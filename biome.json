@@ -1,0 +1,25 @@
+{
+	"$schema": "https://biomejs.dev/schemas/1.6.2/schema.json",
+	"organizeImports": {
+		"enabled": true
+	},
+	"files": {
+		"include": ["src/**/*"]
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true
+		},
+		"include": ["src"]
+	},
+	"formatter": {
+		"lineWidth": 160,
+		"include": ["src"]
+	},
+	"javascript": {
+		"parser": {
+			"unsafeParameterDecoratorsEnabled": true
+		}
+	}
+}
