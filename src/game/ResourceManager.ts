@@ -1,38 +1,16 @@
-import { loadJson } from "../utils/loaders.util";
+import { loadJson, loadText } from "../utils/loaders.util";
 import Audio from "./Audio";
 import Font from "./Font";
+import type { GameOptions } from "./Game";
 import { SpriteSheet } from "./Spritesheet";
-
-function loadSpritesheets(mgr: ResourceManager, sheets: string[]) {
-	return sheets.map((filename) =>
-		SpriteSheet.load(filename)
-			.catch((err) => console.error(`SpriteSheet.load ${filename}`, err))
-			.then((r) => mgr.add("sprite", filename, r)),
-	);
-}
-
-function loadAudiosheets(mgr: ResourceManager, sheets: string[]) {
-	return sheets.map((filename) =>
-		Audio.load(filename)
-			.catch((err) => console.error(`Audio.load ${filename}`, err))
-			.then((r) => mgr.add("audio", filename, r)),
-	);
-}
-
-function loadFonts(mgr: ResourceManager, sheets: string[]) {
-	return sheets.map((filename: string) => {
-		const promise = Font.load(filename);
-		promise.catch((err) => console.error(`Font.load ${filename}`, err));
-		promise.then((r) => mgr.add("font", r.name, r));
-		return promise;
-	});
-}
 
 export default class ResourceManager {
 	private cache: Map<string, unknown>;
+	private options: GameOptions;
 
-	constructor() {
+	constructor(gameOptions: GameOptions) {
 		this.cache = new Map();
+		this.options = gameOptions;
 	}
 
 	async load(resourcesFilename: string) {
@@ -43,19 +21,48 @@ export default class ResourceManager {
 		for (const [kind, value] of Object.entries(sheet)) {
 			switch (kind) {
 				case "spritesheets":
-					resource = loadSpritesheets(this, value);
+					resource = this.loadSpritesheets(value);
 					break;
 				case "audiosheets":
-					resource = loadAudiosheets(this, value);
+					resource = this.loadAudiosheets(value);
 					break;
 				case "fonts":
-					resource = loadFonts(this, value);
+					resource = this.loadFonts(value);
 					break;
 			}
 			jobs.push(...resource);
 		}
 
 		return Promise.all(jobs);
+	}
+
+	private loadSpritesheets(sheets: string[]) {
+		return sheets.map((filename) =>
+			SpriteSheet.load(this.options.paths.spritesheets + filename)
+				.catch((err) => console.error(`SpriteSheet.load ${filename}`, err))
+				.then((r) => this.add("sprite", filename, r)),
+		);
+	}
+
+	private loadAudiosheets(sheets: string[]) {
+		return sheets.map((filename) =>
+			Audio.load(this.options.paths.audiosheets + filename)
+				.catch((err) => console.error(`Audio.load ${filename}`, err))
+				.then((r) => this.add("audio", filename, r)),
+		);
+	}
+
+	private loadFonts(sheets: string[]) {
+		return sheets.map((filename: string) => {
+			const promise = Font.load(this.options.paths.fonts + filename);
+			promise.catch((err) => console.error(`Font.load ${filename}`, err));
+			promise.then((r) => this.add("font", r.name, r));
+			return promise;
+		});
+	}
+
+	async loadScene(name: string) {
+		return loadText(`${this.options.paths.scenes}${name}.script`);
 	}
 
 	add(kind: string, name: string, rez) {
@@ -68,7 +75,6 @@ export default class ResourceManager {
 	get(kind: string, name?: string) {
 		const id = name ? `${kind}:${name}` : kind;
 		if (!this.cache.has(id)) throw new Error(`Unable to find resource ${id}!`);
-
 		return this.cache.get(id);
 	}
 

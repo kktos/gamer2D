@@ -7,10 +7,9 @@ class Timer {
 	public countdown: number;
 	public counter: number;
 	public duration: number;
-
-	private parent: Timers;
-	private name: string;
-	private repeatCount: number;
+	public parent: Timers;
+	public name: string;
+	public repeatCount: number;
 
 	constructor(parent: Timers, name: string, duration: number, repeatCount: number) {
 		this.parent = parent;

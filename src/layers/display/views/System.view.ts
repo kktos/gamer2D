@@ -1,5 +1,5 @@
+import { createEntity } from "../../../entities/EntityFactory";
 import { EntityPool } from "../../../entities/EntityPool";
-import { entityClasses } from "../../../entities/entities";
 import type GameContext from "../../../game/GameContext";
 import { Scene } from "../../../scene/Scene";
 import type { TText } from "../../../script/compiler/display/layout/text.rules";
@@ -54,10 +54,8 @@ export class System {
 	}
 
 	spawn(name: string, ...args: unknown[]) {
-		if (entityClasses[name]) {
-			const entity = new entityClasses[name](this.gc.resourceManager, ...args);
-			this.layer.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
-		}
+		const entity = createEntity(this.gc.resourceManager, name, ...args);
+		this.layer.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
 	}
 
 	timer(name: string) {

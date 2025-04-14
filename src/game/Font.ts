@@ -1,4 +1,3 @@
-import ENV from "../env";
 import type { RequireAllOrNone } from "../types/typescript.types";
 import { nameToRgba } from "../utils/canvas.utils";
 import { loadImage, loadJson } from "../utils/loaders.util";
@@ -57,7 +56,7 @@ export default class Font {
 	private cache: Map<string, HTMLCanvasElement>;
 
 	static async load(filename: string) {
-		const sheet = await loadJson(ENV.FONTS_PATH + filename);
+		const sheet = await loadJson(filename);
 		return await loadFont(sheet);
 	}
 

@@ -13,10 +13,10 @@ export default class AnimationTrait extends Trait {
 	}
 
 	setAnim(entity: Entity, name: string) {
-		const anim = entity.spritesheet?.animations.get(name) as TAnimation | undefined;
+		const anim = entity.spritesheet?.animations.get(name);
 		if (!anim) throw new Error(`Unknown animation ${name} for ${entity.constructor}`);
 
-		this.anim = new Anim(name, anim);
+		this.anim = new Anim(name, anim as unknown as TAnimation);
 		entity.setSprite(this.anim.frame(0));
 		return this;
 	}

@@ -1,4 +1,3 @@
-import ENV from "../env";
 import type { TSpritesSheet } from "../types/engine.types";
 import { drawZoomedImage } from "../utils/canvas.utils";
 import createSpriteSheet from "../utils/createSpriteSheet.util";
@@ -17,7 +16,7 @@ export class SpriteSheet {
 
 	static load(filename: string) {
 		let sheet: TSpritesSheet;
-		return loadJson(ENV.SPRITESHEETS_PATH + filename)
+		return loadJson(filename)
 			.then((s) => {
 				sheet = s;
 			})

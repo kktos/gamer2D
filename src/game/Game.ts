@@ -1,5 +1,7 @@
 import { GAME_EVENTS } from "../constants/events.const";
 import { GP_BUTTONS, GP_STICKS_AXES } from "../constants/gamepad.const";
+import type { Entity } from "../entities/Entity";
+import { setupEntities } from "../entities/EntityFactory";
 import ENV from "../env";
 import Director from "../scene/Director";
 import { createViewport } from "../utils/canvas.utils";
@@ -8,18 +10,33 @@ import type GameContext from "./GameContext";
 import { KeyMap } from "./KeyMap";
 import ResourceManager from "./ResourceManager";
 
+export type entityDefinition = { name: string; className: string; classType: Entity };
+
+export type GameOptions = {
+	paths: {
+		spritesheets: string;
+		audiosheets: string;
+		fonts: string;
+		scenes: string;
+	};
+	audio: {
+		volume: number;
+	};
+	entities: entityDefinition[];
+};
+
 export default class Game {
 	private fpsManager: FPSManager;
 	private gc: GameContext;
 	private coppola: Director | null;
 
-	constructor(canvas: HTMLCanvasElement) {
+	constructor(canvas: HTMLCanvasElement, options: GameOptions) {
 		this.coppola = null;
 
 		this.gc = {
 			viewport: createViewport(canvas),
 
-			resourceManager: new ResourceManager(),
+			resourceManager: new ResourceManager(options),
 
 			dt: 1 / ENV.FPS,
 			tick: 0,
@@ -45,6 +62,8 @@ export default class Game {
 			this.coppola?.update(this.gc);
 		};
 		this.fpsManager = new FPSManager(ENV.FPS, onTimerUpdate);
+
+		setupEntities(options.entities);
 	}
 
 	pause() {

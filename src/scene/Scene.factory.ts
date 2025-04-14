@@ -1,7 +1,5 @@
-import ENV from "../env";
 import type GameContext from "../game/GameContext";
 import { compileScript } from "../script/compiler/compiler";
-import { loadJson, loadText } from "../utils/loaders.util";
 import LocalDB from "../utils/storage.util";
 import type { Scene } from "./Scene";
 import { DisplayScene } from "./display.scene";
@@ -35,11 +33,12 @@ export class SceneFactory {
 		sheet = LocalDB.loadResource(name);
 		if (!sheet) {
 			try {
-				const scriptText = await loadText(`${ENV.SCENES_PATH}${name}.script`);
+				// const scriptText = await loadText(`${ENV.SCENES_PATH}${name}.script`);
+				const scriptText = await gc.resourceManager.loadScene(name);
 				sheet = compileScript(scriptText);
 			} catch (e) {
 				console.error((e as Error).message);
-				sheet = await loadJson(`${ENV.SCENES_PATH}${name}.json`);
+				// sheet = await loadJson(`${ENV.SCENES_PATH}${name}.json`);
 			}
 		}
 

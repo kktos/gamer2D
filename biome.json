@@ -11,11 +11,11 @@
 		"rules": {
 			"recommended": true
 		},
-		"include": ["src"]
+		"include": ["src", "./rollup.config.mjs"]
 	},
 	"formatter": {
 		"lineWidth": 160,
-		"include": ["src"]
+		"include": ["src", "./rollup.config.mjs"]
 	},
 	"javascript": {
 		"parser": {

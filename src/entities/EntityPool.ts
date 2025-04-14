@@ -1,4 +1,6 @@
-import { entityClasses } from "./entities";
+import type GameContext from "../game/GameContext";
+import type ResourceManager from "../game/ResourceManager";
+import { createEntity } from "./EntityFactory";
 
 export class EntityPool {
 	static pools = {};
@@ -6,15 +8,13 @@ export class EntityPool {
 	private pool: EntityPool[];
 	private available: boolean[];
 
-	static create(resourceManager, name, size, ...args) {
-		if (entityClasses[name]) {
-			const pool = new EntityPool(size, () => new entityClasses[name](resourceManager, ...args));
-			EntityPool.pools[name] = pool;
-			return pool;
-		}
+	static create(resourceManager: ResourceManager, name: string, size: number, ...args) {
+		const pool = new EntityPool(size, () => createEntity(resourceManager, name, ...args));
+		EntityPool.pools[name] = pool;
+		return pool;
 	}
 
-	constructor(size, createObject) {
+	constructor(size: number, createObject) {
 		this.pool = Array.from({ length: size }, createObject);
 		this.available = Array(size).fill(true);
 	}
@@ -39,7 +39,7 @@ export class EntityPool {
 		}
 	}
 
-	update(gc, scene) {
+	update(gc: GameContext, scene) {
 		for (let index = 0; index < this.available.length; index++) {
 			if (!this.available[index]) this.pool[index].update(gc, scene);
 		}
@@ -51,7 +51,7 @@ export class EntityPool {
 		}
 	}
 
-	render(gc) {
+	render(gc: GameContext) {
 		for (let index = 0; index < this.available.length; index++) {
 			if (!this.available[index]) this.pool[index].render(gc);
 		}

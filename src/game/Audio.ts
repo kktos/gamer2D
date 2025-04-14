@@ -68,7 +68,7 @@ export default class Audio {
 	public context: AudioContext;
 
 	static load(filename: string) {
-		return loadJson(ENV.SOUNDS_PATH + filename)
+		return loadJson(filename)
 			.then((sheet) => loadSounds(sheet))
 			.catch((err) => console.error(`Audio.load(${filename})`, err));
 	}
