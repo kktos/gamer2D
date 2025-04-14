@@ -3,7 +3,7 @@ import type GameContext from "../game/GameContext";
 import type { Scene } from "../scene/Scene";
 import { Trait } from "./Trait";
 
-export default class BoundingBoxTrait extends Trait {
+export class BoundingBoxTrait extends Trait {
 	update(gc: GameContext, entity: Entity, scene: Scene) {
 		const bbox = scene.bbox;
 

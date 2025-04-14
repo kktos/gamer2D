@@ -18,10 +18,10 @@ export default class LevelScene extends Scene {
 	static STATE_ENDING = Symbol.for("ending");
 
 	public gravity: number;
+	public grid: Grid;
 
-	private grid: Grid;
 	private state: symbol;
-	entities: Entity[];
+	private entities: Entity[];
 
 	constructor(gc: GameContext, name: string, sheet) {
 		super(gc, name);

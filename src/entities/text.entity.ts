@@ -1,7 +1,7 @@
 import ENV from "../env";
 import type Font from "../game/Font";
 import type ResourceManager from "../game/ResourceManager";
-import FadeTrait from "../traits/fade.trait";
+import { FadeTrait } from "../traits/fade.trait";
 import { Entity } from "./Entity";
 
 export type TextDTO = {
@@ -30,13 +30,13 @@ export default class TextEntity extends Entity {
 	private bgcolor: string;
 	private pos: () => [number, number];
 
-	constructor(resourceMgr: ResourceManager, textObj) {
+	constructor(resourceMgr: ResourceManager, textObj: TextDTO) {
 		super(resourceMgr, textObj.pos[0], textObj.pos[1]);
 
 		this.font = resourceMgr.get("font", ENV.MAIN_FONT) as Font;
 
-		this.text = typeof textObj.text !== "function" ? () => textObj.text : textObj.text;
-		this.pos = typeof textObj.pos !== "function" ? () => textObj.pos : textObj.pos;
+		this.text = typeof textObj.text !== "function" ? () => textObj.text as string : textObj.text;
+		this.pos = typeof textObj.pos !== "function" ? () => textObj.pos as [number, number] : textObj.pos;
 		this.color = textObj.color;
 		this.bgcolor = textObj.bgcolor;
 		this.align = textObj.align;

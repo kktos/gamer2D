@@ -1,4 +1,6 @@
-import { COLLISION, contains } from "../maths/math";
+import type { Entity } from "../entities/Entity";
+import type GameContext from "../game/GameContext";
+import { COLLISION } from "../maths/math";
 import { Trait } from "./Trait";
 
 export class BounceTrait extends Trait {
@@ -12,7 +14,7 @@ export class BounceTrait extends Trait {
 		this.repulsiveFactor = -Math.abs(repulsiveFactor);
 	}
 
-	collides(gc, side, entity, target) {
+	collides(gc: GameContext, side, entity: Entity, target: Entity) {
 		if (!this.isBouncing || !target.isSolid) return;
 
 		// if(contains(target, entity)) {

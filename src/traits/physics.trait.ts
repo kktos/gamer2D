@@ -1,5 +1,8 @@
+import type { Entity } from "../entities/Entity";
 import ENV from "../env";
+import type GameContext from "../game/GameContext";
 import { COLLISION, intersectRect } from "../maths/math";
+import type LevelScene from "../scene/level.scene";
 import { Trait } from "./Trait";
 
 type CellRect = {
@@ -19,7 +22,7 @@ export class PhysicsTrait extends Trait {
 		this.collisionRects = [];
 	}
 
-	update(gc, entity, scene) {
+	update(gc: GameContext, entity: Entity, scene: LevelScene) {
 		entity.vel.y += (scene.gravity ?? 50) * entity.mass * gc.dt;
 
 		entity.left += entity.vel.x * gc.dt;
@@ -27,10 +30,11 @@ export class PhysicsTrait extends Trait {
 
 		entity.top += entity.vel.y * gc.dt;
 		// level.tileCollider.checkY(entity, gameContext, level);
-		this.checkY(gc, entity, scene);
+		//this.checkY(gc, entity, scene);
 	}
 
-	checkY(gc, entity, scene) {
+	/*
+	checkY(gc: GameContext, entity: Entity, scene: LevelScene) {
 		if (!entity.vel.y || !scene.grid) return;
 
 		const { x, y } = scene.grid.toGrid(entity.left, entity.top);
@@ -46,7 +50,7 @@ export class PhysicsTrait extends Trait {
 		}
 	}
 
-	checkX(gc, entity, scene) {
+	checkX(gc: GameContext, entity: Entity, scene: LevelScene) {
 		if (!entity.vel.y || !scene.grid) return;
 
 		const x = Math.floor((entity.left - ENV.LEVEL_GRID.X) / scene.grid.cellWidth);
@@ -78,7 +82,7 @@ export class PhysicsTrait extends Trait {
 			}
 		}
 	}
-	__checkY(gc, entity, scene) {
+	__checkY(gc: GameContext, entity: Entity, scene: LevelScene) {
 		if (!entity.vel.y || !scene.grid) return;
 
 		this.collisionRects = [];
@@ -147,4 +151,6 @@ export class PhysicsTrait extends Trait {
 
 		// });
 	}
+
+*/
 }

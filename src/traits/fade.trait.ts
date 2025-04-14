@@ -2,7 +2,7 @@ import type TextEntity from "../entities/text.entity";
 import { hexToRgb } from "../utils/canvas.utils";
 import { Trait } from "./Trait";
 
-export default class FadeTrait extends Trait {
+export class FadeTrait extends Trait {
 	color: number[];
 	isFadein: boolean;
 	alpha: number;

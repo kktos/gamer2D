@@ -1,11 +1,12 @@
 import type { Entity } from "../entities/Entity";
 import type { Point } from "../maths/math";
+import type { Scene } from "../scene/Scene";
 import { DIRECTIONS } from "../script/types/direction.type";
 import { Trait } from "./Trait";
 
 type ProviderFn = (deltaTime: number, entity: Entity) => Point | null;
 
-export default class PathTrait extends Trait {
+export class PathTrait extends Trait {
 	private isRunning: boolean;
 	private currentProvider: number;
 	private pointProviders: ProviderFn[];
@@ -99,7 +100,7 @@ export default class PathTrait extends Trait {
 	}
 */
 
-	update({ deltaTime }, entity: Entity, scene) {
+	update({ deltaTime }, entity: Entity, scene: Scene) {
 		if (!this.isRunning) return;
 
 		entity.mass = 0;

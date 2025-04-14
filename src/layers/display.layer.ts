@@ -16,7 +16,7 @@ import type { TView } from "../script/compiler/display/layout/view.rules";
 import { evalExpr, evalNumber } from "../script/engine/eval.script";
 import { execAction } from "../script/engine/exec.script";
 import { OP_TYPES, OP_TYPES_STR } from "../script/types/operation.types";
-import PathTrait from "../traits/path.trait";
+import { PathTrait } from "../traits/path.trait";
 import type { TVarSounds, TVarSprites, TVars } from "../types/engine.types";
 import LocalDB from "../utils/storage.util";
 import { UILayer } from "./UILayer";

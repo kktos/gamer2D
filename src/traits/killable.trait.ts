@@ -1,7 +1,9 @@
+import type { Entity } from "../entities/Entity";
 import { EntitiesLayer } from "../layers/entities.layer";
+import type { Scene } from "../scene/Scene";
 import { Trait } from "./Trait";
 
-export default class KillableTrait extends Trait {
+export class KillableTrait extends Trait {
 	static EVENT_KILLED = Symbol.for("Killed");
 
 	public isDead: boolean;
@@ -20,7 +22,7 @@ export default class KillableTrait extends Trait {
 		this.isDead = true;
 	}
 
-	update({ dt }, entity, scene) {
+	update({ dt }, entity: Entity, scene: Scene) {
 		if (this.isDead) {
 			entity.isSolid = false;
 
