@@ -1,7 +1,6 @@
 import ENV from "../env";
 import type Font from "../game/Font";
 import type ResourceManager from "../game/ResourceManager";
-import { FadeTrait } from "../traits/fade.trait";
 import { Entity } from "./Entity";
 
 export type TextDTO = {
@@ -11,19 +10,24 @@ export type TextDTO = {
 	align?: number;
 	valign?: number;
 	size?: number;
-	anim?: {
-		name: string;
-	};
 	width?: string | number;
 	height?: string | number;
 	bgcolor?: string;
 };
 
-export default class TextEntity extends Entity {
+export class TextEntity extends Entity {
 	public color: string;
+	// public text: () => string;
 
+	get text() {
+		return this._text();
+	}
+	set text(value) {
+		this._text = () => value;
+	}
+
+	private _text: () => string;
 	private font: Font;
-	private text: () => string;
 	private align: number;
 	private valign: number;
 	private fontsize: number;
@@ -35,7 +39,7 @@ export default class TextEntity extends Entity {
 
 		this.font = resourceMgr.get("font", ENV.MAIN_FONT) as Font;
 
-		this.text = typeof textObj.text !== "function" ? () => textObj.text as string : textObj.text;
+		this._text = typeof textObj.text !== "function" ? () => textObj.text as string : textObj.text;
 		this.pos = typeof textObj.pos !== "function" ? () => textObj.pos as [number, number] : textObj.pos;
 		this.color = textObj.color;
 		this.bgcolor = textObj.bgcolor;
@@ -46,15 +50,6 @@ export default class TextEntity extends Entity {
 			x: textObj.width ? Number(textObj.width) : 0,
 			y: textObj.height ? Number(textObj.height) : 0,
 		};
-
-		switch (textObj.anim?.name) {
-			case "fadein":
-				this.addTrait(new FadeTrait("in", this.color));
-				this.color = "#000";
-				break;
-			case "fadeout":
-				this.addTrait(new FadeTrait("out", this.color));
-		}
 	}
 
 	render(gc) {
@@ -65,7 +60,7 @@ export default class TextEntity extends Entity {
 		const [x, y] = this.pos();
 		this.font.print({
 			ctx: ctx,
-			text: this.text(),
+			text: this.text,
 			x,
 			y,
 			color: this.color,

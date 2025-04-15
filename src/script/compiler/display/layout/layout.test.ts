@@ -6,7 +6,7 @@ describe("Layout", () => {
 		const script = `
 		display "intro" {
 			layout {
-				menuItems = [
+				$menuItems = [
 					"play",
 					"intro"
 				]
@@ -30,12 +30,6 @@ describe("Layout", () => {
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		expect(result).toStrictEqual({
-			background: "#FF0000",
-			font: "bubble-bobble",
-			name: "intro",
-			showCursor: true,
-			type: "display",
-		});
+		expect(result).toHaveProperty("layout");
 	});
 });

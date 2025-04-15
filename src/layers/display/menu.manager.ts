@@ -1,5 +1,5 @@
 import type { Entity } from "../../entities/Entity";
-import type TextEntity from "../../entities/text.entity";
+import type { TextEntity } from "../../entities/text.entity";
 import ENV from "../../env";
 import type GameContext from "../../game/GameContext";
 import type { SpriteSheet } from "../../game/Spritesheet";

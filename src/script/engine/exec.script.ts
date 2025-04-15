@@ -1,5 +1,6 @@
 import type { TVars } from "../../types/engine.types";
-import { evalExpr, interpolateString } from "./eval.script";
+import { ArgColor, ArgIdentifier, ArgVariable } from "../compiler/display/layout/action.rules";
+import { evalExpr, evalVar, interpolateString } from "./eval.script";
 
 function execFnCall({ vars }: { vars: TVars }, fnCall, objSource) {
 	const args: unknown[] = [];
@@ -9,9 +10,23 @@ function execFnCall({ vars }: { vars: TVars }, fnCall, objSource) {
 			args.push(arg);
 			continue;
 		}
-		const strMatches = arg.match(/^"(.*)"$/);
-		if (strMatches) {
-			args.push(interpolateString({ vars }, strMatches[1]));
+		if (typeof arg === "string") {
+			const strMatches = arg.match(/^"(.*)"$/);
+			if (strMatches) {
+				args.push(interpolateString({ vars }, strMatches[1]));
+				continue;
+			}
+		}
+		if (arg instanceof ArgVariable) {
+			args.push(evalVar({ vars }, arg.value));
+			continue;
+		}
+		if (arg instanceof ArgIdentifier) {
+			args.push(arg.value);
+			continue;
+		}
+		if (arg instanceof ArgColor) {
+			args.push(arg.value);
 			continue;
 		}
 		args.push(evalExpr({ vars }, arg));

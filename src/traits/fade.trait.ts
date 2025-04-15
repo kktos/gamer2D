@@ -1,4 +1,4 @@
-import type TextEntity from "../entities/text.entity";
+import type { TextEntity } from "../entities/text.entity";
 import { hexToRgb } from "../utils/canvas.utils";
 import { Trait } from "./Trait";
 

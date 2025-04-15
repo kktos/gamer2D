@@ -1,23 +1,28 @@
 import type { Entity } from "../entities/Entity";
 import { createEntity } from "../entities/EntityFactory";
-import TextEntity, { type TextDTO } from "../entities/text.entity";
+import { type TextDTO, TextEntity } from "../entities/text.entity";
 import ENV from "../env";
 import { Events } from "../events/Events";
 import type Audio from "../game/Audio";
 import type Font from "../game/Font";
 import type GameContext from "../game/GameContext";
+import type ResourceManager from "../game/ResourceManager";
 import { type BBox, ptInRect } from "../maths/math";
 import { Scene } from "../scene/Scene";
 import type { SceneSheet } from "../scene/Scene.factory";
+import type { TFunctionArg } from "../script/compiler/display/layout/action.rules";
 import type { TStatement } from "../script/compiler/display/layout/layout.rules";
 import type { TMenu } from "../script/compiler/display/layout/menu.rules";
 import type { TText } from "../script/compiler/display/layout/text.rules";
 import type { TView } from "../script/compiler/display/layout/view.rules";
-import { evalExpr, evalNumber } from "../script/engine/eval.script";
+import type { TEventHandlers } from "../script/compiler/display/on.rules";
+import type { TSoundDefs } from "../script/compiler/display/sound.rules";
+import { evalArg, evalExpr, evalNumber } from "../script/engine/eval.script";
 import { execAction } from "../script/engine/exec.script";
 import { OP_TYPES, OP_TYPES_STR } from "../script/types/operation.types";
-import { PathTrait } from "../traits/path.trait";
-import type { TVarSounds, TVarSprites, TVars } from "../types/engine.types";
+import { FadeTrait } from "../traits/fade.trait";
+import { type PathDefDTO, PathTrait } from "../traits/path.trait";
+import type { TExpr, TVarSounds, TVarSprites, TVars } from "../types/engine.types";
 import LocalDB from "../utils/storage.util";
 import { UILayer } from "./UILayer";
 import { prepareMenu, renderMenu } from "./display/menu.manager";
@@ -80,35 +85,8 @@ export class DisplayLayer extends UILayer {
 		this.prepareRendering(gc);
 
 		this.timers = Timers.createTimers(sheet);
-
-		if (sheet.on) {
-			for (const [name, value] of Object.entries(sheet.on)) {
-				const [eventName, id] = name.split(":");
-				parent.events.on(Symbol.for(eventName), (...args) => {
-					// biome-ignore lint/suspicious/noDoubleEquals: <explanation>
-					if (id && args[0] != id) return;
-					execAction({ vars: this.vars }, value.action);
-				});
-			}
-		}
-
-		if (sheet.sounds) {
-			const sounds: TVarSounds = new Map();
-			for (const [key, soundDef] of Object.entries(sheet.sounds)) {
-				const [soundSheet, name] = key.split(":");
-				const audio = rezMgr.get("audio", soundSheet) as Audio;
-				const sound = {
-					name,
-					audio,
-					play: () => audio.play(name),
-				};
-				if (soundDef.play) {
-					parent.events.on(Scene.EVENT_START, () => sound.audio.play(name));
-				}
-				sounds.set(key, sound);
-			}
-			this.vars.set("sounds", sounds);
-		}
+		if (sheet.on) this.initEventHandlers(sheet.on, parent);
+		if (sheet.sounds) this.initSounds(sheet.sounds, parent, rezMgr);
 	}
 
 	destroy() {
@@ -141,6 +119,35 @@ export class DisplayLayer extends UILayer {
 		this.vars.set("centerX", Math.floor(ENV.VIEWPORT_WIDTH / 2));
 		this.vars.set("centerY", Math.floor(ENV.VIEWPORT_HEIGHT / 2));
 		this.vars.set("centerUIY", Math.floor((this.gc.viewport.bbox.height - ENV.UI_HEIGHT) / 2 / this.gc.viewport.ratioHeight));
+	}
+
+	initEventHandlers(EventHandlers: TEventHandlers, parent: Scene) {
+		for (const [name, value] of Object.entries(EventHandlers)) {
+			const [eventName, id] = name.split(":");
+			parent.events.on(Symbol.for(eventName), (...args) => {
+				// biome-ignore lint/suspicious/noDoubleEquals: <explanation>
+				if (id && args[0] != id) return;
+				execAction({ vars: this.vars }, value.action);
+			});
+		}
+	}
+
+	initSounds(soundDefs: TSoundDefs, parent: Scene, rezMgr: ResourceManager) {
+		const sounds: TVarSounds = new Map();
+		for (const [key, soundDef] of Object.entries(soundDefs)) {
+			const [soundSheet, name] = key.split(":");
+			const audio = rezMgr.get("audio", soundSheet) as Audio;
+			const sound = {
+				name,
+				audio,
+				play: () => audio.play(name),
+			};
+			if (soundDef.play) {
+				parent.events.on(Scene.EVENT_START, () => sound.audio.play(name));
+			}
+			sounds.set(key, sound);
+		}
+		this.vars.set("sounds", sounds);
 	}
 
 	selectMenuItem(idx: number) {
@@ -178,7 +185,6 @@ export class DisplayLayer extends UILayer {
 			valign: op.valign,
 			size: op.size,
 			color: op.color,
-			anim: op.anim,
 			bgcolor: op.bgcolor,
 			text: () => evalExpr({ vars: this.vars }, op.text) as string,
 		};
@@ -186,19 +192,56 @@ export class DisplayLayer extends UILayer {
 		if (op.height) textObj.height = evalNumber({ vars: this.vars }, op.height);
 
 		const entity = new TextEntity(this.gc.resourceManager, textObj);
+		if (op.anim) {
+			switch (op.anim.name) {
+				case "fadein":
+					entity.addTrait(new FadeTrait("in", textObj.color));
+					break;
+				case "fadeout":
+					entity.addTrait(new FadeTrait("out", textObj.color));
+					break;
+				default: {
+					const anim = this.vars.get(op.anim.name) as { path: unknown[]; speed: number };
+					if (!anim) {
+						throw new Error(`Animation ${op.anim.name} not found`);
+					}
+					const animDTO: PathDefDTO = {
+						path: anim.path,
+						speed: anim.speed,
+					};
+					entity.addTrait(new PathTrait(animDTO, { evalArg: (arg) => evalArg({ vars: this.vars }, arg) }));
+				}
+			}
+		}
 		this.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
 		op.entity = entity;
 	}
+	/*
+	private evalNumber(expr: string | number) {
+		return evalNumber({ vars: this.vars }, expr);
+	}
 
+	private evalExpr(expr: TExpr[] | number | string | { expr: string }) {
+		return evalExpr({ vars: this.vars }, expr);
+	}
+
+	private evalArg(arg: TFunctionArg) {
+		return evalArg({ vars: this.vars }, arg);
+	}
+*/
 	// addSprite(op:TSprite & { entity: Entity }) {
 	addSprite(op) {
 		const entity = createEntity(this.gc.resourceManager, op.sprite, op.pos[0], op.pos[1], op.dir);
 		if (op.anim) {
-			const anim = this.vars.get(op.anim.name);
+			const anim = this.vars.get(op.anim.name) as { path: unknown[]; speed: number };
 			if (!anim) {
 				throw new Error(`Animation ${op.anim.name} not found`);
 			}
-			entity.addTrait(new PathTrait(anim));
+			const animDTO: PathDefDTO = {
+				path: anim.path,
+				speed: anim.speed,
+			};
+			entity.addTrait(new PathTrait(animDTO, { evalArg: (arg) => evalArg({ vars: this.vars }, arg) }));
 		}
 		this.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
 		op.entity = entity;

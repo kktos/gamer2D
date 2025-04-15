@@ -1,5 +1,7 @@
 import type GameContext from "../game/GameContext";
 import { compileScript } from "../script/compiler/compiler";
+import type { TEventHandlers } from "../script/compiler/display/on.rules";
+import type { TSoundDefs } from "../script/compiler/display/sound.rules";
 import LocalDB from "../utils/storage.util";
 import type { Scene } from "./Scene";
 import { DisplayScene } from "./display.scene";
@@ -17,8 +19,8 @@ export type SceneSheet = {
 	ui: unknown;
 	font: string;
 	layout: unknown[];
-	sounds: unknown;
-	on: unknown;
+	sounds: TSoundDefs;
+	on: TEventHandlers;
 };
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>

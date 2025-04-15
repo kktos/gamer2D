@@ -1,17 +1,26 @@
 import type { Entity } from "../entities/Entity";
 import type { Point } from "../maths/math";
 import type { Scene } from "../scene/Scene";
+import { ArgColor } from "../script/compiler/display/layout/action.rules";
+import { typeOfArg } from "../script/engine/eval.script";
 import { DIRECTIONS } from "../script/types/direction.type";
 import { Trait } from "./Trait";
 
 type ProviderFn = (deltaTime: number, entity: Entity) => Point | null;
+const TAU = 2 * Math.PI;
+const toRad = 180 / Math.PI;
+
+export type PathDefDTO = {
+	path: unknown[];
+	speed: number;
+};
 
 export class PathTrait extends Trait {
 	private isRunning: boolean;
 	private currentProvider: number;
 	private pointProviders: ProviderFn[];
 
-	constructor(pathDef) {
+	constructor(pathDef: PathDefDTO, { evalArg }) {
 		super();
 
 		// console.log(pathDef);
@@ -23,18 +32,47 @@ export class PathTrait extends Trait {
 		for (const path of pathDef.path) {
 			const p = path[0];
 			let provider: ProviderFn | null = null;
-			switch (p.name[1]) {
+			switch (p.name[0]) {
 				case "line": {
-					provider = createLinePointProvider(p.args[0], p.args[1], p.args[2], p.args[3], p.args[4], pathDef.speed);
+					provider = createLinePointProvider(evalArg(p.args[0]), evalArg(p.args[1]), evalArg(p.args[2]), evalArg(p.args[3]), evalArg(p.args[4]), pathDef.speed);
 					break;
 				}
 				case "circle": {
-					provider = createCirclePointProvider(p.args[0], p.args[1], p.args[2], p.args[3], pathDef.speed);
+					// console.log("createCirclePointProvider", evalArg(p.args[0]), evalArg(p.args[1]), evalArg(p.args[2]), evalArg(p.args[3]), pathDef.speed);
+					provider = createCirclePointProvider(evalArg(p.args[0]), evalArg(p.args[1]), evalArg(p.args[2]), evalArg(p.args[3]), pathDef.speed);
 					break;
 				}
 				case "dir": {
+					// console.log("dir", evalArg(p.args[0]));
 					provider = (_, entity) => {
-						entity.dir = p.args[0] === "left" ? DIRECTIONS.LEFT : DIRECTIONS.RIGHT;
+						entity.dir = evalArg(p.args[0]) === "left" ? DIRECTIONS.LEFT : DIRECTIONS.RIGHT;
+						return null;
+					};
+					break;
+				}
+				case "prop": {
+					// console.log("prop", evalArg(p.args[0]), evalArg(p.args[1]));
+					const prop = evalArg(p.args[0]);
+					const value = evalArg(p.args[1]);
+					const valueType = typeOfArg(p.args[1]);
+					let idx = 0;
+					provider = (deltaTime: number, entity: Entity) => {
+						switch (typeof entity[prop]) {
+							case "number":
+								if (typeof value === "number") entity[prop] += value;
+								break;
+							case "string": {
+								if (Array.isArray(value)) {
+									entity[prop] = value[Math.floor(idx)];
+									idx = (idx + deltaTime * pathDef.speed) % value.length;
+								} else if (valueType === "color") {
+									const col = new ArgColor(entity[prop]);
+									entity[prop] = (p.args[1] as ArgColor).add(col);
+								}
+								break;
+							}
+						}
+						// entity.dir = evalArg(p.args[0]) === "left" ? DIRECTIONS.LEFT : DIRECTIONS.RIGHT;
 						return null;
 					};
 					break;
@@ -46,6 +84,8 @@ export class PathTrait extends Trait {
 					};
 					break;
 				}
+				default:
+					throw new Error("Unknown path command");
 			}
 			if (provider) this.pointProviders.push(provider);
 		}
@@ -111,34 +151,36 @@ export class PathTrait extends Trait {
 	}
 }
 
-function createCirclePointProvider(x: number, y: number, radius: number, initialAngle: number, speed: number) {
+function createCirclePointProvider(centerX: number, centerY: number, radius: number, initialAngle: number, speed: number) {
+	// console.log(centerX, centerY, radius, initialAngle, speed);
+
 	// const speed = Math.abs(anim.speed) ?? 1;
 	const dir = speed < 0 ? -1 : 1;
-	const TAU = 2 * Math.PI;
-	const toRad = 180 / Math.PI;
 	let angle = ((initialAngle % 360) * Math.PI) / 180; //(TAU * x) / 100;
 	const endValue = Math.floor(initialAngle % 360);
 	const relativeSpeed = Math.abs(speed) / 10;
-	return (deltaTime: number): Point | null => {
+	const circlePointProvider = (deltaTime: number): Point | null => {
 		angle = (angle + deltaTime * relativeSpeed) % TAU;
 		if (Math.floor(angle * toRad) === endValue) return null;
 		return {
-			x: Math.floor(x + radius * Math.cos(dir * angle)),
-			y: Math.floor(y + radius * Math.sin(dir * angle)),
+			x: Math.floor(centerX + radius * Math.cos(dir * angle)),
+			y: Math.floor(centerY + radius * Math.sin(dir * angle)),
 		};
 	};
+	return circlePointProvider;
 }
 
-function createLinePointProvider(step: number, x1: number, y1: number, x2: number, y2: number, speed: number) {
-	const slope = (y2 - y1) / (x2 - x1);
-	const offset = y1 - slope * x1;
-	return (deltaTime: number, entity: Entity): Point | null => {
+function createLinePointProvider(step: number, fromX: number, fromY: number, toX: number, toY: number, speed: number) {
+	const slope = (toY - fromY) / (toX - fromX);
+	const offset = fromY - slope * fromX;
+	const linePointProvider = (deltaTime: number, entity: Entity): Point | null => {
 		const x = entity.left + step * speed * deltaTime;
-		if (x < x1 || x > x2) return null;
+		if (x < fromX || x > toX) return null;
 		const y = slope * x + offset;
 		return {
 			x,
 			y,
 		};
 	};
+	return linePointProvider;
 }

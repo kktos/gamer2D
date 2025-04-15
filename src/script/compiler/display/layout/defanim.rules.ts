@@ -2,7 +2,7 @@ import type { TupleToUnion } from "../../../../types/typescript.types";
 import { OP_TYPES } from "../../../types/operation.types";
 import { tokens } from "../../lexer";
 
-export type TAnim = {
+export type TAnimDef = {
 	type: TupleToUnion<[typeof OP_TYPES.ANIM]>;
 	name: string;
 	path?: unknown[];
@@ -16,7 +16,7 @@ export class DefAnimRules {
 			$.CONSUME(tokens.Def);
 			$.CONSUME(tokens.Anim);
 
-			const result: TAnim = {
+			const result: TAnimDef = {
 				type: OP_TYPES.ANIM,
 				name: $.CONSUME(tokens.StringLiteral).payload,
 			};
@@ -37,7 +37,7 @@ export class DefAnimRules {
 	static layoutDefAnimPath($) {
 		return $.RULE("layoutDefAnimPath", () => {
 			$.CONSUME(tokens.Path);
-			return { name: "path", value: $.SUBRULE($.layoutActionBlock) };
+			return { name: "path", value: $.SUBRULE($.layoutActionBlock, { ARGS: [{ noSystem: true }] }) };
 		});
 	}
 	static layoutDefAnimSpeed($) {

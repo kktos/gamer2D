@@ -3,7 +3,7 @@ import type ResourceManager from "../game/ResourceManager";
 import type { Entity } from "./Entity";
 import BackgroundEntity from "./background.entity";
 import SpriteEntity from "./sprite.entity";
-import TextEntity from "./text.entity";
+import { TextEntity } from "./text.entity";
 
 const entityClasses = {
 	BackgroundEntity,

@@ -1,5 +1,5 @@
 import { tokens } from "../../lexer";
-import type { TAnim } from "./defanim.rules";
+import type { TAnimDef } from "./defanim.rules";
 import type { TImage } from "./image.rules";
 import type { TMenu, TMenuItemGroup } from "./menu.rules";
 import type { TRect } from "./rect.rules";
@@ -9,7 +9,7 @@ import type { TSprite } from "./sprite.rules";
 import type { TText } from "./text.rules";
 import type { TView } from "./view.rules";
 
-export type TStatement = TText | TSprite | TMenu | TRepeat | TView | TAnim | TSet | TImage | TRect | TMenuItemGroup;
+export type TStatement = TText | TSprite | TMenu | TRepeat | TView | TAnimDef | TSet | TImage | TRect | TMenuItemGroup;
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class LayoutRules {
