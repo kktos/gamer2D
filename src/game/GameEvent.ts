@@ -21,7 +21,7 @@ interface GameJoystickBtnDownEvent {
 }
 
 export interface BaseEvent {
-	type: "none"| "click" | "mousemove" | "mousedown" | "mouseup" | "wheel" | "keyup" | "keydown";
+	type: "none" | "click" | "mousemove" | "mousedown" | "mouseup" | "wheel" | "keyup" | "keydown";
 	x: number;
 	y: number;
 	buttons?: number;

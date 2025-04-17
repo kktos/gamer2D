@@ -250,7 +250,7 @@ export default class Game {
 				break;
 			}
 
-			case "devicemotion":				
+			case "devicemotion":
 				console.log("devicemotion", (e as DeviceMotionEvent).rotationRate);
 				break;
 

@@ -6,7 +6,7 @@ import type { UILayer } from "../layers/UILayer";
 import type { BBox } from "../maths/math";
 
 export class Scene {
-	static EVENT_COMPLETE = Symbol.for("scene complete");
+	static EVENT_COMPLETE = Symbol.for("SCENE_COMPLETE");
 	static EVENT_START = Symbol.for("SCENE_START");
 	static TASK_RESET = Symbol.for("reset");
 

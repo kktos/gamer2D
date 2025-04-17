@@ -1,6 +1,6 @@
 {
   "name": "gamer2d",
-  "version": "0.55.0",
+  "version": "0.59.0",
   "description": "A 2D Game Engine for Arkanoid, Bobble Bubble and more",
   "module": "./game/Game.js",
   "types": "./game/Game.d.ts",
