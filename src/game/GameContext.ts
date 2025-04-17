@@ -1,4 +1,3 @@
-import type { BBox } from "../maths/math";
 import type { Scene } from "../scene/Scene";
 import type { KeyMap } from "./KeyMap";
 import type ResourceManager from "./ResourceManager";

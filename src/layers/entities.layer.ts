@@ -20,12 +20,12 @@ export class EntitiesLayer extends Layer {
 	setTaskHandlers() {
 		const tasks = this.scene.tasks;
 
-		tasks.onTask(EntitiesLayer.TASK_REMOVE_ENTITY, (entity:Entity) => {
+		tasks.onTask(EntitiesLayer.TASK_REMOVE_ENTITY, (entity: Entity) => {
 			const idx = this.entities.indexOf(entity);
 			if (idx !== -1) this.entities.splice(idx, 1);
 		});
 
-		tasks.onTask(EntitiesLayer.TASK_ADD_ENTITY, (entity:Entity) => {
+		tasks.onTask(EntitiesLayer.TASK_ADD_ENTITY, (entity: Entity) => {
 			this.entities.push(entity);
 		});
 	}

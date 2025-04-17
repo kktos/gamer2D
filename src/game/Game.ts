@@ -9,6 +9,7 @@ import { setupTraits } from "../traits/TraitFactory";
 import { createViewport } from "../utils/canvas.utils";
 import { FPSManager } from "./FPSManager";
 import type GameContext from "./GameContext";
+import type GameEvent from "./GameEvent";
 import { KeyMap } from "./KeyMap";
 import ResourceManager from "./ResourceManager";
 
@@ -148,43 +149,42 @@ export default class Game {
 		}, 0);
 	}
 
-	handleEvent(e) {
+	handleEvent(e: Event) {
 		if (!e.isTrusted) return;
 
-		if (e.srcElement.className === "overlay") return;
-
-		let x = 0;
-		let y = 0;
-
-		if (["touchstart", "touchend", "touchcancel", "touchmove"].includes(e.type)) {
-			const touch = e.touches[0] || e.changedTouches[0];
-			x = touch.pageX;
-			y = touch.pageY;
-		}
-
-		if (["mousedown", "mouseup", "mousemove", "click"].includes(e.type)) {
-			x = e.clientX;
-			y = e.clientY;
-		}
+		if ((e.target as HTMLElement).className === "overlay") return;
 
 		const bbox = this.gc.viewport.bbox;
-		const evt = {
+		const evt: GameEvent = {
 			type: e.type,
-			buttons: e.buttons,
-			x: ((x - bbox.x) / this.gc.viewport.ratioWidth) | 0,
-			y: ((y - bbox.y) / this.gc.viewport.ratioHeight) | 0,
-			key: undefined,
-			// wheel event data
+			x: 0,
+			y: 0,
 			deltaX: 0,
 			deltaY: 0,
 			deltaZ: 0,
 		};
 
+		let x = 0;
+		let y = 0;
+
+		if (["touchstart", "touchend", "touchcancel", "touchmove"].includes(e.type)) {
+			const touch = (e as TouchEvent).touches[0] || (e as TouchEvent).changedTouches[0];
+			x = touch.pageX;
+			y = touch.pageY;
+		} else if (["mousedown", "mouseup", "mousemove", "click"].includes(e.type)) {
+			x = (e as MouseEvent).clientX;
+			y = (e as MouseEvent).clientY;
+			evt.buttons = (e as MouseEvent).buttons;
+		}
+
+		evt.x = ((x - bbox.x) / this.gc.viewport.ratioWidth) | 0;
+		evt.y = ((y - bbox.y) / this.gc.viewport.ratioHeight) | 0;
+
 		switch (e.type) {
 			case "wheel":
-				evt.deltaX = e.deltaX;
-				evt.deltaY = e.deltaY;
-				evt.deltaZ = e.deltaZ;
+				evt.deltaX = (e as WheelEvent).deltaX;
+				evt.deltaY = (e as WheelEvent).deltaY;
+				evt.deltaZ = (e as WheelEvent).deltaZ;
 				break;
 
 			case "contextmenu":
@@ -201,8 +201,8 @@ export default class Game {
 
 			case "keyup":
 			case "keydown":
-				evt.key = e.key;
-				this.gc.keys.set(e.key, evt.type === "keydown");
+				evt.key = (e as KeyboardEvent).key;
+				this.gc.keys.set((e as KeyboardEvent).key, evt.type === "keydown");
 				break;
 
 			case "click":
@@ -210,7 +210,7 @@ export default class Game {
 			case "mousedown":
 			case "mouseup":
 			case "mousemove": {
-				if (e.target.id !== "game") return;
+				if ((e.target as HTMLElement).id !== "game") return;
 				this.gc.mouse.down = evt.type === "mousedown";
 				this.gc.mouse.x = evt.x;
 				this.gc.mouse.y = evt.y;
@@ -237,11 +237,11 @@ export default class Game {
 			}
 
 			case "devicemotion":
-				console.log("devicemotion", e.rotationRate);
+				console.log("devicemotion", (e as DeviceMotionEvent).rotationRate);
 				break;
 
 			case "gamepadconnected":
-				this.gc.gamepad = { id: e.gamepad.index, lastTime: 0 };
+				this.gc.gamepad = { id: (e as GamepadEvent).gamepad.index, lastTime: 0 };
 				break;
 			case "gamepaddisconnected":
 				this.gc.gamepad = null;
