@@ -1,9 +1,13 @@
 import type { TextEntity } from "../entities/text.entity";
+import Game from "../game/Game";
+import type GameContext from "../game/GameContext";
 import type { ArgColor } from "../types/value.types";
 import { hexToRgb } from "../utils/canvas.utils";
 import { Trait } from "./Trait";
 
 export class FadeTrait extends Trait {
+	static EVENT_FADED = Symbol.for("FADED");
+
 	color: number[];
 	isFadein: boolean;
 	alpha: number;
@@ -14,17 +18,30 @@ export class FadeTrait extends Trait {
 		super();
 		this.color = hexToRgb(color.value) || [0, 0, 0];
 		this.isFadein = inOrOut === "in";
-		this.alpha = this.isFadein ? 1 : 255;
-		this.isRunning = true;
-		this.speed = speed / 10;
+		this.speed = speed / 5;
+		this.reset();
 	}
 
-	update({ dt }, entity: TextEntity) {
+	reset() {
+		this.isRunning = true;
+		this.alpha = this.isFadein ? 1 : 255;
+	}
+
+	update(gc: GameContext, entity: TextEntity) {
 		if (!this.isRunning) return;
-		this.alpha = this.alpha + (this.isFadein ? 1 : -1) * dt * this.speed;
-		if (this.alpha > 255 || this.alpha < 0) {
-			this.isRunning = false;
-			return;
+		this.alpha = this.alpha + (this.isFadein ? 1 : -1) * gc.dt * this.speed;
+		if (this.isFadein) {
+			if (this.alpha > 255) {
+				this.isRunning = false;
+				gc.scene.events.emit(FadeTrait.EVENT_FADED, this.id);
+				return;
+			}
+		} else {
+			if (this.alpha < 1) {
+				this.isRunning = false;
+				gc.scene.events.emit(FadeTrait.EVENT_FADED, this.id);
+				return;
+			}
 		}
 		entity.color = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.alpha / 255})`;
 	}
