@@ -26,6 +26,7 @@ export type SceneSheet = {
 	layout: unknown[];
 	sounds: TSoundDefs;
 	on: TEventHandlers;
+	settings?: Record<string, unknown>;
 };
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>

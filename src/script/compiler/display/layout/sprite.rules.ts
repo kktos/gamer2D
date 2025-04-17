@@ -7,6 +7,7 @@ import { tokens } from "../../lexer";
 export type TSprite = {
 	type: TupleToUnion<[typeof OP_TYPES.SPRITE]>;
 	sprite: string;
+	id?: string;
 	pos: [number, number];
 	zoom: number;
 	range?: [number, number];
@@ -21,6 +22,13 @@ export class SpriteRules {
 		return $.RULE("layoutSprite", (options) => {
 			$.CONSUME(tokens.Sprite);
 
+			let id: string;
+			$.OPTION(() => {
+				$.CONSUME(tokens.ID);
+				$.CONSUME2(tokens.Colon);
+				id = $.CONSUME3(tokens.StringLiteral).payload;
+			});
+
 			const result: TSprite = {
 				type: OP_TYPES.SPRITE,
 				sprite: $.CONSUME(tokens.StringLiteral).payload,
@@ -28,13 +36,15 @@ export class SpriteRules {
 				pos: $.SUBRULE($.parm_at),
 			};
 
-			$.OPTION(() => {
+			$.OPTION2(() => {
 				result.range = $.SUBRULE($.parm_range);
 			});
 
-			$.OPTION2(() => {
+			$.OPTION3(() => {
 				result.dir = $.SUBRULE($.parm_dir);
 			});
+
+			if (id) result.id = id;
 
 			return result;
 		});

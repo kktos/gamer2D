@@ -42,13 +42,13 @@ export class LevelRules {
 	}
 
 	static levelSettings($) {
-		return $.RULE("levelSettings", () => {
+		return $.RULE("levelSettings", (settingsOptions) => {
 			$.CONSUME(tokens.Settings);
 			$.CONSUME(tokens.OpenCurly);
 
 			const settings = {};
 			$.MANY(() => {
-				const { name, value } = $.SUBRULE($.layoutSet);
+				const { name, value } = $.SUBRULE($.layoutSet, { ARGS: [{ noDollar: true }] });
 				settings[name] = value;
 			});
 

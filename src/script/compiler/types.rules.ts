@@ -27,7 +27,22 @@ export class TypesRules {
 
 	static numOrVar($) {
 		return $.RULE("numOrVar", () => {
-			return $.OR([{ ALT: () => $.SUBRULE($.number) }, { ALT: () => $.SUBRULE($.variable) }]);
+			return $.OR([
+				{
+					ALT: () => {
+						$.CONSUME(tokens.True);
+						return true;
+					},
+				},
+				{
+					ALT: () => {
+						$.CONSUME(tokens.False);
+						return false;
+					},
+				},
+				{ ALT: () => $.SUBRULE($.number) },
+				{ ALT: () => $.SUBRULE($.variable) },
+			]);
 		});
 	}
 

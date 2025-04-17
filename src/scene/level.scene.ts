@@ -43,7 +43,7 @@ export default class LevelScene extends Scene {
 
 		this.addLayer(new BackgroundLayer(gc, this, sheet.background));
 		this.addLayer(new LevelLayer(gc, this, sheet.name, sheet.settings, this.grid));
-		this.addLayer(new EntitiesLayer(gc, this, this.entities));
+		this.addLayer(new EntitiesLayer(gc, this, this.entities, sheet));
 		this.addLayer(new CollisionLayer(gc, this));
 		this.addLayer(new DashboardLayer(gc, this));
 	}

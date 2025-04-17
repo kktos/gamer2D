@@ -32,7 +32,7 @@ type TokenDef = {
 type TokenDefs = Record<string, TokenDef>;
 
 const tokenDefs: TokenDefs = {
-	Identifier: { pattern: /[a-zA-Z]\w*/ },
+	Identifier: { pattern: /[a-zA-Z_]\w*/ },
 	// Variable: { pattern: /\$[a-zA-Z]\w*/ },
 	Variable: { pattern: /\$[a-zA-Z]\w*(\.\$?\w+)*/ },
 
@@ -48,6 +48,7 @@ const tokenDefs: TokenDefs = {
 	Font: { pattern: "font", longer_alt: "Identifier" },
 	Layout: { pattern: "layout", longer_alt: "Identifier" },
 	Layers: { pattern: "layers", longer_alt: "Identifier" },
+
 	Align: { pattern: "align", longer_alt: "Identifier" },
 	VAlign: { pattern: "valign", longer_alt: "Identifier" },
 	Size: { pattern: "size", longer_alt: "Identifier" },
@@ -60,6 +61,7 @@ const tokenDefs: TokenDefs = {
 	Anim: { pattern: "anim", longer_alt: "Identifier" },
 	Path: { pattern: "path", longer_alt: "Identifier" },
 	Speed: { pattern: "speed", longer_alt: "Identifier" },
+	ID: { pattern: "id", longer_alt: "Identifier" },
 
 	Text: { pattern: "text", longer_alt: "Identifier" },
 	Sprite: { pattern: "sprite", longer_alt: "Identifier" },
@@ -99,6 +101,9 @@ const tokenDefs: TokenDefs = {
 	MS: { pattern: "ms", longer_alt: "Identifier" },
 	On: { pattern: "on", longer_alt: "Identifier" },
 	Of: { pattern: "of", longer_alt: "Identifier" },
+
+	True: { pattern: "true", longer_alt: "Identifier" },
+	False: { pattern: "false", longer_alt: "Identifier" },
 
 	StringLiteral: { pattern: matchStringLiteral, line_breaks: false },
 	Comma: { pattern: "," },
@@ -143,6 +148,10 @@ export const tokenList = [
 	tokens.ShowCursor,
 	tokens.On,
 	tokens.Of,
+
+	tokens.True,
+	tokens.False,
+
 	tokens.Timer,
 	tokens.MS,
 	tokens.Font,
@@ -160,6 +169,7 @@ export const tokenList = [
 	tokens.Anim,
 	tokens.Path,
 	tokens.Speed,
+	tokens.ID,
 
 	tokens.Text,
 	tokens.Sprite,

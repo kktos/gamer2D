@@ -33,6 +33,7 @@ export class DisplayRules {
 				{ ALT: () => $.SUBRULE($.displayOnEvent, { ARGS: [sheet] }) },
 				{ ALT: () => $.SUBRULE($.displayUI) },
 				{ ALT: () => $.SUBRULE($.displayLayers) },
+				{ ALT: () => $.SUBRULE($.levelSettings, { ARGS: [{ noDollar: false }] }) },
 			]);
 		});
 	}

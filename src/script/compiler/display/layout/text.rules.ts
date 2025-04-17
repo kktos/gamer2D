@@ -7,7 +7,7 @@ import { tokens } from "../../lexer";
 export type TText = {
 	type: TupleToUnion<[typeof OP_TYPES.TEXT]>;
 	text: string;
-	// pos: [number|string, number|string];
+	id?: string;
 	pos: [number | ArgVariable, number | ArgVariable];
 	size?: number;
 	align?: number;
@@ -28,6 +28,13 @@ export class TextRules {
 	static layoutText($) {
 		return $.RULE("layoutText", (options, isMenuItem: boolean) => {
 			$.CONSUME(tokens.Text);
+
+			let id: string;
+			$.OPTION(() => {
+				$.CONSUME(tokens.ID);
+				$.CONSUME2(tokens.Colon);
+				id = $.CONSUME3(tokens.StringLiteral).payload;
+			});
 
 			const result: TText = {
 				type: OP_TYPES.TEXT,
@@ -54,12 +61,12 @@ export class TextRules {
 				result.bgcolor = options.bgcolor;
 			}
 
-			$.OPTION(() => {
+			$.OPTION2(() => {
 				result.width = $.SUBRULE($.layoutViewWidth);
 				result.height = $.SUBRULE($.layoutViewHeight);
 			});
 
-			$.OPTION2(() => {
+			$.OPTION3(() => {
 				const { name, value, isParm } = $.SUBRULE($.textSpriteProps);
 
 				$.ACTION(() => {
@@ -71,6 +78,8 @@ export class TextRules {
 			if (isMenuItem) {
 				result.action = $.SUBRULE3($.layoutAction);
 			}
+
+			if (id) result.id = id;
 
 			return result;
 		});

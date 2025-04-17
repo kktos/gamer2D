@@ -26,6 +26,6 @@ export class DisplayScene extends Scene {
 		this.receiver = new DisplayLayer(gc, this, sheet);
 		this.addLayer(this.receiver);
 
-		this.addLayer(new EntitiesLayer(gc, this));
+		this.addLayer(new EntitiesLayer(gc, this, [], sheet));
 	}
 }

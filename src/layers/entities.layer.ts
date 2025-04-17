@@ -7,12 +7,14 @@ export class EntitiesLayer extends Layer {
 	static TASK_REMOVE_ENTITY = Symbol.for("removeEntity");
 	static TASK_ADD_ENTITY = Symbol.for("addEntity");
 
-	entities: Entity[];
+	private entities: Entity[];
+	private wannaShowCount: boolean;
 
 	constructor(gc: GameContext, parent, entities: Entity[] = [], sheet = null) {
 		super(gc, parent);
 
 		this.entities = entities;
+		this.wannaShowCount = sheet?.settings?.show_entities_count;
 
 		this.setTaskHandlers();
 	}
@@ -38,9 +40,11 @@ export class EntitiesLayer extends Layer {
 	render(gc: GameContext) {
 		for (const entity of this.entities) entity.render(gc);
 
-		const ctx = gc.viewport.ctx;
-		ctx.fillStyle = "#fff";
-		ctx.font = "10px";
-		ctx.fillText(`${this.entities.length}`, 500, 15);
+		if (this.wannaShowCount) {
+			const ctx = gc.viewport.ctx;
+			ctx.fillStyle = "#fff";
+			ctx.font = "10px";
+			ctx.fillText(`${this.entities.length}`, 500, 15);
+		}
 	}
 }
