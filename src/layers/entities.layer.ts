@@ -12,8 +12,6 @@ export class EntitiesLayer extends Layer {
 	constructor(gc: GameContext, parent, entities: Entity[] = [], sheet = null) {
 		super(gc, parent);
 
-		// if(sheet)
-		// 	entities.push(...createBricks(gc, {bricksDef: sheet}));
 		this.entities = entities;
 
 		this.setTaskHandlers();
@@ -22,12 +20,12 @@ export class EntitiesLayer extends Layer {
 	setTaskHandlers() {
 		const tasks = this.scene.tasks;
 
-		tasks.onTask(EntitiesLayer.TASK_REMOVE_ENTITY, (entity) => {
+		tasks.onTask(EntitiesLayer.TASK_REMOVE_ENTITY, (entity:Entity) => {
 			const idx = this.entities.indexOf(entity);
 			if (idx !== -1) this.entities.splice(idx, 1);
 		});
 
-		tasks.onTask(EntitiesLayer.TASK_ADD_ENTITY, (entity) => {
+		tasks.onTask(EntitiesLayer.TASK_ADD_ENTITY, (entity:Entity) => {
 			this.entities.push(entity);
 		});
 	}
@@ -43,7 +41,6 @@ export class EntitiesLayer extends Layer {
 		const ctx = gc.viewport.ctx;
 		ctx.fillStyle = "#fff";
 		ctx.font = "10px";
-		// ctx.fillText(`${this.entities.length}`, 600 - 60, 600 - 10);
 		ctx.fillText(`${this.entities.length}`, 500, 15);
 	}
 }

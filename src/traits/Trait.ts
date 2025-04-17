@@ -9,11 +9,11 @@ export interface ITrait {
 	on(name: string, callback, count: number): Trait;
 	finalize(entity: Entity): void;
 
-	collides(gc: GameContext, side: typeof COLLISION, entity: Entity, target: Entity): void;
-	update(gc: GameContext, entity: Entity, scene: Scene): void;
+	collides?(gc: GameContext, side: typeof COLLISION, entity: Entity, target: Entity): void;
+	update?(gc: GameContext, entity: Entity, scene: Scene): void;
 }
 
-export class Trait {
+export class Trait implements ITrait {
 	class: string;
 	id: string;
 	listeners: { name: string; callback: EventCallback; count: number }[];

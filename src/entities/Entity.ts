@@ -165,11 +165,11 @@ export class Entity {
 	}
 
 	collides(gc: GameContext, side: typeof COLLISION, target: Entity) {
-		for (const trait of this.collidesTraits) (trait as unknown as ITrait).collides(gc, side, this, target);
+		for (const trait of this.collidesTraits) (trait as ITrait).collides(gc, side, this, target);
 	}
 
 	update(gc: GameContext, scene: Scene) {
-		for (const trait of this.updateTraits) (trait as unknown as ITrait).update(gc, this, scene);
+		for (const trait of this.updateTraits) (trait as ITrait).update(gc, this, scene);
 		this.lifetime += gc.dt * ENV.FPS;
 	}
 

@@ -66,7 +66,6 @@ export class Scene {
 	}
 
 	render(gc: GameContext) {
-		// for (const layer of this.layers) layer.render(gc, this);
 		for (const layer of this.layers) layer.render(gc);
 	}
 

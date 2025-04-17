@@ -75,8 +75,8 @@ export default class Director {
 		if (this.currentScene) this.currentScene.handleEvent(gc, e);
 	}
 	update(gc: GameContext) {
-		if (!this.currentScene?.isRunning) return;
-		this.currentScene?.update(gc);
-		this.currentScene?.render(gc);
+		if (!this.currentScene || !this.currentScene.isRunning) return;
+		this.currentScene.update(gc);
+		this.currentScene.render(gc);
 	}
 }
