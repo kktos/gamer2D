@@ -1,9 +1,10 @@
+import type { Entity } from "../../../entities/Entity";
 import { createEntity } from "../../../entities/EntityFactory";
 import { EntityPool } from "../../../entities/EntityPool";
 import type GameContext from "../../../game/GameContext";
 import { Scene } from "../../../scene/Scene";
 import type { TText } from "../../../script/compiler/display/layout/text.rules";
-import type { TVarSounds, TVarSprites, TVars } from "../../../types/engine.types";
+import type { TVarSounds, TVars } from "../../../types/engine.types";
 import LocalDB from "../../../utils/storage.util";
 import type { DisplayLayer } from "../../display.layer";
 import { EntitiesLayer } from "../../entities.layer";
@@ -62,8 +63,8 @@ export class System {
 		return this.layer.timers?.get(name);
 	}
 
-	sprite(idx: number) {
-		return (this.vars.get("sprites") as TVarSprites).get(idx);
+	sprite(id: string) {
+		return (this.vars.get("sprites") as Map<string, Entity>).get(id);
 	}
 
 	sound(name: string) {

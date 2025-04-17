@@ -6,10 +6,10 @@ import type { Trait } from "../traits/Trait";
 
 export type TExpr = string | number | boolean | TExpr[];
 
-export type TVarSprites = {
-	get: (idx: number) => Entity;
-	add: (sprite: Entity) => void;
-};
+// export type TVarSprites = {
+// 	get: (idx: number) => Entity;
+// 	add: (sprite: Entity) => void;
+// };
 
 export type TVarSound = {
 	name: string;
@@ -32,5 +32,5 @@ export type TSpritesSheet = {
 	animations: Record<string, TAnimation>;
 };
 
-export type TVarTypes = TExpr | TVarSounds | TVarSprites | Record<string, unknown> | null | View | System | Trait;
+export type TVarTypes = TExpr | TVarSounds | Map<string, Entity> | Record<string, unknown> | null | View | System | Trait;
 export type TVars = Map<string, TVarTypes>;

@@ -6,7 +6,7 @@ import { Events } from "../events/Events";
 import type Audio from "../game/Audio";
 import type Font from "../game/Font";
 import type GameContext from "../game/GameContext";
-import type {BaseEvent, GameEvent} from "../game/GameEvent";
+import type { BaseEvent, GameEvent } from "../game/GameEvent";
 import type ResourceManager from "../game/ResourceManager";
 import { type BBox, ptInRect } from "../maths/math";
 import { Scene } from "../scene/Scene";
@@ -23,7 +23,7 @@ import type { Trait } from "../traits/Trait";
 import { FadeTrait } from "../traits/fade.trait";
 import { type PathDefDTO, PathTrait } from "../traits/path.trait";
 import { VariableTrait } from "../traits/variable.trait";
-import type { TVarSounds, TVarSprites, TVars } from "../types/engine.types";
+import type { TVarSounds, TVars } from "../types/engine.types";
 import { OP_TYPES, OP_TYPES_STR } from "../types/operation.types";
 import { ArgVariable } from "../types/value.types";
 import LocalDB from "../utils/storage.util";
@@ -108,14 +108,14 @@ export class DisplayLayer extends UILayer {
 		this.vars.set("mouseX", 0);
 		this.vars.set("mouseY", 0);
 
-		const spriteList: Entity[] = [];
-		const sprites: TVarSprites = {
-			get: (idx: number) => spriteList[idx],
-			add: (sprite: Entity) => {
-				spriteList.push(sprite);
-			},
-		};
-		this.vars.set("sprites", sprites);
+		// const spriteList: Entity[] = [];
+		// const sprites: TVarSprites = {
+		// 	get: (idx: number) => spriteList[idx],
+		// 	add: (sprite: Entity) => {
+		// 		spriteList.push(sprite);
+		// 	},
+		// };
+		this.vars.set("sprites", new Map<string, Entity>());
 
 		this.vars.set("clientHeight", ENV.VIEWPORT_HEIGHT);
 		this.vars.set("clientWidth", ENV.VIEWPORT_WIDTH);
@@ -196,6 +196,8 @@ export class DisplayLayer extends UILayer {
 		if (op.height) textObj.height = evalNumber({ vars: this.vars }, op.height);
 
 		const entity = new TextEntity(this.gc.resourceManager, textObj);
+		if (op.id) entity.id = op.id;
+
 		if (op.anim) {
 			switch (op.anim.name) {
 				case "fadein":
@@ -262,6 +264,8 @@ export class DisplayLayer extends UILayer {
 	// addSprite(op:TSprite & { entity: Entity }) {
 	addSprite(op) {
 		const entity = createEntity(this.gc.resourceManager, op.sprite, op.pos[0], op.pos[1], op.dir);
+		if (op.id) entity.id = op.id;
+
 		if (op.anim) {
 			const anim = this.vars.get(op.anim.name) as { path: unknown[]; speed: number };
 			if (!anim) {
@@ -275,9 +279,9 @@ export class DisplayLayer extends UILayer {
 		}
 		this.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
 		op.entity = entity;
-		const sprites = this.vars.get("sprites") as TVarSprites;
+		const sprites = this.vars.get("sprites") as Map<string, Entity>; // as TVarSprites;
 		if (!sprites) throw new Error("No variable sprites !?!");
-		sprites.add(entity);
+		sprites.set(entity.id, entity); //.add(entity);
 	}
 
 	prepareRendering(gc: GameContext) {
@@ -432,7 +436,7 @@ export class DisplayLayer extends UILayer {
 			// 	}
 			// }
 
-			if("x" in e) {
+			if ("x" in e) {
 				e.x = e.x - Number(view.pos[0]);
 				e.y = e.y - Number(view.pos[1]);
 				e.pageX = e.x;
