@@ -3,7 +3,7 @@ import { generateID } from "../utils/id.util";
 type Handler = (...args: unknown[]) => void;
 
 export class TaskList {
-	private id: string;
+	public id: string;
 	private tasks: { name: symbol; args: unknown[] }[];
 	private taskHandlers: Map<symbol, Handler>;
 

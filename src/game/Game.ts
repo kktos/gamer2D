@@ -9,7 +9,7 @@ import { setupTraits } from "../traits/TraitFactory";
 import { createViewport } from "../utils/canvas.utils";
 import { FPSManager } from "./FPSManager";
 import type GameContext from "./GameContext";
-import type GameEvent from "./GameEvent";
+import type { BaseEvent, GameEvent } from "./GameEvent";
 import { KeyMap } from "./KeyMap";
 import ResourceManager from "./ResourceManager";
 
@@ -120,7 +120,7 @@ export default class Game {
 				// this.gc.mouse.y= evt.y;
 				// this.coppola.handleEvent(this.gc, evt);
 
-				const evt = {
+				const evt: GameEvent = {
 					type: "joyaxismove",
 					timestamp: gamepad.timestamp,
 					vertical: vMove,
@@ -131,7 +131,7 @@ export default class Game {
 
 		const buttons = gamepad.buttons;
 		setTimeout(() => {
-			const evt = {
+			const evt: GameEvent = {
 				type: "joybuttondown",
 				timestamp: gamepad?.timestamp,
 				X: buttons[GP_BUTTONS.X].pressed,
@@ -156,7 +156,7 @@ export default class Game {
 
 		const bbox = this.gc.viewport.bbox;
 		const evt: GameEvent = {
-			type: e.type,
+			type: "none",
 			x: 0,
 			y: 0,
 			deltaX: 0,
@@ -182,6 +182,7 @@ export default class Game {
 
 		switch (e.type) {
 			case "wheel":
+				evt.type = e.type;
 				evt.deltaX = (e as WheelEvent).deltaX;
 				evt.deltaY = (e as WheelEvent).deltaY;
 				evt.deltaZ = (e as WheelEvent).deltaZ;
@@ -201,16 +202,24 @@ export default class Game {
 
 			case "keyup":
 			case "keydown":
+				evt.type = e.type;
 				evt.key = (e as KeyboardEvent).key;
 				this.gc.keys.set((e as KeyboardEvent).key, evt.type === "keydown");
 				break;
 
 			case "click":
-			// if (evt.x > this.gc.viewport.width - 50 && evt.y > this.gc.viewport.height - 50) console.show();
-			case "mousedown":
-			case "mouseup":
 			case "mousemove": {
 				if ((e.target as HTMLElement).id !== "game") return;
+				evt.type = e.type;
+				this.gc.mouse.x = evt.x;
+				this.gc.mouse.y = evt.y;
+				break;
+			}
+
+			case "mousedown":
+			case "mouseup": {
+				if ((e.target as HTMLElement).id !== "game") return;
+				evt.type = e.type;
 				this.gc.mouse.down = evt.type === "mousedown";
 				this.gc.mouse.x = evt.x;
 				this.gc.mouse.y = evt.y;
@@ -218,34 +227,39 @@ export default class Game {
 			}
 
 			case "touchmove": {
+				if ((e.target as HTMLElement).id !== "game") return;
 				evt.type = "mousemove";
 				this.gc.mouse.x = evt.x;
 				this.gc.mouse.y = evt.y;
 				break;
 			}
 			case "touchstart": {
+				if ((e.target as HTMLElement).id !== "game") return;
 				evt.type = "mousedown";
+				this.gc.mouse.down = true;
 				this.gc.mouse.x = evt.x;
 				this.gc.mouse.y = evt.y;
 				break;
 			}
 			case "touchcancel": {
+				if ((e.target as HTMLElement).id !== "game") return;
 				evt.type = "mouseup";
+				this.gc.mouse.down = false;
 				this.gc.mouse.x = evt.x;
 				this.gc.mouse.y = evt.y;
 				break;
 			}
 
-			case "devicemotion":
+			case "devicemotion":				
 				console.log("devicemotion", (e as DeviceMotionEvent).rotationRate);
 				break;
 
 			case "gamepadconnected":
 				this.gc.gamepad = { id: (e as GamepadEvent).gamepad.index, lastTime: 0 };
-				break;
+				return;
 			case "gamepaddisconnected":
 				this.gc.gamepad = null;
-				break;
+				return;
 		}
 		this.coppola?.handleEvent(this.gc, evt);
 	}

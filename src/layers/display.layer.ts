@@ -6,6 +6,7 @@ import { Events } from "../events/Events";
 import type Audio from "../game/Audio";
 import type Font from "../game/Font";
 import type GameContext from "../game/GameContext";
+import type {BaseEvent, GameEvent} from "../game/GameEvent";
 import type ResourceManager from "../game/ResourceManager";
 import { type BBox, ptInRect } from "../maths/math";
 import { Scene } from "../scene/Scene";
@@ -257,19 +258,7 @@ export class DisplayLayer extends UILayer {
 		this.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
 		op.entity = entity;
 	}
-	/*
-	private evalNumber(expr: string | number) {
-		return evalNumber({ vars: this.vars }, expr);
-	}
 
-	private evalExpr(expr: TExpr[] | number | string | { expr: string }) {
-		return evalExpr({ vars: this.vars }, expr);
-	}
-
-	private evalArg(arg: TFunctionArg) {
-		return evalArg({ vars: this.vars }, arg);
-	}
-*/
 	// addSprite(op:TSprite & { entity: Entity }) {
 	addSprite(op) {
 		const entity = createEntity(this.gc.resourceManager, op.sprite, op.pos[0], op.pos[1], op.dir);
@@ -368,7 +357,7 @@ export class DisplayLayer extends UILayer {
 		if (this.menu) this.selectMenuItem(this.itemSelected + 1);
 	}
 
-	handleEvent(gc, e) {
+	handleEvent(gc: GameContext, e: GameEvent) {
 		switch (e.type) {
 			case "click":
 				if (this.isMouseEnabled && this.menu) {
@@ -443,14 +432,13 @@ export class DisplayLayer extends UILayer {
 			// 	}
 			// }
 
-			const localEvent = {
-				...e,
-				pageX: e.x,
-				pageY: e.y,
-				x: e.x - Number(view.pos[0]),
-				y: e.y - Number(view.pos[1]),
-			};
-			view.component?.handleEvent(gc, localEvent);
+			if("x" in e) {
+				e.x = e.x - Number(view.pos[0]);
+				e.y = e.y - Number(view.pos[1]);
+				e.pageX = e.x;
+				e.pageY = e.y;
+			}
+			view.component?.handleEvent(gc, e);
 		}
 	}
 
