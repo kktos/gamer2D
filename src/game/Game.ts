@@ -4,6 +4,8 @@ import type { Entity } from "../entities/Entity";
 import { setupEntities } from "../entities/EntityFactory";
 import ENV from "../env";
 import Director from "../scene/Director";
+import type { Trait } from "../traits/Trait";
+import { setupTraits } from "../traits/TraitFactory";
 import { createViewport } from "../utils/canvas.utils";
 import { FPSManager } from "./FPSManager";
 import type GameContext from "./GameContext";
@@ -11,6 +13,7 @@ import { KeyMap } from "./KeyMap";
 import ResourceManager from "./ResourceManager";
 
 export type entityDefinition = { name: string; className: string; classType: Entity };
+export type traitDefinition = { className: string; classType: Trait };
 
 export type GameOptions = {
 	paths: {
@@ -22,7 +25,8 @@ export type GameOptions = {
 	audio: {
 		volume: number;
 	};
-	entities: entityDefinition[];
+	entities?: entityDefinition[];
+	traits?: traitDefinition[];
 };
 
 export default class Game {
@@ -63,7 +67,8 @@ export default class Game {
 		};
 		this.fpsManager = new FPSManager(ENV.FPS, onTimerUpdate);
 
-		setupEntities(options.entities);
+		if (options.entities) setupEntities(options.entities);
+		if (options.traits) setupTraits(options.traits);
 	}
 
 	pause() {

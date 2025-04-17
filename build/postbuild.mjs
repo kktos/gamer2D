@@ -1,5 +1,3 @@
-
-
 import { readFileSync, writeFileSync, copyFileSync } from "node:fs";
 
 const keys= [ "name", "version", "type", "author", "description", "license", "module", "types","exports","bin", "repository", "dependencies"];

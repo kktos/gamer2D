@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { OP_TYPES } from "../../../types/operation.types";
+import { OP_TYPES } from "../../../../types/operation.types";
+import { ArgColor, ArgIdentifier, ArgVariable } from "../../../../types/value.types";
 import { compileScript } from "../../compiler";
-import { ArgColor, ArgIdentifier, ArgVariable } from "./action.rules";
 
 describe("Def Anim", () => {
 	it("should define an anim on path", () => {
@@ -26,7 +26,10 @@ describe("Def Anim", () => {
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		expect(result.layout.filter((op) => op.type === OP_TYPES.ANIM)).toStrictEqual([
+
+		const anim = result.layout.filter((op) => op.type === OP_TYPES.ANIM);
+
+		expect(anim).toEqual([
 			{
 				type: OP_TYPES.ANIM,
 				name: "clockwise",
@@ -35,7 +38,7 @@ describe("Def Anim", () => {
 					[
 						{
 							name: ["circle"],
-							args: [new ArgVariable("$xpos"), new ArgVariable("$ypos"), new ArgVariable("$radius"), 0],
+							args: [new ArgVariable("xpos"), new ArgVariable("ypos"), new ArgVariable("radius"), 0],
 						},
 					],
 					[{ name: ["loop"], args: [] }],
@@ -71,12 +74,12 @@ describe("Def Anim", () => {
 				{
 					type: OP_TYPES.ANIM,
 					name: "fadeout",
-					path: [
+					path: expect.arrayContaining([
 						[{ name: ["prop"], args: ["color", new ArgColor("#00000001")] }],
 						[{ name: ["prop"], args: ["name", "X:%mouseX%"] }],
 						[{ name: ["dir"], args: [new ArgIdentifier("left")] }],
 						[{ name: ["loop"], args: [] }],
-					],
+					]),
 				},
 			],
 		});

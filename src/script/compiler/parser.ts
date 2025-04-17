@@ -32,6 +32,8 @@ export class SheetParser extends EmbeddedActionsParser {
 		this.performSelfAnalysis();
 	}
 
+	public variablesDict = new Map();
+
 	public sheet = this.RULE("sheet", () => {
 		return this.OR([
 			{ ALT: () => this.SUBRULE(this.displaySheet) },
@@ -47,6 +49,8 @@ export class SheetParser extends EmbeddedActionsParser {
 	public htmlColor = TypesRules.htmlColor(this);
 	public numOrVar = TypesRules.numOrVar(this);
 	public strOrVar = TypesRules.strOrVar(this);
+	public varOrArrayOfVars = TypesRules.varOrArrayOfVars(this);
+	public arrayOfVars = TypesRules.arrayOfVars(this);
 
 	public displaySheet = DisplayRules.displaySheet(this);
 	public displayProps = DisplayRules.displayProps(this);
@@ -78,6 +82,7 @@ export class SheetParser extends EmbeddedActionsParser {
 	public layoutSetValue = SetRules.layoutSetValue(this);
 	public layoutSetValueArray = SetRules.layoutSetValueArray(this);
 	public layoutSetEval = SetRules.layoutSetEval(this);
+	public layoutSetTrait = SetRules.layoutSetTrait(this);
 	public layoutFor = ForRules.layoutFor(this);
 	public layoutForTwoNumber = ForRules.layoutForTwoNumber(this);
 	public layoutForItems = ForRules.layoutForItems(this);

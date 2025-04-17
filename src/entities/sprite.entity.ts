@@ -1,10 +1,11 @@
+import type ResourceManager from "../game/ResourceManager";
 import AnimationTrait from "../traits/animation.trait";
 import { Entity } from "./Entity";
 
 export default class SpriteEntity extends Entity {
 	private isAnimSprite: boolean;
 
-	constructor(resourceMgr, x, y, sprite) {
+	constructor(resourceMgr: ResourceManager, x: number, y: number, sprite) {
 		const [sheet, spriteName] = sprite.split(":");
 
 		super(resourceMgr, x, y, sheet);

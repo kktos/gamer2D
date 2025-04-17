@@ -8,7 +8,8 @@ import type { TMenu, TMenuItem, TMenuItemGroup } from "../../script/compiler/dis
 import type { TRepeatItem } from "../../script/compiler/display/layout/repeat.rules";
 import type { TSprite } from "../../script/compiler/display/layout/sprite.rules";
 import type { TText } from "../../script/compiler/display/layout/text.rules";
-import { OP_TYPES } from "../../script/types/operation.types";
+import { evalNumber } from "../../script/engine/eval.script";
+import { OP_TYPES } from "../../types/operation.types";
 import type { DisplayLayer } from "../display.layer";
 import { repeat } from "./repeat.manager";
 import { loadSprite, renderSprite } from "./sprite.renderer";
@@ -58,7 +59,7 @@ export function renderMenu(gc: GameContext, layer: DisplayLayer, menu: TMenu) {
 					break;
 				}
 				if (item.color) {
-					(item.entity as TextEntity).color = item.color;
+					(item.entity as TextEntity).color = item.color.value;
 				}
 				break;
 			}
@@ -96,7 +97,9 @@ function computeBBox(gc: GameContext, layer: DisplayLayer, items: (TMenuItemGrou
 				layer.addText(item);
 				if (item.align) layer.font.align = item.align;
 				if (item.size) layer.font.size = item.size;
-				const r = layer.font.textRect(item.text, item.pos[0], item.pos[1]);
+				const left = evalNumber({ vars: layer.vars }, item.pos[0]);
+				const top = evalNumber({ vars: layer.vars }, item.pos[1]);
+				const r = layer.font.textRect(item.text, left, top);
 				item.bbox = { left: r[0], top: r[1], right: r[2], bottom: r[3] };
 				break;
 			}
@@ -139,7 +142,7 @@ function computeBBox(gc: GameContext, layer: DisplayLayer, items: (TMenuItemGrou
 }
 
 function renderSelection(gc: GameContext, menu: TMenu & SelectionSprites, item) {
-	const bkgndColor = menu.selection?.background;
+	const bkgndColor = menu.selection?.background.value;
 	const ctx = gc.viewport.ctx;
 	const rect = item.bbox;
 

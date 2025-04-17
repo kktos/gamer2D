@@ -2,6 +2,7 @@ import type { Entity } from "../entities/Entity";
 import type Audio from "../game/Audio";
 import type { System } from "../layers/display/views/System.view";
 import type { View } from "../layers/display/views/View";
+import type { Trait } from "../traits/Trait";
 
 export type TExpr = string | number | boolean | TExpr[];
 
@@ -31,5 +32,5 @@ export type TSpritesSheet = {
 	animations: Record<string, TAnimation>;
 };
 
-export type TVarTypes = TExpr | TVarSounds | TVarSprites | Record<string, unknown> | null | View | System;
+export type TVarTypes = TExpr | TVarSounds | TVarSprites | Record<string, unknown> | null | View | System | Trait;
 export type TVars = Map<string, TVarTypes>;

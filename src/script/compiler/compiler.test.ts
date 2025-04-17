@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { ArgColor } from "../../types/value.types";
 import { compileScript } from "./compiler";
 
 describe("compileScript", () => {
@@ -13,7 +14,7 @@ describe("compileScript", () => {
 		const result = compileScript(script);
 		expect(result).toBeDefined();
 		expect(result).toStrictEqual({
-			background: "#FF0000",
+			background: new ArgColor("#FF0000"),
 			font: "bubble-bobble",
 			name: "intro",
 			showCursor: true,

@@ -1,4 +1,4 @@
-import { DIRECTIONS } from "../../../types/direction.type";
+import { DIRECTIONS } from "../../../../types/direction.type";
 import { tokens } from "../../lexer";
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>

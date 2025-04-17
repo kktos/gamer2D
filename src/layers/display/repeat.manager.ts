@@ -1,9 +1,9 @@
 import type { TRepeat, TRepeatItem } from "../../script/compiler/display/layout/repeat.rules";
 import type { TSprite } from "../../script/compiler/display/layout/sprite.rules";
 import type { TText } from "../../script/compiler/display/layout/text.rules";
-import { evalExpr } from "../../script/engine/eval.script";
-import { OP_TYPES } from "../../script/types/operation.types";
+import { evalExpr, evalNumber, evalString } from "../../script/engine/eval.script";
 import type { TVarTypes, TVars } from "../../types/engine.types";
+import { OP_TYPES } from "../../types/operation.types";
 import { clone } from "../../utils/object.util";
 
 export function repeat(op: TRepeat, callback: (item: TRepeatItem) => void, vars: TVars) {
@@ -21,17 +21,18 @@ export function repeat(op: TRepeat, callback: (item: TRepeatItem) => void, vars:
 		from = evalExpr({ vars }, op.from) as number;
 	}
 
-	const processItem = (item: TText | TSprite, idx: number) => {
+	const processItem = (item: TSprite | TText, idx: number) => {
 		switch (item.type) {
 			case OP_TYPES.TEXT:
-				(item as TText).text = evalExpr({ vars }, item.text) as string;
+				item.text = evalString({ vars }, item.text);
 				break;
 			case OP_TYPES.SPRITE:
-				(item as TSprite).sprite = evalExpr({ vars }, (item as TSprite).sprite) as string;
+				item.sprite = evalString({ vars }, item.sprite);
 				break;
 		}
-		item.pos[0] += (idx - from) * op.step.pos[0];
-		item.pos[1] += (idx - from) * op.step.pos[1];
+
+		(item.pos as number[])[0] += (idx - from) * op.step.pos[0];
+		(item.pos as number[])[1] += (idx - from) * op.step.pos[1];
 	};
 
 	for (let idx = from; idx < from + count; idx++) {
@@ -41,7 +42,6 @@ export function repeat(op: TRepeat, callback: (item: TRepeatItem) => void, vars:
 
 		for (let itemIdx = 0; itemIdx < op.items.length; itemIdx++) {
 			const item = clone<TRepeatItem>(op.items[itemIdx]);
-
 			if (item.type === OP_TYPES.GROUP) {
 				for (const groupItem of item.items) {
 					processItem(groupItem, idx);

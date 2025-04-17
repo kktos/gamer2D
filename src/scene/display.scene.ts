@@ -12,7 +12,7 @@ export class DisplayScene extends Scene {
 	constructor(gc: GameContext, name: string, sheet: SceneSheet) {
 		super(gc, name);
 
-		this.addLayer(new BackgroundLayer(gc, this, sheet.background));
+		this.addLayer(new BackgroundLayer(gc, this, sheet.background.value));
 
 		if (sheet.layers) {
 			for (let idx = 0; idx < sheet.layers.length; idx++) {

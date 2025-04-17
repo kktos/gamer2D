@@ -31,7 +31,7 @@ export class UIRules {
 	static displayUIPos($) {
 		return $.RULE("displayUIPos", () => {
 			$.CONSUME(tokens.Pos);
-			const value = $.CONSUME(tokens.StringLiteral).payload;
+			const value = $.OR([{ ALT: () => $.CONSUME(tokens.Top) }, { ALT: () => $.CONSUME(tokens.Bottom) }]).image;
 			return { name: "pos", value };
 		});
 	}

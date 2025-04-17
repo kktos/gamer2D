@@ -1,54 +1,44 @@
 import ENV from "../env";
 import type Font from "../game/Font";
 import type ResourceManager from "../game/ResourceManager";
+import type { ArgColor } from "../types/value.types";
 import { Entity } from "./Entity";
 
 export type TextDTO = {
-	pos: [number, number] | (() => [number, number]);
-	text: string | (() => string);
-	color?: string;
+	pos: [number, number];
+	text: string;
+	color?: ArgColor;
 	align?: number;
 	valign?: number;
 	size?: number;
-	width?: string | number;
-	height?: string | number;
+	width?: number;
+	height?: number;
 	bgcolor?: string;
 };
 
 export class TextEntity extends Entity {
 	public color: string;
-	// public text: () => string;
+	public text: string;
 
-	get text() {
-		return this._text();
-	}
-	set text(value) {
-		this._text = () => value;
-	}
-
-	private _text: () => string;
 	private font: Font;
 	private align: number;
 	private valign: number;
 	private fontsize: number;
 	private bgcolor: string;
-	private pos: () => [number, number];
 
 	constructor(resourceMgr: ResourceManager, textObj: TextDTO) {
 		super(resourceMgr, textObj.pos[0], textObj.pos[1]);
 
 		this.font = resourceMgr.get("font", ENV.MAIN_FONT) as Font;
-
-		this._text = typeof textObj.text !== "function" ? () => textObj.text as string : textObj.text;
-		this.pos = typeof textObj.pos !== "function" ? () => textObj.pos as [number, number] : textObj.pos;
-		this.color = textObj.color;
+		this.text = textObj.text;
+		this.color = textObj.color.value;
 		this.bgcolor = textObj.bgcolor;
 		this.align = textObj.align;
 		this.valign = textObj.valign;
 		this.fontsize = textObj.size;
 		this.size = {
-			x: textObj.width ? Number(textObj.width) : 0,
-			y: textObj.height ? Number(textObj.height) : 0,
+			x: textObj.width ?? 0,
+			y: textObj.height ?? 0,
 		};
 	}
 
@@ -57,12 +47,11 @@ export class TextEntity extends Entity {
 		this.font.size = this.fontsize;
 		this.font.align = this.align;
 		this.font.valign = this.valign;
-		const [x, y] = this.pos();
 		this.font.print({
 			ctx: ctx,
 			text: this.text,
-			x,
-			y,
+			x: this.left,
+			y: this.top,
 			color: this.color,
 			width: this.size.x,
 			height: this.size.y,

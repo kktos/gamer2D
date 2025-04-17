@@ -1,3 +1,4 @@
+import { ArgColor, ArgVariable } from "../../types/value.types";
 import { tokens } from "./lexer";
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
@@ -12,8 +13,7 @@ export class TypesRules {
 
 	static variable($) {
 		return $.RULE("variable", () => {
-			// return $.CONSUME(tokens.Variable).image.substring(1);
-			return $.CONSUME(tokens.Variable).image;
+			return new ArgVariable($.CONSUME(tokens.Variable).image.substring(1));
 		});
 	}
 
@@ -21,7 +21,7 @@ export class TypesRules {
 		return $.RULE("htmlColor", () => {
 			const colorName = () => $.CONSUME(tokens.Identifier).image;
 			const colorHex = () => $.CONSUME(tokens.HexNumber).image;
-			return $.OR([{ ALT: colorHex }, { ALT: colorName }]);
+			return new ArgColor($.OR([{ ALT: colorHex }, { ALT: colorName }]));
 		});
 	}
 
@@ -34,6 +34,25 @@ export class TypesRules {
 	static strOrVar($) {
 		return $.RULE("strOrVar", () => {
 			return $.OR([{ ALT: () => $.CONSUME(tokens.StringLiteral).payload }, { ALT: () => $.SUBRULE($.variable) }]);
+		});
+	}
+
+	static varOrArrayOfVars($) {
+		return $.RULE("varOrArrayOfVars", () => {
+			return $.OR([{ ALT: () => $.SUBRULE($.variable) }, { ALT: () => $.SUBRULE($.arrayOfVars) }]);
+		});
+	}
+
+	static arrayOfVars($) {
+		return $.RULE("arrayOfVars", () => {
+			const result: unknown[] = [];
+			$.CONSUME(tokens.OpenBracket);
+			$.MANY_SEP({
+				SEP: tokens.Comma,
+				DEF: () => result.push($.SUBRULE($.variable)),
+			});
+			$.CONSUME(tokens.CloseBracket);
+			return result;
 		});
 	}
 }

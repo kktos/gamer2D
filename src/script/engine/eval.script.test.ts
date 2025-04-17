@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { TVars } from "../../types/engine.types";
+import { ArgVariable } from "../../types/value.types";
 import { evalExpr, evalNumber, evalVar, interpolateString } from "../engine/eval.script";
 
 describe("Script Engine Tests", () => {
@@ -16,7 +17,7 @@ describe("Script Engine Tests", () => {
 
 		it("should handle unknown variables gracefully", () => {
 			const vars: TVars = new Map([["name", "John"]]);
-			const text = "My name is %name% and I am %age% years old.";
+			const text = "My name is ${name} and I am ${age} years old.";
 			expect(() => interpolateString({ vars }, text)).toThrow(TypeError);
 		});
 
@@ -102,7 +103,7 @@ describe("Script Engine Tests", () => {
 
 		it("should evaluate a string with interpolation", () => {
 			const vars: TVars = new Map([["name", "John"]]);
-			const result = evalExpr({ vars }, "Hello %name%!");
+			const result = evalExpr({ vars }, "Hello ${name}!");
 			expect(result).toBe("Hello John!");
 		});
 
@@ -150,7 +151,7 @@ describe("Script Engine Tests", () => {
 
 		it("should evaluate a variable to a number", () => {
 			const vars: TVars = new Map([["a", 10]]);
-			const result = evalNumber({ vars }, "$a");
+			const result = evalNumber({ vars }, new ArgVariable("a"));
 			expect(result).toBe(10);
 		});
 	});

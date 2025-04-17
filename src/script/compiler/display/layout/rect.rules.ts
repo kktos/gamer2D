@@ -1,5 +1,5 @@
+import { OP_TYPES } from "../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../types/typescript.types";
-import { OP_TYPES } from "../../../types/operation.types";
 import { tokens } from "../../lexer";
 
 export type TRect = {

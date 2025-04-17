@@ -10,19 +10,21 @@ import type ResourceManager from "../game/ResourceManager";
 import { type BBox, ptInRect } from "../maths/math";
 import { Scene } from "../scene/Scene";
 import type { SceneSheet } from "../scene/Scene.factory";
-import type { TFunctionArg } from "../script/compiler/display/layout/action.rules";
 import type { TStatement } from "../script/compiler/display/layout/layout.rules";
 import type { TMenu } from "../script/compiler/display/layout/menu.rules";
 import type { TText } from "../script/compiler/display/layout/text.rules";
 import type { TView } from "../script/compiler/display/layout/view.rules";
 import type { TEventHandlers } from "../script/compiler/display/on.rules";
 import type { TSoundDefs } from "../script/compiler/display/sound.rules";
-import { evalArg, evalExpr, evalNumber } from "../script/engine/eval.script";
+import { evalArg, evalExpr, evalNumber, evalString, isStringInterpolable } from "../script/engine/eval.script";
 import { execAction } from "../script/engine/exec.script";
-import { OP_TYPES, OP_TYPES_STR } from "../script/types/operation.types";
+import type { Trait } from "../traits/Trait";
 import { FadeTrait } from "../traits/fade.trait";
 import { type PathDefDTO, PathTrait } from "../traits/path.trait";
-import type { TExpr, TVarSounds, TVarSprites, TVars } from "../types/engine.types";
+import { VariableTrait } from "../traits/variable.trait";
+import type { TVarSounds, TVarSprites, TVars } from "../types/engine.types";
+import { OP_TYPES, OP_TYPES_STR } from "../types/operation.types";
+import { ArgVariable } from "../types/value.types";
 import LocalDB from "../utils/storage.util";
 import { UILayer } from "./UILayer";
 import { prepareMenu, renderMenu } from "./display/menu.manager";
@@ -33,7 +35,7 @@ import type { View } from "./display/views/View";
 import { initViews, views } from "./display/views/views";
 import { EntitiesLayer } from "./entities.layer";
 
-type TViewDesc = TView & {
+type TViewDef = TView & {
 	component?: View;
 	canvas?: HTMLCanvasElement;
 	bbox?: BBox;
@@ -54,7 +56,7 @@ export class DisplayLayer extends UILayer {
 	private wannaDisplayHitzones: boolean;
 	private lastJoyTime: number;
 	private menu: TMenu | null;
-	private views: TViewDesc[];
+	private views: TViewDef[];
 
 	constructor(gc: GameContext, parent: Scene, sheet: SceneSheet) {
 		super(gc, parent, sheet.ui);
@@ -79,7 +81,7 @@ export class DisplayLayer extends UILayer {
 
 		this.menu = menus.length > 0 ? menus[0] : null;
 
-		this.views = this.layout.filter((op) => op.type === OP_TYPES.VIEW) as unknown as TViewDesc[];
+		this.views = this.layout.filter((op) => op.type === OP_TYPES.VIEW) as unknown as TViewDef[];
 		initViews({ canvas: gc.viewport.canvas, gc, vars: this.vars, layer: this });
 
 		this.prepareRendering(gc);
@@ -177,16 +179,17 @@ export class DisplayLayer extends UILayer {
 	}
 
 	addText(op: TText & { entity?: Entity }) {
-		const posX = () => evalNumber({ vars: this.vars }, op.pos[0]);
-		const posY = () => evalNumber({ vars: this.vars }, op.pos[1]);
+		const posX = evalNumber({ vars: this.vars }, op.pos[0]);
+		const posY = evalNumber({ vars: this.vars }, op.pos[1]);
+
 		const textObj: TextDTO = {
-			pos: () => [posX(), posY()],
+			pos: [posX, posY],
 			align: op.align,
 			valign: op.valign,
 			size: op.size,
 			color: op.color,
-			bgcolor: op.bgcolor,
-			text: () => evalExpr({ vars: this.vars }, op.text) as string,
+			bgcolor: op.bgcolor?.value,
+			text: isStringInterpolable(op.text) ? "" : op.text,
 		};
 		if (op.width) textObj.width = evalNumber({ vars: this.vars }, op.width);
 		if (op.height) textObj.height = evalNumber({ vars: this.vars }, op.height);
@@ -213,6 +216,44 @@ export class DisplayLayer extends UILayer {
 				}
 			}
 		}
+		if (op.traits) {
+			let traitsArray: ArgVariable[];
+			if (op.traits instanceof ArgVariable) {
+				traitsArray = this.vars.get(op.traits.value) as unknown as ArgVariable[];
+			} else {
+				traitsArray = op.traits;
+			}
+			for (const traitName of traitsArray) {
+				const trait = this.vars.get(traitName.value) as Trait;
+				entity.addTrait(trait);
+			}
+		}
+
+		const varProps = [
+			{ propName: "pos", alias: ["left", "top"] },
+			{ propName: "width", alias: "width" },
+			{ propName: "height", alias: "height" },
+			{ propName: "text", alias: "text" },
+		];
+		const addTrait = (prop, alias) => {
+			if (prop instanceof ArgVariable) {
+				entity.addTrait(new VariableTrait({ vars: this.vars, propName: alias, varName: prop.value }));
+				return;
+			}
+			if (isStringInterpolable(prop)) {
+				entity.addTrait(new VariableTrait({ vars: this.vars, propName: alias, text: op.text }));
+			}
+		};
+		for (const { propName, alias } of varProps) {
+			if (Array.isArray(op[propName])) {
+				for (let idx = 0; idx < op[propName].length; idx++) {
+					addTrait(op[propName][idx], alias[idx]);
+				}
+				continue;
+			}
+			addTrait(op[propName], alias);
+		}
+
 		this.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
 		op.entity = entity;
 	}
@@ -288,13 +329,13 @@ export class DisplayLayer extends UILayer {
 		if (this.menu) prepareMenu(gc, this, this.menu);
 	}
 
-	prepareView(gc: GameContext, viewDesc: TViewDesc) {
-		if (!views[viewDesc.view]) throw new TypeError(`Unknown View Type ${viewDesc.view}`);
+	prepareView(gc: GameContext, viewDef: TViewDef) {
+		if (!views[viewDef.view]) throw new TypeError(`Unknown View Type ${viewDef.view}`);
 
-		const width = evalNumber({ vars: this.vars }, viewDesc.width);
-		const height = evalNumber({ vars: this.vars }, viewDesc.height);
-		const left = evalNumber({ vars: this.vars }, viewDesc.pos[0]);
-		const top = evalNumber({ vars: this.vars }, viewDesc.pos[1]);
+		const width = evalNumber({ vars: this.vars }, viewDef.width);
+		const height = evalNumber({ vars: this.vars }, viewDef.height);
+		const left = evalNumber({ vars: this.vars }, viewDef.pos[0]);
+		const top = evalNumber({ vars: this.vars }, viewDef.pos[1]);
 
 		const canvas = document.createElement("canvas");
 		canvas.width = width;
@@ -302,15 +343,15 @@ export class DisplayLayer extends UILayer {
 
 		const ctx = { canvas, gc, vars: this.vars, layer: this };
 
-		viewDesc.component = new views[viewDesc.view](ctx);
-		viewDesc.canvas = canvas;
-		viewDesc.bbox = {
+		viewDef.component = new views[viewDef.view](ctx);
+		viewDef.canvas = canvas;
+		viewDef.bbox = {
 			left,
 			top,
 			right: width + left,
 			bottom: height + top,
 		};
-		this.vars.set(viewDesc.name, viewDesc.component || null);
+		this.vars.set(viewDef.name, viewDef.component || null);
 	}
 
 	findMenuByPoint(x: number, y: number) {

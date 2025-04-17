@@ -1,9 +1,9 @@
 import type { Entity } from "../entities/Entity";
 import type { Point } from "../maths/math";
 import type { Scene } from "../scene/Scene";
-import { ArgColor } from "../script/compiler/display/layout/action.rules";
 import { typeOfArg } from "../script/engine/eval.script";
-import { DIRECTIONS } from "../script/types/direction.type";
+import { DIRECTIONS } from "../types/direction.type";
+import { ArgColor } from "../types/value.types";
 import { Trait } from "./Trait";
 
 type ProviderFn = (deltaTime: number, entity: Entity) => Point | null;

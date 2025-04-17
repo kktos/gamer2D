@@ -1,3 +1,4 @@
+import { ArgVariable, ValueTrait } from "../../../../types/value.types";
 import { tokens } from "../../lexer";
 
 const NUMBER = 1;
@@ -5,6 +6,7 @@ const ALIGN = 2;
 const VALIGN = 3;
 const COLOR = 4;
 const ANIM = 5;
+const TRAITS = 6;
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class TextSpritePropsRules {
@@ -55,6 +57,12 @@ export class TextSpritePropsRules {
 						return { image: "bgcolor" };
 					},
 				},
+				{
+					ALT: () => {
+						propType = TRAITS;
+						return $.CONSUME(tokens.Traits);
+					},
+				},
 			]).image;
 
 			let isParm = false;
@@ -64,7 +72,7 @@ export class TextSpritePropsRules {
 			});
 
 			let valueType = 0;
-			let value: string | number | { name: string } = 0;
+			let value: string | number | { name: string } | ArgVariable[] | ArgVariable = 0;
 			$.OR2([
 				{
 					ALT: () => {
@@ -121,6 +129,12 @@ export class TextSpritePropsRules {
 						};
 					},
 				},
+				{
+					ALT: () => {
+						valueType = TRAITS;
+						value = $.SUBRULE($.varOrArrayOfVars);
+					},
+				},
 			]);
 
 			$.ACTION(() => {
@@ -137,10 +151,33 @@ export class TextSpritePropsRules {
 					case ANIM:
 						if (valueType !== ANIM) throw new TypeError(`Invalid value ${value} for ${name}`);
 						break;
+					case TRAITS:
+						if (valueType !== TRAITS) throw new TypeError(`Invalid value ${value} for ${name}`);
+						if (!isParm) throw new TypeError(`${name} can only be used as a param`);
+						if (Array.isArray(value)) {
+							throwIfVarsAreNotTraits($, value);
+						} else {
+							const varName = (value as ArgVariable).value;
+							if (!$.variablesDict.has(varName)) throw new TypeError(`Unknown variable "${varName}"`);
+							const varValue = $.variablesDict.get(varName);
+							if (!Array.isArray(varValue)) throw new TypeError(`Variable "${varName}" is not an array of traits`);
+							throwIfVarsAreNotTraits($, varValue);
+						}
+						break;
 				}
 			});
 
 			return { name, value, isParm };
 		});
+	}
+}
+
+function throwIfVarsAreNotTraits($, vars: ArgVariable[]) {
+	for (const value of vars) {
+		if (!(value instanceof ArgVariable)) throw new TypeError(`This "${value}" is not a variable`);
+		const varName = (value as ArgVariable).value;
+		if (!$.variablesDict.has(varName)) throw new TypeError(`Unknown variable "${varName}"`);
+		const varValue = $.variablesDict.get(varName);
+		if (!(typeof varValue === "object" && varValue instanceof ValueTrait)) throw new TypeError(`Variable "${varName}" is not a trait`);
 	}
 }

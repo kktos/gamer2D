@@ -1,7 +1,7 @@
 import type { BBox } from "../../../../maths/math";
+import type { DIRECTIONS } from "../../../../types/direction.type";
+import { OP_TYPES } from "../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../types/typescript.types";
-import type { DIRECTIONS } from "../../../types/direction.type";
-import { OP_TYPES } from "../../../types/operation.types";
 import { tokens } from "../../lexer";
 
 export type TSprite = {

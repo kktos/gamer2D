@@ -2,6 +2,7 @@ import type GameContext from "../game/GameContext";
 import { compileScript } from "../script/compiler/compiler";
 import type { TEventHandlers } from "../script/compiler/display/on.rules";
 import type { TSoundDefs } from "../script/compiler/display/sound.rules";
+import type { ArgColor } from "../types/value.types";
 import LocalDB from "../utils/storage.util";
 import type { Scene } from "./Scene";
 import { DisplayScene } from "./display.scene";
@@ -10,13 +11,17 @@ import { DisplayScene } from "./display.scene";
 import { GameScene } from "./game.scene";
 import LevelScene from "./level.scene";
 
+export type SceneSheetUI = {
+	pos: "top" | "bottom";
+	background?: ArgColor;
+};
 export type SceneSheet = {
 	name: string;
 	type: string;
 	showCursor: boolean;
-	background: string;
+	background: ArgColor;
 	layers: string[];
-	ui: unknown;
+	ui?: SceneSheetUI;
 	font: string;
 	layout: unknown[];
 	sounds: TSoundDefs;

@@ -1,11 +1,12 @@
 import type GameContext from "../game/GameContext";
 import { Scene } from "../scene/Scene";
+import type { SceneSheetUI } from "../scene/Scene.factory";
 import { Layer } from "./Layer";
 
 export class UILayer extends Layer {
 	private ui: HTMLElement;
 
-	constructor(gc: GameContext, parent: Scene, layout) {
+	constructor(gc: GameContext, parent: Scene, layout: SceneSheetUI) {
 		super(gc, parent);
 
 		const ui = document.getElementById("ui");
@@ -17,7 +18,7 @@ export class UILayer extends Layer {
 		if (layout) {
 			this.ui.className = layout.pos === "top" ? "top" : "bottom";
 
-			if (layout.background) this.ui.style.backgroundColor = layout.background;
+			if (layout.background) this.ui.style.backgroundColor = layout.background.value;
 
 			this.ui.innerHTML = `
 				<div class="grid-column header">

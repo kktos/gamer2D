@@ -5,8 +5,8 @@ import type ResourceManager from "../game/ResourceManager";
 import type { SpriteSheet } from "../game/Spritesheet";
 import type { COLLISION, Point } from "../maths/math";
 import type { Scene } from "../scene/Scene";
-import { DIRECTIONS } from "../script/types/direction.type";
 import type { ITrait, Trait } from "../traits/Trait";
+import { DIRECTIONS } from "../types/direction.type";
 import { generateID } from "../utils/id.util";
 
 export class Entity {
@@ -105,6 +105,14 @@ export class Entity {
 	set bottom(y) {
 		this.previousBbox.top = this._pos.y;
 		this._pos.y = y - this.size.y;
+	}
+	set width(w) {
+		this.previousBbox.right = this.right;
+		this.size.x = w;
+	}
+	set height(h) {
+		this.previousBbox.bottom = this.bottom;
+		this.size.y = h;
 	}
 
 	set(propname, propvalue) {

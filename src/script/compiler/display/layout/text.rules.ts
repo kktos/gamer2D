@@ -1,22 +1,24 @@
 import type { BBox } from "../../../../maths/math";
+import { OP_TYPES } from "../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../types/typescript.types";
-import { OP_TYPES } from "../../../types/operation.types";
+import type { ArgColor, ArgVariable } from "../../../../types/value.types";
 import { tokens } from "../../lexer";
 
 export type TText = {
 	type: TupleToUnion<[typeof OP_TYPES.TEXT]>;
 	text: string;
 	// pos: [number|string, number|string];
-	pos: [number, number];
+	pos: [number | ArgVariable, number | ArgVariable];
 	size?: number;
 	align?: number;
 	valign?: number;
-	color?: string;
+	color?: ArgColor;
 	anim?: { name: string };
 	action?: unknown[];
-	width?: string;
-	height?: string;
-	bgcolor?: string;
+	width?: number | ArgVariable;
+	height?: number | ArgVariable;
+	bgcolor?: ArgColor;
+	traits?: ArgVariable[] | ArgVariable;
 
 	bbox?: BBox;
 };

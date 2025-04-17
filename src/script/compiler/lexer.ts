@@ -63,6 +63,8 @@ const tokenDefs: TokenDefs = {
 
 	Text: { pattern: "text", longer_alt: "Identifier" },
 	Sprite: { pattern: "sprite", longer_alt: "Identifier" },
+	Traits: { pattern: "traits", longer_alt: "Identifier" },
+	Trait: { pattern: "trait", longer_alt: "Identifier" },
 	Image: { pattern: "image", longer_alt: "Identifier" },
 	Menu: { pattern: "menu", longer_alt: "Identifier" },
 	View: { pattern: "view", longer_alt: "Identifier" },
@@ -161,6 +163,8 @@ export const tokenList = [
 
 	tokens.Text,
 	tokens.Sprite,
+	tokens.Traits,
+	tokens.Trait,
 	tokens.Image,
 	tokens.Menu,
 	tokens.Items,

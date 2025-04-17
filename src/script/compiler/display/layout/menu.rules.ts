@@ -1,6 +1,7 @@
 import type { BBox } from "../../../../maths/math";
+import { OP_TYPES } from "../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../types/typescript.types";
-import { OP_TYPES } from "../../../types/operation.types";
+import type { ArgColor } from "../../../../types/value.types";
 import { tokens } from "../../lexer";
 import type { TRepeat } from "./repeat.rules";
 import type { TSprite } from "./sprite.rules";
@@ -24,7 +25,7 @@ import type { TText } from "./text.rules";
 
 export type TMenuSelection = {
 	color?: string;
-	background?: string;
+	background?: ArgColor;
 	left?: string;
 	right?: string;
 	var?: string;

@@ -1,6 +1,6 @@
 import type { Entity } from "../entities/Entity";
 import type { Scene } from "../scene/Scene";
-import { DIRECTIONS } from "../script/types/direction.type";
+import { DIRECTIONS } from "../types/direction.type";
 import { Trait } from "./Trait";
 
 export class KeyboardPlayerOneTrait extends Trait {

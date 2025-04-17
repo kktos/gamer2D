@@ -1,11 +1,19 @@
+import { createTrait } from "../../traits/TraitFactory";
 import type { TExpr, TVarTypes, TVars } from "../../types/engine.types";
-import { ArgColor, ArgIdentifier, ArgVariable, type TFunctionArg } from "../compiler/display/layout/action.rules";
+import { ArgColor, ArgIdentifier, ArgVariable, ValueTrait } from "../../types/value.types";
+import type { TFunctionArg } from "../compiler/display/layout/action.rules";
+
+export function isStringInterpolable(text: string) {
+	if (typeof text !== "string") return false;
+	return text.match(/\$\{(.+?)\}/) !== null;
+}
 
 export function interpolateString({ vars }: { vars: TVars }, text: string) {
 	if (typeof text !== "string") {
 		throw new TypeError("text must be a string !");
 	}
-	return text.replaceAll(/%(.+?)%/g, (m, varname) => String(evalExpr({ vars }, `$${varname}`)));
+	// return text.replaceAll(/\$\{(.+?)\}/g, (m, varname) => String(evalExpr({ vars }, `$${varname}`)));
+	return text.replaceAll(/\$\{(.+?)\}/g, (m, varname) => String(evalVar({ vars }, varname)));
 }
 
 export function evalVar({ vars }: { vars: TVars }, varname: string) {
@@ -44,25 +52,32 @@ export function evalVar({ vars }: { vars: TVars }, varname: string) {
 
 const VARNAME_REGEX = /\$[a-zA-Z_][a-zA-Z0-9_]*(?:\.\$?[a-zA-Z_][a-zA-Z0-9_]*)*/g;
 
-export function evalExpr({ vars }: { vars: TVars }, varOrExpr: TExpr[] | number | string | { expr: string }): TVarTypes {
+export function evalExpr({ vars }: { vars: TVars }, varOrExpr: TExpr[] | number | string | { expr: string } | ValueTrait): TVarTypes {
 	if (Array.isArray(varOrExpr) || typeof varOrExpr === "number") return varOrExpr;
+
 	if (typeof varOrExpr === "string") {
 		if (varOrExpr.match(/^\$/)) return evalVar({ vars }, varOrExpr.substring(1));
 		return interpolateString({ vars }, varOrExpr);
 	}
+
+	if (varOrExpr instanceof ValueTrait) {
+		return createTrait(varOrExpr.name, ...varOrExpr.args);
+	}
+
 	const exprSrc = varOrExpr.expr;
 	const expr = exprSrc.replaceAll(VARNAME_REGEX, (name) => evalVar({ vars }, name.substring(1)) as string);
-
-	// console.log("EVAL", expr);
-
 	// biome-ignore lint/security/noGlobalEval: <explanation>
-	const result = eval(expr);
-	return result;
+	return eval(expr);
 }
 
-export function evalNumber({ vars }, nameOrNumber: string | number) {
+export function evalNumber({ vars }, nameOrNumber: ArgVariable | number) {
 	if (typeof nameOrNumber === "number") return nameOrNumber;
-	return Number(evalExpr({ vars }, nameOrNumber));
+	return Number(evalVar({ vars }, nameOrNumber.value));
+}
+
+export function evalString({ vars }, nameOrString: ArgVariable | string) {
+	if (typeof nameOrString === "string") return interpolateString({ vars }, nameOrString);
+	return String(evalVar({ vars }, nameOrString.value));
 }
 
 export function typeOfArg(arg: TFunctionArg) {

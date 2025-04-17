@@ -1,5 +1,6 @@
+import { OP_TYPES } from "../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../types/typescript.types";
-import { OP_TYPES } from "../../../types/operation.types";
+import type { ArgVariable } from "../../../../types/value.types";
 import { tokens } from "../../lexer";
 
 export type TView = {
@@ -7,8 +8,8 @@ export type TView = {
 	name: string;
 	view: string;
 	pos: [number, number];
-	width: string;
-	height: string;
+	width: number | ArgVariable;
+	height: number | ArgVariable;
 };
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
@@ -42,7 +43,6 @@ export class ViewRules {
 		return $.RULE("layoutViewWidth", () => {
 			$.CONSUME(tokens.Width);
 			$.CONSUME(tokens.Colon);
-
 			return $.SUBRULE($.numOrVar);
 		});
 	}
@@ -51,7 +51,6 @@ export class ViewRules {
 		return $.RULE("layoutViewHeight", () => {
 			$.CONSUME(tokens.Height);
 			$.CONSUME(tokens.Colon);
-
 			return $.SUBRULE($.numOrVar);
 		});
 	}
