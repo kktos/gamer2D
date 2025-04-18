@@ -55,6 +55,8 @@ export class SheetParser extends EmbeddedActionsParser {
 	public displaySheet = DisplayRules.displaySheet(this);
 	public displayProps = DisplayRules.displayProps(this);
 	public displayLayers = DisplayRules.displayLayers(this);
+	public displaySettings = DisplayRules.displaySettings(this);
+	public displaySet = DisplayRules.displaySet(this);
 
 	public sound = SoundRules.sound(this);
 

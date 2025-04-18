@@ -11,8 +11,8 @@ describe("Display", () => {
 			font "bubble-bobble"
 
 			settings {
-				$show_entities_count = true
-				$show_entity_frame = false
+				show_entities_count = true
+				show_entity_frame = false
 			}
 
 		}

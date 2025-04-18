@@ -13,15 +13,12 @@ export type TSet = {
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class SetRules {
 	static layoutSet($) {
-		return $.RULE("layoutSet", (setOptions) => {
+		return $.RULE("layoutSet", () => {
 			// $.CONSUME(tokens.Set);
-
-			// const name= setOptions?.noDollar ? $.CONSUME(tokens.Identifier).image : $.CONSUME(tokens.Variable).image.substring(1);
-			const name = $.CONSUME(tokens.Variable).image.substring(1);
 
 			const result: TSet = {
 				type: OP_TYPES.SET,
-				name,
+				name: $.CONSUME(tokens.Variable).image.substring(1),
 				value: 0,
 			};
 

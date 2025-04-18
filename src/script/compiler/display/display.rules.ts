@@ -1,4 +1,6 @@
+import { OP_TYPES } from "../../../types/operation.types";
 import { tokens } from "../lexer";
+import type { TSet } from "./layout/set.rules";
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class DisplayRules {
@@ -33,8 +35,43 @@ export class DisplayRules {
 				{ ALT: () => $.SUBRULE($.displayOnEvent, { ARGS: [sheet] }) },
 				{ ALT: () => $.SUBRULE($.displayUI) },
 				{ ALT: () => $.SUBRULE($.displayLayers) },
-				{ ALT: () => $.SUBRULE($.levelSettings, { ARGS: [{ noDollar: false }] }) },
+				{ ALT: () => $.SUBRULE($.displaySettings) },
 			]);
+		});
+	}
+
+	static displaySettings($) {
+		return $.RULE("displaySettings", () => {
+			$.CONSUME(tokens.Settings);
+			$.CONSUME(tokens.OpenCurly);
+
+			const settings = {};
+			$.MANY(() => {
+				const { name, value } = $.SUBRULE($.displaySet);
+				settings[name] = value;
+			});
+
+			$.CONSUME(tokens.CloseCurly);
+
+			return { name: "settings", value: settings };
+		});
+	}
+
+	static displaySet($) {
+		return $.RULE("displaySet", () => {
+			const result: TSet = {
+				type: OP_TYPES.SET,
+				name: $.CONSUME(tokens.Identifier).image,
+				value: 0,
+			};
+
+			$.CONSUME(tokens.Equal);
+
+			result.value = $.SUBRULE($.layoutSetValue);
+
+			$.variablesDict.set(result.name, result.value);
+
+			return result;
 		});
 	}
 
