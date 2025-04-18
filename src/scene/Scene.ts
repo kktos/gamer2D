@@ -61,8 +61,8 @@ export class Scene {
 	}
 
 	update(gc: GameContext) {
-		for (const layer of this.layers) layer.update(gc, this);
 		this.tasks.processTasks();
+		for (const layer of this.layers) layer.update(gc, this);
 	}
 
 	render(gc: GameContext) {
