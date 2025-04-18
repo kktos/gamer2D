@@ -58,6 +58,7 @@ export class DisplayLayer extends UILayer {
 	private lastJoyTime: number;
 	private menu: TMenu | null;
 	private views: TViewDef[];
+	private wannaShowCursor: boolean;
 
 	constructor(gc: GameContext, parent: Scene, sheet: SceneSheet) {
 		super(gc, parent, sheet.ui);
@@ -71,6 +72,7 @@ export class DisplayLayer extends UILayer {
 		this.isMouseEnabled = true;
 		this.wannaDisplayHitzones = false;
 		this.lastJoyTime = 0;
+		this.wannaShowCursor = sheet.showCursor;
 
 		this.itemSelected = 0;
 
@@ -392,7 +394,7 @@ export class DisplayLayer extends UILayer {
 				if (this.isMouseEnabled && this.menu) {
 					const menuIdx = this.findMenuByPoint(e.x, e.y);
 					if (menuIdx >= 0) this.selectMenuItem(menuIdx);
-					gc.viewport.canvas.style.cursor = menuIdx >= 0 ? "pointer" : "default";
+					if (this.wannaShowCursor) gc.viewport.canvas.style.cursor = menuIdx >= 0 ? "pointer" : "default";
 				}
 				break;
 
