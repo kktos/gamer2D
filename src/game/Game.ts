@@ -9,7 +9,7 @@ import { setupTraits } from "../traits/TraitFactory";
 import { createViewport } from "../utils/canvas.utils";
 import { FPSManager } from "./FPSManager";
 import type GameContext from "./GameContext";
-import type { BaseEvent, GameEvent } from "./GameEvent";
+import type { GameEvent } from "./GameEvent";
 import { KeyMap } from "./KeyMap";
 import ResourceManager from "./ResourceManager";
 
@@ -57,7 +57,6 @@ export default class Game {
 		};
 
 		this.gc.viewport.ctx.scale(this.gc.viewport.ratioWidth, this.gc.viewport.ratioHeight);
-		// this.gc.viewport.ctx.scale(this.gc.viewport.ratioWidth,this.gc.viewport.ratioWidth);
 
 		const onTimerUpdate = (deltaTime: number) => {
 			this.gc.tick++;

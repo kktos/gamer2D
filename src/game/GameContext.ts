@@ -25,5 +25,5 @@ export default interface GameContext {
 	keys: KeyMap;
 	scene: Scene | null;
 
-	wannaPauseOnBlur: true;
+	wannaPauseOnBlur: boolean;
 }
