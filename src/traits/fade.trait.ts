@@ -8,7 +8,7 @@ import { Trait } from "./Trait";
 export class FadeTrait extends Trait {
 	static EVENT_FADED = Symbol.for("FADED");
 
-	color: number[];
+	color: string;
 	isFadein: boolean;
 	alpha: number;
 	isRunning: boolean;
@@ -16,7 +16,8 @@ export class FadeTrait extends Trait {
 
 	constructor(inOrOut: "in" | "out", color: ArgColor, speed = 60) {
 		super();
-		this.color = hexToRgb(color.value) || [0, 0, 0];
+		const rgb = hexToRgb(color.value) || [0, 0, 0];
+		this.color = `${rgb[0]}, ${rgb[1]}, ${rgb[2]}`;
 		this.isFadein = inOrOut === "in";
 		this.speed = speed / 5;
 		this.reset();
@@ -24,14 +25,14 @@ export class FadeTrait extends Trait {
 
 	reset() {
 		this.isRunning = true;
-		this.alpha = this.isFadein ? 1 : 255;
+		this.alpha = this.isFadein ? 1 : 100;
 	}
 
 	update(gc: GameContext, entity: TextEntity) {
 		if (!this.isRunning) return;
 		this.alpha = this.alpha + (this.isFadein ? 1 : -1) * gc.dt * this.speed;
 		if (this.isFadein) {
-			if (this.alpha > 255) {
+			if (this.alpha > 100) {
 				this.isRunning = false;
 				gc.scene.events.emit(FadeTrait.EVENT_FADED, this.id);
 				return;
@@ -43,6 +44,6 @@ export class FadeTrait extends Trait {
 				return;
 			}
 		}
-		entity.color = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${this.alpha / 255})`;
+		entity.color = `rgba(${this.color}, ${Math.floor(this.alpha)}%)`;
 	}
 }
