@@ -10,30 +10,35 @@ import { DIRECTIONS } from "../types/direction.type";
 import { generateID } from "../utils/id.util";
 
 export class Entity {
-	class: string;
-	id: string;
-	_pos: Point;
-	size: Point;
-	vel: Point;
-	speed: number;
-	mass: number;
-	isFixed: boolean;
-	isSolid: boolean;
-	previousVel: Point;
-	previousMass: number;
-	previousBbox: { left: number; top: number; right: number; bottom: number };
-	dir: number;
-	ghost: boolean;
-	points: number;
-	lifetime: number;
-	anim: null;
-	events: EventBuffer;
+	public class: string;
+	public id: string;
+
+	public currSprite: string | null;
+	public spritesheet: SpriteSheet | null;
+	public size: Point;
+	public vel: Point;
+	public mass: number;
+	public speed: number;
+	public dir: number;
+	public lifetime: number;
+	public points: number;
+
+	public isSolid: boolean;
+	public isFixed: boolean;
+	// a ghost won't interact with the player
+	public isGhost: boolean;
+
+	public previousBbox: { left: number; top: number; right: number; bottom: number };
 	// biome-ignore lint/complexity/noBannedTypes: <explanation>
-	traits: Map<Function, Trait>;
-	collidesTraits: Trait[];
-	updateTraits: Trait[];
-	currSprite: string | null;
-	spritesheet: SpriteSheet | null;
+	public traits: Map<Function, Trait>;
+	public events: EventBuffer;
+
+	private _pos: Point;
+	private previousVel: Point;
+	private previousMass: number;
+	// private anim: null;
+	private collidesTraits: Trait[];
+	private updateTraits: Trait[];
 
 	constructor(resourceMgr: ResourceManager, x: number, y: number, sheetFilename?: string) {
 		const m = String(this.constructor).match(/class ([a-zA-Z0-9_]+)/);
@@ -52,14 +57,13 @@ export class Entity {
 		this.previousBbox = { left: x, top: y, right: 0, bottom: 0 };
 		this.dir = DIRECTIONS.LEFT;
 
-		// a ghost won't interact with the world - only with the paddle/player
-		this.ghost = false;
+		this.isGhost = false;
 
 		// how much killing it will be added to/substracted from the player score
 		this.points = 0;
 
 		this.lifetime = 0;
-		this.anim = null;
+		// this.anim = null;
 		this.events = new EventBuffer();
 		this.traits = new Map();
 		this.collidesTraits = [];

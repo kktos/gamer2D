@@ -14,9 +14,10 @@ export interface ITrait {
 }
 
 export class Trait implements ITrait {
-	class: string;
-	id: string;
-	listeners: { name: string; callback: EventCallback; count: number }[];
+	public class: string;
+	public id: string;
+	
+	private listeners: { name: string; callback: EventCallback; count: number }[];
 
 	constructor() {
 		const m = String(this.constructor).match(/class ([a-zA-Z0-9_]+)/);
