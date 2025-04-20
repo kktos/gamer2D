@@ -40,6 +40,7 @@ export class SetRules {
 				{ ALT: () => $.SUBRULE($.layoutSetValueArray) },
 				{ ALT: () => $.SUBRULE($.layoutSetEval) },
 				{ ALT: () => $.SUBRULE($.layoutSetTrait) },
+				{ ALT: () => $.SUBRULE($.htmlColor) },
 			]);
 		});
 	}
