@@ -16,7 +16,7 @@ export interface ITrait {
 export class Trait implements ITrait {
 	public class: string;
 	public id: string;
-	
+
 	private listeners: { name: string; callback: EventCallback; count: number }[];
 
 	constructor() {

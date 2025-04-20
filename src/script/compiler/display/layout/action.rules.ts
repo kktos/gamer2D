@@ -13,30 +13,37 @@ export type TActionList = TFunctionCall[][];
 export class ActionRules {
 	static layoutAction($) {
 		return $.RULE("layoutAction", () => {
+			// action:
 			$.CONSUME(tokens.Action);
 			$.CONSUME(tokens.Colon);
 
+			// { <statements> }
 			return $.SUBRULE($.layoutActionBlock);
 		});
 	}
+
 	static layoutActionBlock($) {
 		return $.RULE("layoutActionBlock", (actionOptions) => {
 			const result: TFunctionCall[][] = [];
 
+			// {
 			$.CONSUME(tokens.OpenCurly);
-
+			// statements list
 			$.AT_LEAST_ONE(() => {
 				result.push($.SUBRULE($.layoutActionStatement, { ARGS: [actionOptions] }));
 			});
-
+			// }
 			$.CONSUME(tokens.CloseCurly);
 
 			return result;
 		});
 	}
+
 	static layoutActionStatement($) {
 		return $.RULE("layoutActionStatement", (actionOptions) => {
 			const result: TFunctionCall[] = [];
+			// <functionName>(...parms)[.<functionName>(...parms)][.<functionName>(...parms)]....
+			// to allow something like sprite("Bubblun").set("mass", 0)
 			$.AT_LEAST_ONE_SEP({
 				SEP: tokens.Dot,
 				DEF: () => {
@@ -49,6 +56,7 @@ export class ActionRules {
 			return result;
 		});
 	}
+
 	static layoutActionFunctionCall($) {
 		return $.RULE("layoutActionFunctionCall", () => {
 			const result: TFunctionCall = {
@@ -86,6 +94,7 @@ export class ActionRules {
 			return result;
 		});
 	}
+
 	static layoutActionFunctionName($) {
 		return $.RULE("layoutActionFunctionName", () => {
 			return $.OR([
