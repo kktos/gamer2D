@@ -29,14 +29,12 @@ export class Entity {
 	public isGhost: boolean;
 
 	public previousBbox: { left: number; top: number; right: number; bottom: number };
-	// biome-ignore lint/complexity/noBannedTypes: <explanation>
-	public traits: Map<Function, Trait>;
+	public traits: Map<string, Trait>;
 	public events: EventBuffer;
 
 	private _pos: Point;
 	private previousVel: Point;
 	private previousMass: number;
-	// private anim: null;
 	private collidesTraits: Trait[];
 	private updateTraits: Trait[];
 
@@ -63,16 +61,13 @@ export class Entity {
 		this.points = 0;
 
 		this.lifetime = 0;
-		// this.anim = null;
 		this.events = new EventBuffer();
 		this.traits = new Map();
 		this.collidesTraits = [];
 		this.updateTraits = [];
 
 		this.currSprite = null;
-		if (sheetFilename) {
-			this.spritesheet = resourceMgr.get("sprite", sheetFilename) as SpriteSheet;
-		} else this.spritesheet = null;
+		this.spritesheet = sheetFilename ? (resourceMgr.get("sprite", sheetFilename) as SpriteSheet) : null;
 	}
 
 	get left() {
@@ -136,7 +131,7 @@ export class Entity {
 	}
 
 	addTrait(trait: Trait) {
-		this.traits.set(trait.constructor, trait);
+		this.traits.set(trait.class, trait);
 		if ("collides" in trait) this.collidesTraits.push(trait);
 		if ("update" in trait) this.updateTraits.push(trait);
 		return trait;
@@ -164,7 +159,7 @@ export class Entity {
 		this.currSprite = name;
 		const frame = anim.frame(0);
 		this.size = this.spritesheet.spriteSize(frame);
-		if (opt.paused === true) anim.pause();
+		if (opt.paused) anim.pause();
 		return anim;
 	}
 
