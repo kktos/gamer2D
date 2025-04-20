@@ -94,7 +94,7 @@ describe("TextSpriteProps", () => {
 					pos: [16, 5],
 					dir: 0,
 				},
-			]
+			],
 		});
 	});
 });
