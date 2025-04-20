@@ -6,9 +6,20 @@ import { DashboardLayer } from "../layers/dashboard.layer";
 import { EntitiesLayer } from "../layers/entities.layer";
 import { LevelLayer } from "../layers/level.layer";
 import type { Grid } from "../maths/grid.math";
+import type { ArgColor } from "../types/value.types";
 import { createLevelEntities } from "../utils/createLevelEntities.utils";
 import { createLevelGrid } from "../utils/createLevelGrid.utils";
 import { Scene } from "./Scene";
+
+export type SceneLevelSheet = {
+	type: "level";
+	name: string;
+	showCursor?: boolean;
+	background?: ArgColor;
+	font?: string;
+	settings?: Record<string, unknown>;
+	sprites?: unknown[];
+};
 
 export default class LevelScene extends Scene {
 	static TASK_ADD_ENTITY = Symbol.for("add entity");
@@ -23,9 +34,10 @@ export default class LevelScene extends Scene {
 	private state: symbol;
 	private entities: Entity[];
 
-	constructor(gc: GameContext, name: string, sheet) {
-		super(gc, name);
-		this.killOnExit = true;
+	constructor(gc: GameContext, name: string, sheet: SceneLevelSheet) {
+		super(gc, name, sheet.settings);
+
+		this.isPermanent = false;
 
 		// this.entities = [];
 
@@ -41,14 +53,16 @@ export default class LevelScene extends Scene {
 		// const spawner= new SpawnerEntity(gc.resourceManager, 300, 550);
 		// this.entities.push(spawner);
 
-		this.addLayer(new BackgroundLayer(gc, this, sheet.background));
+		this.addLayer(new BackgroundLayer(gc, this, sheet.background?.value));
 		this.addLayer(new LevelLayer(gc, this, sheet.name, sheet.settings, this.grid));
 		this.addLayer(new EntitiesLayer(gc, this, this.entities, sheet));
 		this.addLayer(new CollisionLayer(gc, this));
 		this.addLayer(new DashboardLayer(gc, this));
 	}
 
-	init(gc: GameContext) {}
+	init(gc: GameContext) {
+		return this;
+	}
 
 	broadcast(name: symbol, ...args: unknown[]) {
 		for (let idx = 0; idx < this.entities.length; idx++) {

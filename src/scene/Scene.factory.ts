@@ -1,33 +1,17 @@
 import type GameContext from "../game/GameContext";
 import { compileScript } from "../script/compiler/compiler";
-import type { TEventHandlers } from "../script/compiler/display/on.rules";
-import type { TSoundDefs } from "../script/compiler/display/sound.rules";
-import type { ArgColor } from "../types/value.types";
 import LocalDB from "../utils/storage.util";
 import type { Scene } from "./Scene";
-import { DisplayScene } from "./display.scene";
-// import DebugScene from "./debug.scene.js";
+import { DisplayScene, type SceneDisplaySheet } from "./display.scene";
 // import EditorScene from "./editor.scene.js";
 import { GameScene } from "./game.scene";
-import LevelScene from "./level.scene";
+import LevelScene, { type SceneLevelSheet } from "./level.scene";
 
-export type SceneSheetUI = {
-	pos: "top" | "bottom";
-	background?: ArgColor;
-};
-export type SceneSheet = {
+export type SceneGameSheet = {
+	type: "game";
 	name: string;
-	type: string;
-	showCursor: boolean;
-	background: ArgColor;
-	layers: string[];
-	ui?: SceneSheetUI;
-	font: string;
-	layout: unknown[];
-	sounds: TSoundDefs;
-	on: TEventHandlers;
-	settings?: Record<string, unknown>;
 };
+export type SceneSheet = SceneDisplaySheet | SceneLevelSheet | SceneGameSheet;
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class SceneFactory {
@@ -41,12 +25,10 @@ export class SceneFactory {
 		sheet = LocalDB.loadResource(name);
 		if (!sheet) {
 			try {
-				// const scriptText = await loadText(`${ENV.SCENES_PATH}${name}.script`);
 				const scriptText = await gc.resourceManager.loadScene(name);
 				sheet = compileScript(scriptText);
 			} catch (e) {
 				console.error((e as Error).message);
-				// sheet = await loadJson(`${ENV.SCENES_PATH}${name}.json`);
 			}
 		}
 
@@ -59,9 +41,6 @@ export class SceneFactory {
 			case "display":
 				scene = new DisplayScene(gc, sheet.name, sheet);
 				break;
-			// case "debug":
-			// 	scene= new DebugScene(gc, sheet.name, sheet);
-			// 	break;
 			// case "editor":
 			// 	scene= new EditorScene(gc, sheet.name, sheet);
 			// 	break;
@@ -72,11 +51,12 @@ export class SceneFactory {
 				scene = new GameScene(gc, sheet.name, sheet);
 				break;
 			default:
-				throw new Error(`Uknown Scene type: ${sheet.type}`);
+				// throw new Error(`Uknown Scene type: ${sheet.type}`);
+				throw new Error("Uknown Scene type");
 		}
 
 		// scene.killOnExit= sheet.killOnExit ? true : false;
-		gc.viewport.canvas.style.cursor = sheet.showCursor ? "default" : "none";
+		if ("showCursor" in sheet) gc.viewport.canvas.style.cursor = sheet.showCursor ? "default" : "none";
 
 		return scene;
 	}

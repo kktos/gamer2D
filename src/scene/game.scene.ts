@@ -5,9 +5,9 @@ export class GameScene extends Scene {
 
 	constructor(gc, name, sheet) {
 		super(gc, name);
-		this.killOnExit = false;
+		this.isPermanent = true;
 
-		this.currentLevel = 1;
+		this.currentLevel = 0;
 
 		// LocalDB.newPlayer("currentPlayer");
 	}
@@ -18,6 +18,8 @@ export class GameScene extends Scene {
 		this.currentLevel++;
 
 		this.events.emit(Scene.EVENT_COMPLETE, `levels/level${String(this.currentLevel).padStart(3, "0")}`);
+
+		return this;
 
 		// if(!LocalDB.currentPlayer().lives || this.currentLevel > this.rounds) {
 		// 	this.killOnExit= true;
