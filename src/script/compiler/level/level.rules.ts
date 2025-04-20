@@ -44,14 +44,18 @@ export class LevelRules {
 	static levelSettings($) {
 		return $.RULE("levelSettings", () => {
 			$.CONSUME(tokens.Settings);
-			$.CONSUME(tokens.OpenCurly);
 
+			$.CONSUME(tokens.OpenCurly);
 			const settings = {};
 			$.MANY(() => {
-				const { name, value } = $.SUBRULE($.layoutSet);
+				const name = $.CONSUME(tokens.Identifier).image;
+
+				$.CONSUME(tokens.Equal);
+
+				const value = $.SUBRULE($.layoutSetValue);
+
 				settings[name] = value;
 			});
-
 			$.CONSUME(tokens.CloseCurly);
 
 			return { name: "settings", value: settings };
