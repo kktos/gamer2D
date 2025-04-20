@@ -6,6 +6,7 @@ import { DefAnimRules } from "./display/layout/defanim.rules";
 import { ForRules } from "./display/layout/for.rules";
 import { ImageRules } from "./display/layout/image.rules";
 import { LayoutRules } from "./display/layout/layout.rules";
+import { MathRules } from "./display/layout/math.rules";
 import { MenuRules } from "./display/layout/menu.rules";
 import { ParmsRules } from "./display/layout/parms.rules";
 import { RectRules } from "./display/layout/rect.rules";
@@ -48,9 +49,11 @@ export class SheetParser extends EmbeddedActionsParser {
 	public variable = TypesRules.variable(this);
 	public htmlColor = TypesRules.htmlColor(this);
 	public numOrVar = TypesRules.numOrVar(this);
+	public tupleNumOrVar = TypesRules.tupleNumOrVar(this);
 	public strOrVar = TypesRules.strOrVar(this);
 	public varOrArrayOfVars = TypesRules.varOrArrayOfVars(this);
 	public arrayOfVars = TypesRules.arrayOfVars(this);
+	public arrayOfVarsAndStrings = TypesRules.arrayOfVarsAndStrings(this);
 
 	public displaySheet = DisplayRules.displaySheet(this);
 	public displayProps = DisplayRules.displayProps(this);
@@ -74,24 +77,27 @@ export class SheetParser extends EmbeddedActionsParser {
 	public layoutSprite = SpriteRules.layoutSprite(this);
 	public layoutImage = ImageRules.layoutImage(this);
 	public textSpriteProps = TextSpritePropsRules.textSpriteProps(this);
+
 	public layoutMenu = MenuRules.layoutMenu(this);
+	public layoutMenuKeys = MenuRules.layoutMenuKeys(this);
 	public layoutMenuItems = MenuRules.layoutMenuItems(this);
 	public layoutMenuItem = MenuRules.layoutMenuItemGroup(this);
 	public layoutMenuSelection = MenuRules.layoutMenuSelection(this);
 	public layoutMenuSelectionColor = MenuRules.layoutMenuSelectionColor(this);
 	public layoutMenuSelectionSprite = MenuRules.layoutMenuSelectionSprite(this);
+	public layoutMenuSelectionVar = MenuRules.layoutMenuSelectionVar(this);
+
 	public layoutSet = SetRules.layoutSet(this);
 	public layoutSetValue = SetRules.layoutSetValue(this);
 	public layoutSetValueArray = SetRules.layoutSetValueArray(this);
 	public layoutSetEval = SetRules.layoutSetEval(this);
 	public layoutSetTrait = SetRules.layoutSetTrait(this);
+
+	public mathAdd = MathRules.mathAdd(this);
+
 	public layoutFor = ForRules.layoutFor(this);
 	public layoutForTwoNumber = ForRules.layoutForTwoNumber(this);
-	public layoutForItems = ForRules.layoutForItems(this);
 	public layoutRepeat = RepeatRules.layoutRepeat(this);
-	public layoutRepeatParms = RepeatRules.layoutRepeatParms(this);
-	public layoutRepeatParm = RepeatRules.layoutRepeatParm(this);
-	public layoutRepeatParmStep = RepeatRules.layoutRepeatParmStep(this);
 	public layoutRepeatItems = RepeatRules.layoutRepeatItems(this);
 	public layoutView = ViewRules.layoutView(this);
 	public layoutViewType = ViewRules.layoutViewType(this);

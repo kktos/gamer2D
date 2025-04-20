@@ -18,10 +18,8 @@ describe("Layout", () => {
 						left "test"
 					}
 					items {
-						repeat count:$menuItems.length var:idx step:{ at:0,50 } {				
-							item {
-								text $menuItems.$idx at:300,200
-							}
+						repeat $idx count:$menuItems.length {				
+							text $menuItems.$idx at:300,200 action:{ goto("") }
 						}		
 					}
 				}			

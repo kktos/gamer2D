@@ -46,6 +46,15 @@ export class TypesRules {
 		});
 	}
 
+	static tupleNumOrVar($) {
+		return $.RULE("tupleNumOrVar", () => {
+			const x = $.SUBRULE($.numOrVar);
+			$.CONSUME(tokens.Comma);
+			const y = $.SUBRULE2($.numOrVar);
+			return [x, y];
+		});
+	}
+
 	static strOrVar($) {
 		return $.RULE("strOrVar", () => {
 			return $.OR([{ ALT: () => $.CONSUME(tokens.StringLiteral).payload }, { ALT: () => $.SUBRULE($.variable) }]);
@@ -65,6 +74,19 @@ export class TypesRules {
 			$.MANY_SEP({
 				SEP: tokens.Comma,
 				DEF: () => result.push($.SUBRULE($.variable)),
+			});
+			$.CONSUME(tokens.CloseBracket);
+			return result;
+		});
+	}
+
+	static arrayOfVarsAndStrings($) {
+		return $.RULE("arrayOfVarsAndStrings", () => {
+			const result: unknown[] = [];
+			$.CONSUME(tokens.OpenBracket);
+			$.MANY_SEP({
+				SEP: tokens.Comma,
+				DEF: () => result.push($.SUBRULE($.strOrVar)),
 			});
 			$.CONSUME(tokens.CloseBracket);
 			return result;

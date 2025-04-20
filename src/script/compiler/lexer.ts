@@ -78,10 +78,14 @@ const tokenDefs: TokenDefs = {
 	Items: { pattern: "items", longer_alt: "Identifier" },
 	Item: { pattern: "item", longer_alt: "Identifier" },
 	Selection: { pattern: "selection", longer_alt: "Identifier" },
+	Keys: { pattern: "keys", longer_alt: "Identifier" },
+
 	UI: { pattern: "ui", longer_alt: "Identifier" },
 	Pos: { pattern: "pos", longer_alt: "Identifier" },
 	Width: { pattern: "width", longer_alt: "Identifier" },
 	Height: { pattern: "height", longer_alt: "Identifier" },
+	Fill: { pattern: "fill", longer_alt: "Identifier" },
+	Pad: { pattern: "pad", longer_alt: "Identifier" },
 	Type: { pattern: "type", longer_alt: "Identifier" },
 
 	Left: { pattern: "left", longer_alt: "Identifier" },
@@ -97,6 +101,7 @@ const tokenDefs: TokenDefs = {
 	Step: { pattern: "step", longer_alt: "Identifier" },
 	Eval: { pattern: "eval", longer_alt: "Identifier" },
 	Settings: { pattern: "settings", longer_alt: "Identifier" },
+	Add: { pattern: "add", longer_alt: "Identifier" },
 
 	MS: { pattern: "ms", longer_alt: "Identifier" },
 	On: { pattern: "on", longer_alt: "Identifier" },
@@ -176,16 +181,21 @@ export const tokenList = [
 	tokens.Traits,
 	tokens.Trait,
 	tokens.Image,
+
 	tokens.Menu,
 	tokens.Items,
 	tokens.Item,
 	tokens.Selection,
+	tokens.Keys,
+
 	tokens.UI,
 	tokens.Pos,
 	tokens.View,
 	tokens.Rect,
 	tokens.Width,
 	tokens.Height,
+	tokens.Fill,
+	tokens.Pad,
 	tokens.Type,
 	tokens.Sound,
 	tokens.Play,
@@ -204,6 +214,7 @@ export const tokenList = [
 	tokens.Step,
 	tokens.Eval,
 	tokens.Settings,
+	tokens.Add,
 
 	// The Identifier must appear after the keywords because all keywords are valid identifiers.
 	tokens.Identifier,

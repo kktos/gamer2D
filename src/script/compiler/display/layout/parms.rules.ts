@@ -8,25 +8,18 @@ export class ParmsRules {
 			$.CONSUME(tokens.At);
 			$.CONSUME(tokens.Colon);
 
-			const x = $.SUBRULE($.numOrVar);
-
-			$.CONSUME(tokens.Comma);
-
-			const y = $.SUBRULE2($.numOrVar);
-
-			return [x, y];
+			return $.SUBRULE($.tupleNumOrVar);
 		});
 	}
+
 	static parm_range($) {
 		return $.RULE("parm_range", () => {
 			$.CONSUME(tokens.Range);
 			$.CONSUME(tokens.Colon);
-			const x = $.SUBRULE($.number);
-			$.CONSUME(tokens.Comma);
-			const y = $.SUBRULE2($.number);
-			return [x, y];
+			return $.SUBRULE($.tupleNumOrVar);
 		});
 	}
+
 	static parm_dir($) {
 		return $.RULE("parm_dir", () => {
 			$.CONSUME(tokens.Dir);

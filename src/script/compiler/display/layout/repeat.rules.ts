@@ -1,123 +1,86 @@
 import { OP_TYPES } from "../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../types/typescript.types";
+import type { ArgVariable } from "../../../../types/value.types";
 import { tokens } from "../../lexer";
+import type { TMath } from "./math.rules";
 import type { TMenuItemGroup } from "./menu.rules";
 import type { TSprite } from "./sprite.rules";
 import type { TText } from "./text.rules";
 
 /*
-		repeat count:5 var:idx step:{ at:0,50 } {				
+		repeat $idx count:5 {				
 			item {
 				text "toto" at:300,200
+				[...]
 			}
 		}
  */
 
-export type TRepeatItem = TSprite | TText | TMenuItemGroup;
+export type TRepeatItem = TSprite | TText | TMenuItemGroup | TMath;
 export type TRepeat = {
 	type: TupleToUnion<[typeof OP_TYPES.REPEAT]>;
-	from: number | string;
-	count: number | string;
-	step: {
-		pos: [number, number];
+	from: number;
+	count: number | ArgVariable;
+	step?: {
+		var: string;
+		inc: number | ArgVariable;
 	};
 	items: TRepeatItem[];
 	var?: string;
-	list?: string;
+	list?: string | string[];
 };
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class RepeatRules {
 	static layoutRepeat($) {
 		return $.RULE("layoutRepeat", (options, isMenuItem: boolean) => {
+			// repeat
 			$.CONSUME(tokens.Repeat);
 
-			let result: TRepeat = { type: OP_TYPES.REPEAT, from: 0, count: 0, step: { pos: [0, 0] }, items: [] };
+			const result: TRepeat = { type: OP_TYPES.REPEAT, from: 0, count: 0, items: [] };
 
-			const parms = $.SUBRULE($.layoutRepeatParms, {
-				ARGS: [options, isMenuItem],
+			// optional var for iterator
+			$.OPTION(() => {
+				result.var = $.CONSUME(tokens.Variable).image.substring(1);
 			});
 
+			// count:<number>
+			const name = $.CONSUME(tokens.Identifier).image?.toLowerCase();
 			$.ACTION(() => {
-				if (parms.count === undefined || parms.step === undefined)
-					throw new TypeError(`Missing required parm (count, step) for Repeat : ${JSON.stringify(parms)}`);
+				if (name !== "count") {
+					throw new TypeError(`Missing required parm count for Repeat ${name}`);
+				}
 			});
+			$.CONSUME(tokens.Colon);
+			result.count = $.SUBRULE($.numOrVar);
 
-			result = { ...result, ...parms };
-
-			$.CONSUME(tokens.OpenCurly);
-
+			// { repeatItems }
 			result.items = $.SUBRULE($.layoutRepeatItems, {
 				ARGS: [options, isMenuItem],
 			});
 
-			$.CONSUME(tokens.CloseCurly);
-
 			return result;
-		});
-	}
-
-	static layoutRepeatParms($) {
-		return $.RULE("layoutRepeatParms", () => {
-			const parms = {};
-			$.AT_LEAST_ONE(() => {
-				const parm = $.SUBRULE($.layoutRepeatParm);
-				if (parms[parm[0]]) throw new TypeError(`Duplicate parm for Repeat : ${parm[0]}`);
-				parms[parm[0]] = parm[1];
-			});
-			return parms;
-		});
-	}
-
-	static layoutRepeatParm($) {
-		return $.RULE("layoutRepeatParm", () => {
-			let value: unknown;
-
-			const name = $.OR([{ ALT: () => $.CONSUME(tokens.Identifier) }, { ALT: () => $.CONSUME(tokens.Step) }]).image?.toLowerCase();
-
-			$.CONSUME(tokens.Colon);
-
-			switch (name) {
-				case "count":
-					value = $.SUBRULE($.numOrVar);
-					break;
-				case "var":
-					value = $.CONSUME(tokens.Identifier).image;
-					break;
-				case "step":
-					value = $.SUBRULE($.layoutRepeatParmStep);
-					break;
-
-				default:
-					$.ACTION(() => {
-						throw new TypeError(`Invalid parm for Repeat : ${name}`);
-					});
-			}
-
-			return [name, value];
-		});
-	}
-
-	static layoutRepeatParmStep($) {
-		return $.RULE("layoutRepeatParmStep", () => {
-			$.CONSUME(tokens.OpenCurly);
-			const result = $.SUBRULE($.parm_at);
-			$.CONSUME(tokens.CloseCurly);
-			return { pos: result };
 		});
 	}
 
 	static layoutRepeatItems($) {
 		return $.RULE("layoutRepeatItems", (options, isMenuItem) => {
 			const items: TRepeatItem[] = [];
+
+			$.CONSUME(tokens.OpenCurly);
+			// list of
+			// text | sprite | item | add
 			$.AT_LEAST_ONE(() => {
 				const item = $.OR([
 					{ ALT: () => $.SUBRULE($.layoutText, { ARGS: [options, isMenuItem] }) },
 					{ ALT: () => $.SUBRULE($.layoutSprite, { ARGS: [options] }) },
-					{ ALT: () => $.SUBRULE($.layoutMenuItem, { ARGS: [options] }) },
+					{ ALT: () => $.SUBRULE($.layoutMenuItemGroup, { ARGS: [options] }) },
+					{ ALT: () => $.SUBRULE($.mathAdd, { ARGS: [options] }) },
 				]);
 				items.push(item);
 			});
+			$.CONSUME(tokens.CloseCurly);
+
 			return items;
 		});
 	}

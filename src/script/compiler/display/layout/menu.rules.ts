@@ -37,11 +37,14 @@ export type TMenuItemGroup = {
 
 	bbox?: BBox;
 };
-export type TMenuItem = TRepeat | TMenuItemGroup | TText | TSprite;
+export type TMenuItemRendered = TMenuItemGroup | TText | TSprite;
+export type TMenuItem = TRepeat | TMenuItemRendered;
+
 export type TMenu = {
 	type: TupleToUnion<[typeof OP_TYPES.MENU]>;
 	items: TMenuItem[];
 	selection?: TMenuSelection;
+	keys?: unknown[];
 };
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
@@ -50,41 +53,54 @@ export class MenuRules {
 		return $.RULE("layoutMenu", (options) => {
 			const result: TMenu = { type: OP_TYPES.MENU, items: [] };
 
+			// menu {
 			$.CONSUME(tokens.Menu);
-
 			$.CONSUME(tokens.OpenCurly);
 
+			// selection { ... }
 			result.selection = $.OPTION(() => $.SUBRULE($.layoutMenuSelection));
-
+			// keys { ... }
+			result.keys = $.OPTION2(() => $.SUBRULE($.layoutMenuKeys));
+			// items { ... }
 			result.items = $.SUBRULE($.layoutMenuItems, { ARGS: [options] });
 
+			// } end of menu
 			$.CONSUME(tokens.CloseCurly);
 
 			return result;
 		});
 	}
+
 	static layoutMenuItems($) {
 		return $.RULE("layoutMenuItems", (options) => {
+			// items {
 			$.CONSUME(tokens.Items);
 			$.CONSUME(tokens.OpenCurly);
 
 			const items: unknown[] = [];
-			$.AT_LEAST_ONE(() => {
-				$.OR([
-					{ ALT: () => items.push($.SUBRULE($.layoutFor, { ARGS: [options, true] })) },
-					{ ALT: () => items.push($.SUBRULE($.layoutRepeat, { ARGS: [options, true] })) },
-					{ ALT: () => items.push($.SUBRULE($.layoutText, { ARGS: [options, true] })) },
-					{ ALT: () => items.push($.SUBRULE($.layoutMenuItemGroup, { ARGS: [options] })) },
-				]);
-			});
-
+			$.OR([
+				{ ALT: () => items.push($.SUBRULE($.layoutFor, { ARGS: [options, true] })) },
+				{ ALT: () => items.push($.SUBRULE($.layoutRepeat, { ARGS: [options, true] })) },
+				{
+					ALT: () => {
+						$.AT_LEAST_ONE(() => {
+							$.OR2([
+								{ ALT: () => items.push($.SUBRULE($.layoutText, { ARGS: [options, true] })) },
+								{ ALT: () => items.push($.SUBRULE($.layoutMenuItemGroup, { ARGS: [options, true] })) },
+							]);
+						});
+					},
+				},
+			]);
+			// } end of items
 			$.CONSUME(tokens.CloseCurly);
 
 			return items;
 		});
 	}
+
 	static layoutMenuItemGroup($) {
-		return $.RULE("layoutMenuItemGroup", (options) => {
+		return $.RULE("layoutMenuItemGroup", (options, isMenuItem) => {
 			$.CONSUME(tokens.Item);
 
 			const result: TMenuItemGroup = {
@@ -92,22 +108,51 @@ export class MenuRules {
 				items: [],
 			};
 
-			$.OPTION(() => {
-				result.action = $.SUBRULE($.layoutAction);
-			});
-
 			$.CONSUME(tokens.OpenCurly);
-
 			$.AT_LEAST_ONE(() => {
 				const item = $.OR([{ ALT: () => $.SUBRULE($.layoutText, { ARGS: [options] }) }, { ALT: () => $.SUBRULE($.layoutSprite, { ARGS: [options] }) }]);
 				result.items.push(item);
 			});
-
 			$.CONSUME(tokens.CloseCurly);
+
+			// action: { <statements> } OPTIONAL as user can manage is with events
+			$.OPTION(() => {
+				result.action = $.SUBRULE($.layoutAction);
+			});
 
 			return result;
 		});
 	}
+
+	static layoutMenuKeys($) {
+		return $.RULE("layoutMenuKeys", () => {
+			$.CONSUME(tokens.Keys);
+			$.CONSUME(tokens.OpenCurly);
+
+			const keys = {};
+
+			$.AT_LEAST_ONE(() => {
+				const name = $.CONSUME(tokens.Identifier).image;
+				$.CONSUME(tokens.Colon);
+
+				$.CONSUME(tokens.OpenBracket);
+				const list: unknown[] = [];
+				$.MANY_SEP({
+					SEP: tokens.Comma,
+					DEF: () => {
+						list.push($.CONSUME2(tokens.StringLiteral).payload);
+					},
+				});
+				$.CONSUME(tokens.CloseBracket);
+				keys[name] = list;
+			});
+
+			$.CONSUME(tokens.CloseCurly);
+
+			return keys;
+		});
+	}
+
 	static layoutMenuSelection($) {
 		return $.RULE("layoutMenuSelection", () => {
 			$.CONSUME(tokens.Selection);
@@ -120,7 +165,7 @@ export class MenuRules {
 					{ ALT: () => $.SUBRULE($.layoutMenuSelectionSprite) },
 					{ ALT: () => $.SUBRULE($.background) },
 					{ ALT: () => $.SUBRULE($.layoutMenuSelectionColor) },
-					{ ALT: () => ({ name: "var", value: $.CONSUME(tokens.Variable).image.substring(1) }) },
+					{ ALT: () => $.SUBRULE($.layoutMenuSelectionVar) },
 				]);
 				selection[name] = value;
 			});
@@ -130,12 +175,24 @@ export class MenuRules {
 			return selection;
 		});
 	}
+
+	static layoutMenuSelectionVar($) {
+		return $.RULE("layoutMenuSelectionVar", () => {
+			const word = $.CONSUME(tokens.Identifier).image.toLowerCase();
+			$.ACTION(() => {
+				if (word !== "var") throw new TypeError("Invalid Var declaration");
+			});
+			return { name: "var", value: $.CONSUME(tokens.Variable).image.substring(1) };
+		});
+	}
+
 	static layoutMenuSelectionColor($) {
 		return $.RULE("layoutMenuSelectionColor", () => {
 			$.CONSUME(tokens.Color);
 			return { name: "color", value: $.SUBRULE($.htmlColor) };
 		});
 	}
+
 	static layoutMenuSelectionSprite($) {
 		return $.RULE("layoutMenuSelectionSprite", () => {
 			const name = $.OR([{ ALT: () => $.CONSUME(tokens.Left).image }, { ALT: () => $.CONSUME(tokens.Right).image }]);

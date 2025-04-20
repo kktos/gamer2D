@@ -20,10 +20,11 @@ export class ForRules {
 		return $.RULE("layoutFor", (options, isMenuItem: boolean) => {
 			$.CONSUME(tokens.For);
 
-			const result: TRepeat = { type: OP_TYPES.REPEAT, from: 0, count: 0, items: [], step: { pos: [0, 0] } };
+			const result: TRepeat = { type: OP_TYPES.REPEAT, from: 0, count: 0, items: [] };
 
 			$.OR([
 				{
+					// for <var> from,to
 					ALT: () => {
 						$.OPTION(() => {
 							result.var = $.CONSUME(tokens.Variable).image.substring(1);
@@ -35,24 +36,27 @@ export class ForRules {
 					},
 				},
 				{
+					// for <var> of <arrayVar | [<string|var>]>
 					ALT: () => {
 						result.var = $.CONSUME2(tokens.Variable).image.substring(1);
 						$.CONSUME2(tokens.Of);
-						result.list = $.CONSUME3(tokens.Variable).image.substring(1);
+						result.list = $.OR2([
+							{
+								ALT: () => {
+									const varName = $.CONSUME3(tokens.Variable).image.substring(1);
+									if (!$.variablesDict.has(varName)) throw new TypeError(`Unknown variable "${varName}"`);
+									return varName;
+								},
+							},
+							{ ALT: () => $.SUBRULE($.arrayOfVarsAndStrings) },
+						]);
 					},
 				},
 			]);
 
-			$.CONSUME(tokens.OpenCurly);
-
-			$.CONSUME(tokens.Step);
-			result.step.pos = $.SUBRULE2($.layoutForTwoNumber);
-
-			result.items = $.SUBRULE($.layoutForItems, {
+			result.items = $.SUBRULE($.layoutRepeatItems, {
 				ARGS: [options, isMenuItem],
 			});
-
-			$.CONSUME(tokens.CloseCurly);
 
 			return result;
 		});
@@ -64,27 +68,6 @@ export class ForRules {
 			$.CONSUME(tokens.Comma);
 			const b = $.SUBRULE2($.number);
 			return [a, b];
-		});
-	}
-
-	static layoutForItems($) {
-		return $.RULE("layoutForItems", (options, isMenuItem) => {
-			$.CONSUME(tokens.Items);
-			$.CONSUME(tokens.OpenCurly);
-
-			const items: unknown[] = [];
-			$.AT_LEAST_ONE(() => {
-				const item = $.OR([
-					{ ALT: () => $.SUBRULE($.layoutText, { ARGS: [options, isMenuItem] }) },
-					{ ALT: () => $.SUBRULE($.layoutSprite, { ARGS: [options] }) },
-					{ ALT: () => $.SUBRULE($.layoutMenuItem, { ARGS: [options] }) },
-				]);
-				items.push(item);
-			});
-
-			$.CONSUME(tokens.CloseCurly);
-
-			return items;
 		});
 	}
 }

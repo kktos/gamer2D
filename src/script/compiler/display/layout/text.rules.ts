@@ -75,9 +75,13 @@ export class TextRules {
 				});
 			});
 
-			if (isMenuItem) {
-				result.action = $.SUBRULE3($.layoutAction);
-			}
+			// action: { <statements> } OPTIONAL as user can manage is with events
+			$.OPTION4({
+				GATE: () => isMenuItem,
+				DEF: () => {
+					result.action = $.SUBRULE3($.layoutAction);
+				},
+			});
 
 			if (id) result.id = id;
 
