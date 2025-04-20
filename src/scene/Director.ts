@@ -3,15 +3,11 @@ import { Scene } from "./Scene";
 import { SceneFactory } from "./Scene.factory";
 
 export default class Director {
-	sceneIndex: number;
-	scenes: Scene[];
-	gc: GameContext;
-
-	constructor(gc: GameContext) {
-		this.sceneIndex = -1;
-		this.scenes = [];
-		this.gc = gc;
-	}
+	constructor(
+		private gc: GameContext,
+		private scenes: Scene[] = [],
+		private sceneIndex = -1,
+	) {}
 
 	addScene(scene: Scene) {
 		scene.events.on(Scene.EVENT_COMPLETE, (nameOrIdx: unknown) => {
@@ -30,7 +26,8 @@ export default class Director {
 	pauseScene() {
 		if (!this.currentScene) return;
 		this.currentScene.pause();
-		this.currentScene.killOnExit && this.scenes.splice(this.sceneIndex, 1);
+		if (this.currentScene.isPermanent) return;
+		this.scenes.splice(this.sceneIndex, 1);
 	}
 
 	runPrevious() {
@@ -38,16 +35,14 @@ export default class Director {
 		this.sceneIndex--;
 		if (this.sceneIndex < 0) this.sceneIndex = 0;
 		if (this.currentScene) {
-			this.currentScene.init(this.gc);
-			this.currentScene.run();
+			this.currentScene.init(this.gc).run();
 		}
 	}
 	runNext() {
 		this.pauseScene();
 		this.sceneIndex++;
 		if (this.currentScene) {
-			this.currentScene.init(this.gc);
-			this.currentScene.run();
+			this.currentScene.init(this.gc).run();
 		}
 	}
 
@@ -56,18 +51,14 @@ export default class Director {
 		const sceneIdx = this.scenes.findIndex((scene) => scene.name === name);
 		if (sceneIdx >= 0) {
 			this.sceneIndex = sceneIdx;
-			if (this.currentScene) {
-				this.currentScene.init(this.gc);
-				this.currentScene.run();
-			}
+			this.currentScene.init(this.gc).run();
 			return;
 		}
 
 		SceneFactory.load(this.gc, name).then((scene) => {
 			this.addScene(scene);
 			this.sceneIndex = this.scenes.length - 1;
-			this.currentScene.init(this.gc);
-			this.currentScene.run();
+			this.currentScene.init(this.gc).run();
 		});
 	}
 
@@ -76,7 +67,6 @@ export default class Director {
 	}
 	update(gc: GameContext) {
 		if (!this.currentScene || !this.currentScene.isRunning) return;
-		this.currentScene.update(gc);
-		this.currentScene.render(gc);
+		this.currentScene.update(gc).render(gc);
 	}
 }
