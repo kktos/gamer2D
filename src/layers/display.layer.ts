@@ -141,26 +141,17 @@ export class DisplayLayer extends UILayer {
 		if (op.id) entity.id = op.id;
 
 		if (op.anim) {
-			switch (op.anim.name) {
-				case "fadein":
-					entity.addTrait(new FadeTrait("in", textObj.color));
-					break;
-				case "fadeout":
-					entity.addTrait(new FadeTrait("out", textObj.color));
-					break;
-				default: {
-					const anim = this.vars.get(op.anim.name) as { path: unknown[]; speed: number };
-					if (!anim) {
-						throw new Error(`Animation ${op.anim.name} not found`);
-					}
-					const animDTO: PathDefDTO = {
-						path: anim.path,
-						speed: anim.speed,
-					};
-					entity.addTrait(new PathTrait(animDTO, { evalArg: (arg) => evalArg({ vars: this.vars }, arg) }));
-				}
+			const anim = this.vars.get(op.anim.name) as { path: unknown[]; speed: number };
+			if (!anim) {
+				throw new Error(`Animation ${op.anim.name} not found`);
 			}
+			const animDTO: PathDefDTO = {
+				path: anim.path,
+				speed: anim.speed,
+			};
+			entity.addTrait(new PathTrait(animDTO, { evalArg: (arg) => evalArg({ vars: this.vars }, arg) }));
 		}
+
 		if (op.traits) {
 			let traitsArray: ArgVariable[];
 			if (op.traits instanceof ArgVariable) {
