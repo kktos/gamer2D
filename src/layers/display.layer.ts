@@ -2,34 +2,32 @@ import type { Entity } from "../entities/Entity";
 import { createEntity } from "../entities/EntityFactory";
 import { type TextDTO, TextEntity } from "../entities/text.entity";
 import ENV from "../env";
-import { Events } from "../events/Events";
-import type Audio from "../game/Audio";
 import type Font from "../game/Font";
 import type GameContext from "../game/GameContext";
-import type { BaseEvent, GameEvent } from "../game/GameEvent";
-import type ResourceManager from "../game/ResourceManager";
-import { type BBox, ptInRect } from "../maths/math";
-import { Scene } from "../scene/Scene";
-import type { SceneSheet } from "../scene/Scene.factory";
+import type { GameEvent } from "../game/GameEvent";
+import type { BBox } from "../maths/math";
+import type { Scene } from "../scene/Scene";
+import type { SceneDisplaySheet } from "../scene/display.scene";
 import type { TStatement } from "../script/compiler/display/layout/layout.rules";
 import type { TMenu } from "../script/compiler/display/layout/menu.rules";
+import type { TRect } from "../script/compiler/display/layout/rect.rules";
 import type { TText } from "../script/compiler/display/layout/text.rules";
 import type { TView } from "../script/compiler/display/layout/view.rules";
 import type { TEventHandlers } from "../script/compiler/display/on.rules";
-import type { TSoundDefs } from "../script/compiler/display/sound.rules";
-import { evalArg, evalExpr, evalNumber, evalString, isStringInterpolable } from "../script/engine/eval.script";
+import { evalArg, evalExpr, evalNumber, isStringInterpolable } from "../script/engine/eval.script";
 import { execAction } from "../script/engine/exec.script";
 import type { Trait } from "../traits/Trait";
 import { FadeTrait } from "../traits/fade.trait";
 import { type PathDefDTO, PathTrait } from "../traits/path.trait";
 import { VariableTrait } from "../traits/variable.trait";
-import type { TVarSounds, TVars } from "../types/engine.types";
-import { OP_TYPES, OP_TYPES_STR } from "../types/operation.types";
+import type { TVars } from "../types/engine.types";
+import { OP_TYPES } from "../types/operation.types";
 import { ArgVariable } from "../types/value.types";
 import LocalDB from "../utils/storage.util";
 import { UILayer } from "./UILayer";
-import { prepareMenu, renderMenu } from "./display/menu.manager";
+import { GameMenu } from "./display/menu/menu.manager";
 import { repeat } from "./display/repeat.manager";
+import { initSounds } from "./display/sound.manager";
 import { renderSprite } from "./display/sprite.renderer";
 import { Timers } from "./display/timers.class";
 import type { View } from "./display/views/View";
@@ -47,20 +45,18 @@ export class DisplayLayer extends UILayer {
 
 	public timers: Timers | null;
 	public font: Font;
-	public itemSelected: number;
 	public vars: TVars;
+	public wannaShowCursor: boolean;
 
 	private layout: TStatement[];
 	private time: number;
 	private blinkFlag: boolean;
-	private isMouseEnabled: boolean;
-	private wannaDisplayHitzones: boolean;
-	private lastJoyTime: number;
-	private menu: TMenu | null;
+	// private lastJoyTime: number;
 	private views: TViewDef[];
-	private wannaShowCursor: boolean;
 
-	constructor(gc: GameContext, parent: Scene, sheet: SceneSheet) {
+	private menu: GameMenu | null;
+
+	constructor(gc: GameContext, parent: Scene, sheet: SceneDisplaySheet) {
 		super(gc, parent, sheet.ui);
 
 		const rezMgr = gc.resourceManager;
@@ -69,29 +65,24 @@ export class DisplayLayer extends UILayer {
 		this.layout = sheet.layout as TStatement[];
 		this.time = 0;
 		this.blinkFlag = false;
-		this.isMouseEnabled = true;
-		this.wannaDisplayHitzones = false;
-		this.lastJoyTime = 0;
+		// this.lastJoyTime = 0;
 		this.wannaShowCursor = sheet.showCursor;
-
-		this.itemSelected = 0;
 
 		this.vars = new Map();
 		this.initVars();
 
-		const menus = this.layout.filter((op) => op.type === OP_TYPES.MENU) as unknown as TMenu[];
-		if (menus.length > 1) throw new Error("Only one menu is allowed per viewport");
-
-		this.menu = menus.length > 0 ? menus[0] : null;
-
 		this.views = this.layout.filter((op) => op.type === OP_TYPES.VIEW) as unknown as TViewDef[];
 		initViews({ canvas: gc.viewport.canvas, gc, vars: this.vars, layer: this });
 
+		const menus = this.layout.filter((op) => op.type === OP_TYPES.MENU);
+		this.menu = GameMenu.create(gc, this, menus);
+
 		this.prepareRendering(gc);
+		this.menu?.prepareMenu();
 
 		this.timers = Timers.createTimers(sheet);
 		if (sheet.on) this.initEventHandlers(sheet.on, parent);
-		if (sheet.sounds) this.initSounds(sheet.sounds, parent, rezMgr);
+		if (sheet.sounds) this.vars.set("sounds", initSounds({ soundDefs: sheet.sounds, parent, resourceManager: rezMgr }));
 	}
 
 	destroy() {
@@ -104,19 +95,12 @@ export class DisplayLayer extends UILayer {
 	initVars() {
 		this.vars.set("highscores", LocalDB.highscores());
 		this.vars.set("player", LocalDB.currentPlayer());
-		this.vars.set("itemIdxSelected", this.itemSelected);
+		this.vars.set("itemIdxSelected", this.menu?.itemSelected);
 		this.vars.set("itemSelected", "");
 
 		this.vars.set("mouseX", 0);
 		this.vars.set("mouseY", 0);
 
-		// const spriteList: Entity[] = [];
-		// const sprites: TVarSprites = {
-		// 	get: (idx: number) => spriteList[idx],
-		// 	add: (sprite: Entity) => {
-		// 		spriteList.push(sprite);
-		// 	},
-		// };
 		this.vars.set("sprites", new Map<string, Entity>());
 
 		this.vars.set("clientHeight", ENV.VIEWPORT_HEIGHT);
@@ -135,50 +119,6 @@ export class DisplayLayer extends UILayer {
 				execAction({ vars: this.vars }, value.action);
 			});
 		}
-	}
-
-	initSounds(soundDefs: TSoundDefs, parent: Scene, rezMgr: ResourceManager) {
-		const sounds: TVarSounds = new Map();
-		for (const [key, soundDef] of Object.entries(soundDefs)) {
-			const [soundSheet, name] = key.split(":");
-			const audio = rezMgr.get("audio", soundSheet) as Audio;
-			const sound = {
-				name,
-				audio,
-				play: () => audio.play(name),
-			};
-			if (soundDef.play) {
-				parent.events.on(Scene.EVENT_START, () => sound.audio.play(name));
-			}
-			sounds.set(key, sound);
-		}
-		this.vars.set("sounds", sounds);
-	}
-
-	selectMenuItem(idx: number) {
-		if (!this.menu) return;
-		this.itemSelected = (idx < 0 ? this.menu.items.length - 1 : idx) % this.menu.items.length;
-
-		if (this.menu.selection?.var) {
-			this.vars.set(this.menu.selection.var, this.itemSelected);
-		} else {
-			this.vars.set("itemIdxSelected", this.itemSelected);
-			this.vars.set("itemSelected", this.menu?.items[this.itemSelected]);
-		}
-		this.scene.events.emit(Events.MENU_ITEM_SELECTED, this.itemSelected);
-	}
-
-	execMenuItemAction(gc: GameContext, idx?: number) {
-		if (!this.menu) return;
-
-		const selectedIdx = idx == null ? this.itemSelected : idx;
-		const menuItem = this.menu.items[selectedIdx];
-
-		if ("action" in menuItem) {
-			return execAction({ vars: this.vars }, menuItem.action);
-		}
-
-		this.scene.events.emit(Events.MENU_ITEM_CLICKED, selectedIdx);
 	}
 
 	addText(op: TText & { entity?: Entity }) {
@@ -320,8 +260,6 @@ export class DisplayLayer extends UILayer {
 					break;
 			}
 		}
-
-		if (this.menu) prepareMenu(gc, this, this.menu);
 	}
 
 	prepareView(gc: GameContext, viewDef: TViewDef) {
@@ -349,27 +287,9 @@ export class DisplayLayer extends UILayer {
 		this.vars.set(viewDef.name, viewDef.component || null);
 	}
 
-	findMenuByPoint(x: number, y: number) {
-		return this.menu ? this.menu.items.findIndex((item) => "bbox" in item && ptInRect(x, y, item.bbox)) : -1;
-	}
-
-	menuMoveUp() {
-		if (this.menu) {
-			this.selectMenuItem(this.itemSelected - 1);
-		}
-	}
-
-	menuMoveDown() {
-		if (this.menu) this.selectMenuItem(this.itemSelected + 1);
-	}
-
 	handleEvent(gc: GameContext, e: GameEvent) {
 		switch (e.type) {
 			case "click":
-				if (this.isMouseEnabled && this.menu) {
-					const menuIdx = this.findMenuByPoint(e.x, e.y);
-					if (menuIdx >= 0) this.execMenuItemAction(gc, menuIdx);
-				}
 				break;
 
 			// case "joyaxismove":
@@ -381,51 +301,13 @@ export class DisplayLayer extends UILayer {
 			// 	if(e.vertical > 0.1)
 			// 		return this.menuMoveDown();
 
-			case "joybuttondown":
-				if (e.X || e.TRIGGER_RIGHT) return this.execMenuItemAction(gc);
-				if (e.CURSOR_UP) return this.menuMoveUp();
-				if (e.CURSOR_DOWN) return this.menuMoveDown();
-				break;
-
 			case "mousemove":
 				this.vars.set("mouseX", e.x);
 				this.vars.set("mouseY", e.y);
-
-				if (this.isMouseEnabled && this.menu) {
-					const menuIdx = this.findMenuByPoint(e.x, e.y);
-					if (menuIdx >= 0) this.selectMenuItem(menuIdx);
-					if (this.wannaShowCursor) gc.viewport.canvas.style.cursor = menuIdx >= 0 ? "pointer" : "default";
-				}
-				break;
-
-			case "keyup":
-				switch (e.key) {
-					case "Control":
-						this.wannaDisplayHitzones = false;
-						break;
-				}
-				break;
-
-			case "keydown":
-				switch (e.key) {
-					case "Control":
-						this.wannaDisplayHitzones = true;
-						break;
-
-					case "ArrowDown":
-					case "ArrowRight":
-						this.menuMoveDown();
-						break;
-					case "ArrowUp":
-					case "ArrowLeft":
-						this.menuMoveUp();
-						break;
-					case "Enter":
-						this.execMenuItemAction(gc);
-						break;
-				}
 				break;
 		}
+
+		this.menu?.handleEvent(e);
 
 		// console.log("DisplayLayer.handleEvent", e);
 
@@ -448,16 +330,28 @@ export class DisplayLayer extends UILayer {
 		}
 	}
 
-	renderRect({ viewport: { ctx } }, op) {
-		ctx.fillStyle = op.color;
-		ctx.fillRect(
-			evalNumber({ vars: this.vars }, op.pos[0]),
-			evalNumber({ vars: this.vars }, op.pos[1]),
-			evalNumber({ vars: this.vars }, op.width),
-			evalNumber({ vars: this.vars }, op.height),
-		);
-		// ctx.strokeStyle= op.color;
-		// ctx.strokeRect(op.pos[0], op.pos[1], op.width, op.height);
+	renderRect({ viewport: { ctx } }, op: TRect) {
+		let x = evalNumber({ vars: this.vars }, op.pos[0]);
+		let y = evalNumber({ vars: this.vars }, op.pos[1]);
+		let w = evalNumber({ vars: this.vars }, op.width);
+		let h = evalNumber({ vars: this.vars }, op.height);
+
+		if (op.pad) {
+			const padX = evalNumber({ vars: this.vars }, op.pad[0]);
+			const padY = evalNumber({ vars: this.vars }, op.pad[1]);
+			x = x - padX;
+			y = y - padY;
+			w = w + padX * 2;
+			h = h + padY * 2;
+		}
+
+		if (op.fill) {
+			ctx.fillStyle = op.fill.value;
+			ctx.fillRect(x, y, w, h);
+		} else {
+			ctx.strokeStyle = op.color.value;
+			ctx.strokeRect(x, y, w, h);
+		}
 	}
 
 	renderView(gc: GameContext, op) {
@@ -484,14 +378,11 @@ export class DisplayLayer extends UILayer {
 		for (let idx = 0; idx < this.layout.length; idx++) {
 			const op = this.layout[idx];
 			switch (op.type) {
-				// case OP_TYPES.SPRITE:
-				// 	renderSprite(gc, this, op);
-				// 	break;
 				case OP_TYPES.IMAGE:
 					renderSprite(gc, this, op);
 					break;
 				case OP_TYPES.MENU:
-					renderMenu(gc, this, op);
+					this.menu?.renderMenu(ctx);
 					break;
 				case OP_TYPES.RECT:
 					this.renderRect(gc, op);
@@ -499,25 +390,6 @@ export class DisplayLayer extends UILayer {
 				case OP_TYPES.VIEW:
 					this.renderView(gc, op);
 					break;
-				// default:
-				// 	throw new Error(`Unkown operation ${op.type}`);
-			}
-		}
-
-		if (this.wannaDisplayHitzones && this.menu) {
-			const items = this.menu.items;
-			for (let idx = 0; idx < items.length; idx++) {
-				const item = items[idx];
-				if ("bbox" in item && item.bbox) {
-					ctx.strokeStyle = "red";
-					ctx.strokeRect(item.bbox.left, item.bbox.top, item.bbox.right - item.bbox.left, item.bbox.bottom - item.bbox.top);
-					ctx.fillStyle = "red";
-					ctx.fillText(`${OP_TYPES_STR[item.type]}`, item.bbox.left, item.bbox.bottom + 10);
-				}
-
-				ctx.fillStyle = "white";
-				const str = `Selected: ${this.itemSelected} X: ${this.gc.mouse.x} Y: ${this.gc.mouse.y}`;
-				ctx.fillText(str, gc.viewport.width - 200, gc.viewport.height - 15);
 			}
 		}
 	}

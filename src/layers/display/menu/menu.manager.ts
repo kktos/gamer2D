@@ -1,0 +1,243 @@
+import type { Entity } from "../../../entities/Entity";
+import type { TextEntity } from "../../../entities/text.entity";
+import ENV from "../../../env";
+import { Events } from "../../../events/Events";
+import type GameContext from "../../../game/GameContext";
+import type { GameEvent } from "../../../game/GameEvent";
+import type { SpriteSheet } from "../../../game/Spritesheet";
+import { growRect, ptInRect } from "../../../maths/math";
+import type { TMath } from "../../../script/compiler/display/layout/math.rules";
+import type { TMenu, TMenuItem, TMenuItemRendered } from "../../../script/compiler/display/layout/menu.rules";
+import type { TRepeatItem } from "../../../script/compiler/display/layout/repeat.rules";
+import { execAction } from "../../../script/engine/exec.script";
+import { OP_TYPES, OP_TYPES_STR } from "../../../types/operation.types";
+import type { DisplayLayer } from "../../display.layer";
+import { repeat } from "../repeat.manager";
+import { loadSprite, renderSprite } from "../sprite.renderer";
+import { computeBBox } from "./menu.utils";
+
+export type SelectionSprites = { selectionSprites?: { left?: { ss: SpriteSheet; sprite: string }; right?: { ss: SpriteSheet; sprite: string } } };
+
+export class GameMenu {
+	private wannaDisplayHitzones: boolean;
+	public itemSelected: number;
+
+	static create(gc: GameContext, layer: DisplayLayer, menus: TMenu[] | null): GameMenu | null {
+		if (!menus || menus.length === 0) return null;
+		if (menus.length > 1) console.error("Only one menu is allowed per viewport. Using the first one.");
+		return new GameMenu(gc, layer, menus[0]);
+	}
+
+	constructor(
+		private gc: GameContext,
+		private layer: DisplayLayer,
+		private menu: TMenu & SelectionSprites,
+	) {
+		this.itemSelected = 0;
+	}
+
+	get items() {
+		return this.menu.items;
+	}
+
+	prepareMenu() {
+		const menuItems: Exclude<TRepeatItem, TMath>[] = [];
+		for (let idx = 0; idx < this.menu.items.length; idx++) {
+			const item = this.menu.items[idx];
+
+			if (item.type === OP_TYPES.REPEAT) {
+				repeat(item, (menuitem: Exclude<TRepeatItem, TMath>) => menuItems.push(menuitem), this.layer.vars);
+				continue;
+			}
+
+			menuItems.push(item);
+		}
+
+		computeBBox(this.gc, this.layer, menuItems);
+
+		this.menu.items = menuItems;
+
+		this.menu.selectionSprites = undefined;
+		if (this.menu.selection) {
+			this.menu.selectionSprites = {};
+			if (this.menu.selection.left) {
+				this.menu.selectionSprites.left = loadSprite(this.gc, this.menu.selection.left);
+			}
+			if (this.menu.selection.right) {
+				this.menu.selectionSprites.right = loadSprite(this.gc, this.menu.selection.right);
+			}
+		}
+	}
+
+	findMenuByPoint(x: number, y: number) {
+		return this.menu.items.findIndex((item) => "bbox" in item && ptInRect(x, y, item.bbox));
+	}
+
+	execMenuItemAction(idx?: number) {
+		const selectedIdx = idx == null ? this.itemSelected : idx;
+		const menuItem = this.menu.items[selectedIdx];
+
+		if ("action" in menuItem) {
+			return execAction({ vars: this.layer.vars }, menuItem.action);
+		}
+
+		this.layer.scene.events.emit(Events.MENU_ITEM_CLICKED, selectedIdx);
+	}
+
+	moveUpSelection() {
+		this.selectMenuItem(this.itemSelected - 1);
+	}
+
+	moveDownSelection() {
+		this.selectMenuItem(this.itemSelected + 1);
+	}
+
+	selectMenuItem(idx: number) {
+		this.itemSelected = (idx < 0 ? this.menu.items.length - 1 : idx) % this.menu.items.length;
+
+		if (this.menu.selection?.var) {
+			this.layer.vars.set(this.menu.selection.var, this.itemSelected);
+		} else {
+			this.layer.vars.set("itemIdxSelected", this.itemSelected);
+			this.layer.vars.set("itemSelected", this.menu?.items[this.itemSelected]);
+		}
+		this.layer.scene.events.emit(Events.MENU_ITEM_SELECTED, this.itemSelected);
+	}
+
+	handleEvent(e: GameEvent) {
+		switch (e.type) {
+			case "click": {
+				const menuIdx = this.findMenuByPoint(e.x, e.y);
+				if (menuIdx >= 0) this.execMenuItemAction(menuIdx);
+				break;
+			}
+			case "mousemove": {
+				const menuIdx = this.findMenuByPoint(e.x, e.y);
+				if (menuIdx >= 0) this.selectMenuItem(menuIdx);
+				if (this.layer.wannaShowCursor) this.gc.viewport.canvas.style.cursor = menuIdx >= 0 ? "pointer" : "default";
+				break;
+			}
+			case "joybuttondown":
+				if (e.X || e.TRIGGER_RIGHT) return this.execMenuItemAction();
+				if (e.CURSOR_UP) return this.moveUpSelection();
+				if (e.CURSOR_DOWN) return this.moveDownSelection();
+				break;
+
+			case "keyup":
+				switch (e.key) {
+					case "Control":
+						this.wannaDisplayHitzones = false;
+						break;
+				}
+				break;
+			case "keydown":
+				switch (e.key) {
+					case "Control":
+						this.wannaDisplayHitzones = true;
+						break;
+
+					case "ArrowDown":
+					case "ArrowRight":
+						this.moveDownSelection();
+						break;
+					case "ArrowUp":
+					case "ArrowLeft":
+						this.moveUpSelection();
+						break;
+					case "Enter":
+						this.execMenuItemAction();
+						break;
+				}
+				break;
+		}
+	}
+
+	renderMenu(ctx: CanvasRenderingContext2D) {
+		const selectedColor = this.menu.selection?.color ?? ENV.COLORS.SELECTED_TEXT;
+
+		const renderMenuItem = (item: TMenuItem & { entity?: Entity }, isSelected: boolean) => {
+			switch (item.type) {
+				case OP_TYPES.TEXT: {
+					if (!item.entity) break;
+					if (isSelected) {
+						(item.entity as TextEntity).color = selectedColor;
+						break;
+					}
+					if (item.color) {
+						(item.entity as TextEntity).color = item.color.value;
+					}
+					break;
+				}
+				case OP_TYPES.SPRITE:
+					renderSprite(this.gc, this.layer, item);
+					break;
+				case OP_TYPES.GROUP:
+					{
+						const submenu = item;
+						for (const item of submenu.items) {
+							renderMenuItem(item, isSelected);
+						}
+					}
+					break;
+			}
+		};
+
+		for (let idx = 0; idx < this.menu.items.length; idx++) {
+			const item = this.menu.items[idx] as TMenuItemRendered;
+			if (idx === this.itemSelected) {
+				this.renderSelection(item);
+				renderMenuItem(item, true);
+				continue;
+			}
+			renderMenuItem(item, false);
+		}
+
+		if (this.wannaDisplayHitzones) {
+			const items = this.menu.items;
+			for (let idx = 0; idx < items.length; idx++) {
+				const item = items[idx];
+				if ("bbox" in item && item.bbox) {
+					ctx.strokeStyle = "red";
+					ctx.strokeRect(item.bbox.left, item.bbox.top, item.bbox.right - item.bbox.left, item.bbox.bottom - item.bbox.top);
+					ctx.fillStyle = "red";
+					ctx.fillText(`${OP_TYPES_STR[item.type]}`, item.bbox.left, item.bbox.bottom + 10);
+				}
+
+				ctx.fillStyle = "white";
+				const str = `Selected: ${this.itemSelected} X: ${this.gc.mouse.x} Y: ${this.gc.mouse.y}`;
+				ctx.fillText(str, 15, 15);
+			}
+		}
+	}
+
+	renderSelection(item: TMenuItemRendered) {
+		const bkgndColor = this.menu.selection?.background.value;
+		const ctx = this.gc.viewport.ctx;
+		const rect = item.bbox;
+
+		if (bkgndColor) {
+			const selectRect = growRect(rect, 2, 5);
+			ctx.fillStyle = bkgndColor;
+			ctx.fillRect(selectRect.x, selectRect.y, selectRect.width + 2, selectRect.height - 4);
+		}
+		const color = this.menu.selection?.color ?? ENV.COLORS.SELECT_RECT;
+		if (color) {
+			ctx.strokeStyle = color;
+			ctx.beginPath();
+			ctx.moveTo(rect.left - 2, rect.top - 5);
+			ctx.lineTo(rect.right + 4, rect.top - 5);
+			ctx.moveTo(rect.left - 2, rect.bottom + 2);
+			ctx.lineTo(rect.right + 4, rect.bottom + 2);
+			ctx.stroke();
+		}
+
+		if (this.menu.selectionSprites?.left) {
+			const { ss, sprite } = this.menu.selectionSprites.left;
+			ss.drawAnim(sprite, ctx, rect.left - 25, rect.top - 2, this.gc.tick);
+		}
+		if (this.menu.selectionSprites?.right) {
+			const { ss, sprite } = this.menu.selectionSprites.right;
+			ss.drawAnim(sprite, ctx, rect.right + 4, rect.top - 2, this.gc.tick);
+		}
+	}
+}

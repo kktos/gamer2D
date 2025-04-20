@@ -1,6 +1,6 @@
 import type GameContext from "../game/GameContext";
 import { Scene } from "../scene/Scene";
-import type { SceneSheetUI } from "../scene/Scene.factory";
+import type { SceneSheetUI } from "../scene/display.scene";
 import { Layer } from "./Layer";
 
 export class UILayer extends Layer {

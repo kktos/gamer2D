@@ -1,0 +1,28 @@
+import type Audio from "../../game/Audio";
+import type ResourceManager from "../../game/ResourceManager";
+import { Scene } from "../../scene/Scene";
+import type { TSoundDefs } from "../../script/compiler/display/sound.rules";
+import type { TVarSounds, TVars } from "../../types/engine.types";
+
+type InitSoundsDef = {
+	soundDefs: TSoundDefs;
+	parent: Scene;
+	resourceManager: ResourceManager;
+};
+export function initSounds({ soundDefs, parent, resourceManager }: InitSoundsDef) {
+	const sounds: TVarSounds = new Map();
+	for (const [key, soundDef] of Object.entries(soundDefs)) {
+		const [soundSheet, name] = key.split(":");
+		const audio = resourceManager.get("audio", soundSheet) as Audio;
+		const sound = {
+			name,
+			audio,
+			play: () => audio.play(name),
+		};
+		if (soundDef.play) {
+			parent.events.on(Scene.EVENT_START, () => sound.audio.play(name));
+		}
+		sounds.set(key, sound);
+	}
+	return sounds;
+}
