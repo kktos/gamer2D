@@ -44,6 +44,7 @@ export class DebugView extends View {
 			frames: { length: 0 },
 		});
 		this.vars.set("frameSprite", "");
+		this.vars.set("spriteType", "");
 
 		this.rezMgr = this.gc.resourceManager;
 		this.spritesheetList = [...this.rezMgr.byKind("sprite"), ...this.rezMgr.byKind("font")];
