@@ -3,7 +3,7 @@ import { EventBuffer } from "../events/EventBuffer";
 import type GameContext from "../game/GameContext";
 import type ResourceManager from "../game/ResourceManager";
 import type { SpriteSheet } from "../game/Spritesheet";
-import type { COLLISION, Point } from "../maths/math";
+import type { BBox, COLLISION, Point } from "../maths/math";
 import type { Scene } from "../scene/Scene";
 import type { ITrait, Trait } from "../traits/Trait";
 import { DIRECTIONS } from "../types/direction.type";
@@ -28,7 +28,7 @@ export class Entity {
 	// a ghost won't interact with the player
 	public isGhost: boolean;
 
-	public previousBbox: { left: number; top: number; right: number; bottom: number };
+	public previousBbox: BBox;
 	public traits: Map<string, Trait>;
 	public events: EventBuffer;
 

@@ -1,3 +1,4 @@
+import type { BBox } from "../maths/math";
 import type { RequireAllOrNone } from "../types/typescript.types";
 import { nameToRgba } from "../utils/canvas.utils";
 import { loadImage, loadJson } from "../utils/loaders.util";
@@ -93,10 +94,10 @@ export default class Font {
 		return [newX, y, newX + width, y + this.height];
 	}
 
-	print(options: PrintOptions) {
+	print(options: PrintOptions): BBox {
 		const { ctx, text, x, y, color, width, height, bgcolor } = options;
 
-		if (text === undefined || text === null || text === "") return [x, y, x, y];
+		if (text === undefined || text === null || text === "") return { left: x, top: y, right: x, bottom: y };
 
 		const key = JSON.stringify([text, x, y, color]);
 		if (!this.cache.has(key)) {
@@ -138,7 +139,7 @@ export default class Font {
 		}
 
 		const canvas = this.cache.get(key);
-		if (!canvas) return [x, y, x, y];
+		if (!canvas) return { left: x, top: y, right: x, bottom: y };
 
 		let newX = 0;
 		let newY = 0;
@@ -181,6 +182,6 @@ export default class Font {
 		}
 
 		ctx.drawImage(canvas, x + newX, y + newY);
-		return [newX, y, newX + canvas.width, y + canvas.height];
+		return { left: x + newX, top: y + newY, right: x + newX + canvas.width, bottom: y + newY + canvas.height };
 	}
 }

@@ -1,6 +1,7 @@
 import ENV from "../env";
 import type Font from "../game/Font";
 import type ResourceManager from "../game/ResourceManager";
+import type { BBox } from "../maths/math";
 import type { ArgColor } from "../types/value.types";
 import { Entity } from "./Entity";
 
@@ -19,6 +20,7 @@ export type TextDTO = {
 export class TextEntity extends Entity {
 	public color: string;
 	public text: string;
+	public bbox: BBox;
 
 	private font: Font;
 	private align: number;
@@ -40,6 +42,7 @@ export class TextEntity extends Entity {
 			x: textObj.width ?? 0,
 			y: textObj.height ?? 0,
 		};
+		this.bbox = { left: this.left, top: this.top, right: this.right, bottom: this.bottom };
 	}
 
 	render(gc) {
@@ -47,7 +50,7 @@ export class TextEntity extends Entity {
 		this.font.size = this.fontsize;
 		this.font.align = this.align;
 		this.font.valign = this.valign;
-		this.font.print({
+		this.bbox = this.font.print({
 			ctx: ctx,
 			text: this.text,
 			x: this.left,
