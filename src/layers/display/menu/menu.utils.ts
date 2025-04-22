@@ -1,60 +1,55 @@
 import type GameContext from "../../../game/GameContext";
 import type { BBox } from "../../../maths/math";
-import type { TMenuItemGroup } from "../../../script/compiler/display/layout/menu.rules";
-import type { TSprite } from "../../../script/compiler/display/layout/sprite.rules";
-import type { TText } from "../../../script/compiler/display/layout/text.rules";
-import { evalNumber } from "../../../script/engine/eval.script";
+import type { TMenuItemRendered } from "../../../script/compiler/display/layout/menu.rules";
 import { OP_TYPES } from "../../../types/operation.types";
 import type { DisplayLayer } from "../../display.layer";
 import { loadSprite } from "../sprite.renderer";
+import { addText } from "../text.manager";
 
-export function computeBBox(gc: GameContext, layer: DisplayLayer, items: (TMenuItemGroup | TText | TSprite)[], isGroup = false) {
-	let bbox: BBox | null = null;
+export function computeBBox(gc: GameContext, layer: DisplayLayer, items: TMenuItemRendered[]) {
+	const bbox: BBox | null = null;
 	for (let idx = 0; idx < items.length; idx++) {
 		const item = items[idx];
 		switch (item.type) {
 			case OP_TYPES.TEXT: {
-				layer.addText(item);
+				item.entity = addText(layer, item);
 				if (item.align) layer.font.align = item.align;
 				if (item.size) layer.font.size = item.size;
-				const left = evalNumber({ vars: layer.vars }, item.pos[0]);
-				const top = evalNumber({ vars: layer.vars }, item.pos[1]);
-				const r = layer.font.textRect(item.text, left, top);
-				item.bbox = { left: r[0], top: r[1], right: r[2], bottom: r[3] };
+				item.bbox = () => item.entity.bbox;
 				break;
 			}
 			case OP_TYPES.SPRITE: {
 				const { ss, sprite } = loadSprite(gc, item.sprite);
 				const size = ss.spriteSize(sprite);
-				item.bbox = {
+				const bbox: BBox = {
 					left: item.pos[0],
 					top: item.pos[1],
 					right: item.pos[0] + size.x,
 					bottom: +item.pos[1] + size.y,
 				};
+				item.bbox = () => bbox;
 				break;
 			}
 			case OP_TYPES.GROUP: {
-				item.bbox = computeBBox(gc, layer, item.items, true);
+				computeBBox(gc, layer, item.items);
+				item.bbox = () => {
+					const bbox = {
+						left: Number.POSITIVE_INFINITY,
+						top: Number.POSITIVE_INFINITY,
+						right: Number.NEGATIVE_INFINITY,
+						bottom: Number.NEGATIVE_INFINITY,
+					};
+					for (let idx = 0; idx < item.items.length; idx++) {
+						const currBBox = item.items[idx].bbox();
+						bbox.left = Math.min(bbox.left, currBBox.left);
+						bbox.top = Math.min(bbox.top, currBBox.top);
+
+						bbox.right = Math.max(bbox.right, currBBox.right);
+						bbox.bottom = Math.max(bbox.bottom, currBBox.bottom);
+					}
+					return bbox;
+				};
 				break;
-			}
-		}
-		if (isGroup && item.bbox) {
-			if (bbox === null) {
-				bbox = { ...item.bbox };
-				continue;
-			}
-			if (item.bbox.left < bbox.left) {
-				bbox.left = item.bbox.left;
-			}
-			if (item.bbox.top < bbox.top) {
-				bbox.top = item.bbox.top;
-			}
-			if (item.bbox.right > bbox.right) {
-				bbox.right = item.bbox.right;
-			}
-			if (item.bbox.bottom > bbox.bottom) {
-				bbox.bottom = item.bbox.bottom;
 			}
 		}
 	}

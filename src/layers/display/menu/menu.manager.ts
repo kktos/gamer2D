@@ -1,4 +1,3 @@
-import type { Entity } from "../../../entities/Entity";
 import type { TextEntity } from "../../../entities/text.entity";
 import ENV from "../../../env";
 import { Events } from "../../../events/Events";
@@ -21,6 +20,7 @@ export type SelectionSprites = { selectionSprites?: { left?: { ss: SpriteSheet; 
 export class GameMenu {
 	private wannaDisplayHitzones: boolean;
 	public itemSelected: number;
+	private keys: Record<string, () => void>;
 
 	static create(gc: GameContext, layer: DisplayLayer, menus: TMenu[] | null): GameMenu | null {
 		if (!menus || menus.length === 0) return null;
@@ -34,6 +34,22 @@ export class GameMenu {
 		private menu: TMenu & SelectionSprites,
 	) {
 		this.itemSelected = 0;
+		this.wannaDisplayHitzones = false;
+
+		this.keys = {};
+		const keys = menu.keys ?? {};
+		if (!keys.previous) {
+			keys.previous = ["ArrowUp", "ArrowLeft"];
+		}
+		if (!keys.next) {
+			keys.next = ["ArrowDown", "ArrowRight"];
+		}
+		if (!keys.select) {
+			keys.select = ["Enter"];
+		}
+		for (const key of keys.previous) this.keys[key] = () => this.selectPreviousItem();
+		for (const key of keys.next) this.keys[key] = () => this.selectNextItem();
+		for (const key of keys.select) this.keys[key] = () => this.execMenuItemAction();
 	}
 
 	get items() {
@@ -41,6 +57,13 @@ export class GameMenu {
 	}
 
 	prepareMenu() {
+		if (this.menu.selection?.var) {
+			this.layer.vars.set(this.menu.selection.var, this.itemSelected);
+		} else {
+			this.layer.vars.set("itemIdxSelected", this.itemSelected);
+			this.layer.vars.set("itemSelected", "");
+		}
+
 		const menuItems: Exclude<TRepeatItem, TMath>[] = [];
 		for (let idx = 0; idx < this.menu.items.length; idx++) {
 			const item = this.menu.items[idx];
@@ -70,7 +93,8 @@ export class GameMenu {
 	}
 
 	findMenuByPoint(x: number, y: number) {
-		return this.menu.items.findIndex((item) => "bbox" in item && ptInRect(x, y, item.bbox));
+		// return this.menu.items.findIndex((item) => "bbox" in item && ptInRect(x, y, item.bbox));
+		return (this.menu.items as TMenuItemRendered[]).findIndex((item) => ptInRect(x, y, item.bbox()));
 	}
 
 	execMenuItemAction(idx?: number) {
@@ -84,11 +108,11 @@ export class GameMenu {
 		this.layer.scene.events.emit(Events.MENU_ITEM_CLICKED, selectedIdx);
 	}
 
-	moveUpSelection() {
+	selectPreviousItem() {
 		this.selectMenuItem(this.itemSelected - 1);
 	}
 
-	moveDownSelection() {
+	selectNextItem() {
 		this.selectMenuItem(this.itemSelected + 1);
 	}
 
@@ -119,8 +143,8 @@ export class GameMenu {
 			}
 			case "joybuttondown":
 				if (e.X || e.TRIGGER_RIGHT) return this.execMenuItemAction();
-				if (e.CURSOR_UP) return this.moveUpSelection();
-				if (e.CURSOR_DOWN) return this.moveDownSelection();
+				if (e.CURSOR_UP) return this.selectPreviousItem();
+				if (e.CURSOR_DOWN) return this.selectNextItem();
 				break;
 
 			case "keyup":
@@ -131,22 +155,13 @@ export class GameMenu {
 				}
 				break;
 			case "keydown":
-				switch (e.key) {
-					case "Control":
-						this.wannaDisplayHitzones = true;
-						break;
-
-					case "ArrowDown":
-					case "ArrowRight":
-						this.moveDownSelection();
-						break;
-					case "ArrowUp":
-					case "ArrowLeft":
-						this.moveUpSelection();
-						break;
-					case "Enter":
-						this.execMenuItemAction();
-						break;
+				if (e.key in this.keys) {
+					this.keys[e.key]();
+					return;
+				}
+				if (e.key === "Control") {
+					this.wannaDisplayHitzones = true;
+					return;
 				}
 				break;
 		}
@@ -155,7 +170,7 @@ export class GameMenu {
 	renderMenu(ctx: CanvasRenderingContext2D) {
 		const selectedColor = this.menu.selection?.color ?? ENV.COLORS.SELECTED_TEXT;
 
-		const renderMenuItem = (item: TMenuItem & { entity?: Entity }, isSelected: boolean) => {
+		const renderMenuItem = (item: TMenuItem, isSelected: boolean) => {
 			switch (item.type) {
 				case OP_TYPES.TEXT: {
 					if (!item.entity) break;
@@ -197,10 +212,11 @@ export class GameMenu {
 			for (let idx = 0; idx < items.length; idx++) {
 				const item = items[idx];
 				if ("bbox" in item && item.bbox) {
+					const bbox = item.bbox();
 					ctx.strokeStyle = "red";
-					ctx.strokeRect(item.bbox.left, item.bbox.top, item.bbox.right - item.bbox.left, item.bbox.bottom - item.bbox.top);
+					ctx.strokeRect(bbox.left, bbox.top, bbox.right - bbox.left, bbox.bottom - bbox.top);
 					ctx.fillStyle = "red";
-					ctx.fillText(`${OP_TYPES_STR[item.type]}`, item.bbox.left, item.bbox.bottom + 10);
+					ctx.fillText(`${OP_TYPES_STR[item.type]}`, bbox.left, bbox.bottom + 10);
 				}
 
 				ctx.fillStyle = "white";
@@ -213,7 +229,7 @@ export class GameMenu {
 	renderSelection(item: TMenuItemRendered) {
 		const bkgndColor = this.menu.selection?.background.value;
 		const ctx = this.gc.viewport.ctx;
-		const rect = item.bbox;
+		const rect = item.bbox();
 
 		if (bkgndColor) {
 			const selectRect = growRect(rect, 2, 5);
