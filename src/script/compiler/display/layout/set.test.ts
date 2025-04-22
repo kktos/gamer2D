@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { OP_TYPES } from "../../../../types/operation.types";
-import { ArgColor, ArgVariable, ValueTrait } from "../../../../types/value.types";
+import { ArgColor, ArgExpression, ArgVariable, ValueTrait } from "../../../../types/value.types";
 import { compileScript } from "../../compiler";
 
 describe("Set Var Value", () => {
@@ -134,5 +134,27 @@ describe("Set Var Value", () => {
 		expect(fadein).toBeDefined();
 		expect(fadein).toHaveProperty("type", OP_TYPES.SET);
 		expect(fadein).toHaveProperty("value", { expr: "3+3" });
+	});
+
+	it("should set expr", () => {
+		const script = `
+		display "intro" {
+			layout {
+				$rez = $x+($z+(45*$y))*2
+			}
+		}
+		`;
+		const result = compileScript(script);
+		expect(result).toBeDefined();
+		expect(result).toHaveProperty("layout");
+		expect(Array.isArray(result.layout)).toBe(true);
+
+		const fadein = result.layout.find((op) => op.name === "rez");
+		expect(fadein).toBeDefined();
+		expect(fadein).toHaveProperty("type", OP_TYPES.SET);
+		expect(fadein).toHaveProperty(
+			"value",
+			new ArgExpression([new ArgVariable("x"), new ArgVariable("z"), 45, new ArgVariable("y"), "Multiply", "Plus", 2, "Multiply", "Plus"]),
+		);
 	});
 });

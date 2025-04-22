@@ -1,4 +1,4 @@
-import { type ITokenConfig, Lexer, createToken } from "chevrotain";
+import { type ITokenConfig, Lexer, type TokenType, createToken } from "chevrotain";
 
 type RegExpExecArrayWithPayload = RegExpExecArray & { payload: string };
 
@@ -28,6 +28,7 @@ type TokenDef = {
 	longer_alt?: string | ITokenConfig;
 	line_breaks?: boolean;
 	group?: string;
+	categories?: string | TokenType;
 };
 type TokenDefs = Record<string, TokenDef>;
 
@@ -111,9 +112,17 @@ const tokenDefs: TokenDefs = {
 	False: { pattern: "false", longer_alt: "Identifier" },
 
 	StringLiteral: { pattern: matchStringLiteral, line_breaks: false },
+
+	AdditionOp: { pattern: Lexer.NA },
+	Plus: { pattern: "+", categories: "AdditionOp" },
+	Minus: { pattern: "-", categories: "AdditionOp" },
+
+	MultiplicationOp: { pattern: Lexer.NA },
+	Multiply: { pattern: "*", categories: "MultiplicationOp" },
+	Divide: { pattern: "/", categories: "MultiplicationOp" },
+
 	Comma: { pattern: "," },
 	Dot: { pattern: "." },
-	Minus: { pattern: "-" },
 	Dollar: { pattern: "$" },
 	Colon: { pattern: ":" },
 	Equal: { pattern: "=" },
@@ -134,6 +143,9 @@ export const tokens: Record<string, ITokenConfig> = {};
 for (const [key, value] of Object.entries(tokenDefs)) {
 	if (value.longer_alt) {
 		value.longer_alt = tokens[value.longer_alt as string];
+	}
+	if (value.categories) {
+		value.categories = tokens[value.categories as string];
 	}
 	tokens[key] = createToken({ ...value, name: key } as ITokenConfig);
 }
@@ -221,7 +233,6 @@ export const tokenList = [
 	tokens.Variable,
 	tokens.Comma,
 	tokens.Dot,
-	tokens.Minus,
 	tokens.Dollar,
 	tokens.Colon,
 	tokens.Equal,
@@ -235,6 +246,13 @@ export const tokenList = [
 	tokens.HexNumber,
 	tokens.Integer,
 	tokens.StringLiteral,
+
+	tokens.Plus,
+	tokens.Minus,
+	tokens.Multiply,
+	tokens.Divide,
+	tokens.AdditionOp,
+	tokens.MultiplicationOp,
 ];
 
 export const SheetLexer = new Lexer(tokenList);

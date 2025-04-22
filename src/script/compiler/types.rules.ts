@@ -48,9 +48,11 @@ export class TypesRules {
 
 	static tupleNumOrVar($) {
 		return $.RULE("tupleNumOrVar", () => {
-			const x = $.SUBRULE($.numOrVar);
+			// const x = $.SUBRULE($.numOrVar);
+			const x = $.SUBRULE($.expr);
 			$.CONSUME(tokens.Comma);
-			const y = $.SUBRULE2($.numOrVar);
+			// const y = $.SUBRULE2($.numOrVar);
+			const y = $.SUBRULE2($.expr);
 			return [x, y];
 		});
 	}

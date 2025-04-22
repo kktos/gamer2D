@@ -22,6 +22,7 @@ import { SoundRules } from "./display/sound.rules";
 import { TimerRules } from "./display/timer.rules";
 import { UIRules } from "./display/ui.rules";
 import { EditorRules } from "./editor/editor.rules";
+import { ExprRules } from "./expr.rules";
 import { GameRules } from "./game/game.rules";
 import { LevelRules } from "./level/level.rules";
 import { tokenList } from "./lexer";
@@ -54,6 +55,12 @@ export class SheetParser extends EmbeddedActionsParser {
 	public varOrArrayOfVars = TypesRules.varOrArrayOfVars(this);
 	public arrayOfVars = TypesRules.arrayOfVars(this);
 	public arrayOfVarsAndStrings = TypesRules.arrayOfVarsAndStrings(this);
+
+	public expr = ExprRules.expr(this);
+	public exprAddition = ExprRules.exprAddition(this);
+	public exprMultiplication = ExprRules.exprMultiplication(this);
+	public exprScalar = ExprRules.exprScalar(this);
+	public exprSubExpr = ExprRules.exprSubExpr(this);
 
 	public displaySheet = DisplayRules.displaySheet(this);
 	public displayProps = DisplayRules.displayProps(this);

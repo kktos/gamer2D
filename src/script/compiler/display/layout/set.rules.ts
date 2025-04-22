@@ -1,4 +1,4 @@
-import type { TExpr } from "../../../../types/engine.types";
+import type { TResultValue } from "../../../../types/engine.types";
 import { OP_TYPES } from "../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../types/typescript.types";
 import { ArgColor, ArgIdentifier, ArgVariable, ValueTrait } from "../../../../types/value.types";
@@ -7,7 +7,7 @@ import { tokens } from "../../lexer";
 export type TSet = {
 	type: TupleToUnion<[typeof OP_TYPES.SET]>;
 	name: string;
-	value: number | string | TExpr[] | ValueTrait | { expr: string };
+	value: number | string | TResultValue[] | ValueTrait | { expr: string };
 };
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
@@ -36,7 +36,8 @@ export class SetRules {
 		return $.RULE("layoutSetValue", () => {
 			return $.OR([
 				{ ALT: () => $.CONSUME(tokens.StringLiteral).payload },
-				{ ALT: () => $.SUBRULE($.numOrVar) },
+				// { ALT: () => $.SUBRULE($.numOrVar) },
+				{ ALT: () => $.SUBRULE($.expr) },
 				{ ALT: () => $.SUBRULE($.layoutSetValueArray) },
 				{ ALT: () => $.SUBRULE($.layoutSetEval) },
 				{ ALT: () => $.SUBRULE($.layoutSetTrait) },

@@ -1,3 +1,4 @@
+import type { Entity } from "../../../../entities/Entity";
 import type { BBox } from "../../../../maths/math";
 import type { DIRECTIONS } from "../../../../types/direction.type";
 import { OP_TYPES } from "../../../../types/operation.types";
@@ -13,7 +14,8 @@ export type TSprite = {
 	range?: [number, number];
 	dir?: TupleToUnion<[typeof DIRECTIONS.LEFT, typeof DIRECTIONS.RIGHT]>;
 
-	bbox?: BBox;
+	bbox?: () => BBox;
+	entity?: Entity;
 };
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>

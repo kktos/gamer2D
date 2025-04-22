@@ -1,5 +1,5 @@
 import { createTrait } from "../../traits/TraitFactory";
-import type { TExpr, TVarTypes, TVars } from "../../types/engine.types";
+import type { TResultValue, TVarTypes, TVars } from "../../types/engine.types";
 import { ArgColor, ArgIdentifier, ArgVariable, ValueTrait } from "../../types/value.types";
 import type { TFunctionArg } from "../compiler/display/layout/action.rules";
 
@@ -52,7 +52,7 @@ export function evalVar({ vars }: { vars: TVars }, varname: string) {
 
 const VARNAME_REGEX = /\$[a-zA-Z_][a-zA-Z0-9_]*(?:\.\$?[a-zA-Z_][a-zA-Z0-9_]*)*/g;
 
-export function evalExpr({ vars }: { vars: TVars }, varOrExpr: TExpr[] | number | string | { expr: string } | ValueTrait): TVarTypes {
+export function evalExpr({ vars }: { vars: TVars }, varOrExpr: TResultValue[] | number | string | { expr: string } | ValueTrait): TVarTypes {
 	if (Array.isArray(varOrExpr) || typeof varOrExpr === "number") return varOrExpr;
 
 	if (typeof varOrExpr === "string") {

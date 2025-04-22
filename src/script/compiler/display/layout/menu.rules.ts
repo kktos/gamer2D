@@ -35,7 +35,7 @@ export type TMenuItemGroup = {
 	items: (TSprite | TText)[];
 	action?: unknown[];
 
-	bbox?: BBox;
+	bbox?: () => BBox;
 };
 export type TMenuItemRendered = TMenuItemGroup | TText | TSprite;
 export type TMenuItem = TRepeat | TMenuItemRendered;
@@ -44,7 +44,7 @@ export type TMenu = {
 	type: TupleToUnion<[typeof OP_TYPES.MENU]>;
 	items: TMenuItem[];
 	selection?: TMenuSelection;
-	keys?: unknown[];
+	keys?: { previous?: string[]; next?: string[]; select?: string[] };
 };
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
@@ -78,20 +78,14 @@ export class MenuRules {
 			$.CONSUME(tokens.OpenCurly);
 
 			const items: unknown[] = [];
-			$.OR([
-				{ ALT: () => items.push($.SUBRULE($.layoutFor, { ARGS: [options, true] })) },
-				{ ALT: () => items.push($.SUBRULE($.layoutRepeat, { ARGS: [options, true] })) },
-				{
-					ALT: () => {
-						$.AT_LEAST_ONE(() => {
-							$.OR2([
-								{ ALT: () => items.push($.SUBRULE($.layoutText, { ARGS: [options, true] })) },
-								{ ALT: () => items.push($.SUBRULE($.layoutMenuItemGroup, { ARGS: [options, true] })) },
-							]);
-						});
-					},
-				},
-			]);
+			$.AT_LEAST_ONE(() => {
+				$.OR([
+					{ ALT: () => items.push($.SUBRULE($.layoutFor, { ARGS: [options, true] })) },
+					{ ALT: () => items.push($.SUBRULE($.layoutRepeat, { ARGS: [options, true] })) },
+					{ ALT: () => items.push($.SUBRULE($.layoutText, { ARGS: [options, true] })) },
+					{ ALT: () => items.push($.SUBRULE($.layoutMenuItemGroup, { ARGS: [options, true] })) },
+				]);
+			});
 			// } end of items
 			$.CONSUME(tokens.CloseCurly);
 
@@ -129,14 +123,14 @@ export class MenuRules {
 			$.CONSUME(tokens.Keys);
 			$.CONSUME(tokens.OpenCurly);
 
-			const keys = {};
+			const keys: TMenu["keys"] = {};
 
 			$.AT_LEAST_ONE(() => {
 				const name = $.CONSUME(tokens.Identifier).image;
 				$.CONSUME(tokens.Colon);
 
 				$.CONSUME(tokens.OpenBracket);
-				const list: unknown[] = [];
+				const list: string[] = [];
 				$.MANY_SEP({
 					SEP: tokens.Comma,
 					DEF: () => {

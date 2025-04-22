@@ -1,3 +1,4 @@
+import type { TextEntity } from "../../../../entities/text.entity";
 import type { BBox } from "../../../../maths/math";
 import { OP_TYPES } from "../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../types/typescript.types";
@@ -20,7 +21,8 @@ export type TText = {
 	bgcolor?: ArgColor;
 	traits?: ArgVariable[] | ArgVariable;
 
-	bbox?: BBox;
+	bbox?: () => BBox;
+	entity?: TextEntity;
 };
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
