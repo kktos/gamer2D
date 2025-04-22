@@ -52,7 +52,7 @@ export function evalVar({ vars }: { vars: TVars }, varname: string) {
 
 const VARNAME_REGEX = /\$[a-zA-Z_][a-zA-Z0-9_]*(?:\.\$?[a-zA-Z_][a-zA-Z0-9_]*)*/g;
 
-export function evalExpr({ vars }: { vars: TVars }, varOrExpr: TResultValue[] | number | string | { expr: string } | ValueTrait): TVarTypes {
+export function evalValue({ vars }: { vars: TVars }, varOrExpr: TResultValue[] | number | string | { expr: string } | ValueTrait): TVarTypes {
 	if (Array.isArray(varOrExpr) || typeof varOrExpr === "number") return varOrExpr;
 
 	if (typeof varOrExpr === "string") {

@@ -11,7 +11,7 @@ import type { TStatement } from "../script/compiler/display/layout/layout.rules"
 import type { TRect } from "../script/compiler/display/layout/rect.rules";
 import type { TView } from "../script/compiler/display/layout/view.rules";
 import type { TEventHandlers } from "../script/compiler/display/on.rules";
-import { evalArg, evalExpr, evalNumber } from "../script/engine/eval.script";
+import { evalArg, evalNumber, evalValue } from "../script/engine/eval.script";
 import { execAction } from "../script/engine/exec.script";
 import { type PathDefDTO, PathTrait } from "../traits/path.trait";
 import type { TVars } from "../types/engine.types";
@@ -162,7 +162,7 @@ export class DisplayLayer extends UILayer {
 					break;
 				}
 				case OP_TYPES.SET:
-					this.vars.set(op.name, evalExpr({ vars: this.vars }, op.value));
+					this.vars.set(op.name, evalValue({ vars: this.vars }, op.value));
 					break;
 				case OP_TYPES.REPEAT:
 					repeat(op, (item) => this.layout.push(item), this.vars);
