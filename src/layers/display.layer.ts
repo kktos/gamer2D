@@ -1,6 +1,5 @@
 import type { Entity } from "../entities/Entity";
 import { createEntity } from "../entities/EntityFactory";
-import { type TextDTO, TextEntity } from "../entities/text.entity";
 import ENV from "../env";
 import type Font from "../game/Font";
 import type GameContext from "../game/GameContext";
@@ -9,26 +8,21 @@ import type { BBox } from "../maths/math";
 import type { Scene } from "../scene/Scene";
 import type { SceneDisplaySheet } from "../scene/display.scene";
 import type { TStatement } from "../script/compiler/display/layout/layout.rules";
-import type { TMenu } from "../script/compiler/display/layout/menu.rules";
 import type { TRect } from "../script/compiler/display/layout/rect.rules";
-import type { TText } from "../script/compiler/display/layout/text.rules";
 import type { TView } from "../script/compiler/display/layout/view.rules";
 import type { TEventHandlers } from "../script/compiler/display/on.rules";
-import { evalArg, evalExpr, evalNumber, isStringInterpolable } from "../script/engine/eval.script";
+import { evalArg, evalExpr, evalNumber } from "../script/engine/eval.script";
 import { execAction } from "../script/engine/exec.script";
-import type { Trait } from "../traits/Trait";
-import { FadeTrait } from "../traits/fade.trait";
 import { type PathDefDTO, PathTrait } from "../traits/path.trait";
-import { VariableTrait } from "../traits/variable.trait";
 import type { TVars } from "../types/engine.types";
 import { OP_TYPES } from "../types/operation.types";
-import { ArgVariable } from "../types/value.types";
 import LocalDB from "../utils/storage.util";
 import { UILayer } from "./UILayer";
 import { GameMenu } from "./display/menu/menu.manager";
 import { repeat } from "./display/repeat.manager";
 import { initSounds } from "./display/sound.manager";
 import { renderSprite } from "./display/sprite.renderer";
+import { addText } from "./display/text.manager";
 import { Timers } from "./display/timers.class";
 import type { View } from "./display/views/View";
 import { initViews, views } from "./display/views/views";
@@ -95,8 +89,6 @@ export class DisplayLayer extends UILayer {
 	initVars() {
 		this.vars.set("highscores", LocalDB.highscores());
 		this.vars.set("player", LocalDB.currentPlayer());
-		this.vars.set("itemIdxSelected", this.menu?.itemSelected);
-		this.vars.set("itemSelected", "");
 
 		this.vars.set("mouseX", 0);
 		this.vars.set("mouseY", 0);
@@ -121,79 +113,6 @@ export class DisplayLayer extends UILayer {
 		}
 	}
 
-	addText(op: TText & { entity?: Entity }) {
-		const posX = evalNumber({ vars: this.vars }, op.pos[0]);
-		const posY = evalNumber({ vars: this.vars }, op.pos[1]);
-
-		const textObj: TextDTO = {
-			pos: [posX, posY],
-			align: op.align,
-			valign: op.valign,
-			size: op.size,
-			color: op.color,
-			bgcolor: op.bgcolor?.value,
-			text: isStringInterpolable(op.text) ? "" : op.text,
-		};
-		if (op.width) textObj.width = evalNumber({ vars: this.vars }, op.width);
-		if (op.height) textObj.height = evalNumber({ vars: this.vars }, op.height);
-
-		const entity = new TextEntity(this.gc.resourceManager, textObj);
-		if (op.id) entity.id = op.id;
-
-		if (op.anim) {
-			const anim = this.vars.get(op.anim.name) as { path: unknown[]; speed: number };
-			if (!anim) {
-				throw new Error(`Animation ${op.anim.name} not found`);
-			}
-			const animDTO: PathDefDTO = {
-				path: anim.path,
-				speed: anim.speed,
-			};
-			entity.addTrait(new PathTrait(animDTO, { evalArg: (arg) => evalArg({ vars: this.vars }, arg) }));
-		}
-
-		if (op.traits) {
-			let traitsArray: ArgVariable[];
-			if (op.traits instanceof ArgVariable) {
-				traitsArray = this.vars.get(op.traits.value) as unknown as ArgVariable[];
-			} else {
-				traitsArray = op.traits;
-			}
-			for (const traitName of traitsArray) {
-				const trait = this.vars.get(traitName.value) as Trait;
-				entity.addTrait(trait);
-			}
-		}
-
-		const varProps = [
-			{ propName: "pos", alias: ["left", "top"] },
-			{ propName: "width", alias: "width" },
-			{ propName: "height", alias: "height" },
-			{ propName: "text", alias: "text" },
-		];
-		const addTrait = (prop, alias) => {
-			if (prop instanceof ArgVariable) {
-				entity.addTrait(new VariableTrait({ vars: this.vars, propName: alias, varName: prop.value }));
-				return;
-			}
-			if (isStringInterpolable(prop)) {
-				entity.addTrait(new VariableTrait({ vars: this.vars, propName: alias, text: op.text }));
-			}
-		};
-		for (const { propName, alias } of varProps) {
-			if (Array.isArray(op[propName])) {
-				for (let idx = 0; idx < op[propName].length; idx++) {
-					addTrait(op[propName][idx], alias[idx]);
-				}
-				continue;
-			}
-			addTrait(op[propName], alias);
-		}
-
-		this.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
-		op.entity = entity;
-	}
-
 	// addSprite(op:TSprite & { entity: Entity }) {
 	addSprite(op) {
 		const entity = createEntity(this.gc.resourceManager, op.sprite, op.pos[0], op.pos[1], op.dir);
@@ -211,10 +130,12 @@ export class DisplayLayer extends UILayer {
 			entity.addTrait(new PathTrait(animDTO, { evalArg: (arg) => evalArg({ vars: this.vars }, arg) }));
 		}
 		this.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
-		op.entity = entity;
+		// op.entity = entity;
 		const sprites = this.vars.get("sprites") as Map<string, Entity>; // as TVarSprites;
 		if (!sprites) throw new Error("No variable sprites !?!");
 		sprites.set(entity.id, entity); //.add(entity);
+
+		return entity;
 	}
 
 	prepareRendering(gc: GameContext) {
@@ -229,11 +150,11 @@ export class DisplayLayer extends UILayer {
 			const op = this.layout[idx];
 			switch (op.type) {
 				case OP_TYPES.TEXT: {
-					this.addText(op);
+					op.entity = addText(this, op);
 					break;
 				}
 				case OP_TYPES.SPRITE: {
-					this.addSprite(op);
+					op.entity = this.addSprite(op);
 					break;
 				}
 				case OP_TYPES.ANIM: {

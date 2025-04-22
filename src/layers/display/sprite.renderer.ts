@@ -1,3 +1,4 @@
+import type { SpriteSheet } from "../../game/Spritesheet";
 import { getRandom } from "../../maths/math";
 
 function animBuilder(anim, state) {
@@ -83,6 +84,6 @@ export function renderSprite({ resourceManager, deltaTime, tick, viewport: { ctx
 
 export function loadSprite({ resourceManager }, name: string) {
 	const [sheet, sprite] = name.split(":");
-	const ss = resourceManager.get("sprite", sheet);
+	const ss = resourceManager.get("sprite", sheet) as SpriteSheet;
 	return { ss, sprite };
 }
