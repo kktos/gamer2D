@@ -1,11 +1,6 @@
 import { tokenName } from "chevrotain";
-import { ArgExpression, type ArgVariable } from "../../types/value.types";
+import { ArgExpression } from "../../types/value.types";
 import { tokens } from "./lexer";
-
-type TExpr = {
-	lhs: number | boolean | ArgVariable;
-	opList: unknown[];
-};
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class ExprRules {
@@ -58,7 +53,7 @@ export class ExprRules {
 				// consuming 'AdditionOperator' will consume either Plus or Minus as they are subclasses of AdditionOperator
 				const op = $.CONSUME(tokens.MultiplicationOp);
 				//  the index "2" in SUBRULE2 is needed to identify the unique position in the grammar during runtime
-				const rhs = $.SUBRULE2($.exprScalar, { ARGS: [stack] });
+				$.SUBRULE2($.exprScalar, { ARGS: [stack] });
 				// opList.push({ op: tokenName(op.tokenType), rhs, mult: 1 });
 				opList.push(tokenName(op.tokenType));
 				if (stack?.length > 1) {

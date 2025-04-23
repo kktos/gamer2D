@@ -99,10 +99,8 @@ const tokenDefs: TokenDefs = {
 	Def: { pattern: "def", longer_alt: "Identifier" },
 	For: { pattern: "for", longer_alt: "Identifier" },
 	Repeat: { pattern: "repeat", longer_alt: "Identifier" },
-	Step: { pattern: "step", longer_alt: "Identifier" },
-	Eval: { pattern: "eval", longer_alt: "Identifier" },
+	Index: { pattern: "index", longer_alt: "Identifier" },
 	Settings: { pattern: "settings", longer_alt: "Identifier" },
-	Add: { pattern: "add", longer_alt: "Identifier" },
 
 	MS: { pattern: "ms", longer_alt: "Identifier" },
 	On: { pattern: "on", longer_alt: "Identifier" },
@@ -223,10 +221,8 @@ export const tokenList = [
 	tokens.Def,
 	tokens.For,
 	tokens.Repeat,
-	tokens.Step,
-	tokens.Eval,
+	tokens.Index,
 	tokens.Settings,
-	tokens.Add,
 
 	// The Identifier must appear after the keywords because all keywords are valid identifiers.
 	tokens.Identifier,

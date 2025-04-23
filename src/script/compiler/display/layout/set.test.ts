@@ -117,29 +117,14 @@ describe("Set Var Value", () => {
 		expect(mousX).toHaveProperty("value", new ValueTrait("MouseXTrait", []));
 	});
 
-	it("should set eval", () => {
-		const script = `
-		display "intro" {
-			layout {
-				$rez = eval "3+3"
-			}
-		}
-		`;
-		const result = compileScript(script);
-		expect(result).toBeDefined();
-		expect(result).toHaveProperty("layout");
-		expect(Array.isArray(result.layout)).toBe(true);
-
-		const fadein = result.layout.find((op) => op.name === "rez");
-		expect(fadein).toBeDefined();
-		expect(fadein).toHaveProperty("type", OP_TYPES.SET);
-		expect(fadein).toHaveProperty("value", { expr: "3+3" });
-	});
 
 	it("should set expr", () => {
 		const script = `
 		display "intro" {
 			layout {
+				$x=0
+				$y=0
+				$z=0
 				$rez = $x+($z+(45*$y))*2
 			}
 		}

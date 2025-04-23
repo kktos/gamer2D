@@ -1,5 +1,5 @@
 import type { Entity } from "../../../entities/Entity";
-import { createEntity } from "../../../entities/EntityFactory";
+import { createEntity } from "../../../entities/Entity.factory";
 import { EntityPool } from "../../../entities/EntityPool";
 import type GameContext from "../../../game/GameContext";
 import { Scene } from "../../../scene/Scene";

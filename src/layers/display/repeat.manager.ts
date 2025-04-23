@@ -1,14 +1,13 @@
-import type { TMath } from "../../script/compiler/display/layout/math.rules";
 import type { TRepeat, TRepeatItem } from "../../script/compiler/display/layout/repeat.rules";
 import type { TSprite } from "../../script/compiler/display/layout/sprite.rules";
 import type { TText } from "../../script/compiler/display/layout/text.rules";
-import { evalNumber, evalString } from "../../script/engine/eval.script";
+import { evalString, evalValue } from "../../script/engine/eval.script";
 import type { TVarTypes, TVars } from "../../types/engine.types";
 import { OP_TYPES } from "../../types/operation.types";
 import { ArgVariable } from "../../types/value.types";
 import { clone } from "../../utils/object.util";
 
-export function repeat(op: TRepeat, callback: (item: Exclude<TRepeatItem, TMath>) => void, vars: TVars) {
+export function repeat(op: TRepeat, callback: (item: TRepeatItem) => void, vars: TVars) {
 	let count = 0;
 	let from = 0;
 	let list: TVarTypes[] | null = null;
@@ -25,9 +24,8 @@ export function repeat(op: TRepeat, callback: (item: Exclude<TRepeatItem, TMath>
 	}
 
 	for (let idx = from; idx < from + count; idx++) {
-		if (op.var) {
-			vars.set(op.var, list ? list[idx] : idx);
-		}
+		if (op.var) vars.set(op.var, list[idx]);
+		if (op.index) vars.set(op.index, idx);
 
 		for (let itemIdx = 0; itemIdx < op.items.length; itemIdx++) {
 			const item = clone<TRepeatItem>(op.items[itemIdx]);
@@ -39,32 +37,22 @@ export function repeat(op: TRepeat, callback: (item: Exclude<TRepeatItem, TMath>
 				processItem(item, idx, vars);
 			}
 
-			if (item.type !== OP_TYPES.MATH) callback(item);
+			callback(item);
 		}
 	}
 }
 
-function processItem(item: TSprite | TText | TMath, idx: number, vars: TVars) {
+function processItem(item: TSprite | TText, idx: number, vars: TVars) {
 	switch (item.type) {
 		case OP_TYPES.TEXT:
 			item.text = evalString({ vars }, item.text);
-			item.pos[0] = evalNumber({ vars }, item.pos[0]);
-			item.pos[1] = evalNumber({ vars }, item.pos[1]);
+			item.pos[0] = evalValue({ vars }, item.pos[0]);
+			item.pos[1] = evalValue({ vars }, item.pos[1]);
 			break;
 		case OP_TYPES.SPRITE:
 			item.sprite = evalString({ vars }, item.sprite);
-			item.pos[0] = evalNumber({ vars }, item.pos[0]);
-			item.pos[1] = evalNumber({ vars }, item.pos[1]);
-			break;
-		case OP_TYPES.MATH:
-			switch (item.fn) {
-				case "add": {
-					const varName = item.params[0] as string;
-					const inc = item.params[1] as number;
-					vars.set(varName, (vars.get(varName) as number) + inc);
-					break;
-				}
-			}
+			item.pos[0] = evalValue({ vars }, item.pos[0]);
+			item.pos[1] = evalValue({ vars }, item.pos[1]);
 			break;
 	}
 

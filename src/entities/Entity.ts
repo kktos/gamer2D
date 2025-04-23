@@ -1,4 +1,3 @@
-import ENV from "../env";
 import { EventBuffer } from "../events/EventBuffer";
 import type GameContext from "../game/GameContext";
 import type ResourceManager from "../game/ResourceManager";
@@ -15,12 +14,8 @@ export class Entity {
 
 	public currSprite: string | null;
 	public spritesheet: SpriteSheet | null;
-	public size: Point;
-	public vel: Point;
-	public mass: number;
 	public speed: number;
 	public dir: number;
-	public lifetime: number;
 	public points: number;
 
 	public isSolid: boolean;
@@ -32,7 +27,11 @@ export class Entity {
 	public traits: Map<string, Trait>;
 	public events: EventBuffer;
 
+	private _lifetime: number;
+	private _vel: Point;
+	private _mass: number;
 	private _pos: Point;
+	private _size: Point;
 	private previousVel: Point;
 	private previousMass: number;
 	private collidesTraits: Trait[];
@@ -44,23 +43,21 @@ export class Entity {
 		this.id = generateID();
 
 		this._pos = { x, y };
-		this.size = { x: 0, y: 0 };
+		this._size = { x: 0, y: 0 };
+		this.previousBbox = { left: x, top: y, right: 0, bottom: 0 };
 		this.vel = { x: 0, y: 0 };
 		this.speed = 0;
 		this.mass = 1;
 		this.isFixed = true;
 		this.isSolid = true;
-		this.previousVel = { ...this.vel };
-		this.previousMass = this.mass;
-		this.previousBbox = { left: x, top: y, right: 0, bottom: 0 };
 		this.dir = DIRECTIONS.LEFT;
 
 		this.isGhost = false;
 
 		// how much killing it will be added to/substracted from the player score
 		this.points = 0;
+		this._lifetime = 0;
 
-		this.lifetime = 0;
 		this.events = new EventBuffer();
 		this.traits = new Map();
 		this.collidesTraits = [];
@@ -74,19 +71,19 @@ export class Entity {
 		return this._pos.x;
 	}
 	get right() {
-		return this._pos.x + this.size.x;
+		return this._pos.x + this._size.x;
 	}
 	get top() {
 		return this._pos.y;
 	}
 	get bottom() {
-		return this._pos.y + this.size.y;
+		return this._pos.y + this._size.y;
 	}
 	get width() {
-		return this.size.x;
+		return this._size.x;
 	}
 	get height() {
-		return this.size.y;
+		return this._size.y;
 	}
 
 	set left(x) {
@@ -99,19 +96,39 @@ export class Entity {
 	}
 	set right(x) {
 		this.previousBbox.left = this._pos.x;
-		this._pos.x = x - this.size.x;
+		this._pos.x = x - this._size.x;
 	}
 	set bottom(y) {
 		this.previousBbox.top = this._pos.y;
-		this._pos.y = y - this.size.y;
+		this._pos.y = y - this._size.y;
 	}
 	set width(w) {
 		this.previousBbox.right = this.right;
-		this.size.x = w;
+		this._size.x = w;
 	}
 	set height(h) {
 		this.previousBbox.bottom = this.bottom;
-		this.size.y = h;
+		this._size.y = h;
+	}
+
+	get mass() {
+		return this._mass;
+	}
+	set mass(newValue: number) {
+		this.previousMass = this._mass;
+		this._mass = newValue;
+	}
+
+	get vel() {
+		return this._vel;
+	}
+	set vel(newValue: Point) {
+		this.previousVel = this._vel;
+		this._vel = newValue;
+	}
+
+	public get lifetime() {
+		return this._lifetime;
 	}
 
 	set(propname, propvalue) {
@@ -119,15 +136,13 @@ export class Entity {
 	}
 
 	pause() {
-		this.previousVel = this.vel;
-		this.previousMass = this.mass;
 		this.vel = { x: 0, y: 0 };
 		this.mass = 0;
 	}
 
 	go() {
-		this.vel = this.previousVel;
-		this.mass = this.previousMass;
+		this._vel = this.previousVel;
+		this._mass = this.previousMass;
 	}
 
 	addTrait(trait: Trait) {
@@ -142,12 +157,10 @@ export class Entity {
 	}
 
 	setSprite(name: string) {
-		if (!this.spritesheet || !this.spritesheet.has(name)) {
-			throw new Error(`no sprite ${name}`);
-		}
+		if (!this.spritesheet || !this.spritesheet.has(name)) throw new Error(`no sprite ${name}`);
 
 		this.currSprite = name;
-		this.size = this.spritesheet.spriteSize(name);
+		this._size = this.spritesheet.spriteSize(name);
 	}
 
 	setAnim(name: string, opt = { paused: false }) {
@@ -158,7 +171,7 @@ export class Entity {
 
 		this.currSprite = name;
 		const frame = anim.frame(0);
-		this.size = this.spritesheet.spriteSize(frame);
+		this._size = this.spritesheet.spriteSize(frame);
 		if (opt.paused) anim.pause();
 		return anim;
 	}
@@ -169,7 +182,7 @@ export class Entity {
 
 	update(gc: GameContext, scene: Scene) {
 		for (const trait of this.updateTraits) (trait as ITrait).update(gc, this, scene);
-		this.lifetime += gc.dt * ENV.FPS;
+		this._lifetime += 1; //gc.dt * gc.FPS;
 	}
 
 	finalize() {
@@ -180,7 +193,8 @@ export class Entity {
 	render(gc: GameContext) {
 		const ctx = gc.viewport.ctx;
 		ctx.strokeStyle = "gray";
-		ctx.strokeRect(this.left, this.top, this.size.x, this.size.y);
+		ctx.strokeRect(this.left, this.top, this.width, this.height);
+		ctx.strokeStyle = "black";
 		ctx.beginPath();
 		ctx.moveTo(this.left, this.top);
 		ctx.lineTo(this.right, this.bottom);

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { OP_TYPES } from "../../../../types/operation.types";
-import { ArgVariable } from "../../../../types/value.types";
+import { ArgExpression, ArgVariable } from "../../../../types/value.types";
 import { compileScript } from "../../compiler";
 
 describe("Repeat", () => {
@@ -11,9 +11,8 @@ describe("Repeat", () => {
 
 				$Ypos = 190
 				repeat $idx count:9 {
-					text $positions.$idx at:90,$Ypos
-					text $highscores.$idx.score at:250,$Ypos
-					add $Ypos,40
+					text $positions.$idx at:90,$Ypos+$idx*40
+					text $highscores.$idx.score at:250,$Ypos+$idx*40
 				}
 
 			}
@@ -31,22 +30,17 @@ describe("Repeat", () => {
 			type: OP_TYPES.REPEAT,
 			from: 0,
 			count: 9,
-			var: "idx",
+			index: "idx",
 			items: [
 				{
 					type: OP_TYPES.TEXT,
 					text: new ArgVariable("positions.$idx"),
-					pos: [90, new ArgVariable("Ypos")],
+					pos: [90, new ArgExpression([new ArgVariable("Ypos"), new ArgVariable("idx"), 40, "Multiply", "Plus"])],
 				},
 				{
 					type: OP_TYPES.TEXT,
 					text: new ArgVariable("highscores.$idx.score"),
-					pos: [250, new ArgVariable("Ypos")],
-				},
-				{
-					type: OP_TYPES.MATH,
-					fn: "add",
-					params: ["Ypos", 40],
+					pos: [250, new ArgExpression([new ArgVariable("Ypos"), new ArgVariable("idx"), 40, "Multiply", "Plus"])],
 				},
 			],
 		});

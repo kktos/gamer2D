@@ -252,7 +252,7 @@ export class DebugView extends View {
 
 	render(gc: GameContext) {
 		const localGc = { ...gc };
-		localGc.viewport = createViewport(this.canvas);
+		localGc.viewport = createViewport(this.canvas, gc.viewport);
 		this.ctx.clearRect(0, 0, this.width, this.height);
 
 		const name = this.names[this.spriteIndex];

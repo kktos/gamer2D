@@ -2,7 +2,6 @@ import { OP_TYPES } from "../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../types/typescript.types";
 import type { ArgVariable } from "../../../../types/value.types";
 import { tokens } from "../../lexer";
-import type { TMath } from "./math.rules";
 import type { TMenuItemGroup } from "./menu.rules";
 import type { TSprite } from "./sprite.rules";
 import type { TText } from "./text.rules";
@@ -16,18 +15,15 @@ import type { TText } from "./text.rules";
 		}
  */
 
-export type TRepeatItem = TSprite | TText | TMenuItemGroup | TMath;
+export type TRepeatItem = TSprite | TText | TMenuItemGroup;
 export type TRepeat = {
 	type: TupleToUnion<[typeof OP_TYPES.REPEAT]>;
 	from: number;
 	count: number | ArgVariable;
-	step?: {
-		var: string;
-		inc: number | ArgVariable;
-	};
 	items: TRepeatItem[];
-	var?: string;
+	index?: string;
 	list?: string | string[];
+	var?: string;
 };
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
@@ -41,7 +37,8 @@ export class RepeatRules {
 
 			// optional var for iterator
 			$.OPTION(() => {
-				result.var = $.CONSUME(tokens.Variable).image.substring(1);
+				result.index = $.CONSUME(tokens.Variable).image.substring(1);
+				$.variablesDict.set(result.index, 0);
 			});
 
 			// count:<number>
@@ -75,7 +72,7 @@ export class RepeatRules {
 					{ ALT: () => $.SUBRULE($.layoutText, { ARGS: [options, isMenuItem] }) },
 					{ ALT: () => $.SUBRULE($.layoutSprite, { ARGS: [options] }) },
 					{ ALT: () => $.SUBRULE($.layoutMenuItemGroup, { ARGS: [options] }) },
-					{ ALT: () => $.SUBRULE($.mathAdd, { ARGS: [options] }) },
+					// { ALT: () => $.SUBRULE($.mathAdd, { ARGS: [options] }) },
 				]);
 				items.push(item);
 			});

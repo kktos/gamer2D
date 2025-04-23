@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { OP_TYPES } from "../../../../types/operation.types";
-import { ArgVariable } from "../../../../types/value.types";
+import { ArgExpression, ArgVariable } from "../../../../types/value.types";
 import { compileScript } from "../../compiler";
 
 describe("For", () => {
@@ -11,9 +11,8 @@ describe("For", () => {
 
 				$Ypos = 190
 				for $idx 0,10 {
-					text $positions.$idx at:90,$Ypos
-					text $highscores.$idx.score at:250,$Ypos
-					add $Ypos,40
+					text $positions.$idx at:90,$Ypos+$idx*40
+					text $highscores.$idx.score at:250,$Ypos+$idx*40
 				}
 
 			}
@@ -30,22 +29,17 @@ describe("For", () => {
 			type: OP_TYPES.REPEAT,
 			from: 0,
 			count: 11,
-			var: "idx",
+			index: "idx",
 			items: [
 				{
 					type: OP_TYPES.TEXT,
 					text: new ArgVariable("positions.$idx"),
-					pos: [90, new ArgVariable("Ypos")],
+					pos: [90, new ArgExpression([new ArgVariable("Ypos"), new ArgVariable("idx"), 40, "Multiply", "Plus"])],
 				},
 				{
 					type: OP_TYPES.TEXT,
 					text: new ArgVariable("highscores.$idx.score"),
-					pos: [250, new ArgVariable("Ypos")],
-				},
-				{
-					type: OP_TYPES.MATH,
-					fn: "add",
-					params: ["Ypos", 40],
+					pos: [250, new ArgExpression([new ArgVariable("Ypos"), new ArgVariable("idx"), 40, "Multiply", "Plus"])],
 				},
 			],
 		});
@@ -60,9 +54,8 @@ describe("For", () => {
 					"intro"
 				]
 				$Ypos = 190
-				for $menuItem of $menuItems {
-					text $positions.$idx at:90,$Ypos
-					add $Ypos,40
+				for $menuItem of $menuItems index:$idx{
+					text $menuItem at:90,$Ypos+$idx*40
 				}
 
 			}
@@ -81,16 +74,12 @@ describe("For", () => {
 			count: 0,
 			var: "menuItem",
 			list: "menuItems",
+			index: "idx",
 			items: [
 				{
 					type: OP_TYPES.TEXT,
-					text: new ArgVariable("positions.$idx"),
-					pos: [90, new ArgVariable("Ypos")],
-				},
-				{
-					type: OP_TYPES.MATH,
-					fn: "add",
-					params: ["Ypos", 40],
+					text: new ArgVariable("menuItem"),
+					pos: [90, new ArgExpression([new ArgVariable("Ypos"), new ArgVariable("idx"), 40, "Multiply", "Plus"])],
 				},
 			],
 		});
@@ -101,9 +90,8 @@ describe("For", () => {
 		display "intro" {
 			layout {
 				$Ypos = 190
-				for $menuItem of ["play","intro"] {
-					text $menuItem at:90,$Ypos
-					add $Ypos,40
+				for $menuItem of ["play","intro"] index:$idx {
+					text $menuItem at:90,$Ypos+$idx*40
 				}
 
 			}
@@ -122,16 +110,48 @@ describe("For", () => {
 			count: 0,
 			var: "menuItem",
 			list: ["play", "intro"],
+			index: "idx",
 			items: [
 				{
 					type: OP_TYPES.TEXT,
 					text: new ArgVariable("menuItem"),
-					pos: [90, new ArgVariable("Ypos")],
+					pos: [90, new ArgExpression([new ArgVariable("Ypos"), new ArgVariable("idx"), 40, "Multiply", "Plus"])],
 				},
+			],
+		});
+	});
+
+	it("should do a for..of loop with iterator var", () => {
+		const script = `
+		display "intro" {
+			layout {
+				$Ypos = 190
+				for $menuItem of ["play","intro"] index:$idx {
+					text $menuItem at:90,$Ypos+$idx*40
+				}
+
+			}
+		}
+		`;
+		const result = compileScript(script);
+		expect(result).toBeDefined();
+		expect(result).toHaveProperty("layout");
+		expect(Array.isArray(result.layout)).toBe(true);
+
+		const menu = result.layout.find((op) => op.type === OP_TYPES.REPEAT);
+
+		expect(menu).toEqual({
+			type: OP_TYPES.REPEAT,
+			from: 0,
+			count: 0,
+			var: "menuItem",
+			list: ["play", "intro"],
+			index: "idx",
+			items: [
 				{
-					type: OP_TYPES.MATH,
-					fn: "add",
-					params: ["Ypos", 40],
+					type: OP_TYPES.TEXT,
+					text: new ArgVariable("menuItem"),
+					pos: [90, new ArgExpression([new ArgVariable("Ypos"), new ArgVariable("idx"), 40, "Multiply", "Plus"])],
 				},
 			],
 		});
@@ -144,7 +164,6 @@ describe("For", () => {
 				for $idx 0,10 {
 					text $positions.$idx at:90,$Ypos
 					text $highscores.$idx.score at:250,$Ypos
-					add $Ypos,40
 				}
 			}
 		}

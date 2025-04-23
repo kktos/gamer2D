@@ -6,7 +6,6 @@ import { DefAnimRules } from "./display/layout/defanim.rules";
 import { ForRules } from "./display/layout/for.rules";
 import { ImageRules } from "./display/layout/image.rules";
 import { LayoutRules } from "./display/layout/layout.rules";
-import { MathRules } from "./display/layout/math.rules";
 import { MenuRules } from "./display/layout/menu.rules";
 import { ParmsRules } from "./display/layout/parms.rules";
 import { RectRules } from "./display/layout/rect.rules";
@@ -34,7 +33,7 @@ export class SheetParser extends EmbeddedActionsParser {
 		this.performSelfAnalysis();
 	}
 
-	public variablesDict = new Map();
+	public variablesDict = new Map<string, unknown>();
 
 	public sheet = this.RULE("sheet", () => {
 		return this.OR([
@@ -48,6 +47,7 @@ export class SheetParser extends EmbeddedActionsParser {
 
 	public number = TypesRules.number(this);
 	public variable = TypesRules.variable(this);
+	public definedVariable = TypesRules.definedVariable(this);
 	public htmlColor = TypesRules.htmlColor(this);
 	public numOrVar = TypesRules.numOrVar(this);
 	public tupleNumOrVar = TypesRules.tupleNumOrVar(this);
@@ -97,10 +97,7 @@ export class SheetParser extends EmbeddedActionsParser {
 	public layoutSet = SetRules.layoutSet(this);
 	public layoutSetValue = SetRules.layoutSetValue(this);
 	public layoutSetValueArray = SetRules.layoutSetValueArray(this);
-	public layoutSetEval = SetRules.layoutSetEval(this);
 	public layoutSetTrait = SetRules.layoutSetTrait(this);
-
-	public mathAdd = MathRules.mathAdd(this);
 
 	public layoutFor = ForRules.layoutFor(this);
 	public layoutForTwoNumber = ForRules.layoutForTwoNumber(this);

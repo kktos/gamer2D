@@ -7,6 +7,6 @@ export class MouseXTrait extends Trait {
 		const bbox = scene.bbox;
 		entity.left = gc.mouse.x;
 		if (entity.left < bbox.left) entity.left = bbox.left;
-		else if (entity.right > bbox.right) entity.left = bbox.right - entity.size.x;
+		else if (entity.right > bbox.right) entity.left = bbox.right - entity.width;
 	}
 }

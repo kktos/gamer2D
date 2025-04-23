@@ -34,5 +34,5 @@ export function createEntityByName(resourceManager: ResourceManager, name: strin
 	if (!className) {
 		throw new TypeError(`Unknown Entity Type ${name}`);
 	}
-	return new className(resourceManager, ...args);
+	return new entityClasses[className](resourceManager, ...args);
 }

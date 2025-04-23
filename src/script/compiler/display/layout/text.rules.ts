@@ -2,14 +2,14 @@ import type { TextEntity } from "../../../../entities/text.entity";
 import type { BBox } from "../../../../maths/math";
 import { OP_TYPES } from "../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../types/typescript.types";
-import type { ArgColor, ArgVariable } from "../../../../types/value.types";
+import type { ArgColor, ArgExpression, ArgVariable } from "../../../../types/value.types";
 import { tokens } from "../../lexer";
 
 export type TText = {
 	type: TupleToUnion<[typeof OP_TYPES.TEXT]>;
 	text: string;
 	id?: string;
-	pos: [number | ArgVariable, number | ArgVariable];
+	pos: [number | ArgVariable | ArgExpression, number | ArgVariable | ArgExpression];
 	size?: number;
 	align?: number;
 	valign?: number;

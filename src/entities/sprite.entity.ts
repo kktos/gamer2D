@@ -9,7 +9,6 @@ export default class SpriteEntity extends Entity {
 		const [sheet, spriteName] = sprite.split(":");
 
 		super(resourceMgr, x, y, sheet);
-		this.size = { x: 50, y: 50 };
 
 		// this.isFixed = false;
 

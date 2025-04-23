@@ -3,8 +3,8 @@ import { Scene } from "./Scene";
 export class GameScene extends Scene {
 	private currentLevel: number;
 
-	constructor(gc, name, sheet) {
-		super(gc, name);
+	constructor(gc, sheet) {
+		super(gc, sheet.name);
 		this.isPermanent = true;
 
 		this.currentLevel = 0;

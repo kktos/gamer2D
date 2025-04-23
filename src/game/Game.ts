@@ -1,20 +1,29 @@
 import { GAME_EVENTS } from "../constants/events.const";
 import { GP_BUTTONS, GP_STICKS_AXES } from "../constants/gamepad.const";
 import type { Entity } from "../entities/Entity";
-import { setupEntities } from "../entities/EntityFactory";
-import ENV from "../env";
+import { setupEntities } from "../entities/Entity.factory";
+import type { Layer } from "../layers/Layer";
+import { setupLayers } from "../layers/Layer.factory";
+import type { Grid } from "../maths/grid.math";
 import Director from "../scene/Director";
 import type { Trait } from "../traits/Trait";
 import { setupTraits } from "../traits/TraitFactory";
 import { createViewport } from "../utils/canvas.utils";
+import { path } from "../utils/path.util";
+import { parseSettings } from "../utils/settings.utils";
 import { FPSManager } from "./FPSManager";
 import type GameContext from "./GameContext";
 import type { GameEvent } from "./GameEvent";
 import { KeyMap } from "./KeyMap";
 import ResourceManager from "./ResourceManager";
 
-export type entityDefinition = { name: string; className: string; classType: Entity };
-export type traitDefinition = { className: string; classType: Trait };
+type EntityConstructor = new (...args: unknown[]) => Entity;
+type TraitConstructor = new (...args: unknown[]) => Trait;
+type LayerConstructor = new (...args: unknown[]) => Layer;
+
+export type entityDefinition = { name: string; className: string; classType: EntityConstructor };
+export type traitDefinition = { className: string; classType: TraitConstructor };
+export type layerDefinition = { className: string; classType: LayerConstructor };
 
 export type GameOptions = {
 	paths: {
@@ -23,11 +32,17 @@ export type GameOptions = {
 		fonts: string;
 		scenes: string;
 	};
-	audio: {
-		volume: number;
-	};
 	entities?: entityDefinition[];
 	traits?: traitDefinition[];
+	layers?: layerDefinition[];
+
+	scenes: {
+		level: {
+			createGrid: (settings: Record<string, unknown>) => Grid;
+			layers: string[];
+		};
+	};
+	settings: string;
 };
 
 export default class Game {
@@ -35,15 +50,33 @@ export default class Game {
 	private gc: GameContext;
 	private coppola: Director | null;
 
-	constructor(canvas: HTMLCanvasElement, options: GameOptions) {
+	constructor(
+		canvas: HTMLCanvasElement,
+		public options: GameOptions,
+	) {
 		this.coppola = null;
 
+		for (const [key, value] of Object.entries(this.options.paths)) {
+			this.options.paths[key as keyof GameOptions["paths"]] = path(value);
+		}
+
+		const settings = parseSettings(options.settings);
+
+		const FPS = settings.getNumber("FPS") ?? 60;
 		this.gc = {
-			viewport: createViewport(canvas),
+			viewport: createViewport(canvas, {
+				width: settings.getNumber("VIEWPORT.WIDTH"),
+				height: settings.getNumber("VIEWPORT.HEIGHT"),
+				ratio: settings.getNumber("VIEWPORT.RATIO"),
+			}),
+			ui: { height: settings.getNumber("UI.HEIGHT") ?? 200 },
 
-			resourceManager: new ResourceManager(options),
+			resourceManager: new ResourceManager(this.options, settings),
 
-			dt: 1 / ENV.FPS,
+			options: this.options,
+
+			FPS,
+			dt: 1 / FPS,
 			tick: 0,
 			deltaTime: 0,
 			totalTime: 0,
@@ -52,6 +85,8 @@ export default class Game {
 			gamepad: null,
 			keys: new KeyMap(),
 			scene: null,
+
+			gravity: settings.getNumber("PHYSICS.GRAVITY") ?? 50,
 
 			wannaPauseOnBlur: true,
 		};
@@ -65,10 +100,11 @@ export default class Game {
 			this.gc.gamepad && this.readGamepad();
 			this.coppola?.update(this.gc);
 		};
-		this.fpsManager = new FPSManager(ENV.FPS, onTimerUpdate);
+		this.fpsManager = new FPSManager(FPS, onTimerUpdate);
 
 		if (options.entities) setupEntities(options.entities);
 		if (options.traits) setupTraits(options.traits);
+		if (options.layers) setupLayers(options.layers);
 	}
 
 	pause() {

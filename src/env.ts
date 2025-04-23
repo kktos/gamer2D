@@ -1,15 +1,16 @@
+/*
 // const rootDir= "./assets";
-const rootDir = "";
+// const rootDir = "";
 
-const VIEWPORT_RATIO = 387 / 315;
+// const VIEWPORT_RATIO = 387 / 315;
 
 const ENV = {
-	MAIN_FONT: "bubble-bobble",
+	// MAIN_FONT: "bubble-bobble",
 
 	// SCENES_PATH: "scenes/",
 	// LEVELS_DIR: "/levels/",
 	// SOUNDS_PATH: "sounds/",
-	VOLUME: 50,
+	// VOLUME: 50,
 
 	// SPRITESHEETS_PATH: "spritesheets/",
 	// IMAGES_PATH: "images/",
@@ -40,13 +41,14 @@ const ENV = {
 	// VIEWPORT_WIDTH: 387*2,
 	// VIEWPORT_HEIGHT: 315*2,
 
-	VIEWPORT_RATIO: 387 / 315,
-	VIEWPORT_WIDTH: 600,
-	VIEWPORT_HEIGHT: 600,
+	// VIEWPORT_RATIO: 387 / 315,
+	// VIEWPORT_WIDTH: 600,
+	// VIEWPORT_HEIGHT: 600,
 
-	UI_HEIGHT: 200,
+	// UI_HEIGHT: 200,
 
-	FPS: 60,
+	// FPS: 60,
 };
 
 export default ENV;
+*/

@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { OP_TYPES } from "../../../types/operation.types";
 import { compileScript } from "../compiler";
 
 describe("Display", () => {

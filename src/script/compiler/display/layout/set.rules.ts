@@ -7,7 +7,7 @@ import { tokens } from "../../lexer";
 export type TSet = {
 	type: TupleToUnion<[typeof OP_TYPES.SET]>;
 	name: string;
-	value: number | string | TResultValue[] | ValueTrait | { expr: string };
+	value: number | string | TResultValue[] | ValueTrait; // | { expr: string };
 };
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
@@ -36,10 +36,8 @@ export class SetRules {
 		return $.RULE("layoutSetValue", () => {
 			return $.OR([
 				{ ALT: () => $.CONSUME(tokens.StringLiteral).payload },
-				// { ALT: () => $.SUBRULE($.numOrVar) },
 				{ ALT: () => $.SUBRULE($.expr) },
 				{ ALT: () => $.SUBRULE($.layoutSetValueArray) },
-				{ ALT: () => $.SUBRULE($.layoutSetEval) },
 				{ ALT: () => $.SUBRULE($.layoutSetTrait) },
 				{ ALT: () => $.SUBRULE($.htmlColor) },
 			]);
@@ -75,14 +73,6 @@ export class SetRules {
 
 			$.CONSUME(tokens.CloseParent);
 			return new ValueTrait(name, args);
-		});
-	}
-
-	static layoutSetEval($) {
-		return $.RULE("layoutSetEval", () => {
-			$.CONSUME(tokens.Eval);
-			const expr = $.CONSUME(tokens.StringLiteral).payload;
-			return { expr };
 		});
 	}
 

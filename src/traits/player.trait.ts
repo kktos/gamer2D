@@ -1,20 +1,21 @@
-import ENV from "../env";
 import LocalDB from "../utils/storage.util";
 import { Trait } from "./Trait";
 
 export default class PlayerTrait extends Trait {
 	static EVENT_PLAYER_KILLED = Symbol.for("playerKilled");
 
-	lives: number;
-	score: number;
-	highscore: number;
-	paddle: unknown;
+	private lives: number;
+	private score: number;
+	private highscore: number;
+	private paddle: unknown;
+	private maxLifes: number;
 
 	constructor(paddle) {
 		super();
 
 		const currentStats = LocalDB.currentPlayer();
 		this.lives = currentStats.lives;
+		this.maxLifes = 0; //ENV.MAX_LIFES;
 		this.score = currentStats.score;
 		this.highscore = currentStats.highscore;
 
@@ -45,7 +46,7 @@ export default class PlayerTrait extends Trait {
 
 	addLife() {
 		this.lives++;
-		if (this.lives > ENV.MAX_LIFES) this.lives = ENV.MAX_LIFES;
+		if (this.lives > this.maxLifes) this.lives = this.maxLifes;
 		LocalDB.updateLives(this.lives);
 	}
 }

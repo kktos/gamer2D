@@ -17,6 +17,17 @@ export class TypesRules {
 		});
 	}
 
+	static definedVariable($) {
+		return $.RULE("definedVariable", () => {
+			const varName = $.CONSUME(tokens.Variable).image.substring(1);
+			$.ACTION(() => {
+				const parts = varName.split(".");
+				if (!$.variablesDict.has(parts[0])) throw new TypeError(`Unknown variable "${parts[0]}"`);
+			});
+			return new ArgVariable(varName);
+		});
+	}
+
 	static htmlColor($) {
 		return $.RULE("htmlColor", () => {
 			const colorName = () => $.CONSUME(tokens.Identifier).image;
@@ -41,17 +52,15 @@ export class TypesRules {
 					},
 				},
 				{ ALT: () => $.SUBRULE($.number) },
-				{ ALT: () => $.SUBRULE($.variable) },
+				{ ALT: () => $.SUBRULE($.definedVariable) },
 			]);
 		});
 	}
 
 	static tupleNumOrVar($) {
 		return $.RULE("tupleNumOrVar", () => {
-			// const x = $.SUBRULE($.numOrVar);
 			const x = $.SUBRULE($.expr);
 			$.CONSUME(tokens.Comma);
-			// const y = $.SUBRULE2($.numOrVar);
 			const y = $.SUBRULE2($.expr);
 			return [x, y];
 		});

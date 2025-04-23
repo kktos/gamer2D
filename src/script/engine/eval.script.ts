@@ -1,6 +1,6 @@
 import { createTrait } from "../../traits/TraitFactory";
 import type { TResultValue, TVarTypes, TVars } from "../../types/engine.types";
-import { ArgColor, ArgIdentifier, ArgVariable, ValueTrait } from "../../types/value.types";
+import { ArgColor, type ArgExpression, ArgIdentifier, ArgVariable, ValueTrait } from "../../types/value.types";
 import type { TFunctionArg } from "../compiler/display/layout/action.rules";
 
 export function isStringInterpolable(text: string) {
@@ -52,7 +52,7 @@ export function evalVar({ vars }: { vars: TVars }, varname: string) {
 
 const VARNAME_REGEX = /\$[a-zA-Z_][a-zA-Z0-9_]*(?:\.\$?[a-zA-Z_][a-zA-Z0-9_]*)*/g;
 
-export function evalValue({ vars }: { vars: TVars }, varOrExpr: TResultValue[] | number | string | { expr: string } | ValueTrait): TVarTypes {
+export function oldEvalValue({ vars }: { vars: TVars }, varOrExpr: TResultValue[] | number | string | { expr: string } | ValueTrait): TVarTypes {
 	if (Array.isArray(varOrExpr) || typeof varOrExpr === "number") return varOrExpr;
 
 	if (typeof varOrExpr === "string") {
@@ -68,6 +68,47 @@ export function evalValue({ vars }: { vars: TVars }, varOrExpr: TResultValue[] |
 	const expr = exprSrc.replaceAll(VARNAME_REGEX, (name) => evalVar({ vars }, name.substring(1)) as string);
 	// biome-ignore lint/security/noGlobalEval: <explanation>
 	return eval(expr);
+}
+
+export function evalValue({ vars }: { vars: TVars }, expr: ArgExpression | ArgVariable | number | string | ValueTrait | TResultValue[]) {
+	if (Array.isArray(expr) || typeof expr === "number") return expr;
+	if (typeof expr === "string") return interpolateString({ vars }, expr);
+	if (expr instanceof ArgVariable) return evalVar({ vars }, expr.value);
+	if (expr instanceof ValueTrait) return createTrait(expr.name, ...expr.args);
+	return evalExpr({ vars }, expr);
+}
+
+export function evalExpr({ vars }: { vars: TVars }, expr: ArgExpression) {
+	let idx = 0;
+	const args = [];
+	while (idx < expr.stack.length) {
+		const item = expr.stack[idx++];
+		if (typeof item === "string") {
+			const op2 = args.pop();
+			const op1 = args.pop();
+			switch (item) {
+				case "Plus":
+					args.push(op1 + op2);
+					break;
+				case "Minus":
+					args.push(op1 - op2);
+					break;
+				case "Multiply":
+					args.push(op1 * op2);
+					break;
+				case "Divide":
+					args.push(op1 / op2);
+					break;
+			}
+			continue;
+		}
+		if (item instanceof ArgVariable) {
+			args.push(evalVar({ vars }, item.value));
+			continue;
+		}
+		args.push(item);
+	}
+	return args[0];
 }
 
 export function evalNumber({ vars }, nameOrNumber: ArgVariable | number) {

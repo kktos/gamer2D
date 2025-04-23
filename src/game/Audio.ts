@@ -1,5 +1,5 @@
-import ENV from "../env";
 import { loadJson, loadSound } from "../utils/loaders.util";
+import type { TSettings } from "../utils/settings.utils";
 
 const audioContext = new window.AudioContext();
 unlockAudioContext(audioContext);
@@ -49,8 +49,8 @@ async function loadFile(context: AudioContext, soundName: string) {
 		.catch((err) => console.error(`loadSound(${soundName})`, err));
 }
 
-async function loadSounds(sheet) {
-	const audio = new Audio();
+async function loadSounds(sheet, settings: TSettings) {
+	const audio = new Audio(settings);
 	return Promise.all(
 		Object.keys(sheet).map((name) =>
 			loadFile(audio.context, sheet[name].sound)
@@ -67,17 +67,17 @@ export default class Audio {
 	private gainNode: GainNode;
 	public context: AudioContext;
 
-	static load(filename: string) {
+	static load(filename: string, settings: TSettings) {
 		return loadJson(filename)
-			.then((sheet) => loadSounds(sheet))
+			.then((sheet) => loadSounds(sheet, settings))
 			.catch((err) => console.error(`Audio.load(${filename})`, err));
 	}
 
-	constructor() {
+	constructor(settings: TSettings) {
 		this.buffers = new Map();
 		this.context = audioContext;
 		this.gainNode = this.context.createGain();
-		this.gainNode.gain.value = (ENV.VOLUME / 100) ** 2;
+		this.gainNode.gain.value = (settings.getNumber("AUDIO.VOLUME") / 100) ** 2;
 	}
 
 	add(name: string, buffer: AudioBuffer) {

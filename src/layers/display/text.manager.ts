@@ -1,18 +1,18 @@
 import type { Entity } from "../../entities/Entity";
 import { type TextDTO, TextEntity } from "../../entities/text.entity";
 import type { TText } from "../../script/compiler/display/layout/text.rules";
-import { evalArg, evalNumber, isStringInterpolable } from "../../script/engine/eval.script";
+import { evalArg, evalNumber, evalValue, isStringInterpolable } from "../../script/engine/eval.script";
 import type { Trait } from "../../traits/Trait";
 import { type PathDefDTO, PathTrait } from "../../traits/path.trait";
 import { VariableTrait } from "../../traits/variable.trait";
 import type { TVars } from "../../types/engine.types";
-import { ArgVariable } from "../../types/value.types";
+import { ArgExpression, ArgVariable } from "../../types/value.types";
 import type { DisplayLayer } from "../display.layer";
 import { EntitiesLayer } from "../entities.layer";
 
 export function addText(layer: DisplayLayer, op: TText & { entity?: Entity }) {
-	const posX = evalNumber({ vars: layer.vars }, op.pos[0]);
-	const posY = evalNumber({ vars: layer.vars }, op.pos[1]);
+	const posX = evalValue({ vars: layer.vars }, op.pos[0]);
+	const posY = evalValue({ vars: layer.vars }, op.pos[1]);
 
 	const textObj: TextDTO = {
 		pos: [posX, posY],
@@ -73,13 +73,18 @@ function setupVariableProps(op: TText & { entity?: Entity }, entity: Entity, var
 		{ propName: "text", alias: "text" },
 	];
 	const addTrait = (prop, alias) => {
+		if (typeof prop === "number") return;
+		if (typeof prop === "string") {
+			if (isStringInterpolable(prop)) {
+				entity.addTrait(new VariableTrait({ vars, propName: alias, text: op.text }));
+			}
+			return;
+		}
 		if (prop instanceof ArgVariable) {
 			entity.addTrait(new VariableTrait({ vars, propName: alias, varName: prop.value }));
 			return;
 		}
-		if (isStringInterpolable(prop)) {
-			entity.addTrait(new VariableTrait({ vars, propName: alias, text: op.text }));
-		}
+		if (prop instanceof ArgExpression) entity.addTrait(new VariableTrait({ vars, propName: alias, text: op.text }));
 	};
 	for (const { propName, alias } of varProps) {
 		if (Array.isArray(op[propName])) {

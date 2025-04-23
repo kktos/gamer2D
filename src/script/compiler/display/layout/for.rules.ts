@@ -4,14 +4,15 @@ import type { TRepeat } from "./repeat.rules";
 
 /*
 	for $idx 0,10 {
-		step 0,40
-		items {
-			text "%positions.$idx%" at:90,190
-			text "%highscores.$idx.score%" at:250,190
-			text "%highscores.$idx.round%" at:450,190
-			text "%highscores.$idx.name%" at:580,190
-		}
+		text "%positions.$idx%" at:90,190
+		text "%highscores.$idx.score%" at:250,190
+		text "%highscores.$idx.round%" at:450,190
+		text "%highscores.$idx.name%" at:580,190
 	}
+	$itemYpos = 180
+	for $menuItem of $menuItems var:$idx {
+		item {text $menuItem at:300,$itemYpos+50*$idx}
+	}		
 */
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
@@ -27,7 +28,8 @@ export class ForRules {
 					// for <var> from,to
 					ALT: () => {
 						$.OPTION(() => {
-							result.var = $.CONSUME(tokens.Variable).image.substring(1);
+							result.index = $.CONSUME(tokens.Variable).image.substring(1);
+							$.variablesDict.set(result.index, 0);
 						});
 
 						const range = $.SUBRULE($.layoutForTwoNumber);
@@ -50,6 +52,13 @@ export class ForRules {
 							},
 							{ ALT: () => $.SUBRULE($.arrayOfVarsAndStrings) },
 						]);
+
+						$.OPTION2(() => {
+							$.CONSUME(tokens.Index);
+							$.CONSUME(tokens.Colon);
+							result.index = $.CONSUME4(tokens.Variable).image.substring(1);
+							$.variablesDict.set(result.index, 0);
+						});
 					},
 				},
 			]);

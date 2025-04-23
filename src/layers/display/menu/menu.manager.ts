@@ -1,11 +1,9 @@
 import type { TextEntity } from "../../../entities/text.entity";
-import ENV from "../../../env";
 import { Events } from "../../../events/Events";
 import type GameContext from "../../../game/GameContext";
 import type { GameEvent } from "../../../game/GameEvent";
 import type { SpriteSheet } from "../../../game/Spritesheet";
 import { growRect, ptInRect } from "../../../maths/math";
-import type { TMath } from "../../../script/compiler/display/layout/math.rules";
 import type { TMenu, TMenuItem, TMenuItemRendered } from "../../../script/compiler/display/layout/menu.rules";
 import type { TRepeatItem } from "../../../script/compiler/display/layout/repeat.rules";
 import { execAction } from "../../../script/engine/exec.script";
@@ -21,6 +19,8 @@ export class GameMenu {
 	private wannaDisplayHitzones: boolean;
 	public itemSelected: number;
 	private keys: Record<string, () => void>;
+	private DefaultColorSelectedText: string;
+	private DefaultColorSelectedRect: string;
 
 	static create(gc: GameContext, layer: DisplayLayer, menus: TMenu[] | null): GameMenu | null {
 		if (!menus || menus.length === 0) return null;
@@ -35,6 +35,8 @@ export class GameMenu {
 	) {
 		this.itemSelected = 0;
 		this.wannaDisplayHitzones = false;
+		this.DefaultColorSelectedText = gc.resourceManager.settings.get("MENU.COLORS.SELECTED_TEXT") as string;
+		this.DefaultColorSelectedRect = gc.resourceManager.settings.get("MENU.COLORS.SELECT_RECT") as string;
 
 		this.keys = {};
 		const keys = menu.keys ?? {};
@@ -64,12 +66,12 @@ export class GameMenu {
 			this.layer.vars.set("itemSelected", "");
 		}
 
-		const menuItems: Exclude<TRepeatItem, TMath>[] = [];
+		const menuItems: TRepeatItem[] = [];
 		for (let idx = 0; idx < this.menu.items.length; idx++) {
 			const item = this.menu.items[idx];
 
 			if (item.type === OP_TYPES.REPEAT) {
-				repeat(item, (menuitem: Exclude<TRepeatItem, TMath>) => menuItems.push(menuitem), this.layer.vars);
+				repeat(item, (menuitem: TRepeatItem) => menuItems.push(menuitem), this.layer.vars);
 				continue;
 			}
 
@@ -168,7 +170,7 @@ export class GameMenu {
 	}
 
 	renderMenu(ctx: CanvasRenderingContext2D) {
-		const selectedColor = this.menu.selection?.color ?? ENV.COLORS.SELECTED_TEXT;
+		const selectedColor = this.menu.selection?.color ?? this.DefaultColorSelectedText;
 
 		const renderMenuItem = (item: TMenuItem, isSelected: boolean) => {
 			switch (item.type) {
@@ -236,7 +238,7 @@ export class GameMenu {
 			ctx.fillStyle = bkgndColor;
 			ctx.fillRect(selectRect.x, selectRect.y, selectRect.width + 2, selectRect.height - 4);
 		}
-		const color = this.menu.selection?.color ?? ENV.COLORS.SELECT_RECT;
+		const color = this.menu.selection?.color ?? this.DefaultColorSelectedRect;
 		if (color) {
 			ctx.strokeStyle = color;
 			ctx.beginPath();

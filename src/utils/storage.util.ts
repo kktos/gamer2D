@@ -1,4 +1,4 @@
-import ENV from "../env";
+const HIGHSCORES_COUNT = 10;
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export default class LocalDB {
@@ -71,7 +71,7 @@ export default class LocalDB {
 	static isPlayerScoreGoodEnough() {
 		const lastGame = LocalDB.currentPlayer();
 		const highscores = LocalDB.highscores();
-		return !highscores.length || highscores.length < ENV.HIGHSCORES_COUNT || highscores.some((i) => i.score < lastGame.score);
+		return !highscores.length || highscores.length < HIGHSCORES_COUNT || highscores.some((i) => i.score < lastGame.score);
 	}
 
 	static updateHighscores() {
@@ -83,7 +83,7 @@ export default class LocalDB {
 			score: lastGame.score,
 		});
 		highscores.sort((a, b) => (a.score < b.score ? 1 : -1));
-		highscores = highscores.slice(0, ENV.HIGHSCORES_COUNT);
+		highscores = highscores.slice(0, HIGHSCORES_COUNT);
 		localStorage.setItem("player:highscore", highscores[highscores.length - 1].score);
 		localStorage.setItem("player:highscores", JSON.stringify(highscores));
 	}

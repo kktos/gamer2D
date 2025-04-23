@@ -1,4 +1,4 @@
-import { ArgColor, ArgIdentifier, ArgVariable } from "../types/value.types";
+import { ArgColor, ArgExpression, ArgIdentifier, ArgVariable } from "../types/value.types";
 
 // https://gist.github.com/Ely-S/4191458
 export function clone<T>(original: T, duplicata: Record<string, unknown> = {}): T {
@@ -16,6 +16,11 @@ export function clone<T>(original: T, duplicata: Record<string, unknown> = {}): 
 			}
 			if (original[i] instanceof ArgIdentifier) {
 				const col = new ArgIdentifier(original[i].value);
+				duplicata[i] = col;
+				continue;
+			}
+			if (original[i] instanceof ArgExpression) {
+				const col = new ArgExpression(original[i].stack);
 				duplicata[i] = col;
 				continue;
 			}

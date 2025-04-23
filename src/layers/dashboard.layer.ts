@@ -1,5 +1,4 @@
 // import WallEntity from "../entities/wall.entity.js";
-import ENV from "../env";
 import type Font from "../game/Font";
 import { Align } from "../game/Font";
 import type { SpriteSheet } from "../game/Spritesheet";
@@ -26,7 +25,7 @@ export class DashboardLayer extends Layer {
 		this.spritesheet = rezMgr.get("sprite", "bubblun");
 
 		const lifeSize = this.spritesheet.spriteSize("life");
-		this.lifeY = ENV.VIEWPORT_HEIGHT - lifeSize.y * 2 - 6;
+		this.lifeY = gc.viewport.height - lifeSize.y * 2 - 6;
 		this.lifeW = lifeSize.x;
 
 		// this.walls= [];
@@ -37,7 +36,7 @@ export class DashboardLayer extends Layer {
 		// );
 		// this.walls[2].left= this.width - this.walls[2].size.x - 2;
 
-		this.font = rezMgr.get("font", ENV.MAIN_FONT);
+		this.font = rezMgr.get("font", gc.resourceManager.mainFontName);
 
 		// this.timer= 0;
 	}

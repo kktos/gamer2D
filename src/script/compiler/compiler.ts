@@ -3,10 +3,10 @@ import { SheetParser } from "./parser";
 
 const parser = new SheetParser();
 
-export function compileScript(text: string) {
+export function compileScript(text: string, globals?: Map<string, unknown>) {
 	const lexingResult = SheetLexer.tokenize(text);
 	parser.input = lexingResult.tokens;
-	parser.variablesDict = new Map();
+	parser.variablesDict = globals ? globals : new Map();
 	const result = parser.sheet();
 	if (parser.errors.length > 0) {
 		console.error("PARSE ERR", parser.errors);

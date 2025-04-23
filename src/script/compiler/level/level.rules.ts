@@ -1,6 +1,23 @@
+import type { DIRECTIONS } from "../../../types/direction.type";
+import type { TupleToUnion } from "../../../types/typescript.types";
+import type { ArgColor, ArgExpression, ArgVariable } from "../../../types/value.types";
 import { tokens } from "../lexer";
 
 const CONCAT = Symbol.for("concat");
+
+export type TSceneLevelSheet = {
+	type: "level";
+	name: string;
+	showCursor?: boolean;
+	background?: ArgColor;
+	font?: string;
+	settings?: Record<string, unknown>;
+	sprites?: {
+		name: string;
+		pos: [number | ArgVariable | ArgExpression, number | ArgVariable | ArgExpression];
+		dir: TupleToUnion<[typeof DIRECTIONS.LEFT, typeof DIRECTIONS.RIGHT]>;
+	}[];
+};
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class LevelRules {
@@ -8,7 +25,7 @@ export class LevelRules {
 		return $.RULE("levelSheet", () => {
 			$.CONSUME(tokens.Level);
 
-			const sheet = {
+			const sheet: TSceneLevelSheet = {
 				type: "level",
 				name: $.CONSUME(tokens.StringLiteral).payload,
 			};

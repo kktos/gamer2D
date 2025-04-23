@@ -1,17 +1,16 @@
-import ENV from "../env";
-
-export function createViewport(canvas: HTMLCanvasElement) {
+export function createViewport(canvas: HTMLCanvasElement, viewport: { width: number; height: number; ratio: number }) {
 	canvas.width = window.innerWidth;
-	canvas.height = canvas.width * ENV.VIEWPORT_RATIO;
+	canvas.height = canvas.width * Number(viewport.ratio); //ENV.VIEWPORT_RATIO;
 
 	return {
-		width: ENV.VIEWPORT_WIDTH,
-		height: ENV.VIEWPORT_HEIGHT,
+		width: viewport.width, //ENV.VIEWPORT_WIDTH,
+		height: viewport.height, //ENV.VIEWPORT_HEIGHT,
 		canvas,
 		bbox: canvas.getBoundingClientRect(),
 		ctx: canvas.getContext("2d") as CanvasRenderingContext2D,
-		ratioWidth: canvas.width / ENV.VIEWPORT_WIDTH,
-		ratioHeight: canvas.height / ENV.VIEWPORT_HEIGHT,
+		ratioWidth: canvas.width / Number(viewport.width),
+		ratioHeight: canvas.height / Number(viewport.height),
+		ratio: viewport.ratio,
 	};
 }
 

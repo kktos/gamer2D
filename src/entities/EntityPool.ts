@@ -1,6 +1,6 @@
 import type GameContext from "../game/GameContext";
 import type ResourceManager from "../game/ResourceManager";
-import { createEntity } from "./EntityFactory";
+import { createEntity } from "./Entity.factory";
 
 export class EntityPool {
 	static pools = {};

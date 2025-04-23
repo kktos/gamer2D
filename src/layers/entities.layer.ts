@@ -1,6 +1,10 @@
 import type { Entity } from "../entities/Entity";
 import type GameContext from "../game/GameContext";
+import type { Grid } from "../maths/grid.math";
 import type { Scene } from "../scene/Scene";
+import type { SceneDisplaySheet } from "../script/compiler/display/display.rules";
+import type { TSceneLevelSheet } from "../script/compiler/level/level.rules";
+import { createLevelEntities } from "../utils/createLevelEntities.utils";
 import { Layer } from "./Layer";
 
 export class EntitiesLayer extends Layer {
@@ -10,11 +14,12 @@ export class EntitiesLayer extends Layer {
 	private entities: Entity[];
 	private wannaShowCount: boolean;
 
-	constructor(gc: GameContext, parent, entities: Entity[] = [], sheet = null) {
+	constructor(gc: GameContext, parent: Scene, sheet: TSceneLevelSheet | SceneDisplaySheet, grid?: Grid) {
 		super(gc, parent);
 
-		this.entities = entities;
-		this.wannaShowCount = sheet?.settings?.show_entities_count;
+		this.entities = grid ? createLevelEntities(gc.resourceManager, grid, (sheet as TSceneLevelSheet).sprites) : [];
+
+		this.wannaShowCount = sheet.settings?.show_entities_count === true;
 
 		this.setTaskHandlers();
 	}

@@ -1,6 +1,28 @@
 import { OP_TYPES } from "../../../types/operation.types";
+import type { ArgColor } from "../../../types/value.types";
 import { tokens } from "../lexer";
 import type { TSet } from "./layout/set.rules";
+import type { TEventHandlers } from "./on.rules";
+import type { TSoundDefs } from "./sound.rules";
+
+export type SceneSheetUI = {
+	pos: "top" | "bottom";
+	background?: ArgColor;
+};
+
+export type SceneDisplaySheet = {
+	type: "display";
+	name: string;
+	showCursor?: boolean;
+	background?: ArgColor;
+	layers?: string[];
+	ui?: SceneSheetUI;
+	font?: string;
+	layout?: unknown[];
+	sounds?: TSoundDefs;
+	on?: TEventHandlers;
+	settings?: Record<string, unknown>;
+};
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class DisplayRules {

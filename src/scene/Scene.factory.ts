@@ -1,17 +1,42 @@
 import type GameContext from "../game/GameContext";
 import { compileScript } from "../script/compiler/compiler";
+import type { SceneDisplaySheet } from "../script/compiler/display/display.rules";
+import type { TSceneLevelSheet } from "../script/compiler/level/level.rules";
 import LocalDB from "../utils/storage.util";
 import type { Scene } from "./Scene";
-import { DisplayScene, type SceneDisplaySheet } from "./display.scene";
+import { DisplayScene } from "./display.scene";
 // import EditorScene from "./editor.scene.js";
 import { GameScene } from "./game.scene";
-import LevelScene, { type SceneLevelSheet } from "./level.scene";
+import LevelScene from "./level.scene";
 
 export type SceneGameSheet = {
 	type: "game";
 	name: string;
 };
-export type SceneSheet = SceneDisplaySheet | SceneLevelSheet | SceneGameSheet;
+export type SceneSheet = SceneDisplaySheet | TSceneLevelSheet | SceneGameSheet;
+
+const GLOBAL_VARIABLES = new Map([
+	// display
+	["highscores", 0],
+	["player", 0],
+	["mouseX", 0],
+	["mouseY", 0],
+	["sprites", 0],
+	["clientHeight", 0],
+	["clientWidth", 0],
+	["centerX", 0],
+	["centerY", 0],
+	["centerUIY", 0],
+	//menu
+	["itemSelected", 0],
+	["itemIdxSelected", 0],
+	// debug
+	["frameSpriteSize", 0],
+	["frameSprite", 0],
+	["spriteType", 0],
+	["anim", 0],
+	["spriteIndex", 0],
+]);
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class SceneFactory {
@@ -26,7 +51,7 @@ export class SceneFactory {
 		if (!sheet) {
 			try {
 				const scriptText = await gc.resourceManager.loadScene(name);
-				sheet = compileScript(scriptText);
+				sheet = compileScript(scriptText, GLOBAL_VARIABLES);
 			} catch (e) {
 				console.error((e as Error).message);
 			}
@@ -39,16 +64,16 @@ export class SceneFactory {
 		let scene: Scene;
 		switch (sheet.type) {
 			case "display":
-				scene = new DisplayScene(gc, sheet.name, sheet);
+				scene = new DisplayScene(gc, sheet);
 				break;
 			// case "editor":
 			// 	scene= new EditorScene(gc, sheet.name, sheet);
 			// 	break;
 			case "level":
-				scene = new LevelScene(gc, sheet.name, sheet);
+				scene = new LevelScene(gc, sheet);
 				break;
 			case "game":
-				scene = new GameScene(gc, sheet.name, sheet);
+				scene = new GameScene(gc, sheet);
 				break;
 			default:
 				// throw new Error(`Uknown Scene type: ${sheet.type}`);

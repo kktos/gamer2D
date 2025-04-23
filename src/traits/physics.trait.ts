@@ -1,7 +1,5 @@
 import type { Entity } from "../entities/Entity";
-import ENV from "../env";
 import type GameContext from "../game/GameContext";
-import { COLLISION, intersectRect } from "../maths/math";
 import type LevelScene from "../scene/level.scene";
 import { Trait } from "./Trait";
 
@@ -23,7 +21,7 @@ export class PhysicsTrait extends Trait {
 	}
 
 	update(gc: GameContext, entity: Entity, scene: LevelScene) {
-		entity.vel.y += (scene.gravity ?? 50) * entity.mass * gc.dt;
+		entity.vel.y += scene.gravity * entity.mass * gc.dt;
 
 		entity.left += entity.vel.x * gc.dt;
 		// level.tileCollider.checkX(entity, gameContext, level);

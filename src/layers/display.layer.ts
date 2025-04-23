@@ -1,12 +1,11 @@
 import type { Entity } from "../entities/Entity";
-import { createEntity } from "../entities/EntityFactory";
-import ENV from "../env";
+import { createEntity } from "../entities/Entity.factory";
 import type Font from "../game/Font";
 import type GameContext from "../game/GameContext";
 import type { GameEvent } from "../game/GameEvent";
 import type { BBox } from "../maths/math";
 import type { Scene } from "../scene/Scene";
-import type { SceneDisplaySheet } from "../scene/display.scene";
+import type { SceneDisplaySheet } from "../script/compiler/display/display.rules";
 import type { TStatement } from "../script/compiler/display/layout/layout.rules";
 import type { TRect } from "../script/compiler/display/layout/rect.rules";
 import type { TView } from "../script/compiler/display/layout/view.rules";
@@ -54,7 +53,7 @@ export class DisplayLayer extends UILayer {
 		super(gc, parent, sheet.ui);
 
 		const rezMgr = gc.resourceManager;
-		this.font = rezMgr.get("font", sheet.font ?? ENV.MAIN_FONT) as Font;
+		this.font = rezMgr.get<Font>("font", sheet.font ?? gc.resourceManager.mainFontName);
 
 		this.layout = sheet.layout as TStatement[];
 		this.time = 0;
@@ -63,7 +62,7 @@ export class DisplayLayer extends UILayer {
 		this.wannaShowCursor = sheet.showCursor;
 
 		this.vars = new Map();
-		this.initVars();
+		this.initVars(gc);
 
 		this.views = this.layout.filter((op) => op.type === OP_TYPES.VIEW) as unknown as TViewDef[];
 		initViews({ canvas: gc.viewport.canvas, gc, vars: this.vars, layer: this });
@@ -86,7 +85,7 @@ export class DisplayLayer extends UILayer {
 		}
 	}
 
-	initVars() {
+	initVars(gc: GameContext) {
 		this.vars.set("highscores", LocalDB.highscores());
 		this.vars.set("player", LocalDB.currentPlayer());
 
@@ -95,11 +94,11 @@ export class DisplayLayer extends UILayer {
 
 		this.vars.set("sprites", new Map<string, Entity>());
 
-		this.vars.set("clientHeight", ENV.VIEWPORT_HEIGHT);
-		this.vars.set("clientWidth", ENV.VIEWPORT_WIDTH);
-		this.vars.set("centerX", Math.floor(ENV.VIEWPORT_WIDTH / 2));
-		this.vars.set("centerY", Math.floor(ENV.VIEWPORT_HEIGHT / 2));
-		this.vars.set("centerUIY", Math.floor((this.gc.viewport.bbox.height - ENV.UI_HEIGHT) / 2 / this.gc.viewport.ratioHeight));
+		this.vars.set("clientHeight", gc.viewport.height);
+		this.vars.set("clientWidth", gc.viewport.width);
+		this.vars.set("centerX", Math.floor(gc.viewport.width / 2));
+		this.vars.set("centerY", Math.floor(gc.viewport.height / 2));
+		this.vars.set("centerUIY", Math.floor((this.gc.viewport.bbox.height - gc.ui.height) / 2 / this.gc.viewport.ratioHeight));
 	}
 
 	initEventHandlers(EventHandlers: TEventHandlers, parent: Scene) {
@@ -162,6 +161,7 @@ export class DisplayLayer extends UILayer {
 					break;
 				}
 				case OP_TYPES.SET:
+					// this.vars.set(op.name, oldEvalValue({ vars: this.vars }, op.value));
 					this.vars.set(op.name, evalValue({ vars: this.vars }, op.value));
 					break;
 				case OP_TYPES.REPEAT:

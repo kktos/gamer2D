@@ -1,6 +1,6 @@
 import type { TVars } from "../../types/engine.types";
 import { ArgColor, ArgIdentifier, ArgVariable } from "../../types/value.types";
-import { evalValue, evalVar, interpolateString } from "./eval.script";
+import { evalVar, interpolateString, oldEvalValue } from "./eval.script";
 
 function execFnCall({ vars }: { vars: TVars }, fnCall, objSource) {
 	const args: unknown[] = [];
@@ -29,7 +29,7 @@ function execFnCall({ vars }: { vars: TVars }, fnCall, objSource) {
 			args.push(arg.value);
 			continue;
 		}
-		args.push(evalValue({ vars }, arg));
+		args.push(oldEvalValue({ vars }, arg));
 	}
 
 	let self = objSource;

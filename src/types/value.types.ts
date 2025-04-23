@@ -1,6 +1,6 @@
 type ExprOperations = "Plus" | "Minus" | "Multiply" | "Divide";
 export class ArgExpression {
-	constructor(public value: (number | ArgVariable | ArgColor | ExprOperations)[]) {}
+	constructor(public stack: (number | ArgVariable | ArgColor | ExprOperations)[]) {}
 }
 
 export class ArgVariable {

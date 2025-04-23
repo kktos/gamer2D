@@ -1,5 +1,4 @@
 import type { Entity } from "../entities/Entity";
-import ENV from "../env";
 import { Trait } from "./Trait";
 
 export default class TimerTrait extends Trait {
@@ -20,8 +19,8 @@ export default class TimerTrait extends Trait {
 		this.currentTime = this.totalTime;
 	}
 
-	update({ dt }, entity: Entity) {
-		this.currentTime -= ((dt * 1) / ENV.FPS) * 10;
+	update({ dt, FPS }, entity: Entity) {
+		this.currentTime -= (dt / FPS) * 10;
 
 		if (this.currentTime <= 0) {
 			this.reset();

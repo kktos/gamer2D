@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { TVars } from "../../types/engine.types";
-import { ArgVariable } from "../../types/value.types";
-import { evalNumber, evalValue, evalVar, interpolateString } from "../engine/eval.script";
+import { ArgExpression, ArgVariable } from "../../types/value.types";
+import { evalExpr, evalNumber, evalVar, interpolateString, oldEvalValue } from "../engine/eval.script";
 
 describe("Script Engine Tests", () => {
 	describe("interpolateString", () => {
@@ -82,28 +82,28 @@ describe("Script Engine Tests", () => {
 		// });
 	});
 
-	describe("evalExpr", () => {
+	describe("evalValue", () => {
 		it("should return the input if it's a number", () => {
 			const vars: TVars = new Map();
-			const result = evalValue({ vars }, 123);
+			const result = oldEvalValue({ vars }, 123);
 			expect(result).toBe(123);
 		});
 
 		it("should return the input if it's an array", () => {
 			const vars: TVars = new Map();
-			const result = evalValue({ vars }, [1, 2, 3]);
+			const result = oldEvalValue({ vars }, [1, 2, 3]);
 			expect(result).toEqual([1, 2, 3]);
 		});
 
 		it("should evaluate a simple variable", () => {
 			const vars: TVars = new Map([["name", "John"]]);
-			const result = evalValue({ vars }, "$name");
+			const result = oldEvalValue({ vars }, "$name");
 			expect(result).toBe("John");
 		});
 
 		it("should evaluate a string with interpolation", () => {
 			const vars: TVars = new Map([["name", "John"]]);
-			const result = evalValue({ vars }, "Hello ${name}!");
+			const result = oldEvalValue({ vars }, "Hello ${name}!");
 			expect(result).toBe("Hello John!");
 		});
 
@@ -112,7 +112,7 @@ describe("Script Engine Tests", () => {
 				["a", 10],
 				["b", 5],
 			]);
-			const result = evalValue({ vars }, { expr: "$a + $b" });
+			const result = oldEvalValue({ vars }, { expr: "$a + $b" });
 			expect(result).toBe(15);
 		});
 
@@ -122,7 +122,7 @@ describe("Script Engine Tests", () => {
 				["b", 5],
 				["c", 2],
 			]);
-			const result = evalValue({ vars }, { expr: "($a + $b) * $c" });
+			const result = oldEvalValue({ vars }, { expr: "($a + $b) * $c" });
 			expect(result).toBe(30);
 		});
 
@@ -137,7 +137,7 @@ describe("Script Engine Tests", () => {
 				["a", 10],
 				["b", 5],
 			]);
-			const result = evalValue({ vars }, { expr: "$a > $b" });
+			const result = oldEvalValue({ vars }, { expr: "$a > $b" });
 			expect(result).toBe(true);
 		});
 	});
@@ -153,6 +153,15 @@ describe("Script Engine Tests", () => {
 			const vars: TVars = new Map([["a", 10]]);
 			const result = evalNumber({ vars }, new ArgVariable("a"));
 			expect(result).toBe(10);
+		});
+	});
+
+	describe("evalExpr", () => {
+		it("should return the input if it's a number", () => {
+			const vars: TVars = new Map();
+			const expr = new ArgExpression([1, 1, "Plus", 6, "Multiply"]);
+			const result = evalExpr({ vars }, expr);
+			expect(result).toBe(12);
 		});
 	});
 });

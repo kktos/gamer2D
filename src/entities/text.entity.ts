@@ -1,4 +1,3 @@
-import ENV from "../env";
 import type Font from "../game/Font";
 import type ResourceManager from "../game/ResourceManager";
 import type { BBox } from "../maths/math";
@@ -31,17 +30,15 @@ export class TextEntity extends Entity {
 	constructor(resourceMgr: ResourceManager, textObj: TextDTO) {
 		super(resourceMgr, textObj.pos[0], textObj.pos[1]);
 
-		this.font = resourceMgr.get("font", ENV.MAIN_FONT) as Font;
+		this.font = resourceMgr.get("font", resourceMgr.mainFontName);
 		this.text = textObj.text;
 		this.color = textObj.color.value;
 		this.bgcolor = textObj.bgcolor;
 		this.align = textObj.align;
 		this.valign = textObj.valign;
 		this.fontsize = textObj.size;
-		this.size = {
-			x: textObj.width ?? 0,
-			y: textObj.height ?? 0,
-		};
+		this.width = textObj.width ?? 0;
+		this.height = textObj.height ?? 0;
 		this.bbox = { left: this.left, top: this.top, right: this.right, bottom: this.bottom };
 	}
 
@@ -56,8 +53,8 @@ export class TextEntity extends Entity {
 			x: this.left,
 			y: this.top,
 			color: this.color,
-			width: this.size.x,
-			height: this.size.y,
+			width: this.width,
+			height: this.height,
 			bgcolor: this.bgcolor,
 		});
 	}

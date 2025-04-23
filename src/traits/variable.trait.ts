@@ -1,5 +1,5 @@
 import type { Entity } from "../entities/Entity";
-import { evalString } from "../script/engine/eval.script";
+import { evalValue } from "../script/engine/eval.script";
 import type { TVars } from "../types/engine.types";
 import { Trait } from "./Trait";
 
@@ -18,9 +18,10 @@ export class VariableTrait extends Trait {
 		this.vars = vars;
 		if (varName) {
 			this.value = () => this.vars.get(this.varName);
-		} else {
-			this.value = () => evalString({ vars: this.vars }, this.text);
+			return;
 		}
+		// this.value = () => evalString({ vars: this.vars }, this.text);
+		this.value = () => evalValue({ vars: this.vars }, this.text);
 	}
 
 	update({ dt }, entity: Entity) {
