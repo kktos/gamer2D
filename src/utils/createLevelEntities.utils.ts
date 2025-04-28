@@ -2,7 +2,7 @@ import type { Entity } from "../entities/Entity";
 import { createEntityByName } from "../entities/Entity.factory";
 import type ResourceManager from "../game/ResourceManager";
 import type { Grid } from "../maths/grid.math";
-import type { TSceneLevelSheet } from "../script/compiler/level/level.rules";
+import type { TSceneLevelSheet } from "../script/compiler/layers/level/level.rules";
 
 export function createLevelEntities(resourceManager: ResourceManager, grid: Grid, sprites: TSceneLevelSheet["sprites"]) {
 	const entities: Entity[] = [];

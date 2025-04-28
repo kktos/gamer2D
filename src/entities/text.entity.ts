@@ -1,7 +1,7 @@
 import type Font from "../game/Font";
 import type ResourceManager from "../game/ResourceManager";
 import type { BBox } from "../maths/math";
-import { ALIGN_TYPES, type TAlignType } from "../script/compiler/display/layout/text-sprite-props.rules";
+import { ALIGN_TYPES, type TAlignType } from "../script/compiler/layers/display/layout/text-sprite-props.rules";
 import type { ArgColor } from "../types/value.types";
 import { Entity } from "./Entity";
 

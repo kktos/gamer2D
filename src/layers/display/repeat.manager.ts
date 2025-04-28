@@ -1,6 +1,6 @@
-import type { TRepeat, TRepeatItem } from "../../script/compiler/display/layout/repeat.rules";
-import type { TSprite } from "../../script/compiler/display/layout/sprite.rules";
-import type { TText } from "../../script/compiler/display/layout/text.rules";
+import type { TRepeat, TRepeatItem } from "../../script/compiler/layers/display/layout/repeat.rules";
+import type { TSprite } from "../../script/compiler/layers/display/layout/sprite.rules";
+import type { TText } from "../../script/compiler/layers/display/layout/text.rules";
 import { evalNumberValue, evalString } from "../../script/engine/eval.script";
 import type { TVarTypes, TVars } from "../../types/engine.types";
 import { OP_TYPES } from "../../types/operation.types";

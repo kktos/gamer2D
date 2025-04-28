@@ -1,7 +1,7 @@
 import { createTrait } from "../../traits/Trait.factory";
 import type { TResultValue, TVars } from "../../types/engine.types";
 import { ArgColor, ArgExpression, ArgIdentifier, ArgVariable, ValueTrait } from "../../types/value.types";
-import type { TFunctionArg } from "../compiler/display/layout/action.rules";
+import type { TFunctionArg } from "../compiler/layers/display/layout/action.rules";
 
 export function isStringInterpolable(text: string) {
 	if (typeof text !== "string") return false;

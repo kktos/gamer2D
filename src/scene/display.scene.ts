@@ -3,7 +3,7 @@ import { createLayer } from "../layers/Layer.factory";
 import { BackgroundLayer } from "../layers/background.layer";
 import { DisplayLayer } from "../layers/display.layer";
 import { EntitiesLayer } from "../layers/entities.layer";
-import type { TSceneDisplaySheet } from "../script/compiler/display/display.rules";
+import type { TSceneDisplaySheet } from "../script/compiler/layers/display/display.rules";
 import { Scene } from "./Scene";
 
 export class DisplayScene extends Scene {

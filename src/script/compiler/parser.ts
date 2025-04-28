@@ -1,31 +1,32 @@
 import { EmbeddedActionsParser } from "chevrotain";
-import { DebugRules } from "./debug/debug.rules";
-import { DisplayRules } from "./display/display.rules";
-import { ActionRules } from "./display/layout/action.rules";
-import { DefAnimRules } from "./display/layout/defanim.rules";
-import { ForRules } from "./display/layout/for.rules";
-import { ImageRules } from "./display/layout/image.rules";
-import { LayoutRules } from "./display/layout/layout.rules";
-import { MenuRules } from "./display/layout/menu.rules";
-import { ParmsRules } from "./display/layout/parms.rules";
-import { RectRules } from "./display/layout/rect.rules";
-import { RepeatRules } from "./display/layout/repeat.rules";
-import { SetRules } from "./display/layout/set.rules";
-import { SpriteRules } from "./display/layout/sprite.rules";
-import { TextSpritePropsRules } from "./display/layout/text-sprite-props.rules";
-import { TextRules } from "./display/layout/text.rules";
-import { ViewRules } from "./display/layout/view.rules";
-import { MiscRules } from "./display/misc.rules";
-import { OnRules } from "./display/on.rules";
-import { SoundRules } from "./display/sound.rules";
-import { TimerRules } from "./display/timer.rules";
-import { UIRules } from "./display/ui.rules";
-import { EditorRules } from "./editor/editor.rules";
-import { ExprRules } from "./expr.rules";
-import { GameRules } from "./game/game.rules";
-import { LevelRules } from "./level/level.rules";
+import { DebugRules } from "./layers/debug/debug.rules";
+import { DisplayRules } from "./layers/display/display.rules";
+import { ActionRules } from "./layers/display/layout/action.rules";
+import { DefAnimRules } from "./layers/display/layout/defanim.rules";
+import { ForRules } from "./layers/display/layout/for.rules";
+import { ImageRules } from "./layers/display/layout/image.rules";
+import { LayoutRules } from "./layers/display/layout/layout.rules";
+import { MenuRules } from "./layers/display/layout/menu.rules";
+import { ParmsRules } from "./layers/display/layout/parms.rules";
+import { RectRules } from "./layers/display/layout/rect.rules";
+import { RepeatRules } from "./layers/display/layout/repeat.rules";
+import { SetRules } from "./layers/display/layout/set.rules";
+import { SpriteRules } from "./layers/display/layout/sprite.rules";
+import { TextSpritePropsRules } from "./layers/display/layout/text-sprite-props.rules";
+import { TextRules } from "./layers/display/layout/text.rules";
+import { ViewRules } from "./layers/display/layout/view.rules";
+import { MiscRules } from "./layers/display/misc.rules";
+import { OnRules } from "./layers/display/on.rules";
+import { SoundRules } from "./layers/display/sound.rules";
+import { TimerRules } from "./layers/display/timer.rules";
+import { UIRules } from "./layers/display/ui.rules";
+import { EditorRules } from "./layers/editor/editor.rules";
+import { GameRules } from "./layers/game/game.rules";
+import { LevelRules } from "./layers/level/level.rules";
 import { tokenList } from "./lexer";
-import { TypesRules } from "./types.rules";
+import { SheetRules } from "./scenes/scene.rules";
+import { ExprRules } from "./shared/expr.rules";
+import { TypesRules } from "./shared/types.rules";
 
 export class SheetParser extends EmbeddedActionsParser {
 	constructor() {
@@ -35,15 +36,7 @@ export class SheetParser extends EmbeddedActionsParser {
 
 	public variablesDict = new Map<string, unknown>();
 
-	public sheet = this.RULE("sheet", () => {
-		return this.OR([
-			{ ALT: () => this.SUBRULE(this.displaySheet) },
-			{ ALT: () => this.SUBRULE(this.gameSheet) },
-			{ ALT: () => this.SUBRULE(this.levelSheet) },
-			{ ALT: () => this.SUBRULE(this.editorSheet) },
-			{ ALT: () => this.SUBRULE(this.debugSheet) },
-		]);
-	});
+	public sheet = SheetRules.sheet(this);
 
 	public number = TypesRules.number(this);
 	public variable = TypesRules.variable(this);

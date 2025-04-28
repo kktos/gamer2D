@@ -2,7 +2,7 @@ import type { Entity } from "../../../entities/Entity";
 import { createEntity } from "../../../entities/Entity.factory";
 import { EntityPool } from "../../../entities/EntityPool";
 import type GameContext from "../../../game/types/GameContext";
-import type { TText } from "../../../script/compiler/display/layout/text.rules";
+import type { TText } from "../../../script/compiler/layers/display/layout/text.rules";
 import type { TVarSounds, TVars } from "../../../types/engine.types";
 import LocalDB from "../../../utils/storage.util";
 import type { DisplayLayer } from "../../display.layer";

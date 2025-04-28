@@ -3,8 +3,8 @@ import type GameContext from "../game/types/GameContext";
 import type { Grid } from "../maths/grid.math";
 import { intersectRect } from "../maths/math";
 import type { Scene } from "../scene/Scene";
-import type { TSceneDisplaySheet } from "../script/compiler/display/display.rules";
-import type { TSceneLevelSheet } from "../script/compiler/level/level.rules";
+import type { TSceneDisplaySheet } from "../script/compiler/layers/display/display.rules";
+import type { TSceneLevelSheet } from "../script/compiler/layers/level/level.rules";
 import { createLevelEntities } from "../utils/createLevelEntities.utils";
 import { Layer } from "./Layer";
 

@@ -1,5 +1,5 @@
 import type { BBox } from "../maths/math";
-import { ALIGN_TYPES, type TAlignType } from "../script/compiler/display/layout/text-sprite-props.rules";
+import { ALIGN_TYPES, type TAlignType } from "../script/compiler/layers/display/layout/text-sprite-props.rules";
 import type { RequireAllOrNone } from "../types/typescript.types";
 import { nameToRgba } from "../utils/canvas.utils";
 import { loadImage, loadJson } from "../utils/loaders.util";

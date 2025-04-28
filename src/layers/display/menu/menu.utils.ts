@@ -1,6 +1,6 @@
 import type GameContext from "../../../game/types/GameContext";
 import type { BBox } from "../../../maths/math";
-import type { TMenuItemRendered } from "../../../script/compiler/display/layout/menu.rules";
+import type { TMenuItemRendered } from "../../../script/compiler/layers/display/layout/menu.rules";
 import { OP_TYPES } from "../../../types/operation.types";
 import type { DisplayLayer } from "../../display.layer";
 import { loadSprite } from "../sprite.renderer";
