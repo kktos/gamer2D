@@ -1,6 +1,6 @@
 import type { Entity } from "../entities/Entity";
-import type GameContext from "../game/GameContext";
-import { COLLISION } from "../maths/math";
+import type GameContext from "../game/types/GameContext";
+import { COLLISION_SIDES, type TCollisionSide } from "../maths/math";
 import { Trait } from "./Trait";
 
 export class BounceTrait extends Trait {
@@ -14,7 +14,7 @@ export class BounceTrait extends Trait {
 		this.repulsiveFactor = -Math.abs(repulsiveFactor);
 	}
 
-	collides(gc: GameContext, side, entity: Entity, target: Entity) {
+	collides(gc: GameContext, entity: Entity, target: Entity) {
 		if (!this.isBouncing || !target.isSolid) return;
 
 		// if(contains(target, entity)) {
@@ -22,30 +22,31 @@ export class BounceTrait extends Trait {
 		// 	console.log("--- PREV contains ?", entity.previousBbox);
 		// }
 
+		const side: TCollisionSide = COLLISION_SIDES.BOTTOM;
 		switch (side) {
-			case COLLISION.LEFT:
-				entity.vel.x *= this.repulsiveFactor;
-				entity.left = entity.previousBbox.left;
+			// case COLLISION.LEFT:
+			// 	entity.vel.x *= this.repulsiveFactor;
+			// 	entity.left = entity.previousBbox.left;
 
-				target.vel.x *= this.repulsiveFactor;
-				// target.right= entity.previousBbox.right;
-				break;
+			// 	target.vel.x *= this.repulsiveFactor;
+			// 	// target.right= entity.previousBbox.right;
+			// 	break;
 
-			case COLLISION.RIGHT:
-				entity.vel.x *= this.repulsiveFactor;
-				entity.right = target.left - 1;
+			// case COLLISION.RIGHT:
+			// 	entity.vel.x *= this.repulsiveFactor;
+			// 	entity.right = target.left - 1;
 
-				target.vel.x *= this.repulsiveFactor;
-				break;
+			// 	target.vel.x *= this.repulsiveFactor;
+			// 	break;
 
-			case COLLISION.TOP:
-				entity.vel.y *= this.repulsiveFactor;
-				entity.top = entity.previousBbox.top;
+			// case COLLISION.TOP:
+			// 	entity.vel.y *= this.repulsiveFactor;
+			// 	entity.top = entity.previousBbox.top;
 
-				target.vel.y *= this.repulsiveFactor;
-				break;
+			// 	target.vel.y *= this.repulsiveFactor;
+			// 	break;
 
-			case COLLISION.BOTTOM:
+			case COLLISION_SIDES.BOTTOM:
 				entity.vel.y *= this.repulsiveFactor;
 				entity.bottom = target.top - 1;
 

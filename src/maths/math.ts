@@ -5,17 +5,18 @@ export function getRandom(min, max) {
 	return Math.random() * (max - min) + min;
 }
 
-export function intersectRect(r1, r2) {
+export function intersectRect(r1: BBox, r2: BBox) {
 	return !(r2.left > r1.right || r2.right < r1.left || r2.top > r1.bottom || r2.bottom < r1.top);
 }
 
-export const COLLISION = {
-	NONE: Symbol.for("none"),
-	LEFT: Symbol.for("left"),
-	RIGHT: Symbol.for("right"),
-	TOP: Symbol.for("top"),
-	BOTTOM: Symbol.for("bottom"),
-};
+export const COLLISION_SIDES = {
+	NONE: 0,
+	LEFT: 1,
+	RIGHT: 2,
+	TOP: 3,
+	BOTTOM: 4,
+} as const;
+export type TCollisionSide = (typeof COLLISION_SIDES)[keyof typeof COLLISION_SIDES];
 
 /*
 
@@ -30,13 +31,13 @@ function collideRect1(r1, r2) {
 	const height = (r1.size.y + r2.size.y) / 2;
 	const crossWidth = width * dy;
 	const crossHeight = height * dx;
-	let collision = COLLISION.NONE;
+	let collision: TCollisionSide = COLLISION_SIDES.NONE;
 
 	if (Math.abs(dx) <= width && Math.abs(dy) <= height) {
 		if (crossWidth > crossHeight) {
-			collision = crossWidth > -crossHeight ? COLLISION.BOTTOM : COLLISION.LEFT;
+			collision = crossWidth > -crossHeight ? COLLISION_SIDES.BOTTOM : COLLISION_SIDES.LEFT;
 		} else {
-			collision = crossWidth > -crossHeight ? COLLISION.RIGHT : COLLISION.TOP;
+			collision = crossWidth > -crossHeight ? COLLISION_SIDES.RIGHT : COLLISION_SIDES.TOP;
 		}
 	}
 	return collision;
@@ -90,23 +91,23 @@ export function growRect(bbox, x, y) {
 
 function intersectSide(intersection) {
 	if (!intersection) {
-		return COLLISION.NONE;
+		return COLLISION_SIDES.NONE;
 	}
 	if (intersection) {
 		if (Math.abs(intersection.x) > Math.abs(intersection.y)) {
 			if (intersection.x < 0) {
-				return COLLISION.RIGHT;
+				return COLLISION_SIDES.RIGHT;
 			}
-			return COLLISION.LEFT;
+			return COLLISION_SIDES.LEFT;
 		}
 
 		if (intersection.y < 0) {
-			return COLLISION.BOTTOM;
+			return COLLISION_SIDES.BOTTOM;
 		}
 
-		return COLLISION.TOP;
+		return COLLISION_SIDES.TOP;
 	}
-	return COLLISION.NONE;
+	return COLLISION_SIDES.NONE;
 }
 
 export function intersect(r1, r2) {

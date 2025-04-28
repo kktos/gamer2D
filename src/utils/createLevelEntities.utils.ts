@@ -6,10 +6,11 @@ import type { TSceneLevelSheet } from "../script/compiler/level/level.rules";
 
 export function createLevelEntities(resourceManager: ResourceManager, grid: Grid, sprites: TSceneLevelSheet["sprites"]) {
 	const entities: Entity[] = [];
-	for (const sprite of sprites) {
-		const { x, y } = grid.toCoord(sprite.pos[0] as number, sprite.pos[1] as number);
-		const entity = createEntityByName(resourceManager, sprite.name, x, y, sprite.dir);
-		entities.push(entity);
-	}
+	if (sprites)
+		for (const sprite of sprites) {
+			const [x, y] = grid.toCoord(sprite.pos[0] as number, sprite.pos[1] as number);
+			const entity = createEntityByName(resourceManager, sprite.name, x, y, sprite.dir);
+			entities.push(entity);
+		}
 	return entities;
 }

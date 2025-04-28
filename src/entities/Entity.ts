@@ -1,12 +1,14 @@
 import { EventBuffer } from "../events/EventBuffer";
-import type GameContext from "../game/GameContext";
 import type ResourceManager from "../game/ResourceManager";
 import type { SpriteSheet } from "../game/Spritesheet";
-import type { BBox, COLLISION, Point } from "../maths/math";
+import type GameContext from "../game/types/GameContext";
+import type { GridCell } from "../maths/grid.math";
+import type { BBox, Point, TCollisionSide } from "../maths/math";
 import type { Scene } from "../scene/Scene";
-import type { ITrait, Trait } from "../traits/Trait";
+import type { ITraitCollides, ITraitObstructedOn, ITraitUpdate, Trait } from "../traits/Trait";
 import { DIRECTIONS } from "../types/direction.type";
 import { generateID } from "../utils/id.util";
+import { getClassName } from "../utils/object.util";
 
 export class Entity {
 	public class: string;
@@ -24,26 +26,26 @@ export class Entity {
 	public isGhost: boolean;
 
 	public previousBbox: BBox;
-	public traits: Map<string, Trait>;
+	private traits: Map<string, Trait>;
 	public events: EventBuffer;
 
 	private _lifetime: number;
-	private _vel: Point;
-	private _mass: number;
+	private _vel: Point = { x: 0, y: 0 };
+	private _mass = 0;
 	private _pos: Point;
-	private _size: Point;
-	private previousVel: Point;
-	private previousMass: number;
-	private collidesTraits: Trait[];
-	private updateTraits: Trait[];
+	private _size: Point = { x: 0, y: 0 };
+	private previousVel: Point = { x: 0, y: 0 };
+	private previousMass = 0;
+
+	private collidesTraits: ITraitCollides[];
+	private updateTraits: ITraitUpdate[];
+	private obstructedOnTraits: ITraitObstructedOn[];
 
 	constructor(resourceMgr: ResourceManager, x: number, y: number, sheetFilename?: string) {
-		const m = String(this.constructor).match(/class ([a-zA-Z0-9_]+)/);
-		this.class = m?.[1] ?? "Entity??";
+		this.class = getClassName(this.constructor);
 		this.id = generateID();
 
 		this._pos = { x, y };
-		this._size = { x: 0, y: 0 };
 		this.previousBbox = { left: x, top: y, right: 0, bottom: 0 };
 		this.vel = { x: 0, y: 0 };
 		this.speed = 0;
@@ -62,67 +64,72 @@ export class Entity {
 		this.traits = new Map();
 		this.collidesTraits = [];
 		this.updateTraits = [];
+		this.obstructedOnTraits = [];
 
 		this.currSprite = null;
 		this.spritesheet = sheetFilename ? (resourceMgr.get("sprite", sheetFilename) as SpriteSheet) : null;
 	}
 
-	get left() {
+	public get left() {
 		return this._pos.x;
 	}
-	get right() {
+	public get right() {
 		return this._pos.x + this._size.x;
 	}
-	get top() {
+	public get top() {
 		return this._pos.y;
 	}
-	get bottom() {
+	public get bottom() {
 		return this._pos.y + this._size.y;
 	}
-	get width() {
+	public get width() {
 		return this._size.x;
 	}
-	get height() {
+	public get height() {
 		return this._size.y;
 	}
 
-	set left(x) {
+	public set left(x) {
 		this.previousBbox.left = this._pos.x;
+		this.previousBbox.right = this._pos.x + this._size.x;
 		this._pos.x = x;
 	}
-	set top(y) {
+	public set top(y) {
 		this.previousBbox.top = this._pos.y;
+		this.previousBbox.bottom = this._pos.y + this._size.y;
 		this._pos.y = y;
 	}
-	set right(x) {
+	public set right(x) {
 		this.previousBbox.left = this._pos.x;
+		this.previousBbox.right = this._pos.x + this._size.x;
 		this._pos.x = x - this._size.x;
 	}
-	set bottom(y) {
+	public set bottom(y) {
 		this.previousBbox.top = this._pos.y;
+		this.previousBbox.bottom = this._pos.y + this._size.y;
 		this._pos.y = y - this._size.y;
 	}
-	set width(w) {
+	public set width(w) {
 		this.previousBbox.right = this.right;
 		this._size.x = w;
 	}
-	set height(h) {
+	public set height(h) {
 		this.previousBbox.bottom = this.bottom;
 		this._size.y = h;
 	}
 
-	get mass() {
+	public get mass() {
 		return this._mass;
 	}
-	set mass(newValue: number) {
+	public set mass(newValue: number) {
 		this.previousMass = this._mass;
 		this._mass = newValue;
 	}
 
-	get vel() {
+	public get vel() {
 		return this._vel;
 	}
-	set vel(newValue: Point) {
+	public set vel(newValue: Point) {
 		this.previousVel = this._vel;
 		this._vel = newValue;
 	}
@@ -131,39 +138,45 @@ export class Entity {
 		return this._lifetime;
 	}
 
-	set(propname, propvalue) {
+	public set(propname, propvalue) {
 		this[propname] = propvalue;
 	}
 
-	pause() {
+	public pause() {
 		this.vel = { x: 0, y: 0 };
 		this.mass = 0;
 	}
 
-	go() {
+	public go() {
 		this._vel = this.previousVel;
 		this._mass = this.previousMass;
 	}
 
-	addTrait(trait: Trait) {
+	public addTrait(trait: Trait) {
 		this.traits.set(trait.class, trait);
-		if ("collides" in trait) this.collidesTraits.push(trait);
-		if ("update" in trait) this.updateTraits.push(trait);
+		if ("collides" in trait) this.collidesTraits.push(trait as ITraitCollides);
+		if ("update" in trait) this.updateTraits.push(trait as ITraitUpdate);
+		if ("obstructedOn" in trait) this.obstructedOnTraits.push(trait as ITraitObstructedOn);
 		return trait;
 	}
 
-	emit(name: symbol, ...args: unknown[]) {
+	public useTrait<T extends Trait>(name: string, fn: (trait: T) => void) {
+		const trait = this.traits.get(name) as T;
+		if (trait) fn(trait);
+	}
+
+	public emit(name: symbol, ...args: unknown[]) {
 		this.events.emit(name, ...args);
 	}
 
-	setSprite(name: string) {
+	public setSprite(name: string) {
 		if (!this.spritesheet || !this.spritesheet.has(name)) throw new Error(`no sprite ${name}`);
 
 		this.currSprite = name;
 		this._size = this.spritesheet.spriteSize(name);
 	}
 
-	setAnim(name: string, opt = { paused: false }) {
+	public setAnim(name: string, opt = { paused: false }) {
 		if (!this.spritesheet || !this.spritesheet.hasAnim(name)) throw new Error(`no animation ${name}`);
 
 		const anim = this.spritesheet.animations.get(name);
@@ -176,24 +189,28 @@ export class Entity {
 		return anim;
 	}
 
-	collides(gc: GameContext, side: typeof COLLISION, target: Entity) {
-		for (const trait of this.collidesTraits) (trait as ITrait).collides(gc, side, this, target);
+	public collides(gc: GameContext, target: Entity) {
+		for (const trait of this.collidesTraits) trait.collides(gc, this, target);
 	}
 
-	update(gc: GameContext, scene: Scene) {
-		for (const trait of this.updateTraits) (trait as ITrait).update(gc, this, scene);
-		this._lifetime += 1; //gc.dt * gc.FPS;
+	public obstructedOn(gc: GameContext, side: TCollisionSide, cell: GridCell) {
+		for (const trait of this.obstructedOnTraits) trait.obstructedOn(gc, this, side, cell);
 	}
 
-	finalize() {
+	public update(gc: GameContext, scene: Scene) {
+		for (const trait of this.updateTraits) trait.update(gc, this, scene);
+		this._lifetime += gc.dt * gc.FPS;
+	}
+
+	public finalize() {
 		for (const [_, trait] of this.traits) trait.finalize?.(this);
 		this.events.clear();
 	}
 
-	render(gc: GameContext) {
+	public render(gc: GameContext) {
 		const ctx = gc.viewport.ctx;
-		ctx.strokeStyle = "gray";
-		ctx.strokeRect(this.left, this.top, this.width, this.height);
+		ctx.fillStyle = "gray";
+		ctx.fillRect(this.left, this.top, this.width, this.height);
 		ctx.strokeStyle = "black";
 		ctx.beginPath();
 		ctx.moveTo(this.left, this.top);

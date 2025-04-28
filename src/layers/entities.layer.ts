@@ -1,8 +1,9 @@
 import type { Entity } from "../entities/Entity";
-import type GameContext from "../game/GameContext";
+import type GameContext from "../game/types/GameContext";
 import type { Grid } from "../maths/grid.math";
+import { intersectRect } from "../maths/math";
 import type { Scene } from "../scene/Scene";
-import type { SceneDisplaySheet } from "../script/compiler/display/display.rules";
+import type { TSceneDisplaySheet } from "../script/compiler/display/display.rules";
 import type { TSceneLevelSheet } from "../script/compiler/level/level.rules";
 import { createLevelEntities } from "../utils/createLevelEntities.utils";
 import { Layer } from "./Layer";
@@ -14,7 +15,7 @@ export class EntitiesLayer extends Layer {
 	private entities: Entity[];
 	private wannaShowCount: boolean;
 
-	constructor(gc: GameContext, parent: Scene, sheet: TSceneLevelSheet | SceneDisplaySheet, grid?: Grid) {
+	constructor(gc: GameContext, parent: Scene, sheet: TSceneLevelSheet | TSceneDisplaySheet, grid?: Grid) {
 		super(gc, parent);
 
 		this.entities = grid ? createLevelEntities(gc.resourceManager, grid, (sheet as TSceneLevelSheet).sprites) : [];
@@ -24,7 +25,7 @@ export class EntitiesLayer extends Layer {
 		this.setTaskHandlers();
 	}
 
-	setTaskHandlers() {
+	public setTaskHandlers() {
 		const tasks = this.scene.tasks;
 
 		tasks.onTask(EntitiesLayer.TASK_REMOVE_ENTITY, (entity: Entity) => {
@@ -37,12 +38,24 @@ export class EntitiesLayer extends Layer {
 		});
 	}
 
-	update(gc: GameContext, scene: Scene) {
+	private handleCollisions(gc: GameContext) {
+		for (let targetIdx = 0; targetIdx < this.entities.length; targetIdx++) {
+			const target = this.entities[targetIdx];
+			for (let idx = targetIdx + 1; idx < this.entities.length; idx++) {
+				if (intersectRect(target, this.entities[idx])) target.collides(gc, this.entities[idx]);
+			}
+		}
+	}
+
+	public update(gc: GameContext, scene: Scene) {
 		for (const entity of this.entities) entity.update(gc, scene);
+
+		this.handleCollisions(gc);
+
 		for (const entity of this.entities) entity.finalize();
 	}
 
-	render(gc: GameContext) {
+	public render(gc: GameContext) {
 		for (const entity of this.entities) entity.render(gc);
 
 		if (this.wannaShowCount) {

@@ -1,34 +1,30 @@
-import { COLLISION } from "../maths/math";
-import { Trait } from "./Trait";
+import type { Entity } from "../entities/Entity";
+import type GameContext from "../game/types/GameContext";
+import type { GridCell } from "../maths/grid.math";
+import { COLLISION_SIDES, type TCollisionSide } from "../maths/math";
+import { type ITraitObstructedOn, Trait } from "./Trait";
 
-export class SolidTrait extends Trait {
-	public isColliding: boolean;
-
-	constructor() {
-		super();
-		this.isColliding = false;
-	}
-	collides(gc, side, entity) {
+export class SolidTrait extends Trait implements ITraitObstructedOn {
+	obstructedOn(_: GameContext, entity: Entity, side: TCollisionSide, cell: GridCell) {
 		switch (side) {
-			case COLLISION.LEFT:
+			case COLLISION_SIDES.LEFT:
 				entity.vel.x = 0;
-				entity.left = entity.previousBbox.left;
+				entity.left = cell.right;
 				break;
 
-			case COLLISION.RIGHT:
+			case COLLISION_SIDES.RIGHT:
 				entity.vel.x = 0;
-				entity.right = entity.previousBbox.left + entity.size.x;
+				entity.right = cell.left;
 				break;
 
-			case COLLISION.TOP:
+			case COLLISION_SIDES.TOP:
 				entity.vel.y = 0;
-				entity.top = entity.previousBbox.top;
+				entity.top = cell.bottom;
 				break;
 
-			case COLLISION.BOTTOM:
+			case COLLISION_SIDES.BOTTOM:
 				entity.vel.y = 0;
-				entity.bottom = entity.previousBbox.top + entity.size.y;
-				this.isColliding = true;
+				entity.bottom = cell.top;
 				break;
 		}
 	}
