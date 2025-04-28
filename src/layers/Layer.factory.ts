@@ -3,7 +3,6 @@ import type { LayerConstructor } from "../game/types/GameOptions";
 import { getClassName } from "../utils/object.util";
 import type { Layer } from "./Layer";
 import { BackgroundLayer } from "./background.layer";
-import { DashboardLayer } from "./dashboard.layer";
 import { DisplayLayer } from "./display.layer";
 import { EntitiesLayer } from "./entities.layer";
 import { WorldCollisionLayer } from "./worldcollision.layer";
@@ -13,7 +12,6 @@ const LayerClasses = {
 	WorldCollisionLayer,
 	DisplayLayer,
 	EntitiesLayer,
-	DashboardLayer,
 };
 
 export function setupLayers(layerDefinitions: LayerConstructor[]) {

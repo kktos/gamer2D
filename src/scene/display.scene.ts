@@ -1,8 +1,8 @@
 import type GameContext from "../game/types/GameContext";
+import { createLayer } from "../layers/Layer.factory";
 import { BackgroundLayer } from "../layers/background.layer";
 import { DisplayLayer } from "../layers/display.layer";
 import { EntitiesLayer } from "../layers/entities.layer";
-import { layerClasses } from "../layers/layers";
 import type { TSceneDisplaySheet } from "../script/compiler/display/display.rules";
 import { Scene } from "./Scene";
 
@@ -15,9 +15,7 @@ export class DisplayScene extends Scene {
 		if (sheet.layers) {
 			for (let idx = 0; idx < sheet.layers.length; idx++) {
 				const layerName = sheet.layers[idx];
-				if (!layerClasses[layerName]) throw new TypeError(`Unknown Layer ${layerName}`);
-
-				this.addLayer(new layerClasses[layerName](gc, this));
+				this.addLayer(createLayer(gc, layerName, this));
 			}
 		}
 
