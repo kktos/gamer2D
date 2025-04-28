@@ -1,7 +1,7 @@
 // import WallEntity from "../entities/wall.entity.js";
 import type Font from "../game/Font";
-import { Align } from "../game/Font";
 import type { SpriteSheet } from "../game/Spritesheet";
+import { ALIGN_TYPES } from "../script/compiler/display/layout/text-sprite-props.rules";
 // import Level from "../scene/level.scene.js";
 // import PlayerTrait from "../traits/player.trait.js";
 import { Layer } from "./Layer";
@@ -47,11 +47,11 @@ export class DashboardLayer extends Layer {
 		const playerInfo = { highscore: 0, score: 0, lives: 3 };
 
 		this.font.size = 3;
-		this.font.align = Align.Center;
+		this.font.align = ALIGN_TYPES.CENTER;
 		this.font.print({ ctx, text: "HIGH SCORE", x: this.centerX, y: 1, color: "red" });
 		this.font.print({ ctx, text: String(playerInfo.highscore), x: this.centerX, y: 28 });
 
-		this.font.align = Align.Left;
+		this.font.align = ALIGN_TYPES.LEFT;
 		if (!(tick % 28)) flipflop = !flipflop;
 		if (flipflop) this.font.print({ ctx, text: "1UP", x: this.width / 8, y: 1, color: "red" });
 		this.font.print({ ctx, text: String(playerInfo.score), x: this.width / 8, y: 28 });

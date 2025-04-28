@@ -32,5 +32,5 @@ export type TSpritesSheet = {
 	animations: Record<string, TAnimation>;
 };
 
-export type TVarTypes = TResultValue | TVarSounds | Map<string, Entity> | Record<string, unknown> | null | View | System | Trait;
+export type TVarTypes = TResultValue | TVarSounds | Map<string, Entity> | Record<string, unknown> | View | System | Trait;
 export type TVars = Map<string, TVarTypes>;

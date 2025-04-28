@@ -1,6 +1,7 @@
 import type Font from "../game/Font";
 import type ResourceManager from "../game/ResourceManager";
 import type { BBox } from "../maths/math";
+import { ALIGN_TYPES, type TAlignType } from "../script/compiler/display/layout/text-sprite-props.rules";
 import type { ArgColor } from "../types/value.types";
 import { Entity } from "./Entity";
 
@@ -8,8 +9,8 @@ export type TextDTO = {
 	pos: [number, number];
 	text: string;
 	color?: ArgColor;
-	align?: number;
-	valign?: number;
+	align?: TAlignType;
+	valign?: TAlignType;
 	size?: number;
 	width?: number;
 	height?: number;
@@ -22,8 +23,8 @@ export class TextEntity extends Entity {
 	public bbox: BBox;
 
 	private font: Font;
-	private align: number;
-	private valign: number;
+	private align: TAlignType;
+	private valign: TAlignType;
 	private fontsize: number;
 	private bgcolor: string;
 
@@ -32,11 +33,11 @@ export class TextEntity extends Entity {
 
 		this.font = resourceMgr.get("font", resourceMgr.mainFontName);
 		this.text = textObj.text;
-		this.color = textObj.color.value;
-		this.bgcolor = textObj.bgcolor;
-		this.align = textObj.align;
-		this.valign = textObj.valign;
-		this.fontsize = textObj.size;
+		this.color = textObj.color?.value ?? "white";
+		this.bgcolor = textObj.bgcolor ?? "black";
+		this.align = textObj.align ?? ALIGN_TYPES.LEFT;
+		this.valign = textObj.valign ?? ALIGN_TYPES.TOP;
+		this.fontsize = textObj.size ?? 8;
 		this.width = textObj.width ?? 0;
 		this.height = textObj.height ?? 0;
 		this.bbox = { left: this.left, top: this.top, right: this.right, bottom: this.bottom };

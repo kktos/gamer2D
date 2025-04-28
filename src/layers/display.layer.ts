@@ -1,11 +1,12 @@
 import type { Entity } from "../entities/Entity";
 import { createEntity } from "../entities/Entity.factory";
 import type Font from "../game/Font";
-import type GameContext from "../game/GameContext";
-import type { GameEvent } from "../game/GameEvent";
+import type GameContext from "../game/types/GameContext";
+import type { GameEvent } from "../game/types/GameEvent";
 import type { BBox } from "../maths/math";
 import type { Scene } from "../scene/Scene";
-import type { SceneDisplaySheet } from "../script/compiler/display/display.rules";
+import type { TSceneDisplaySheet } from "../script/compiler/display/display.rules";
+import type { TFunctionCall } from "../script/compiler/display/layout/action.rules";
 import type { TStatement } from "../script/compiler/display/layout/layout.rules";
 import type { TRect } from "../script/compiler/display/layout/rect.rules";
 import type { TView } from "../script/compiler/display/layout/view.rules";
@@ -49,7 +50,7 @@ export class DisplayLayer extends UILayer {
 
 	private menu: GameMenu | null;
 
-	constructor(gc: GameContext, parent: Scene, sheet: SceneDisplaySheet) {
+	constructor(gc: GameContext, parent: Scene, sheet: TSceneDisplaySheet) {
 		super(gc, parent, sheet.ui);
 
 		const rezMgr = gc.resourceManager;
@@ -59,7 +60,7 @@ export class DisplayLayer extends UILayer {
 		this.time = 0;
 		this.blinkFlag = false;
 		// this.lastJoyTime = 0;
-		this.wannaShowCursor = sheet.showCursor;
+		this.wannaShowCursor = !!sheet.showCursor;
 
 		this.vars = new Map();
 		this.initVars(gc);
@@ -104,7 +105,7 @@ export class DisplayLayer extends UILayer {
 	initEventHandlers(EventHandlers: TEventHandlers, parent: Scene) {
 		for (const [name, value] of Object.entries(EventHandlers)) {
 			const [eventName, id] = name.split(":");
-			parent.events.on(Symbol.for(eventName), (...args) => {
+			parent.on(Symbol.for(eventName), (...args) => {
 				// biome-ignore lint/suspicious/noDoubleEquals: <explanation>
 				if (id && args[0] != id) return;
 				execAction({ vars: this.vars }, value.action);
@@ -118,7 +119,7 @@ export class DisplayLayer extends UILayer {
 		if (op.id) entity.id = op.id;
 
 		if (op.anim) {
-			const anim = this.vars.get(op.anim.name) as { path: unknown[]; speed: number };
+			const anim = this.vars.get(op.anim.name) as { path: TFunctionCall[]; speed: number };
 			if (!anim) {
 				throw new Error(`Animation ${op.anim.name} not found`);
 			}
@@ -140,7 +141,7 @@ export class DisplayLayer extends UILayer {
 	prepareRendering(gc: GameContext) {
 		const views = this.layout.filter((op) => op.type === OP_TYPES.VIEW);
 		for (const view of views) {
-			this.vars.set(view.name, null);
+			this.vars.set(view.name, 0);
 		}
 
 		// console.log(">>> LAYOUT", this.layout);
@@ -196,7 +197,7 @@ export class DisplayLayer extends UILayer {
 			right: width + left,
 			bottom: height + top,
 		};
-		this.vars.set(viewDef.name, viewDef.component || null);
+		this.vars.set(viewDef.name, viewDef.component || 0);
 	}
 
 	handleEvent(gc: GameContext, e: GameEvent) {
@@ -261,7 +262,7 @@ export class DisplayLayer extends UILayer {
 			ctx.fillStyle = op.fill.value;
 			ctx.fillRect(x, y, w, h);
 		} else {
-			ctx.strokeStyle = op.color.value;
+			ctx.strokeStyle = op.color?.value;
 			ctx.strokeRect(x, y, w, h);
 		}
 	}

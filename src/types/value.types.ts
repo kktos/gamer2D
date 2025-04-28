@@ -16,6 +16,7 @@ export class ArgColor {
 
 	get rgba() {
 		const m = this.value.match(/#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})?/);
+		if (!m) throw new TypeError(`Invalid color value ${this.value}`);
 		return { r: Number.parseInt(m[1], 16), g: Number.parseInt(m[2], 16), b: Number.parseInt(m[3], 16), a: Number.parseInt(m[4], 16) || 255 };
 	}
 	add(other: ArgColor) {

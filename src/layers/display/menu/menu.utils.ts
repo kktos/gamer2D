@@ -1,4 +1,4 @@
-import type GameContext from "../../../game/GameContext";
+import type GameContext from "../../../game/types/GameContext";
 import type { BBox } from "../../../maths/math";
 import type { TMenuItemRendered } from "../../../script/compiler/display/layout/menu.rules";
 import { OP_TYPES } from "../../../types/operation.types";
@@ -12,10 +12,11 @@ export function computeBBox(gc: GameContext, layer: DisplayLayer, items: TMenuIt
 		const item = items[idx];
 		switch (item.type) {
 			case OP_TYPES.TEXT: {
-				item.entity = addText(layer, item);
+				const textEntity = addText(layer, item);
+				item.bbox = () => textEntity.bbox;
+				item.entity = textEntity;
 				if (item.align) layer.font.align = item.align;
 				if (item.size) layer.font.size = item.size;
-				item.bbox = () => item.entity.bbox;
 				break;
 			}
 			case OP_TYPES.SPRITE: {

@@ -16,7 +16,7 @@ export class ExprRules {
 	static exprAddition($) {
 		return $.RULE("exprAddition", (stack) => {
 			const lhs = $.SUBRULE($.exprMultiplication, { ARGS: [stack] });
-			const opList = [];
+			const opList: string[] = [];
 			$.MANY(() => {
 				// consuming 'AdditionOperator' will consume either Plus or Minus as they are subclasses of AdditionOperator
 				const op = $.CONSUME(tokens.AdditionOp);
@@ -48,7 +48,7 @@ export class ExprRules {
 	static exprMultiplication($) {
 		return $.RULE("exprMultiplication", (stack) => {
 			const lhs = $.SUBRULE($.exprScalar, { ARGS: [stack] });
-			const opList = [];
+			const opList: string[] = [];
 			$.MANY(() => {
 				// consuming 'AdditionOperator' will consume either Plus or Minus as they are subclasses of AdditionOperator
 				const op = $.CONSUME(tokens.MultiplicationOp);

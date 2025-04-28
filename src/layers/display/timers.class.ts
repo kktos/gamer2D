@@ -1,4 +1,4 @@
-import type GameContext from "../../game/GameContext";
+import type GameContext from "../../game/types/GameContext";
 import type { Scene } from "../../scene/Scene";
 import type { TTimers } from "../../types/engine.types";
 import { DisplayLayer } from "../display.layer";
@@ -93,7 +93,7 @@ export class Timers {
 		for (const [name, t] of this.timers) {
 			t.countdown -= gc.deltaTime;
 			if (t.countdown <= 0) {
-				scene.events.emit(DisplayLayer.EVENT_TIME_OUT, name);
+				scene.emit(DisplayLayer.EVENT_TIME_OUT, name);
 				t.countdown = t.duration;
 				t.counter--;
 				if (t.counter <= 0) this.stop(name);
