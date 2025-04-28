@@ -10,7 +10,7 @@ export type SceneSheetUI = {
 	background?: ArgColor;
 };
 
-export type SceneDisplaySheet = {
+export type TSceneDisplaySheet = {
 	type: "display";
 	name: string;
 	showCursor?: boolean;

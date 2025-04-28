@@ -14,7 +14,7 @@ export type TSprite = {
 	range?: [number, number];
 	dir?: TupleToUnion<[typeof DIRECTIONS.LEFT, typeof DIRECTIONS.RIGHT]>;
 
-	bbox?: () => BBox;
+	bbox: () => BBox;
 	entity?: Entity;
 };
 
@@ -24,14 +24,14 @@ export class SpriteRules {
 		return $.RULE("layoutSprite", (options) => {
 			$.CONSUME(tokens.Sprite);
 
-			let id: string;
+			let id: string | undefined;
 			$.OPTION(() => {
 				$.CONSUME(tokens.ID);
 				$.CONSUME2(tokens.Colon);
 				id = $.CONSUME3(tokens.StringLiteral).payload;
 			});
 
-			const result: TSprite = {
+			const result: Partial<TSprite> = {
 				type: OP_TYPES.SPRITE,
 				sprite: $.CONSUME(tokens.StringLiteral).payload,
 				zoom: options?.zoom ?? 1,

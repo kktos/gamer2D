@@ -50,7 +50,7 @@ export class SetRules {
 			const name = $.CONSUME(tokens.Identifier).image;
 
 			$.CONSUME(tokens.OpenParent);
-			const args = [];
+			const args: (ArgColor | ArgIdentifier | ArgVariable | string | number)[] = [];
 			$.MANY_SEP({
 				SEP: tokens.Comma,
 				DEF: () => {

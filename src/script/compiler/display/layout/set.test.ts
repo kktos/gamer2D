@@ -117,7 +117,6 @@ describe("Set Var Value", () => {
 		expect(mousX).toHaveProperty("value", new ValueTrait("MouseXTrait", []));
 	});
 
-
 	it("should set expr", () => {
 		const script = `
 		display "intro" {

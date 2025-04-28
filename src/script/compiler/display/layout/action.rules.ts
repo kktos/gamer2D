@@ -2,7 +2,7 @@ import { ArgColor, ArgIdentifier, ArgVariable } from "../../../../types/value.ty
 import { tokens } from "../../lexer";
 
 export type TFunctionArg = ArgVariable | ArgIdentifier | ArgColor | number | string;
-type TFunctionCall = {
+export type TFunctionCall = {
 	name: string[];
 	args: TFunctionArg[];
 };

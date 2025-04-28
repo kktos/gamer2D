@@ -11,7 +11,7 @@ export type TSceneLevelSheet = {
 	showCursor?: boolean;
 	background?: ArgColor;
 	font?: string;
-	settings?: Record<string, unknown>;
+	settings: Record<string, unknown>;
 	sprites?: {
 		name: string;
 		pos: [number | ArgVariable | ArgExpression, number | ArgVariable | ArgExpression];
@@ -28,6 +28,7 @@ export class LevelRules {
 			const sheet: TSceneLevelSheet = {
 				type: "level",
 				name: $.CONSUME(tokens.StringLiteral).payload,
+				settings: {},
 			};
 
 			$.CONSUME(tokens.OpenCurly);

@@ -1,3 +1,4 @@
+import type { TupleToUnion } from "../../../../types/typescript.types";
 import { ArgVariable, ValueTrait } from "../../../../types/value.types";
 import { tokens } from "../../lexer";
 
@@ -7,6 +8,16 @@ const VALIGN = 3;
 const COLOR = 4;
 const ANIM = 5;
 const TRAITS = 6;
+
+export const ALIGN_TYPES = {
+	LEFT: 1,
+	RIGHT: 2,
+	TOP: 3,
+	BOTTOM: 4,
+	CENTER: 5,
+} as const;
+
+export type TAlignType = TupleToUnion<[(typeof ALIGN_TYPES)[keyof typeof ALIGN_TYPES]]>;
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class TextSpritePropsRules {
@@ -90,35 +101,35 @@ export class TextSpritePropsRules {
 					ALT: () => {
 						valueType = ALIGN;
 						$.CONSUME(tokens.Left);
-						value = 1;
+						value = ALIGN_TYPES.LEFT;
 					},
 				},
 				{
 					ALT: () => {
 						valueType = ALIGN;
 						$.CONSUME(tokens.Right);
-						value = 3;
+						value = ALIGN_TYPES.RIGHT;
 					},
 				},
 				{
 					ALT: () => {
 						valueType = ALIGN;
 						$.CONSUME(tokens.Top);
-						value = 1;
+						value = ALIGN_TYPES.TOP;
 					},
 				},
 				{
 					ALT: () => {
 						valueType = ALIGN;
 						$.CONSUME(tokens.Bottom);
-						value = 3;
+						value = ALIGN_TYPES.BOTTOM;
 					},
 				},
 				{
 					ALT: () => {
 						valueType = ALIGN;
 						$.CONSUME(tokens.Center);
-						value = 2;
+						value = ALIGN_TYPES.CENTER;
 					},
 				},
 				{

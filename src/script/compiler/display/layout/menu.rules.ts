@@ -35,7 +35,7 @@ export type TMenuItemGroup = {
 	items: (TSprite | TText)[];
 	action?: unknown[];
 
-	bbox?: () => BBox;
+	bbox: () => BBox;
 };
 export type TMenuItemRendered = TMenuItemGroup | TText | TSprite;
 export type TMenuItem = TRepeat | TMenuItemRendered;
@@ -97,7 +97,8 @@ export class MenuRules {
 		return $.RULE("layoutMenuItemGroup", (options, isMenuItem) => {
 			$.CONSUME(tokens.Item);
 
-			const result: TMenuItemGroup = {
+			// const result: Partial<TMenuItemGroup> = {
+			const result: Pick<TMenuItemGroup, "type" | "items" | "action"> = {
 				type: OP_TYPES.GROUP,
 				items: [],
 			};

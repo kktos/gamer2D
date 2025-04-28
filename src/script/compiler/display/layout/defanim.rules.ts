@@ -1,11 +1,12 @@
 import { OP_TYPES } from "../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../types/typescript.types";
 import { tokens } from "../../lexer";
+import type { TFunctionCall } from "./action.rules";
 
 export type TAnimDef = {
 	type: TupleToUnion<[typeof OP_TYPES.ANIM]>;
 	name: string;
-	path?: unknown[];
+	path?: TFunctionCall[];
 	speed?: number;
 };
 

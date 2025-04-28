@@ -4,6 +4,7 @@ import { OP_TYPES } from "../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../types/typescript.types";
 import type { ArgColor, ArgExpression, ArgVariable } from "../../../../types/value.types";
 import { tokens } from "../../lexer";
+import type { TAlignType } from "./text-sprite-props.rules";
 
 export type TText = {
 	type: TupleToUnion<[typeof OP_TYPES.TEXT]>;
@@ -11,8 +12,8 @@ export type TText = {
 	id?: string;
 	pos: [number | ArgVariable | ArgExpression, number | ArgVariable | ArgExpression];
 	size?: number;
-	align?: number;
-	valign?: number;
+	align?: TAlignType;
+	valign?: TAlignType;
 	color?: ArgColor;
 	anim?: { name: string };
 	action?: unknown[];
@@ -21,7 +22,7 @@ export type TText = {
 	bgcolor?: ArgColor;
 	traits?: ArgVariable[] | ArgVariable;
 
-	bbox?: () => BBox;
+	bbox: () => BBox;
 	entity?: TextEntity;
 };
 
@@ -31,14 +32,14 @@ export class TextRules {
 		return $.RULE("layoutText", (options, isMenuItem: boolean) => {
 			$.CONSUME(tokens.Text);
 
-			let id: string;
+			let id: string | undefined;
 			$.OPTION(() => {
 				$.CONSUME(tokens.ID);
 				$.CONSUME2(tokens.Colon);
 				id = $.CONSUME3(tokens.StringLiteral).payload;
 			});
 
-			const result: TText = {
+			const result: Partial<TText> = {
 				type: OP_TYPES.TEXT,
 				text: $.SUBRULE($.strOrVar),
 				pos: $.SUBRULE2($.parm_at),
