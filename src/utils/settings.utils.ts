@@ -19,7 +19,10 @@ export function parseSettings(settings: string): TSettings {
 			return settingsMap.get(key);
 		},
 		getNumber(key: string) {
-			return Number(settingsMap.get(key));
+			const value = settingsMap.get(key);
+			const number = Number.parseInt(value);
+			if (Number.isNaN(number)) throw new TypeError(`Setting ${key} is not a number '${value}'`);
+			return number;
 		},
 		has(key: string) {
 			return settingsMap.has(key);
