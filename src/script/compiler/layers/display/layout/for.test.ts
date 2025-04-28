@@ -7,6 +7,7 @@ describe("For", () => {
 	it("should do a for loop", () => {
 		const script = `
 		display "intro" {
+			display {
 			layout {
 
 				$Ypos = 190
@@ -16,14 +17,17 @@ describe("For", () => {
 				}
 
 			}
+			}
 		}
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		expect(result).toHaveProperty("layout");
-		expect(Array.isArray(result.layout)).toBe(true);
+		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		expect(displayLayer).toBeDefined();
+		expect(displayLayer).toHaveProperty("layout");
+		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		const menu = result.layout.find((op) => op.type === OP_TYPES.REPEAT);
+		const menu = displayLayer.layout.find((op) => op.type === OP_TYPES.REPEAT);
 
 		expect(menu).toEqual({
 			type: OP_TYPES.REPEAT,
@@ -48,6 +52,7 @@ describe("For", () => {
 	it("should do a for..of loop using varList", () => {
 		const script = `
 		display "intro" {
+			display {
 			layout {
 				$menuItems = [
 					"play",
@@ -59,14 +64,17 @@ describe("For", () => {
 				}
 
 			}
+			}
 		}
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		expect(result).toHaveProperty("layout");
-		expect(Array.isArray(result.layout)).toBe(true);
+		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		expect(displayLayer).toBeDefined();
+		expect(displayLayer).toHaveProperty("layout");
+		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		const menu = result.layout.find((op) => op.type === OP_TYPES.REPEAT);
+		const menu = displayLayer.layout.find((op) => op.type === OP_TYPES.REPEAT);
 
 		expect(menu).toEqual({
 			type: OP_TYPES.REPEAT,
@@ -88,6 +96,7 @@ describe("For", () => {
 	it("should do a for..of loop using array", () => {
 		const script = `
 		display "intro" {
+			display {
 			layout {
 				$Ypos = 190
 				for $menuItem of ["play","intro"] index:$idx {
@@ -95,14 +104,17 @@ describe("For", () => {
 				}
 
 			}
+			}
 		}
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		expect(result).toHaveProperty("layout");
-		expect(Array.isArray(result.layout)).toBe(true);
+		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		expect(displayLayer).toBeDefined();
+		expect(displayLayer).toHaveProperty("layout");
+		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		const menu = result.layout.find((op) => op.type === OP_TYPES.REPEAT);
+		const menu = displayLayer.layout.find((op) => op.type === OP_TYPES.REPEAT);
 
 		expect(menu).toEqual({
 			type: OP_TYPES.REPEAT,
@@ -124,6 +136,7 @@ describe("For", () => {
 	it("should do a for..of loop with iterator var", () => {
 		const script = `
 		display "intro" {
+			display {
 			layout {
 				$Ypos = 190
 				for $menuItem of ["play","intro"] index:$idx {
@@ -131,14 +144,17 @@ describe("For", () => {
 				}
 
 			}
+			}
 		}
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		expect(result).toHaveProperty("layout");
-		expect(Array.isArray(result.layout)).toBe(true);
+		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		expect(displayLayer).toBeDefined();
+		expect(displayLayer).toHaveProperty("layout");
+		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		const menu = result.layout.find((op) => op.type === OP_TYPES.REPEAT);
+		const menu = displayLayer.layout.find((op) => op.type === OP_TYPES.REPEAT);
 
 		expect(menu).toEqual({
 			type: OP_TYPES.REPEAT,
@@ -160,11 +176,13 @@ describe("For", () => {
 	it("should raise an error when using unknown var in loop", () => {
 		const script = `
 		display "intro" {
+			display {
 			layout {
 				for $idx 0,10 {
 					text $positions.$idx at:90,$Ypos
 					text $highscores.$idx.score at:250,$Ypos
 				}
+			}
 			}
 		}
 		`;

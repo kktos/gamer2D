@@ -1,15 +1,14 @@
 import type GameContext from "../game/types/GameContext";
 import type { Scene } from "../scene/Scene";
-import type { TSceneDisplaySheet } from "../script/compiler/layers/display/display.rules";
-import type { TSceneLevelSheet } from "../script/compiler/layers/level/level.rules";
+import type { TSceneBackgroundSheet } from "../script/compiler/layers/background/background.rules";
 import { Layer } from "./Layer";
 
 export class BackgroundLayer extends Layer {
 	private color: string;
 
-	constructor(gc: GameContext, parent: Scene, sheet: TSceneLevelSheet | TSceneDisplaySheet) {
+	constructor(gc: GameContext, parent: Scene, sheet: TSceneBackgroundSheet) {
 		super(gc, parent);
-		this.color = sheet.background?.value ?? "#000";
+		this.color = sheet.color.value;
 	}
 
 	render({ viewport: { ctx, width, height } }) {

@@ -6,18 +6,22 @@ describe("Sprite", () => {
 	it("should create a sprite", () => {
 		const script = `
 		display "intro" {
-			layout {
-				sprite "BubblunEntity" at:90,428
-				sprite "BubblunEntity" at:90,428 dir:right
+			display {
+				layout {
+					sprite "BubblunEntity" at:90,428
+					sprite "BubblunEntity" at:90,428 dir:right
+				}
 			}
 		}
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		expect(result).toHaveProperty("layout");
-		expect(Array.isArray(result.layout)).toBe(true);
+		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		expect(displayLayer).toBeDefined();
+		expect(displayLayer).toHaveProperty("layout");
+		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		expect(result.layout).toEqual([
+		expect(displayLayer.layout).toEqual([
 			{
 				pos: [90, 428],
 				type: OP_TYPES.SPRITE,
@@ -37,17 +41,21 @@ describe("Sprite", () => {
 	it("should create a sprite with ID", () => {
 		const script = `
 		display "intro" {
-			layout {
-				sprite id:"test" "BubblunEntity" at:90,428
+			display {
+				layout {
+					sprite id:"test" "BubblunEntity" at:90,428
+				}
 			}
 		}
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		expect(result).toHaveProperty("layout");
-		expect(Array.isArray(result.layout)).toBe(true);
+		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		expect(displayLayer).toBeDefined();
+		expect(displayLayer).toHaveProperty("layout");
+		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		expect(result.layout).toEqual([
+		expect(displayLayer.layout).toEqual([
 			{
 				id: "test",
 				pos: [90, 428],

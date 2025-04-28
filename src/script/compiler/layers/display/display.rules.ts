@@ -10,12 +10,12 @@ export type SceneSheetUI = {
 	background?: ArgColor;
 };
 
-export type TSceneDisplaySheet = {
+export type TLayerDisplaySheet = {
 	type: "display";
-	name: string;
-	showCursor?: boolean;
-	background?: ArgColor;
-	layers?: string[];
+	// name: string;
+	// showCursor?: boolean;
+	// background?: ArgColor;
+	// layers?: string[];
 	ui?: SceneSheetUI;
 	font?: string;
 	layout?: unknown[];
@@ -29,8 +29,7 @@ export class DisplayRules {
 	static displaySheet($) {
 		return $.RULE("displaySheet", () => {
 			$.CONSUME(tokens.Display);
-
-			const sheet = { type: "display", name: $.CONSUME(tokens.StringLiteral).payload };
+			const sheet = { type: "display" };
 
 			$.CONSUME(tokens.OpenCurly);
 
@@ -48,15 +47,15 @@ export class DisplayRules {
 	static displayProps($) {
 		return $.RULE("displayProps", (sheet) => {
 			return $.OR([
-				{ ALT: () => $.SUBRULE($.background) },
-				{ ALT: () => $.SUBRULE($.showCursor) },
+				// { ALT: () => $.SUBRULE($.background) },
+				// { ALT: () => $.SUBRULE($.showCursor) },
 				{ ALT: () => $.SUBRULE($.font) },
 				{ ALT: () => $.SUBRULE($.layout) },
 				{ ALT: () => $.SUBRULE($.sound, { ARGS: [sheet] }) },
 				{ ALT: () => $.SUBRULE($.displayTimer, { ARGS: [sheet] }) },
 				{ ALT: () => $.SUBRULE($.displayOnEvent, { ARGS: [sheet] }) },
 				{ ALT: () => $.SUBRULE($.displayUI) },
-				{ ALT: () => $.SUBRULE($.displayLayers) },
+				// { ALT: () => $.SUBRULE($.displayLayers) },
 				{ ALT: () => $.SUBRULE($.displaySettings) },
 			]);
 		});
@@ -97,21 +96,21 @@ export class DisplayRules {
 		});
 	}
 
-	static displayLayers($) {
-		return $.RULE("displayLayers", () => {
-			$.CONSUME(tokens.Layers);
+	// static displayLayers($) {
+	// 	return $.RULE("displayLayers", () => {
+	// 		$.CONSUME(tokens.Layers);
 
-			$.CONSUME(tokens.OpenCurly);
+	// 		$.CONSUME(tokens.OpenCurly);
 
-			const result: { name: string; value: string[] } = { name: "layers", value: [] };
+	// 		const result: { name: string; value: string[] } = { name: "layers", value: [] };
 
-			$.AT_LEAST_ONE(() => {
-				result.value.push($.CONSUME(tokens.Identifier).image);
-			});
+	// 		$.AT_LEAST_ONE(() => {
+	// 			result.value.push($.CONSUME(tokens.Identifier).image);
+	// 		});
 
-			$.CONSUME(tokens.CloseCurly);
+	// 		$.CONSUME(tokens.CloseCurly);
 
-			return result;
-		});
-	}
+	// 		return result;
+	// 	});
+	// }
 }

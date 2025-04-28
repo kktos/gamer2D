@@ -1,24 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { ArgColor } from "../../types/value.types";
 import { compileScript } from "./compiler";
 
 describe("compileScript", () => {
 	it("should compile a simple display script", () => {
 		const script = `
 		display "intro" {
-			background #FF0000
 			showCursor
-			font "bubble-bobble"
+			game {}
 		}
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
 		expect(result).toStrictEqual({
-			background: new ArgColor("#FF0000"),
-			font: "bubble-bobble",
 			name: "intro",
 			showCursor: true,
 			type: "display",
+			layers: [{ type: "game" }],
 		});
 	});
 

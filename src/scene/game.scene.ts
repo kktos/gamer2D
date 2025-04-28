@@ -6,7 +6,7 @@ export class GameScene extends Scene {
 	private levelPath: string;
 
 	constructor(gc: GameContext, sheet) {
-		super(gc, sheet.name);
+		super(gc, sheet.name, sheet);
 
 		this.isPermanent = true;
 		this.currentLevel = 0;

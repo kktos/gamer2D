@@ -1,17 +1,16 @@
 import type GameContext from "../game/types/GameContext";
 import type { SceneConstructor } from "../game/types/GameOptions";
 import { compileScript } from "../script/compiler/compiler";
-import type { TSceneDisplaySheet } from "../script/compiler/layers/display/display.rules";
-import type { TSceneLevelSheet } from "../script/compiler/layers/level/level.rules";
+import type { TSceneSheet } from "../script/compiler/scenes/scene.rules";
 import LocalDB from "../utils/storage.util";
 import type { Scene } from "./Scene";
 import { DisplayScene } from "./display.scene";
 
-export type TSceneGameSheet = {
-	type: "game";
-	name: string;
-};
-export type TSceneSheet = TSceneDisplaySheet | TSceneLevelSheet | TSceneGameSheet;
+// export type TSceneGameSheet = {
+// 	type: "game";
+// 	name: string;
+// };
+// export type TSceneBaseSheet = TLayerDisplaySheet | TSceneLevelSheet | TSceneGameSheet;
 
 const GLOBAL_VARIABLES = new Map([
 	// display

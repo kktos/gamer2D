@@ -7,12 +7,14 @@ describe("Menu", () => {
 	it("should create a simple menu", () => {
 		const script = `
 		display "intro" {
-			layout {
-				menu {
-					items {
-						text "play" at:300,230 action:{ goto("play") }
-						text "intro" at:300,280 action:{ goto("intro") }
-						text "game" at:300,330
+			display {
+				layout {
+					menu {
+						items {
+							text "play" at:300,230 action:{ goto("play") }
+							text "intro" at:300,280 action:{ goto("intro") }
+							text "game" at:300,330
+						}
 					}
 				}
 			}
@@ -20,10 +22,12 @@ describe("Menu", () => {
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		expect(result).toHaveProperty("layout");
-		expect(Array.isArray(result.layout)).toBe(true);
+		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		expect(displayLayer).toBeDefined();
+		expect(displayLayer).toHaveProperty("layout");
+		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		const menu = result.layout.find((op) => op.type === OP_TYPES.MENU);
+		const menu = displayLayer.layout.find((op) => op.type === OP_TYPES.MENU);
 
 		expect(menu).toEqual({
 			type: OP_TYPES.MENU,
@@ -52,6 +56,7 @@ describe("Menu", () => {
 	it("should create a menu with grouped items", () => {
 		const script = `
 		display "intro" {
+			display {
 			layout {
 				menu {
 					items {
@@ -61,14 +66,17 @@ describe("Menu", () => {
 					}
 				}
 			}
+			}
 		}
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		expect(result).toHaveProperty("layout");
-		expect(Array.isArray(result.layout)).toBe(true);
+		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		expect(displayLayer).toBeDefined();
+		expect(displayLayer).toHaveProperty("layout");
+		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		const menu = result.layout.find((op) => op.type === OP_TYPES.MENU);
+		const menu = displayLayer.layout.find((op) => op.type === OP_TYPES.MENU);
 
 		expect(menu).toEqual({
 			type: OP_TYPES.MENU,
@@ -118,6 +126,7 @@ describe("Menu", () => {
 	it("should create a menu with for loop", () => {
 		const script = `
 		display "intro" {
+			display {
 			layout {
 				$menuItems = [
 					"play",
@@ -142,14 +151,17 @@ describe("Menu", () => {
 					}
 				}
 			}
+			}
 		}
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		expect(result).toHaveProperty("layout");
-		expect(Array.isArray(result.layout)).toBe(true);
+		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		expect(displayLayer).toBeDefined();
+		expect(displayLayer).toHaveProperty("layout");
+		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		const menu = result.layout.find((op) => op.type === OP_TYPES.MENU);
+		const menu = displayLayer.layout.find((op) => op.type === OP_TYPES.MENU);
 
 		expect(menu).toEqual({
 			type: OP_TYPES.MENU,
@@ -181,6 +193,7 @@ describe("Menu", () => {
 	it("should create a menu full options", () => {
 		const script = `
 		display "intro" {
+			display {
 			layout {
 				$menuItems = [
 					"play",
@@ -208,14 +221,17 @@ describe("Menu", () => {
 					}
 				}
 			}
+			}
 		}
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		expect(result).toHaveProperty("layout");
-		expect(Array.isArray(result.layout)).toBe(true);
+		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		expect(displayLayer).toBeDefined();
+		expect(displayLayer).toHaveProperty("layout");
+		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		const menu = result.layout.find((op) => op.type === OP_TYPES.MENU);
+		const menu = displayLayer.layout.find((op) => op.type === OP_TYPES.MENU);
 
 		expect(menu).toEqual({
 			type: OP_TYPES.MENU,

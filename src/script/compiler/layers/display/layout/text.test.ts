@@ -7,17 +7,21 @@ describe("Text", () => {
 	it("should create a text with ID", () => {
 		const script = `
 		display "intro" {
-			layout {
-				text id:"test" "Hello World" at:110,428
+			display {
+				layout {
+					text id:"test" "Hello World" at:110,428
+				}
 			}
 		}
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		expect(result).toHaveProperty("layout");
-		expect(Array.isArray(result.layout)).toBe(true);
+		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		expect(displayLayer).toBeDefined();
+		expect(displayLayer).toHaveProperty("layout");
+		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		expect(result.layout).toEqual([
+		expect(displayLayer.layout).toEqual([
 			{
 				id: "test",
 				pos: [110, 428],
@@ -30,18 +34,22 @@ describe("Text", () => {
 	it("should create a text with position using expressions", () => {
 		const script = `
 		display "intro" {
-			layout {
-				$posX=90
-				text id:"test" "Hello World" at:$posX*2,428
+			display {
+				layout {
+					$posX=90
+					text id:"test" "Hello World" at:$posX*2,428
+				}
 			}
 		}
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		expect(result).toHaveProperty("layout");
-		expect(Array.isArray(result.layout)).toBe(true);
+		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		expect(displayLayer).toBeDefined();
+		expect(displayLayer).toHaveProperty("layout");
+		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		const text = result.layout.find((op) => op.type === OP_TYPES.TEXT);
+		const text = displayLayer.layout.find((op) => op.type === OP_TYPES.TEXT);
 		expect(text).toBeDefined();
 		expect(text).toEqual({
 			id: "test",

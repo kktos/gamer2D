@@ -2,7 +2,8 @@ import { GAME_EVENTS } from "../constants/events.const";
 import { setupEntities, setupEntity } from "../entities/Entity.factory";
 import { setupLayer, setupLayers } from "../layers/Layer.factory";
 import Director from "../scene/Director";
-import { type TSceneSheet, setupScene } from "../scene/Scene.factory";
+import { setupScene } from "../scene/Scene.factory";
+import type { TSceneSheet } from "../script/compiler/scenes/scene.rules";
 import { setupTrait, setupTraits } from "../traits/Trait.factory";
 import { createViewport } from "../utils/canvas.utils";
 import { readGamepad } from "../utils/gamepad.util";
@@ -243,7 +244,7 @@ export default class Game {
 		setupScene(sceneType, sceneClass);
 	}
 
-	addLayer(layerClass: LayerConstructor) {
-		setupLayer(layerClass);
+	addLayer(layerName: string, layerClass: LayerConstructor) {
+		setupLayer({ name: layerName, classType: layerClass });
 	}
 }

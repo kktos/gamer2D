@@ -7,24 +7,28 @@ describe("Repeat", () => {
 	it("should do a repeat loop", () => {
 		const script = `
 		display "intro" {
-			layout {
+			display {
+				layout {
 
-				$Ypos = 190
-				repeat $idx count:9 {
-					text $positions.$idx at:90,$Ypos+$idx*40
-					text $highscores.$idx.score at:250,$Ypos+$idx*40
+					$Ypos = 190
+					repeat $idx count:9 {
+						text $positions.$idx at:90,$Ypos+$idx*40
+						text $highscores.$idx.score at:250,$Ypos+$idx*40
+					}
+
 				}
-
 			}
 		}
 		`;
 
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		expect(result).toHaveProperty("layout");
-		expect(Array.isArray(result.layout)).toBe(true);
+		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		expect(displayLayer).toBeDefined();
+		expect(displayLayer).toHaveProperty("layout");
+		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		const menu = result.layout.find((op) => op.type === OP_TYPES.REPEAT);
+		const menu = displayLayer.layout.find((op) => op.type === OP_TYPES.REPEAT);
 
 		expect(menu).toEqual({
 			type: OP_TYPES.REPEAT,

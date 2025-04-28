@@ -140,7 +140,7 @@ export class GameMenu {
 			case "mousemove": {
 				const menuIdx = this.findMenuByPoint(e.x, e.y);
 				if (menuIdx >= 0) this.selectMenuItem(menuIdx);
-				if (this.layer.wannaShowCursor) this.gc.viewport.canvas.style.cursor = menuIdx >= 0 ? "pointer" : "default";
+				if (this.layer.scene.wannaShowCursor) this.gc.viewport.canvas.style.cursor = menuIdx >= 0 ? "pointer" : "default";
 				break;
 			}
 			case "joybuttondown":

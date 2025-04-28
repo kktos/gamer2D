@@ -14,6 +14,7 @@ export type SceneConstructor = new (...args: any[]) => Scene;
 export type LayerConstructor = new (...args: any[]) => Layer;
 
 export type entityDefinition = { name: string; classType: EntityConstructor };
+export type layerDefinition = { name: string; classType: LayerConstructor };
 
 export type GameOptions = {
 	paths: {
@@ -25,7 +26,7 @@ export type GameOptions = {
 	};
 	entities?: entityDefinition[];
 	traits?: TraitConstructor[];
-	layers?: LayerConstructor[];
+	layers?: layerDefinition[];
 
 	scenes: {
 		level: {

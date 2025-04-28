@@ -17,11 +17,4 @@ export class MiscRules {
 			return { name: "background", value };
 		});
 	}
-
-	static showCursor($) {
-		return $.RULE("showCursor", () => {
-			$.CONSUME(tokens.ShowCursor);
-			return { name: "showCursor", value: true };
-		});
-	}
 }

@@ -7,27 +7,33 @@ describe("Def Anim", () => {
 	it("should define an anim on path", () => {
 		const script = `
 		display "intro" {
-			layout {
+			display {
+				layout {
 
-				$xpos=380
-				$ypos=300
-				$radius=20
-				
-				def anim "clockwise" {
-					path { 
-						circle($xpos,$ypos,$radius,0)
-						loop()
+					$xpos=380
+					$ypos=300
+					$radius=20
+					
+					def anim "clockwise" {
+						path { 
+							circle($xpos,$ypos,$radius,0)
+							loop()
+						}
+						speed 20
 					}
-					speed 20
-				}
 
+				}
 			}
 		}
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
 
-		const anim = result.layout.filter((op) => op.type === OP_TYPES.ANIM);
+		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		expect(displayLayer).toBeDefined();
+		expect(displayLayer).toHaveProperty("layout");
+
+		const anim = displayLayer.layout.filter((op) => op.type === OP_TYPES.ANIM);
 
 		expect(anim).toEqual([
 			{
@@ -50,25 +56,30 @@ describe("Def Anim", () => {
 	it("should define an anim on path", () => {
 		const script = `
 		display "intro" {
-			layout {
+			display {
+				layout {
 
-				def anim "fadeout" {
-					path {
-						prop("color",#00000001)
-						prop("name","X:%mouseX%")
-						dir(left)
-						loop()
+					def anim "fadeout" {
+						path {
+							prop("color",#00000001)
+							prop("name","X:%mouseX%")
+							dir(left)
+							loop()
+						}
 					}
-				}
 
+				}
 			}
 		}
 		`;
 
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		expect(result).toStrictEqual({
-			name: "intro",
+		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		expect(displayLayer).toBeDefined();
+		expect(displayLayer).toHaveProperty("layout");
+
+		expect(displayLayer).toStrictEqual({
 			type: "display",
 			layout: [
 				{

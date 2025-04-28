@@ -1,15 +1,15 @@
 import type { DIRECTIONS } from "../../../../types/direction.type";
 import type { TupleToUnion } from "../../../../types/typescript.types";
-import type { ArgColor, ArgExpression, ArgVariable } from "../../../../types/value.types";
+import type { ArgExpression, ArgVariable } from "../../../../types/value.types";
 import { tokens } from "../../lexer";
 
 const CONCAT = Symbol.for("concat");
 
 export type TSceneLevelSheet = {
 	type: "level";
-	name: string;
-	showCursor?: boolean;
-	background?: ArgColor;
+	// name: string;
+	// showCursor?: boolean;
+	// background?: ArgColor;
 	font?: string;
 	settings: Record<string, unknown>;
 	sprites?: {
@@ -27,7 +27,7 @@ export class LevelRules {
 
 			const sheet: TSceneLevelSheet = {
 				type: "level",
-				name: $.CONSUME(tokens.StringLiteral).payload,
+				// name: $.CONSUME(tokens.StringLiteral).payload,
 				settings: {},
 			};
 
@@ -41,6 +41,10 @@ export class LevelRules {
 				} else sheet[name] = value;
 			});
 
+			$.ACTION(() => {
+				if (Object.keys(sheet.settings).length === 0) throw new TypeError("No Settings !?!");
+			});
+
 			$.CONSUME(tokens.CloseCurly);
 
 			return sheet;
@@ -50,8 +54,8 @@ export class LevelRules {
 	static levelProps($) {
 		return $.RULE("levelProps", () => {
 			return $.OR([
-				{ ALT: () => $.SUBRULE($.background) },
-				{ ALT: () => $.SUBRULE($.showCursor) },
+				// { ALT: () => $.SUBRULE($.background) },
+				// { ALT: () => $.SUBRULE($.showCursor) },
 				{ ALT: () => $.SUBRULE($.font) },
 				{ ALT: () => $.SUBRULE($.levelSettings) },
 				{ ALT: () => $.SUBRULE($.levelSprite) },

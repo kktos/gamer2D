@@ -3,8 +3,10 @@ import { EventEmitter } from "../events/EventEmitter";
 import { TaskList } from "../game/TaskList";
 import type GameContext from "../game/types/GameContext";
 import type { Layer } from "../layers/Layer";
+import { createLayer } from "../layers/Layer.factory";
 import type { UILayer } from "../layers/UILayer";
 import type { BBox } from "../maths/math";
+import type { TSceneSheet } from "../script/compiler/scenes/scene.rules";
 import { generateID } from "../utils/id.util";
 import { getClassName } from "../utils/object.util";
 
@@ -20,6 +22,7 @@ export class Scene {
 	// once created always there (e.g : Game scene vs Level scene)
 	public isPermanent: boolean;
 	public isRunning: boolean;
+	public wannaShowCursor: boolean;
 	public bbox: BBox;
 	public tasks: TaskList;
 
@@ -30,14 +33,14 @@ export class Scene {
 	private screenHeight: number;
 	private layers: Map<string, Layer>;
 	private next: null;
+	private settings?: Record<string, unknown>;
 
 	constructor(
 		private gc: GameContext,
 		public name: string,
-		private settings?: Record<string, unknown>,
+		sheet: TSceneSheet,
 	) {
-		const m = String(this.constructor).match(/class ([^\s]+)/);
-		this.class = m?.[1] ?? "Scene??";
+		this.class = getClassName(this.constructor);
 		this.id = generateID();
 
 		this.screenWidth = gc.viewport.width;
@@ -55,11 +58,14 @@ export class Scene {
 		this.isRunning = false;
 		this.isPermanent = false;
 		this.next = null;
+		this.wannaShowCursor = sheet.showCursor ?? false;
 
 		this.gravity = gc.gravity ?? 0;
 
 		this.tasks = new TaskList();
 		this.setTaskHandlers(gc);
+
+		for (const layer of sheet.layers) this.addLayer(createLayer(gc, layer.type, layer));
 	}
 
 	init(gc: GameContext) {

@@ -7,19 +7,21 @@ describe("Path Trait", () => {
 	it("should deal with a circle", () => {
 		const script = `
 		display "intro" {
-			layout {
+			display {
+				layout {
 
-				def anim "clockwise" {
-					path { 
-						circle(380,300,20,0)
-						dir(Left)
-						prop("color",#00000001)
-						prop("name","X:%mouseX%")
-						loop()
+					def anim "clockwise" {
+						path { 
+							circle(380,300,20,0)
+							dir(Left)
+							prop("color",#00000001)
+							prop("name","X:%mouseX%")
+							loop()
+						}
+						speed 20
 					}
-					speed 20
-				}
 
+				}
 			}
 		}
 		`;
@@ -30,7 +32,11 @@ describe("Path Trait", () => {
 		const vars = new Map();
 		vars.set("mouseX", 100);
 
-		const trait = new PathTrait(result.layout[0], {
+		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		expect(displayLayer).toBeDefined();
+		expect(displayLayer).toHaveProperty("layout");
+
+		const trait = new PathTrait(displayLayer.layout[0], {
 			evalArg: (arg) => {
 				const rez = evalArg({ vars }, arg); /*console.log(arg,rez);*/
 				return rez;

@@ -7,22 +7,26 @@ describe("Repeat", () => {
 	it("should do a repeat loop", () => {
 		const script = `
 		display "intro" {
-			layout {
-				rect at:20,30 width:150 height:220 color:red
-				rect at:10,20 width:100 height:200
-				rect at:10,20 width:100 height:200 fill:#445500
-				color blue
-				rect at:10,20 width:100 height:200 fill:white pad:2,2
+			display {
+				layout {
+					rect at:20,30 width:150 height:220 color:red
+					rect at:10,20 width:100 height:200
+					rect at:10,20 width:100 height:200 fill:#445500
+					color blue
+					rect at:10,20 width:100 height:200 fill:white pad:2,2
+				}
 			}
 		}
 		`;
 
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		expect(result).toHaveProperty("layout");
-		expect(Array.isArray(result.layout)).toBe(true);
+		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		expect(displayLayer).toBeDefined();
+		expect(displayLayer).toHaveProperty("layout");
+		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		const rect = result.layout.filter((op) => op.type === OP_TYPES.RECT);
+		const rect = displayLayer.layout.filter((op) => op.type === OP_TYPES.RECT);
 		expect(Array.isArray(rect)).toBe(true);
 		expect(rect.length).toBe(4);
 

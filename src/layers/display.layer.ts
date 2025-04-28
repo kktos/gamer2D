@@ -5,7 +5,7 @@ import type GameContext from "../game/types/GameContext";
 import type { GameEvent } from "../game/types/GameEvent";
 import type { BBox } from "../maths/math";
 import type { Scene } from "../scene/Scene";
-import type { TSceneDisplaySheet } from "../script/compiler/layers/display/display.rules";
+import type { TLayerDisplaySheet } from "../script/compiler/layers/display/display.rules";
 import type { TFunctionCall } from "../script/compiler/layers/display/layout/action.rules";
 import type { TStatement } from "../script/compiler/layers/display/layout/layout.rules";
 import type { TRect } from "../script/compiler/layers/display/layout/rect.rules";
@@ -40,7 +40,6 @@ export class DisplayLayer extends UILayer {
 	public timers: Timers | null;
 	public font: Font;
 	public vars: TVars;
-	public wannaShowCursor: boolean;
 
 	private layout: TStatement[];
 	private time: number;
@@ -50,7 +49,7 @@ export class DisplayLayer extends UILayer {
 
 	private menu: GameMenu | null;
 
-	constructor(gc: GameContext, parent: Scene, sheet: TSceneDisplaySheet) {
+	constructor(gc: GameContext, parent: Scene, sheet: TLayerDisplaySheet) {
 		super(gc, parent, sheet.ui);
 
 		const rezMgr = gc.resourceManager;
@@ -60,7 +59,6 @@ export class DisplayLayer extends UILayer {
 		this.time = 0;
 		this.blinkFlag = false;
 		// this.lastJoyTime = 0;
-		this.wannaShowCursor = !!sheet.showCursor;
 
 		this.vars = new Map();
 		this.initVars(gc);

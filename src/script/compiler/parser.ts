@@ -1,4 +1,5 @@
 import { EmbeddedActionsParser } from "chevrotain";
+import { BackgroundLayerRules } from "./layers/background/background.rules";
 import { DebugRules } from "./layers/debug/debug.rules";
 import { DisplayRules } from "./layers/display/display.rules";
 import { ActionRules } from "./layers/display/layout/action.rules";
@@ -24,7 +25,7 @@ import { EditorRules } from "./layers/editor/editor.rules";
 import { GameRules } from "./layers/game/game.rules";
 import { LevelRules } from "./layers/level/level.rules";
 import { tokenList } from "./lexer";
-import { SheetRules } from "./scenes/scene.rules";
+import { SceneSheetRules } from "./scenes/scene.rules";
 import { ExprRules } from "./shared/expr.rules";
 import { TypesRules } from "./shared/types.rules";
 
@@ -36,7 +37,10 @@ export class SheetParser extends EmbeddedActionsParser {
 
 	public variablesDict = new Map<string, unknown>();
 
-	public sheet = SheetRules.sheet(this);
+	public sceneSheet = SceneSheetRules.sceneSheet(this);
+	public sceneSheetTypeAndName = SceneSheetRules.sceneSheetTypeAndName(this);
+	public sceneProps = SceneSheetRules.sceneProps(this);
+	public sceneShowCursor = SceneSheetRules.sceneShowCursor(this);
 
 	public number = TypesRules.number(this);
 	public variable = TypesRules.variable(this);
@@ -57,7 +61,6 @@ export class SheetParser extends EmbeddedActionsParser {
 
 	public displaySheet = DisplayRules.displaySheet(this);
 	public displayProps = DisplayRules.displayProps(this);
-	public displayLayers = DisplayRules.displayLayers(this);
 	public displaySettings = DisplayRules.displaySettings(this);
 	public displaySet = DisplayRules.displaySet(this);
 
@@ -111,7 +114,6 @@ export class SheetParser extends EmbeddedActionsParser {
 	public displayOnEvent = OnRules.displayOnEvent(this);
 
 	public gameSheet = GameRules.gameSheet(this);
-	public gameClause = GameRules.gameClause(this);
 
 	public levelSheet = LevelRules.levelSheet(this);
 	public levelProps = LevelRules.levelProps(this);
@@ -119,12 +121,10 @@ export class SheetParser extends EmbeddedActionsParser {
 	public levelSprite = LevelRules.levelSprite(this);
 
 	public editorSheet = EditorRules.editorSheet(this);
-	public editorClause = EditorRules.editorClause(this);
-
 	public debugSheet = DebugRules.debugSheet(this);
-	public debugClause = DebugRules.debugClause(this);
+	public backgroundLayerSheet = BackgroundLayerRules.backgroundLayerSheet(this);
+	public backgroundColor = BackgroundLayerRules.backgroundColor(this);
 
 	public font = MiscRules.font(this);
 	public background = MiscRules.background(this);
-	public showCursor = MiscRules.showCursor(this);
 }

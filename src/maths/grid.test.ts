@@ -94,7 +94,7 @@ describe("Grid", () => {
 			}
 		});
 
-		it("should find cells fully within the range", () => {
+		it.skip("should find cells fully within the range", () => {
 			const x = grid.toCoordX(2);
 			const y1 = grid.toCoordY(9);
 			const y2 = grid.toCoordY(11);

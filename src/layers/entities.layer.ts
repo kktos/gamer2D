@@ -3,7 +3,7 @@ import type GameContext from "../game/types/GameContext";
 import type { Grid } from "../maths/grid.math";
 import { intersectRect } from "../maths/math";
 import type { Scene } from "../scene/Scene";
-import type { TSceneDisplaySheet } from "../script/compiler/layers/display/display.rules";
+import type { TLayerDisplaySheet } from "../script/compiler/layers/display/display.rules";
 import type { TSceneLevelSheet } from "../script/compiler/layers/level/level.rules";
 import { createLevelEntities } from "../utils/createLevelEntities.utils";
 import { Layer } from "./Layer";
@@ -15,7 +15,7 @@ export class EntitiesLayer extends Layer {
 	private entities: Entity[];
 	private wannaShowCount: boolean;
 
-	constructor(gc: GameContext, parent: Scene, sheet: TSceneLevelSheet | TSceneDisplaySheet, grid?: Grid) {
+	constructor(gc: GameContext, parent: Scene, sheet: TSceneLevelSheet | TLayerDisplaySheet, grid?: Grid) {
 		super(gc, parent);
 
 		this.entities = grid ? createLevelEntities(gc.resourceManager, grid, (sheet as TSceneLevelSheet).sprites) : [];
