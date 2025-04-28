@@ -176,18 +176,19 @@ export class Entity {
 		this._size = this.spritesheet.spriteSize(name);
 	}
 
-	public setAnim(name: string, opt = { paused: false }) {
-		if (!this.spritesheet || !this.spritesheet.hasAnim(name)) throw new Error(`no animation ${name}`);
+	// probably useless; commented out for now
+	// public setAnim(name: string, opt = { paused: false }) {
+	// 	if (!this.spritesheet || !this.spritesheet.hasAnim(name)) throw new Error(`no animation ${name}`);
 
-		const anim = this.spritesheet.animations.get(name);
-		if (!anim) throw new Error(`no animation ${name}`);
+	// 	const anim = this.spritesheet.animations.get(name);
+	// 	if (!anim) throw new Error(`no animation ${name}`);
 
-		this.currSprite = name;
-		const frame = anim.frame(0);
-		this._size = this.spritesheet.spriteSize(frame);
-		if (opt.paused) anim.pause();
-		return anim;
-	}
+	// 	this.currSprite = name;
+	// 	const frame = anim.frame(0);
+	// 	this._size = this.spritesheet.spriteSize(frame);
+	// 	if (opt.paused) anim.pause();
+	// 	return anim;
+	// }
 
 	public collides(gc: GameContext, target: Entity) {
 		for (const trait of this.collidesTraits) trait.collides(gc, this, target);
