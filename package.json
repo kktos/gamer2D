@@ -1,7 +1,9 @@
 {
   "name": "gamer2d",
-  "version": "0.136.0",
+  "version": "0.138.0",
   "description": "A 2D Game Engine for Arkanoid, Bobble Bubble and more",
+  "author": "kktos",
+  "license": "ISC",
   "module": "./game/Game.js",
   "types": "./game/Game.d.ts",
   "exports": {
@@ -24,9 +26,6 @@
     "lint:fix": "biome lint --write --unsafe . && biome format --write .",
     "publishIt": "cd dist && npm publish"
   },
-  "keywords": [],
-  "author": "kktos",
-  "license": "ISC",
   "packageManager": "pnpm@10.8.1",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
