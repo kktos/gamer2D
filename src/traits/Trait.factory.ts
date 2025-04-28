@@ -1,22 +1,26 @@
-import type { traitDefinition } from "../game/Game";
+import type { TraitConstructor } from "../game/types/GameOptions";
+import { getClassName } from "../utils/object.util";
 import type { Trait } from "./Trait";
 import { FadeTrait } from "./fade.trait";
 import { MouseXTrait } from "./mouseX.trait";
+import { MouseXYTrait } from "./mouseXY.trait";
+import { XDragTrait } from "./xdrag.trait";
 
 const traitClasses = {
 	MouseXTrait,
+	MouseXYTrait,
 	FadeTrait,
+	XDragTrait,
 };
 
-// const traitNames = {};
+export function setupTraits(traitsDefinitions: TraitConstructor[]) {
+	for (const def of traitsDefinitions) setupTrait(def);
+}
 
-export function setupTraits(traitsDefinitions: traitDefinition[]) {
-	for (const def of traitsDefinitions) {
-		const { className, classType } = def;
-		if (traitClasses[className]) continue;
-		// traitNames[name] = className;
-		traitClasses[className] = classType;
-	}
+export function setupTrait(def: TraitConstructor) {
+	const className = getClassName(def);
+	if (traitClasses[className]) return;
+	traitClasses[className] = def;
 }
 
 export function createTrait(className: string, ...args: unknown[]): Trait {
