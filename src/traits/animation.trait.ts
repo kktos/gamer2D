@@ -4,18 +4,27 @@ import type GameContext from "../game/types/GameContext";
 import { Trait } from "./Trait";
 
 export default class AnimationTrait extends Trait {
-	public anim: Anim | null;
+	public anim: Anim | undefined;
+
+	private animCache: Map<string, Anim>;
 
 	constructor() {
 		super();
-		this.anim = null;
+		this.anim = undefined;
+		this.animCache = new Map();
 	}
 
 	setAnim(entity: Entity, name: string) {
-		const anim = entity.spritesheet?.animations.get(name);
-		if (!anim) throw new Error(`Unknown animation ${name} for ${entity.constructor}`);
+		this.anim = this.animCache.get(name);
 
-		this.anim = Anim.clone(anim);
+		if (!this.anim) {
+			const anim = entity.spritesheet?.animations.get(name);
+			if (!anim) throw new Error(`Unknown animation ${name} for ${entity.constructor}`);
+
+			this.anim = Anim.clone(anim);
+			this.animCache.set(name, this.anim);
+		}
+
 		return this.anim;
 	}
 
