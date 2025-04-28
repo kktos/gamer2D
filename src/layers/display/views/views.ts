@@ -1,4 +1,4 @@
-import type GameContext from "../../../game/GameContext";
+import type GameContext from "../../../game/types/GameContext";
 import type { TVars } from "../../../types/engine.types";
 import type { UILayer } from "../../UILayer";
 import { System } from "./System.view";

@@ -1,7 +1,7 @@
 import type Font from "../../../game/Font";
-import type GameContext from "../../../game/GameContext";
 import type ResourceManager from "../../../game/ResourceManager";
 import type { AnimMap, SpriteMap, SpriteSheet } from "../../../game/Spritesheet";
+import type GameContext from "../../../game/types/GameContext";
 import { createViewport, drawPixelated } from "../../../utils/canvas.utils";
 import type { UILayer } from "../../UILayer";
 import { View } from "./View";
