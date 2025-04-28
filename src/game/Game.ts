@@ -1,49 +1,19 @@
 import { GAME_EVENTS } from "../constants/events.const";
-import { GP_BUTTONS, GP_STICKS_AXES } from "../constants/gamepad.const";
-import type { Entity } from "../entities/Entity";
-import { setupEntities } from "../entities/Entity.factory";
-import type { Layer } from "../layers/Layer";
-import { setupLayers } from "../layers/Layer.factory";
-import type { Grid } from "../maths/grid.math";
+import { setupEntities, setupEntity } from "../entities/Entity.factory";
+import { setupLayer, setupLayers } from "../layers/Layer.factory";
 import Director from "../scene/Director";
-import type { Trait } from "../traits/Trait";
-import { setupTraits } from "../traits/TraitFactory";
+import { type TSceneSheet, setupScene } from "../scene/Scene.factory";
+import { setupTrait, setupTraits } from "../traits/Trait.factory";
 import { createViewport } from "../utils/canvas.utils";
+import { readGamepad } from "../utils/gamepad.util";
 import { path } from "../utils/path.util";
 import { parseSettings } from "../utils/settings.utils";
 import { FPSManager } from "./FPSManager";
-import type GameContext from "./GameContext";
-import type { GameEvent } from "./GameEvent";
 import { KeyMap } from "./KeyMap";
 import ResourceManager from "./ResourceManager";
-
-type EntityConstructor = new (...args: unknown[]) => Entity;
-type TraitConstructor = new (...args: unknown[]) => Trait;
-type LayerConstructor = new (...args: unknown[]) => Layer;
-
-export type entityDefinition = { name: string; className: string; classType: EntityConstructor };
-export type traitDefinition = { className: string; classType: TraitConstructor };
-export type layerDefinition = { className: string; classType: LayerConstructor };
-
-export type GameOptions = {
-	paths: {
-		spritesheets: string;
-		audiosheets: string;
-		fonts: string;
-		scenes: string;
-	};
-	entities?: entityDefinition[];
-	traits?: traitDefinition[];
-	layers?: layerDefinition[];
-
-	scenes: {
-		level: {
-			createGrid: (settings: Record<string, unknown>) => Grid;
-			layers: string[];
-		};
-	};
-	settings: string;
-};
+import type GameContext from "./types/GameContext";
+import type { GameEvent, KeyEvent } from "./types/GameEvent";
+import type { EntityConstructor, GameOptions, LayerConstructor, SceneConstructor, TraitConstructor } from "./types/GameOptions";
 
 export default class Game {
 	private fpsManager: FPSManager;
@@ -93,14 +63,7 @@ export default class Game {
 
 		this.gc.viewport.ctx.scale(this.gc.viewport.ratioWidth, this.gc.viewport.ratioHeight);
 
-		const onTimerUpdate = (deltaTime: number) => {
-			this.gc.tick++;
-			this.gc.deltaTime = deltaTime;
-			this.gc.totalTime += deltaTime;
-			this.gc.gamepad && this.readGamepad();
-			this.coppola?.update(this.gc);
-		};
-		this.fpsManager = new FPSManager(FPS, onTimerUpdate);
+		this.fpsManager = new FPSManager(FPS);
 
 		if (options.entities) setupEntities(options.entities);
 		if (options.traits) setupTraits(options.traits);
@@ -109,7 +72,6 @@ export default class Game {
 
 	pause() {
 		this.fpsManager.stop();
-
 		const overlay = document.createElement("div");
 		overlay.className = "overlay";
 		overlay.id = "gamepaused";
@@ -123,65 +85,7 @@ export default class Game {
 	play() {
 		const overlay = document.querySelector("#gamepaused");
 		overlay?.remove();
-
 		this.fpsManager.start();
-	}
-
-	readGamepad() {
-		if (!this.gc.gamepad) return;
-
-		const gamepad = navigator.getGamepads()[this.gc.gamepad.id];
-		if (!gamepad) return;
-
-		if (gamepad.timestamp === this.gc.gamepad.lastTime) return;
-
-		this.gc.gamepad.lastTime = gamepad.timestamp;
-		const hMove = Number(gamepad.axes[GP_STICKS_AXES.RIGHT_HORIZONTAL].toFixed(3));
-		const vMove = Number(gamepad.axes[GP_STICKS_AXES.RIGHT_VERTICAL].toFixed(3));
-
-		if (hMove !== 0 || vMove !== 0)
-			setTimeout(() => {
-				// const bbox= this.gc.viewport.bbox;
-				// const w= bbox.width/2;
-				// const h= bbox.height/2;
-				// const evt= {
-				// 	type: "mousemove",
-				// 	buttons: [],
-				// 	x: (w + (w * hMove)) / this.gc.viewport.ratioWidth | 0,
-				// 	y: (h + (h * vMove)) / this.gc.viewport.ratioHeight | 0,
-				// 	key: undefined
-				// };
-				// this.gc.mouse.x= evt.x;
-				// this.gc.mouse.y= evt.y;
-				// this.coppola.handleEvent(this.gc, evt);
-
-				const evt: GameEvent = {
-					type: "joyaxismove",
-					timestamp: gamepad.timestamp,
-					vertical: vMove,
-					horizontal: hMove,
-				};
-				this.coppola?.handleEvent(this.gc, evt);
-			}, 0);
-
-		const buttons = gamepad.buttons;
-		setTimeout(() => {
-			const evt: GameEvent = {
-				type: "joybuttondown",
-				timestamp: gamepad?.timestamp,
-				X: buttons[GP_BUTTONS.X].pressed,
-				Y: buttons[GP_BUTTONS.Y].pressed,
-				A: buttons[GP_BUTTONS.A].pressed,
-				B: buttons[GP_BUTTONS.B].pressed,
-				CURSOR_UP: buttons[GP_BUTTONS.CURSOR_UP].pressed,
-				CURSOR_DOWN: buttons[GP_BUTTONS.CURSOR_DOWN].pressed,
-				CURSOR_LEFT: buttons[GP_BUTTONS.CURSOR_LEFT].pressed,
-				CURSOR_RIGHT: buttons[GP_BUTTONS.CURSOR_RIGHT].pressed,
-				TRIGGER_LEFT: buttons[GP_BUTTONS.TRIGGER_LEFT].pressed,
-				TRIGGER_RIGHT: buttons[GP_BUTTONS.TRIGGER_RIGHT].pressed,
-			};
-			this.coppola?.handleEvent(this.gc, evt);
-		}, 0);
 	}
 
 	handleEvent(e: Event) {
@@ -238,7 +142,7 @@ export default class Game {
 			case "keyup":
 			case "keydown":
 				evt.type = e.type;
-				evt.key = (e as KeyboardEvent).key;
+				(evt as KeyEvent).key = (e as KeyboardEvent).key;
 				this.gc.keys.set((e as KeyboardEvent).key, evt.type === "keydown");
 				break;
 
@@ -309,12 +213,37 @@ export default class Game {
 		}
 
 		// console.log("new Director");
-		this.coppola = new Director(this.gc);
-		this.coppola.run(startScene);
+		const coppola = new Director(this.gc);
+		this.coppola = coppola;
+		const onTimerUpdate = (deltaTime: number) => {
+			this.gc.tick++;
+			this.gc.deltaTime = deltaTime;
+			this.gc.totalTime += deltaTime;
+			this.gc.gamepad && readGamepad(this.gc, coppola);
+			coppola.update(this.gc);
+		};
+		this.fpsManager.on(onTimerUpdate);
+		coppola.run(startScene);
 
 		for (let idx = 0; idx < GAME_EVENTS.length; idx++) window.addEventListener(GAME_EVENTS[idx], this);
 
 		// console.log("play()");
 		this.play();
+	}
+
+	addEntity(entityName: string, entityClass: EntityConstructor) {
+		setupEntity({ name: entityName, classType: entityClass });
+	}
+
+	addTrait(traitClass: TraitConstructor) {
+		setupTrait(traitClass);
+	}
+
+	addScene(sceneType: TSceneSheet["type"], sceneClass: SceneConstructor) {
+		setupScene(sceneType, sceneClass);
+	}
+
+	addLayer(layerClass: LayerConstructor) {
+		setupLayer(layerClass);
 	}
 }

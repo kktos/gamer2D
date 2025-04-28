@@ -1,4 +1,4 @@
-import type GameContext from "../game/GameContext";
+import type GameContext from "../game/types/GameContext";
 import { Scene } from "./Scene";
 import { SceneFactory } from "./Scene.factory";
 
@@ -10,9 +10,9 @@ export default class Director {
 	) {}
 
 	addScene(scene: Scene) {
-		scene.events.on(Scene.EVENT_COMPLETE, (nameOrIdx: unknown) => {
-			if (Number.isInteger(nameOrIdx)) {
-				if ((nameOrIdx as number) < 0) this.runPrevious();
+		scene.on(Scene.SCENE_COMPLETED, (nameOrIdx) => {
+			if (typeof nameOrIdx === "number") {
+				if (nameOrIdx < 0) this.runPrevious();
 				else this.runNext();
 			} else this.run(nameOrIdx as string);
 		});

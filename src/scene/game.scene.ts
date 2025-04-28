@@ -1,38 +1,36 @@
+import type GameContext from "../game/types/GameContext";
 import { Scene } from "./Scene";
 
 export class GameScene extends Scene {
 	private currentLevel: number;
+	private levelPath: string;
 
-	constructor(gc, sheet) {
+	constructor(gc: GameContext, sheet) {
 		super(gc, sheet.name);
+
 		this.isPermanent = true;
-
 		this.currentLevel = 0;
-
-		// LocalDB.newPlayer("currentPlayer");
+		this.levelPath = gc.options.paths.levels;
 	}
 
-	update(gc) {
+	get levelName() {
+		return `level${String(this.currentLevel).padStart(3, "0")}`;
+	}
+
+	nextLevel() {
+		this.currentLevel++;
+		this.goto(`${this.levelPath}/${this.levelName}`);
+	}
+
+	isReadyForNextLevel() {
+		return true;
+	}
+
+	update(gc: GameContext) {
 		super.update(gc);
 
-		this.currentLevel++;
-
-		this.events.emit(Scene.EVENT_COMPLETE, `levels/level${String(this.currentLevel).padStart(3, "0")}`);
+		if (this.isReadyForNextLevel()) this.nextLevel();
 
 		return this;
-
-		// if(!LocalDB.currentPlayer().lives || this.currentLevel > this.rounds) {
-		// 	this.killOnExit= true;
-
-		// 	if(LocalDB.isPlayerScoreGoodEnough()) {
-		// 		this.events.emit(Scene.EVENT_COMPLETE, "input_name");
-		// 	}
-		// 	else
-		// 		this.events.emit(Scene.EVENT_COMPLETE, "menu");
-		// }
-		// else {
-		// 	LocalDB.updateRound(this.currentLevel);
-		// 	this.events.emit(Scene.EVENT_COMPLETE, `levels/${this.theme}/stage${this.currentLevel}`);
-		// }
 	}
 }

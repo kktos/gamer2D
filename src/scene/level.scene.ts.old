@@ -1,17 +1,16 @@
-import type GameContext from "../game/GameContext";
+import type GameContext from "../game/types/GameContext";
 import { createLayer } from "../layers/Layer.factory";
 import type { Grid } from "../maths/grid.math";
 import type { TSceneLevelSheet } from "../script/compiler/level/level.rules";
 import { Scene } from "./Scene";
 
-export default class LevelScene extends Scene {
+export default class LevelSceneOLD extends Scene {
 	static TASK_ADD_ENTITY = Symbol.for("add entity");
 
 	static STATE_STARTING = Symbol.for("starting");
 	static STATE_RUNNING = Symbol.for("running");
 	static STATE_ENDING = Symbol.for("ending");
 
-	public gravity: number;
 	public grid: Grid;
 
 	private state: symbol;
@@ -22,8 +21,6 @@ export default class LevelScene extends Scene {
 		this.isPermanent = false;
 
 		this.state = LevelScene.STATE_STARTING;
-
-		this.gravity = gc.gravity;
 
 		this.grid = gc.options.scenes.level.createGrid(sheet.settings);
 		// this.grid = createLevelGrid(sheet.settings);

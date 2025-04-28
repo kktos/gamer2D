@@ -1,4 +1,4 @@
-import type GameContext from "../game/GameContext";
+import type GameContext from "../game/types/GameContext";
 import type { Scene } from "../scene/Scene";
 
 export class Layer {

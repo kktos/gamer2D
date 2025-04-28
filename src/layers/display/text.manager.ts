@@ -1,5 +1,7 @@
 import type { Entity } from "../../entities/Entity";
 import { type TextDTO, TextEntity } from "../../entities/text.entity";
+import type { TFunctionCall } from "../../script/compiler/display/layout/action.rules";
+import { ALIGN_TYPES } from "../../script/compiler/display/layout/text-sprite-props.rules";
 import type { TText } from "../../script/compiler/display/layout/text.rules";
 import { evalArg, evalNumber, evalValue, isStringInterpolable } from "../../script/engine/eval.script";
 import type { Trait } from "../../traits/Trait";
@@ -11,13 +13,13 @@ import type { DisplayLayer } from "../display.layer";
 import { EntitiesLayer } from "../entities.layer";
 
 export function addText(layer: DisplayLayer, op: TText & { entity?: Entity }) {
-	const posX = evalValue({ vars: layer.vars }, op.pos[0]);
-	const posY = evalValue({ vars: layer.vars }, op.pos[1]);
+	const posX = evalValue({ vars: layer.vars }, op.pos[0]) as number;
+	const posY = evalValue({ vars: layer.vars }, op.pos[1]) as number;
 
 	const textObj: TextDTO = {
 		pos: [posX, posY],
 		align: op.align,
-		valign: op.valign,
+		valign: op.valign ?? ALIGN_TYPES.TOP,
 		size: op.size,
 		color: op.color,
 		bgcolor: op.bgcolor?.value,
@@ -39,7 +41,9 @@ export function addText(layer: DisplayLayer, op: TText & { entity?: Entity }) {
 
 // handling with PathTrait of "def anim"
 function setupAnim(op: TText & { entity?: Entity }, entity: Entity, vars: TVars) {
-	const anim = vars.get(op.anim.name) as { path: unknown[]; speed: number };
+	if (!op.anim) return;
+
+	const anim = vars.get(op.anim.name) as { path: TFunctionCall[]; speed: number };
 	if (!anim) {
 		throw new Error(`Animation ${op.anim.name} not found`);
 	}
@@ -52,6 +56,8 @@ function setupAnim(op: TText & { entity?: Entity }, entity: Entity, vars: TVars)
 
 // handling of "traits:[ trait1, trait2, ...]"
 function setupTraits(op: TText & { entity?: Entity }, entity: Entity, vars: TVars) {
+	if (!op.traits) return;
+
 	let traitsArray: ArgVariable[];
 	if (op.traits instanceof ArgVariable) {
 		traitsArray = vars.get(op.traits.value) as unknown as ArgVariable[];

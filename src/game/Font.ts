@@ -1,20 +1,21 @@
 import type { BBox } from "../maths/math";
+import { ALIGN_TYPES, type TAlignType } from "../script/compiler/display/layout/text-sprite-props.rules";
 import type { RequireAllOrNone } from "../types/typescript.types";
 import { nameToRgba } from "../utils/canvas.utils";
 import { loadImage, loadJson } from "../utils/loaders.util";
 import { SpriteSheet } from "./Spritesheet";
 
 // const CHARS= ' 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ©!-×.';
-export const Align = {
-	Left: 1,
-	Center: 2,
-	Right: 3,
-};
-export const VAlign = {
-	Top: 1,
-	Center: 2,
-	Bottom: 3,
-};
+// export const Align = {
+// 	Left: 1,
+// 	Center: 2,
+// 	Right: 3,
+// };
+// export const VAlign = {
+// 	Top: 1,
+// 	Center: 2,
+// 	Bottom: 3,
+// };
 
 type PrintOptionsBase = {
 	ctx: CanvasRenderingContext2D;
@@ -48,8 +49,8 @@ function loadFont(sheet) {
 export default class Font {
 	public name: string;
 	public size: number;
-	public align: number;
-	public valign: number;
+	public align: TAlignType;
+	public valign: TAlignType;
 	public spritesheet: SpriteSheet;
 
 	private spriteHeight: number;
@@ -67,8 +68,8 @@ export default class Font {
 		this.spriteHeight = height;
 		this.spriteWidth = width;
 		this.size = 1;
-		this.align = Align.Left;
-		this.valign = VAlign.Top;
+		this.align = ALIGN_TYPES.LEFT;
+		this.valign = ALIGN_TYPES.TOP;
 		this.cache = new Map();
 	}
 
@@ -84,10 +85,10 @@ export default class Font {
 		const width = textLen * this.width;
 		let newX = x;
 		switch (this.align) {
-			case Align.Center:
+			case ALIGN_TYPES.CENTER:
 				newX -= width / 2;
 				break;
-			case Align.Right:
+			case ALIGN_TYPES.RIGHT:
 				newX -= width;
 				break;
 		}
@@ -144,36 +145,36 @@ export default class Font {
 		let newX = 0;
 		let newY = 0;
 		switch (this.align) {
-			case Align.Center:
+			case ALIGN_TYPES.CENTER:
 				newX -= canvas.width / 2;
 				break;
-			case Align.Right:
+			case ALIGN_TYPES.RIGHT:
 				newX -= canvas.width;
 				break;
 		}
 		switch (this.valign) {
-			case VAlign.Center:
+			case ALIGN_TYPES.CENTER:
 				newY -= canvas.height / 2;
 				break;
-			case VAlign.Bottom:
+			case ALIGN_TYPES.BOTTOM:
 				newY -= canvas.height;
 				break;
 		}
 
 		if (width) {
 			switch (this.align) {
-				case Align.Center:
+				case ALIGN_TYPES.CENTER:
 					newX += width / 2;
 					break;
-				case Align.Right:
+				case ALIGN_TYPES.RIGHT:
 					newX += width;
 					break;
 			}
 			switch (this.valign) {
-				case VAlign.Center:
+				case ALIGN_TYPES.CENTER:
 					newY += height / 2;
 					break;
-				case VAlign.Bottom:
+				case ALIGN_TYPES.BOTTOM:
 					newY += height;
 					break;
 			}

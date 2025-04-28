@@ -1,7 +1,7 @@
-import type { Scene } from "../scene/Scene";
-import type { GameOptions } from "./Game";
-import type { KeyMap } from "./KeyMap";
-import type ResourceManager from "./ResourceManager";
+import type { Scene } from "../../scene/Scene";
+import type { KeyMap } from "../KeyMap";
+import type ResourceManager from "../ResourceManager";
+import type { GameOptions } from "./GameOptions";
 
 export default interface GameContext {
 	viewport: {

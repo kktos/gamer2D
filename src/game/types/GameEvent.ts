@@ -20,12 +20,17 @@ interface GameJoystickBtnDownEvent {
 	TRIGGER_RIGHT: boolean;
 }
 
+export interface KeyEvent extends BaseEvent {
+	type: "keyup" | "keydown";
+	key: string;
+}
+
 export interface BaseEvent {
 	type: "none" | "click" | "mousemove" | "mousedown" | "mouseup" | "wheel" | "keyup" | "keydown";
 	x: number;
 	y: number;
 	buttons?: number;
-	key?: string;
+
 	// wheel event data
 	deltaX: number;
 	deltaY: number;
@@ -35,4 +40,4 @@ export interface BaseEvent {
 	pageY?: number;
 }
 
-export type GameEvent = BaseEvent | GameJoystickBtnDownEvent | GameJoyStickAxisMoveEvent;
+export type GameEvent = BaseEvent | KeyEvent | GameJoystickBtnDownEvent | GameJoyStickAxisMoveEvent;

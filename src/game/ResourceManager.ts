@@ -2,8 +2,8 @@ import { loadJson, loadText } from "../utils/loaders.util";
 import type { TSettings } from "../utils/settings.utils";
 import Audio from "./Audio";
 import Font from "./Font";
-import type { GameOptions } from "./Game";
 import { SpriteSheet } from "./Spritesheet";
+import type { GameOptions } from "./types/GameOptions";
 
 type TResourceKind = "sprite" | "audio" | "font";
 export default class ResourceManager {

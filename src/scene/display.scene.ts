@@ -1,13 +1,13 @@
-import type GameContext from "../game/GameContext";
+import type GameContext from "../game/types/GameContext";
 import { BackgroundLayer } from "../layers/background.layer";
 import { DisplayLayer } from "../layers/display.layer";
 import { EntitiesLayer } from "../layers/entities.layer";
 import { layerClasses } from "../layers/layers";
-import type { SceneDisplaySheet } from "../script/compiler/display/display.rules";
+import type { TSceneDisplaySheet } from "../script/compiler/display/display.rules";
 import { Scene } from "./Scene";
 
 export class DisplayScene extends Scene {
-	constructor(gc: GameContext, sheet: SceneDisplaySheet) {
+	constructor(gc: GameContext, sheet: TSceneDisplaySheet) {
 		super(gc, sheet.name, sheet.settings);
 
 		this.addLayer(new BackgroundLayer(gc, this, sheet));

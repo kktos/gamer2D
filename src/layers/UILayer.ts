@@ -1,12 +1,12 @@
-import type GameContext from "../game/GameContext";
-import { Scene } from "../scene/Scene";
+import type GameContext from "../game/types/GameContext";
+import type { Scene } from "../scene/Scene";
 import type { SceneSheetUI } from "../script/compiler/display/display.rules";
 import { Layer } from "./Layer";
 
 export class UILayer extends Layer {
 	private ui: HTMLElement;
 
-	constructor(gc: GameContext, parent: Scene, layout: SceneSheetUI) {
+	constructor(gc: GameContext, parent: Scene, layout?: SceneSheetUI) {
 		super(gc, parent);
 
 		const ui = document.getElementById("ui");
@@ -66,7 +66,7 @@ export class UILayer extends Layer {
 
 		this.destroy();
 		this.ui.innerHTML = "";
-		this.gc.scene.events.emit(Scene.EVENT_COMPLETE, "menu");
+		this.gc.scene.goto("menu");
 	}
 
 	onClickUIBtn(id) {

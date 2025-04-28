@@ -1,20 +1,21 @@
+import type { EventCallback } from "../events/EventBuffer";
 import { EventEmitter } from "../events/EventEmitter";
-import type GameContext from "../game/GameContext";
 import { TaskList } from "../game/TaskList";
+import type GameContext from "../game/types/GameContext";
 import type { Layer } from "../layers/Layer";
 import type { UILayer } from "../layers/UILayer";
 import type { BBox } from "../maths/math";
 import { generateID } from "../utils/id.util";
+import { getClassName } from "../utils/object.util";
 
 export class Scene {
-	static EVENT_COMPLETE = Symbol.for("SCENE_COMPLETE");
-	static EVENT_START = Symbol.for("SCENE_START");
+	static SCENE_COMPLETED = Symbol.for("SCENE_COMPLETED");
+	static SCENE_STARTED = Symbol.for("SCENE_STARTED");
 	static TASK_RESET = Symbol.for("reset");
 
 	public class: string;
 	public id: string;
 
-	public events: EventEmitter;
 	public receiver: UILayer | null;
 	// once created always there (e.g : Game scene vs Level scene)
 	public isPermanent: boolean;
@@ -22,9 +23,12 @@ export class Scene {
 	public bbox: BBox;
 	public tasks: TaskList;
 
+	public gravity: number;
+
+	private events: EventEmitter;
 	private screenWidth: number;
 	private screenHeight: number;
-	private layers: Layer[];
+	private layers: Map<string, Layer>;
 	private next: null;
 
 	constructor(
@@ -32,7 +36,7 @@ export class Scene {
 		public name: string,
 		private settings?: Record<string, unknown>,
 	) {
-		const m = String(this.constructor).match(/class ([a-zA-Z0-9_]+)/);
+		const m = String(this.constructor).match(/class ([^\s]+)/);
 		this.class = m?.[1] ?? "Scene??";
 		this.id = generateID();
 
@@ -46,35 +50,40 @@ export class Scene {
 		};
 
 		this.events = new EventEmitter();
-		this.layers = [];
+		this.layers = new Map<string, Layer>();
 		this.receiver = null;
 		this.isRunning = false;
 		this.isPermanent = false;
 		this.next = null;
+
+		this.gravity = gc.gravity ?? 0;
 
 		this.tasks = new TaskList();
 		this.setTaskHandlers(gc);
 	}
 
 	init(gc: GameContext) {
-		for (let idx = 0; idx < this.layers.length; idx++) this.layers[idx].init?.(gc, this);
+		for (const layer of this.layers.values()) layer.init?.(gc, this);
 		return this;
 	}
 
-	addLayer(layer: Layer) {
-		this.layers.push(layer);
+	on(name: symbol, listener: EventCallback) {
+		this.events.on(name, listener);
+		return this;
+	}
+	emit(name: symbol, ...args: unknown[]) {
+		this.events.emit(name, ...args);
 		return this;
 	}
 
-	update(gc: GameContext) {
-		this.tasks.processTasks();
-		for (const layer of this.layers) layer.update(gc, this);
+	public addLayer(layer: Layer) {
+		this.layers.set(getClassName(layer), layer);
 		return this;
 	}
 
-	render(gc: GameContext) {
-		for (const layer of this.layers) layer.render(gc);
-		return this;
+	public useLayer<T extends Layer>(name: string, fn: (layer: T) => void) {
+		const layer = this.layers.get(name) as T;
+		if (layer) fn(layer);
 	}
 
 	pause() {
@@ -84,12 +93,12 @@ export class Scene {
 	run() {
 		this.isRunning = true;
 		this.gc.scene = this;
-		this.events.emit(Scene.EVENT_START, this.name);
+		this.events.emit(Scene.SCENE_STARTED, this.name);
 		return this;
 	}
 
-	handleEvent(gc: GameContext, e) {
-		if (this.receiver) this.receiver.handleEvent(gc, e);
+	goto(nameOrIdx: string | number) {
+		this.events.emit(Scene.SCENE_COMPLETED, nameOrIdx);
 	}
 
 	addTask(name: symbol, ...args: unknown[]) {
@@ -101,6 +110,21 @@ export class Scene {
 		// this.tasks.onTask(Scene.TASK_RESET, () => {
 		// 	this.reset(gc);
 		// });
+		return this;
+	}
+
+	handleEvent(gc: GameContext, e) {
+		if (this.receiver) this.receiver.handleEvent(gc, e);
+	}
+
+	update(gc: GameContext) {
+		this.tasks.processTasks();
+		for (const layer of this.layers.values()) layer.update(gc, this);
+		return this;
+	}
+
+	render(gc: GameContext) {
+		for (const layer of this.layers.values()) layer.render(gc);
 		return this;
 	}
 }

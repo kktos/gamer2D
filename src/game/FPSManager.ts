@@ -5,11 +5,15 @@ export class FPSManager {
 	private deltaTime: number;
 	private onUpdate: (deltaTime: number) => void;
 
-	constructor(fps: number, onUpdateFn: (deltaTime: number) => void) {
+	constructor(fps: number) {
 		this.deltaTime = 1 / fps;
 		this.accumulatedTime = 0;
 		this.lastTime = 0;
 		this.isRunning = false;
+		this.onUpdate = () => {};
+	}
+
+	on(onUpdateFn: (deltaTime: number) => void) {
 		this.onUpdate = onUpdateFn;
 	}
 

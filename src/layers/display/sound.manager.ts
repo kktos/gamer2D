@@ -2,7 +2,7 @@ import type Audio from "../../game/Audio";
 import type ResourceManager from "../../game/ResourceManager";
 import { Scene } from "../../scene/Scene";
 import type { TSoundDefs } from "../../script/compiler/display/sound.rules";
-import type { TVarSounds, TVars } from "../../types/engine.types";
+import type { TVarSounds } from "../../types/engine.types";
 
 type InitSoundsDef = {
 	soundDefs: TSoundDefs;
@@ -20,7 +20,7 @@ export function initSounds({ soundDefs, parent, resourceManager }: InitSoundsDef
 			play: () => audio.play(name),
 		};
 		if (soundDef.play) {
-			parent.events.on(Scene.EVENT_START, () => sound.audio.play(name));
+			parent.on(Scene.SCENE_STARTED, () => sound.audio.play(name));
 		}
 		sounds.set(key, sound);
 	}

@@ -1,8 +1,8 @@
 import type { TextEntity } from "../../../entities/text.entity";
 import { Events } from "../../../events/Events";
-import type GameContext from "../../../game/GameContext";
-import type { GameEvent } from "../../../game/GameEvent";
 import type { SpriteSheet } from "../../../game/Spritesheet";
+import type GameContext from "../../../game/types/GameContext";
+import type { GameEvent, KeyEvent } from "../../../game/types/GameEvent";
 import { growRect, ptInRect } from "../../../maths/math";
 import type { TMenu, TMenuItem, TMenuItemRendered } from "../../../script/compiler/display/layout/menu.rules";
 import type { TRepeatItem } from "../../../script/compiler/display/layout/repeat.rules";
@@ -107,7 +107,7 @@ export class GameMenu {
 			return execAction({ vars: this.layer.vars }, menuItem.action);
 		}
 
-		this.layer.scene.events.emit(Events.MENU_ITEM_CLICKED, selectedIdx);
+		this.layer.scene.emit(Events.MENU_ITEM_CLICKED, selectedIdx);
 	}
 
 	selectPreviousItem() {
@@ -127,7 +127,7 @@ export class GameMenu {
 			this.layer.vars.set("itemIdxSelected", this.itemSelected);
 			this.layer.vars.set("itemSelected", this.menu?.items[this.itemSelected]);
 		}
-		this.layer.scene.events.emit(Events.MENU_ITEM_SELECTED, this.itemSelected);
+		this.layer.scene.emit(Events.MENU_ITEM_SELECTED, this.itemSelected);
 	}
 
 	handleEvent(e: GameEvent) {
@@ -150,18 +150,18 @@ export class GameMenu {
 				break;
 
 			case "keyup":
-				switch (e.key) {
+				switch ((e as KeyEvent).key) {
 					case "Control":
 						this.wannaDisplayHitzones = false;
 						break;
 				}
 				break;
 			case "keydown":
-				if (e.key in this.keys) {
-					this.keys[e.key]();
+				if ((e as KeyEvent).key in this.keys) {
+					this.keys[(e as KeyEvent).key]();
 					return;
 				}
-				if (e.key === "Control") {
+				if ((e as KeyEvent).key === "Control") {
 					this.wannaDisplayHitzones = true;
 					return;
 				}
@@ -229,7 +229,7 @@ export class GameMenu {
 	}
 
 	renderSelection(item: TMenuItemRendered) {
-		const bkgndColor = this.menu.selection?.background.value;
+		const bkgndColor = this.menu.selection?.background?.value;
 		const ctx = this.gc.viewport.ctx;
 		const rect = item.bbox();
 

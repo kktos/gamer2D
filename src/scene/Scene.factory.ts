@@ -1,19 +1,17 @@
-import type GameContext from "../game/GameContext";
+import type GameContext from "../game/types/GameContext";
+import type { SceneConstructor } from "../game/types/GameOptions";
 import { compileScript } from "../script/compiler/compiler";
-import type { SceneDisplaySheet } from "../script/compiler/display/display.rules";
+import type { TSceneDisplaySheet } from "../script/compiler/display/display.rules";
 import type { TSceneLevelSheet } from "../script/compiler/level/level.rules";
 import LocalDB from "../utils/storage.util";
 import type { Scene } from "./Scene";
 import { DisplayScene } from "./display.scene";
-// import EditorScene from "./editor.scene.js";
-import { GameScene } from "./game.scene";
-import LevelScene from "./level.scene";
 
-export type SceneGameSheet = {
+export type TSceneGameSheet = {
 	type: "game";
 	name: string;
 };
-export type SceneSheet = SceneDisplaySheet | TSceneLevelSheet | SceneGameSheet;
+export type TSceneSheet = TSceneDisplaySheet | TSceneLevelSheet | TSceneGameSheet;
 
 const GLOBAL_VARIABLES = new Map([
 	// display
@@ -38,10 +36,27 @@ const GLOBAL_VARIABLES = new Map([
 	["spriteIndex", 0],
 ]);
 
+const sceneClasses: Record<TSceneSheet["type"], SceneConstructor | null> = {
+	display: DisplayScene,
+	level: null,
+	game: null,
+};
+
+export function setupScene(sceneType: TSceneSheet["type"], sceneClass: SceneConstructor) {
+	if (!sceneClasses[sceneType]) sceneClasses[sceneType] = sceneClass;
+}
+
+export function createScene(gc: GameContext, className: string, ...args: unknown[]): Scene {
+	if (!sceneClasses[className]) {
+		throw new TypeError(`Unknown Scene Type ${className}`);
+	}
+	return new sceneClasses[className](gc, ...args);
+}
+
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class SceneFactory {
 	static async load(gc: GameContext, name: string) {
-		let sheet: SceneSheet | null = null;
+		let sheet: TSceneSheet | null = null;
 
 		// console.log(`SceneFactory.load "${name}"`);
 
@@ -59,25 +74,17 @@ export class SceneFactory {
 
 		// console.log("SceneFactory.load", JSON.stringify(sheet, undefined, 2), sheet);
 
-		if (!sheet) throw new Error(`Uknown Scene: ${name}`);
+		if (!sheet) throw new Error(`Unknown Scene: ${name}`);
 
 		let scene: Scene;
 		switch (sheet.type) {
 			case "display":
-				scene = new DisplayScene(gc, sheet);
-				break;
-			// case "editor":
-			// 	scene= new EditorScene(gc, sheet.name, sheet);
-			// 	break;
 			case "level":
-				scene = new LevelScene(gc, sheet);
-				break;
 			case "game":
-				scene = new GameScene(gc, sheet);
+				scene = createScene(gc, sheet.type, sheet);
 				break;
 			default:
-				// throw new Error(`Uknown Scene type: ${sheet.type}`);
-				throw new Error("Uknown Scene type");
+				throw new Error("Unknown Scene type");
 		}
 
 		// scene.killOnExit= sheet.killOnExit ? true : false;
