@@ -7,7 +7,7 @@ export default class Anim {
 	public frames: string[];
 	public len: number;
 
-	private name: string;
+	readonly name: string;
 	private events: EventEmitter;
 	private step: number;
 	private loop: number;
@@ -15,6 +15,10 @@ export default class Anim {
 	private frameIdx = -1;
 	private lastHearbeat: number | null = null;
 	private isStopped = true;
+
+	static clone(anim: Anim) {
+		return new Anim(anim.name, anim as unknown as TAnimation);
+	}
 
 	constructor(name: string, sheet: TAnimation) {
 		this.name = name;
