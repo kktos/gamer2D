@@ -1,6 +1,6 @@
-import { createTrait } from "../../traits/TraitFactory";
-import type { TResultValue, TVarTypes, TVars } from "../../types/engine.types";
-import { ArgColor, type ArgExpression, ArgIdentifier, ArgVariable, ValueTrait } from "../../types/value.types";
+import { createTrait } from "../../traits/Trait.factory";
+import type { TResultValue, TVars } from "../../types/engine.types";
+import { ArgColor, ArgExpression, ArgIdentifier, ArgVariable, ValueTrait } from "../../types/value.types";
 import type { TFunctionArg } from "../compiler/display/layout/action.rules";
 
 export function isStringInterpolable(text: string) {
@@ -50,25 +50,24 @@ export function evalVar({ vars }: { vars: TVars }, varname: string) {
 	return value;
 }
 
-const VARNAME_REGEX = /\$[a-zA-Z_][a-zA-Z0-9_]*(?:\.\$?[a-zA-Z_][a-zA-Z0-9_]*)*/g;
+// const VARNAME_REGEX = /\$[a-zA-Z_][a-zA-Z0-9_]*(?:\.\$?[a-zA-Z_][a-zA-Z0-9_]*)*/g;
+// export function oldEvalValue({ vars }: { vars: TVars }, varOrExpr: TResultValue[] | number | string | { expr: string } | ValueTrait): TVarTypes {
+// 	if (Array.isArray(varOrExpr) || typeof varOrExpr === "number") return varOrExpr;
 
-export function oldEvalValue({ vars }: { vars: TVars }, varOrExpr: TResultValue[] | number | string | { expr: string } | ValueTrait): TVarTypes {
-	if (Array.isArray(varOrExpr) || typeof varOrExpr === "number") return varOrExpr;
+// 	if (typeof varOrExpr === "string") {
+// 		if (varOrExpr.match(/^\$/)) return evalVar({ vars }, varOrExpr.substring(1));
+// 		return interpolateString({ vars }, varOrExpr);
+// 	}
 
-	if (typeof varOrExpr === "string") {
-		if (varOrExpr.match(/^\$/)) return evalVar({ vars }, varOrExpr.substring(1));
-		return interpolateString({ vars }, varOrExpr);
-	}
+// 	if (varOrExpr instanceof ValueTrait) {
+// 		return createTrait(varOrExpr.name, ...varOrExpr.args);
+// 	}
 
-	if (varOrExpr instanceof ValueTrait) {
-		return createTrait(varOrExpr.name, ...varOrExpr.args);
-	}
-
-	const exprSrc = varOrExpr.expr;
-	const expr = exprSrc.replaceAll(VARNAME_REGEX, (name) => evalVar({ vars }, name.substring(1)) as string);
-	// biome-ignore lint/security/noGlobalEval: <explanation>
-	return eval(expr);
-}
+// 	const exprSrc = varOrExpr.expr;
+// 	const expr = exprSrc.replaceAll(VARNAME_REGEX, (name) => evalVar({ vars }, name.substring(1)) as string);
+// 	// biome-ignore lint/security/noGlobalEval: <explanation>
+// 	return eval(expr);
+// }
 
 export function evalValue({ vars }: { vars: TVars }, expr: ArgExpression | ArgVariable | number | string | ValueTrait | TResultValue[]) {
 	if (Array.isArray(expr) || typeof expr === "number") return expr;
@@ -78,14 +77,26 @@ export function evalValue({ vars }: { vars: TVars }, expr: ArgExpression | ArgVa
 	return evalExpr({ vars }, expr);
 }
 
+export function evalNumberValue({ vars }: { vars: TVars }, expr: unknown) {
+	let result = expr;
+
+	if (result instanceof ArgVariable) result = evalVar({ vars }, result.value);
+	else if (result instanceof ArgExpression) result = evalExpr({ vars }, result);
+
+	if (typeof result === "number") return result;
+
+	throw new TypeError(`Not a Number value ${expr}`);
+}
+
 export function evalExpr({ vars }: { vars: TVars }, expr: ArgExpression) {
 	let idx = 0;
-	const args = [];
+	const args: number[] = [];
 	while (idx < expr.stack.length) {
-		const item = expr.stack[idx++];
+		let item: unknown = expr.stack[idx++];
 		if (typeof item === "string") {
 			const op2 = args.pop();
 			const op1 = args.pop();
+			if (op1 === undefined || op2 === undefined) throw new TypeError("evalExpr: needs 2 operands for operation");
 			switch (item) {
 				case "Plus":
 					args.push(op1 + op2);
@@ -102,11 +113,13 @@ export function evalExpr({ vars }: { vars: TVars }, expr: ArgExpression) {
 			}
 			continue;
 		}
-		if (item instanceof ArgVariable) {
-			args.push(evalVar({ vars }, item.value));
+		if (item instanceof ArgVariable) item = evalVar({ vars }, item.value);
+
+		if (typeof item === "number") {
+			args.push(item);
 			continue;
 		}
-		args.push(item);
+		throw new TypeError("evalExpr: needs 2 operands for operation");
 	}
 	return args[0];
 }

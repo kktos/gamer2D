@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { TVars } from "../../types/engine.types";
 import { ArgExpression, ArgVariable } from "../../types/value.types";
-import { evalExpr, evalNumber, evalVar, interpolateString, oldEvalValue } from "../engine/eval.script";
+import { evalExpr, evalNumber, evalValue, evalVar, interpolateString } from "../engine/eval.script";
 
 describe("Script Engine Tests", () => {
 	describe("interpolateString", () => {
@@ -85,25 +85,25 @@ describe("Script Engine Tests", () => {
 	describe("evalValue", () => {
 		it("should return the input if it's a number", () => {
 			const vars: TVars = new Map();
-			const result = oldEvalValue({ vars }, 123);
+			const result = evalValue({ vars }, 123);
 			expect(result).toBe(123);
 		});
 
 		it("should return the input if it's an array", () => {
 			const vars: TVars = new Map();
-			const result = oldEvalValue({ vars }, [1, 2, 3]);
+			const result = evalValue({ vars }, [1, 2, 3]);
 			expect(result).toEqual([1, 2, 3]);
 		});
 
 		it("should evaluate a simple variable", () => {
 			const vars: TVars = new Map([["name", "John"]]);
-			const result = oldEvalValue({ vars }, "$name");
+			const result = evalValue({ vars }, new ArgVariable("name"));
 			expect(result).toBe("John");
 		});
 
 		it("should evaluate a string with interpolation", () => {
 			const vars: TVars = new Map([["name", "John"]]);
-			const result = oldEvalValue({ vars }, "Hello ${name}!");
+			const result = evalValue({ vars }, "Hello ${name}!");
 			expect(result).toBe("Hello John!");
 		});
 
@@ -112,7 +112,8 @@ describe("Script Engine Tests", () => {
 				["a", 10],
 				["b", 5],
 			]);
-			const result = oldEvalValue({ vars }, { expr: "$a + $b" });
+			const expr = new ArgExpression([new ArgVariable("a"), new ArgVariable("b"), "Plus"]);
+			const result = evalValue({ vars }, expr);
 			expect(result).toBe(15);
 		});
 
@@ -122,24 +123,19 @@ describe("Script Engine Tests", () => {
 				["b", 5],
 				["c", 2],
 			]);
-			const result = oldEvalValue({ vars }, { expr: "($a + $b) * $c" });
+			const expr = new ArgExpression([new ArgVariable("a"), new ArgVariable("b"), "Plus", new ArgVariable("c"), "Multiply"]);
+			const result = evalValue({ vars }, expr);
 			expect(result).toBe(30);
 		});
 
-		// it("should evaluate a string expression", () => {
-		// 	const vars : TVars = new Map([["name", "John"]]);
-		// 	const result = evalExpr({ vars }, { expr: "'Hello ' + $name" });
-		// 	expect(result).toBe("Hello John");
+		// it("should evaluate a boolean expression", () => {
+		// 	const vars: TVars = new Map([
+		// 		["a", 10],
+		// 		["b", 5],
+		// 	]);
+		// 	const result = evalValue({ vars }, { expr: "$a > $b" });
+		// 	expect(result).toBe(true);
 		// });
-
-		it("should evaluate a boolean expression", () => {
-			const vars: TVars = new Map([
-				["a", 10],
-				["b", 5],
-			]);
-			const result = oldEvalValue({ vars }, { expr: "$a > $b" });
-			expect(result).toBe(true);
-		});
 	});
 
 	describe("evalNumber", () => {
