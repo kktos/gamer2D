@@ -1,6 +1,6 @@
 import type { Entity } from "../entities/Entity";
 import Anim from "../game/Anim";
-import type GameContext from "../game/GameContext";
+import type GameContext from "../game/types/GameContext";
 import type { TAnimation } from "../types/engine.types";
 import { Trait } from "./Trait";
 

@@ -1,7 +1,7 @@
 import type { Entity } from "../entities/Entity";
-import type GameContext from "../game/GameContext";
+import type GameContext from "../game/types/GameContext";
+import { EntitiesLayer } from "../layers/entities.layer";
 import type { Scene } from "../scene/Scene";
-import LevelScene from "../scene/level.scene";
 import { Trait } from "./Trait";
 
 export default class SpawnerTrait extends Trait {
@@ -26,7 +26,7 @@ export default class SpawnerTrait extends Trait {
 		// this.entities.forEach(entity => scene.addTask(LevelScene.TASK_ADD_ENTITY, entity));
 		for (let idx = 0; idx < this.entities.length; idx++) {
 			const entity = this.entities[idx];
-			scene.addTask(LevelScene.TASK_ADD_ENTITY, entity);
+			scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
 		}
 		this.entities.length = 0;
 	}

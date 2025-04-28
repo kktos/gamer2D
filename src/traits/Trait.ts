@@ -1,7 +1,8 @@
 import type { Entity } from "../entities/Entity";
 import type { EventCallback } from "../events/EventBuffer";
-import type GameContext from "../game/GameContext";
-import type { COLLISION } from "../maths/math";
+import type GameContext from "../game/types/GameContext";
+import type { GridCell } from "../maths/grid.math";
+import type { TCollisionSide } from "../maths/math";
 import type { Scene } from "../scene/Scene";
 import { generateID } from "../utils/id.util";
 
@@ -9,11 +10,21 @@ export interface ITrait {
 	on(name: string, callback, count: number): Trait;
 	finalize(entity: Entity): void;
 
-	collides?(gc: GameContext, side: typeof COLLISION, entity: Entity, target: Entity): void;
+	collides?(gc: GameContext, entity: Entity, target: Entity): void;
 	update?(gc: GameContext, entity: Entity, scene: Scene): void;
 }
 
-export class Trait implements ITrait {
+export interface ITraitCollides {
+	collides(gc: GameContext, entity: Entity, target: Entity): void;
+}
+export interface ITraitUpdate {
+	update(gc: GameContext, entity: Entity, scene: Scene): void;
+}
+export interface ITraitObstructedOn {
+	obstructedOn(gc: GameContext, entity: Entity, side: TCollisionSide, cell: GridCell): void;
+}
+
+export class Trait {
 	public class: string;
 	public id: string;
 

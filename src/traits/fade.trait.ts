@@ -1,6 +1,5 @@
 import type { TextEntity } from "../entities/text.entity";
-import Game from "../game/Game";
-import type GameContext from "../game/GameContext";
+import type GameContext from "../game/types/GameContext";
 import type { ArgColor } from "../types/value.types";
 import { hexToRgb } from "../utils/canvas.utils";
 import { Trait } from "./Trait";
@@ -10,8 +9,8 @@ export class FadeTrait extends Trait {
 
 	color: string;
 	isFadein: boolean;
-	alpha: number;
-	isRunning: boolean;
+	alpha = 0;
+	isRunning = false;
 	speed: number;
 
 	constructor(inOrOut: "in" | "out", color: ArgColor, speed = 60) {
@@ -34,13 +33,13 @@ export class FadeTrait extends Trait {
 		if (this.isFadein) {
 			if (this.alpha > 100) {
 				this.isRunning = false;
-				gc.scene.events.emit(FadeTrait.EVENT_FADED, this.id);
+				gc.scene?.emit(FadeTrait.EVENT_FADED, this.id);
 				return;
 			}
 		} else {
 			if (this.alpha < 1) {
 				this.isRunning = false;
-				gc.scene.events.emit(FadeTrait.EVENT_FADED, this.id);
+				gc.scene?.emit(FadeTrait.EVENT_FADED, this.id);
 				return;
 			}
 		}

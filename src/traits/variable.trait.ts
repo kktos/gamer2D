@@ -3,25 +3,24 @@ import { evalValue } from "../script/engine/eval.script";
 import type { TVars } from "../types/engine.types";
 import { Trait } from "./Trait";
 
+type TParams = { vars: TVars; propName: string; varName?: string; text?: string };
 export class VariableTrait extends Trait {
 	private propName: string;
-	private varName?: string;
-	private text?: string;
-	private vars: TVars;
 	private value: () => unknown;
 
-	constructor({ vars, propName, varName = null, text = null }) {
+	constructor({ vars, propName, varName, text }: TParams) {
 		super();
-		this.varName = varName;
-		this.text = text;
 		this.propName = propName;
-		this.vars = vars;
 		if (varName) {
-			this.value = () => this.vars.get(this.varName);
+			this.value = () => vars.get(varName);
 			return;
 		}
-		// this.value = () => evalString({ vars: this.vars }, this.text);
-		this.value = () => evalValue({ vars: this.vars }, this.text);
+		if (text) {
+			this.value = () => evalValue({ vars: vars }, text);
+			return;
+		}
+
+		throw new TypeError("VariableTrait needs either a varName or a text");
 	}
 
 	update({ dt }, entity: Entity) {

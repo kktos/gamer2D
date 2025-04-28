@@ -1,8 +1,8 @@
 import type { Entity } from "../entities/Entity";
-import type LevelScene from "../scene/level.scene";
+import type { Scene } from "../scene/Scene";
 import { Trait } from "./Trait";
 export class GravityTrait extends Trait {
-	update({ dt }, entity: Entity, scene: LevelScene) {
+	update({ dt }, entity: Entity, scene: Scene) {
 		entity.vel.y += scene.gravity * entity.mass * dt;
 	}
 }

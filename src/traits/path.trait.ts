@@ -1,6 +1,7 @@
 import type { Entity } from "../entities/Entity";
 import type { Point } from "../maths/math";
 import type { Scene } from "../scene/Scene";
+import type { TAnimDef } from "../script/compiler/display/layout/defanim.rules";
 import { typeOfArg } from "../script/engine/eval.script";
 import { DIRECTIONS } from "../types/direction.type";
 import { ArgColor } from "../types/value.types";
@@ -10,10 +11,7 @@ type ProviderFn = (deltaTime: number, entity: Entity) => Point | null;
 const TAU = 2 * Math.PI;
 const toRad = 180 / Math.PI;
 
-export type PathDefDTO = {
-	path: unknown[];
-	speed: number;
-};
+export type PathDefDTO = Required<Pick<TAnimDef, "path" | "speed">>;
 
 export class PathTrait extends Trait {
 	private isRunning: boolean;
