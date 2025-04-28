@@ -6,18 +6,19 @@ import { loadImage, loadJson } from "../utils/loaders.util";
 import { SpriteSheet } from "./Spritesheet";
 
 // const CHARS= ' 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ©!-×.';
-// export const Align = {
-// 	Left: 1,
-// 	Center: 2,
-// 	Right: 3,
-// };
-// export const VAlign = {
-// 	Top: 1,
-// 	Center: 2,
-// 	Bottom: 3,
-// };
 
-type PrintOptionsBase = {
+type TFontSheet = {
+	name: string;
+	height: number;
+	width: number;
+	charset: string;
+	img: string;
+	offsetX: number;
+	offsetY: number;
+	gapX: number;
+};
+
+type TPrintOptionsBase = {
 	ctx: CanvasRenderingContext2D;
 	text: string;
 	x: number;
@@ -27,9 +28,9 @@ type PrintOptionsBase = {
 	height: number;
 	bgcolor?: string;
 };
-export type PrintOptions = RequireAllOrNone<PrintOptionsBase, "width" | "height">;
+export type PrintOptions = RequireAllOrNone<TPrintOptionsBase, "width" | "height">;
 
-function loadFont(sheet) {
+function loadFont(sheet: TFontSheet) {
 	return loadImage(sheet.img).then((image) => {
 		const fontSprite = new SpriteSheet(image);
 		const offsetX = sheet.offsetX | 0;
@@ -58,8 +59,8 @@ export default class Font {
 	private cache: Map<string, HTMLCanvasElement>;
 
 	static async load(filename: string) {
-		const sheet = await loadJson(filename);
-		return await loadFont(sheet);
+		const sheet = (await loadJson(filename)) as TFontSheet;
+		return loadFont(sheet);
 	}
 
 	constructor(name: string, sprites, height: number, width: number) {
