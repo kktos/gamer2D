@@ -1,7 +1,7 @@
 import type { TRepeat, TRepeatItem } from "../../script/compiler/display/layout/repeat.rules";
 import type { TSprite } from "../../script/compiler/display/layout/sprite.rules";
 import type { TText } from "../../script/compiler/display/layout/text.rules";
-import { evalString, evalValue } from "../../script/engine/eval.script";
+import { evalNumberValue, evalString } from "../../script/engine/eval.script";
 import type { TVarTypes, TVars } from "../../types/engine.types";
 import { OP_TYPES } from "../../types/operation.types";
 import { ArgVariable } from "../../types/value.types";
@@ -10,7 +10,7 @@ import { clone } from "../../utils/object.util";
 export function repeat(op: TRepeat, callback: (item: TRepeatItem) => void, vars: TVars) {
 	let count = 0;
 	let from = 0;
-	let list: TVarTypes[] | null = null;
+	let list: TVarTypes[] = [];
 
 	// console.log("TRepeat", op);
 
@@ -46,13 +46,13 @@ function processItem(item: TSprite | TText, idx: number, vars: TVars) {
 	switch (item.type) {
 		case OP_TYPES.TEXT:
 			item.text = evalString({ vars }, item.text);
-			item.pos[0] = evalValue({ vars }, item.pos[0]);
-			item.pos[1] = evalValue({ vars }, item.pos[1]);
+			item.pos[0] = evalNumberValue({ vars }, item.pos[0]);
+			item.pos[1] = evalNumberValue({ vars }, item.pos[1]);
 			break;
 		case OP_TYPES.SPRITE:
 			item.sprite = evalString({ vars }, item.sprite);
-			item.pos[0] = evalValue({ vars }, item.pos[0]);
-			item.pos[1] = evalValue({ vars }, item.pos[1]);
+			item.pos[0] = evalNumberValue({ vars }, item.pos[0]);
+			item.pos[1] = evalNumberValue({ vars }, item.pos[1]);
 			break;
 	}
 
