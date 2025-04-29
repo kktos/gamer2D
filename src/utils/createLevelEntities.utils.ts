@@ -2,9 +2,9 @@ import type { Entity } from "../entities/Entity";
 import { createEntityByName } from "../entities/Entity.factory";
 import type ResourceManager from "../game/ResourceManager";
 import type { Grid } from "../maths/grid.math";
-import type { TSceneLevelSheet } from "../script/compiler/layers/level/level.rules";
+import type { TEntitiesLayerSprite } from "../script/compiler/layers/entities/entities.rules";
 
-export function createLevelEntities(resourceManager: ResourceManager, grid: Grid, sprites: TSceneLevelSheet["sprites"]) {
+export function createLevelEntities(resourceManager: ResourceManager, grid: Grid, sprites: TEntitiesLayerSprite[]) {
 	const entities: Entity[] = [];
 	if (sprites)
 		for (const sprite of sprites) {

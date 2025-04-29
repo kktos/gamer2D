@@ -3,7 +3,7 @@ import { EventEmitter } from "../events/EventEmitter";
 import { TaskList } from "../game/TaskList";
 import type GameContext from "../game/types/GameContext";
 import type { Layer } from "../layers/Layer";
-import { createLayer } from "../layers/Layer.factory";
+import { createLayerByName } from "../layers/Layer.factory";
 import type { UILayer } from "../layers/UILayer";
 import type { BBox } from "../maths/math";
 import type { TSceneSheet } from "../script/compiler/scenes/scene.rules";
@@ -65,7 +65,7 @@ export class Scene {
 		this.tasks = new TaskList();
 		this.setTaskHandlers(gc);
 
-		for (const layer of sheet.layers) this.addLayer(createLayer(gc, layer.type, layer));
+		for (const layer of sheet.layers) this.addLayer(createLayerByName(gc, layer.type, this, layer));
 	}
 
 	init(gc: GameContext) {

@@ -1,6 +1,6 @@
 import type ResourceManager from "../game/ResourceManager";
 import type GameContext from "../game/types/GameContext";
-import { createEntity } from "./Entity.factory";
+import { createEntityByName } from "./Entity.factory";
 
 export class EntityPool {
 	static pools = {};
@@ -9,7 +9,7 @@ export class EntityPool {
 	private available: boolean[];
 
 	static create(resourceManager: ResourceManager, name: string, size: number, ...args) {
-		const pool = new EntityPool(size, () => createEntity(resourceManager, name, ...args));
+		const pool = new EntityPool(size, () => createEntityByName(resourceManager, name, ...args));
 		EntityPool.pools[name] = pool;
 		return pool;
 	}

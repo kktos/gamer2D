@@ -4,6 +4,7 @@ import type { SpriteSheet } from "../../../game/Spritesheet";
 import type GameContext from "../../../game/types/GameContext";
 import type { GameEvent, KeyEvent } from "../../../game/types/GameEvent";
 import { growRect, ptInRect } from "../../../maths/math";
+import type { TActionStatement } from "../../../script/compiler/layers/display/layout/action.rules";
 import type { TMenu, TMenuItem, TMenuItemRendered } from "../../../script/compiler/layers/display/layout/menu.rules";
 import type { TRepeatItem } from "../../../script/compiler/layers/display/layout/repeat.rules";
 import { execAction } from "../../../script/engine/exec.script";
@@ -104,7 +105,7 @@ export class GameMenu {
 		const menuItem = this.menu.items[selectedIdx];
 
 		if ("action" in menuItem) {
-			return execAction({ vars: this.layer.vars }, menuItem.action);
+			return execAction({ vars: this.layer.vars }, menuItem.action as TActionStatement[]);
 		}
 
 		this.layer.scene.emit(Events.MENU_ITEM_CLICKED, selectedIdx);

@@ -1,7 +1,8 @@
 import { OP_TYPES } from "../../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../../types/typescript.types";
-import type { ArgVariable } from "../../../../../types/value.types";
+import type { ArgExpression, ArgVariable } from "../../../../../types/value.types";
 import { tokens } from "../../../lexer";
+import type { TImage } from "./image.rules";
 import type { TMenuItemGroup } from "./menu.rules";
 import type { TSprite } from "./sprite.rules";
 import type { TText } from "./text.rules";
@@ -15,11 +16,11 @@ import type { TText } from "./text.rules";
 		}
  */
 
-export type TRepeatItem = TSprite | TText | TMenuItemGroup;
+export type TRepeatItem = TSprite | TText | TMenuItemGroup | TImage;
 export type TRepeat = {
 	type: TupleToUnion<[typeof OP_TYPES.REPEAT]>;
-	from: number;
-	count: number | ArgVariable;
+	from?: number | ArgVariable | ArgExpression;
+	count: number | ArgVariable | ArgExpression;
 	items: TRepeatItem[];
 	index?: string;
 	list?: string | string[];
@@ -33,7 +34,7 @@ export class RepeatRules {
 			// repeat
 			$.CONSUME(tokens.Repeat);
 
-			const result: TRepeat = { type: OP_TYPES.REPEAT, from: 0, count: 0, items: [] };
+			const result: TRepeat = { type: OP_TYPES.REPEAT, count: 0, items: [] };
 
 			// optional var for iterator
 			$.OPTION(() => {
@@ -49,7 +50,7 @@ export class RepeatRules {
 				}
 			});
 			$.CONSUME(tokens.Colon);
-			result.count = $.SUBRULE($.numOrVar);
+			result.count = $.SUBRULE($.expr);
 
 			// { repeatItems }
 			result.items = $.SUBRULE($.layoutRepeatItems, {
@@ -72,6 +73,7 @@ export class RepeatRules {
 					{ ALT: () => $.SUBRULE($.layoutText, { ARGS: [options, isMenuItem] }) },
 					{ ALT: () => $.SUBRULE($.layoutSprite, { ARGS: [options] }) },
 					{ ALT: () => $.SUBRULE($.layoutMenuItemGroup, { ARGS: [options] }) },
+					{ ALT: () => $.SUBRULE($.layoutImage, { ARGS: [options] }) },
 					// { ALT: () => $.SUBRULE($.mathAdd, { ARGS: [options] }) },
 				]);
 				items.push(item);

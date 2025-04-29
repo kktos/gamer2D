@@ -1,13 +1,14 @@
 import { ArgColor, ArgIdentifier, ArgVariable } from "../../../../../types/value.types";
 import { tokens } from "../../../lexer";
+import type { TSet } from "./set.rules";
 
 export type TFunctionArg = ArgVariable | ArgIdentifier | ArgColor | number | string;
 export type TFunctionCall = {
 	name: string[];
 	args: TFunctionArg[];
 };
-
-export type TActionList = TFunctionCall[][];
+export type TActionStatement = TFunctionCall[] | TSet;
+export type TActionList = TActionStatement[];
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class ActionRules {
@@ -24,7 +25,7 @@ export class ActionRules {
 
 	static layoutActionBlock($) {
 		return $.RULE("layoutActionBlock", (actionOptions) => {
-			const result: TFunctionCall[][] = [];
+			const result: TActionStatement[] = [];
 
 			// {
 			$.CONSUME(tokens.OpenCurly);
@@ -41,18 +42,33 @@ export class ActionRules {
 
 	static layoutActionStatement($) {
 		return $.RULE("layoutActionStatement", (actionOptions) => {
-			const result: TFunctionCall[] = [];
-			// <functionName>(...parms)[.<functionName>(...parms)][.<functionName>(...parms)]....
-			// to allow something like sprite("Bubblun").set("mass", 0)
-			$.AT_LEAST_ONE_SEP({
-				SEP: tokens.Dot,
-				DEF: () => {
-					result.push($.SUBRULE($.layoutActionFunctionCall));
+			let result: TFunctionCall[] | unknown;
+
+			$.OR([
+				{
+					ALT: () => {
+						const calls: TFunctionCall[] = [];
+						// <functionName>(...parms)[.<functionName>(...parms)][.<functionName>(...parms)]....
+						// to allow something like sprite("Bubblun").set("mass", 0)
+						$.AT_LEAST_ONE_SEP({
+							SEP: tokens.Dot,
+							DEF: () => {
+								calls.push($.SUBRULE($.layoutActionFunctionCall));
+							},
+						});
+						$.ACTION(() => {
+							if (!actionOptions?.noSystem && calls[0].name.length === 1) calls[0].name.unshift("SYSTEM");
+						});
+						result = calls;
+					},
 				},
-			});
-			$.ACTION(() => {
-				if (!actionOptions?.noSystem && result[0].name.length === 1) result[0].name.unshift("SYSTEM");
-			});
+				{
+					ALT: () => {
+						result = $.SUBRULE($.layoutSet);
+					},
+				},
+			]);
+
 			return result;
 		});
 	}

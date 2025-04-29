@@ -3,6 +3,7 @@ import { OP_TYPES } from "../../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../../types/typescript.types";
 import type { ArgColor } from "../../../../../types/value.types";
 import { tokens } from "../../../lexer";
+import type { TImage } from "./image.rules";
 import type { TRepeat } from "./repeat.rules";
 import type { TSprite } from "./sprite.rules";
 import type { TText } from "./text.rules";
@@ -37,7 +38,7 @@ export type TMenuItemGroup = {
 
 	bbox: () => BBox;
 };
-export type TMenuItemRendered = TMenuItemGroup | TText | TSprite;
+export type TMenuItemRendered = TMenuItemGroup | TText | TSprite | TImage;
 export type TMenuItem = TRepeat | TMenuItemRendered;
 
 export type TMenu = {
@@ -158,7 +159,7 @@ export class MenuRules {
 			$.AT_LEAST_ONE(() => {
 				const { name, value } = $.OR([
 					{ ALT: () => $.SUBRULE($.layoutMenuSelectionSprite) },
-					{ ALT: () => $.SUBRULE($.background) },
+					{ ALT: () => $.SUBRULE($.layoutMenuSelectionBackground) },
 					{ ALT: () => $.SUBRULE($.layoutMenuSelectionColor) },
 					{ ALT: () => $.SUBRULE($.layoutMenuSelectionVar) },
 				]);
@@ -173,11 +174,16 @@ export class MenuRules {
 
 	static layoutMenuSelectionVar($) {
 		return $.RULE("layoutMenuSelectionVar", () => {
-			const word = $.CONSUME(tokens.Identifier).image.toLowerCase();
-			$.ACTION(() => {
-				if (word !== "var") throw new TypeError("Invalid Var declaration");
-			});
+			$.CONSUME(tokens.Var);
 			return { name: "var", value: $.CONSUME(tokens.Variable).image.substring(1) };
+		});
+	}
+
+	static layoutMenuSelectionBackground($) {
+		return $.RULE("layoutMenuSelectionBackground", () => {
+			$.CONSUME(tokens.Background);
+			const value = $.OR([{ ALT: () => $.SUBRULE($.number) }, { ALT: () => $.SUBRULE($.htmlColor) }]);
+			return { name: "background", value };
 		});
 	}
 
@@ -190,7 +196,7 @@ export class MenuRules {
 
 	static layoutMenuSelectionSprite($) {
 		return $.RULE("layoutMenuSelectionSprite", () => {
-			const name = $.OR([{ ALT: () => $.CONSUME(tokens.Left).image }, { ALT: () => $.CONSUME(tokens.Right).image }]);
+			const name = $.OR([{ ALT: () => $.CONSUME(tokens.Left) }, { ALT: () => $.CONSUME(tokens.Right) }]).image;
 			const value = $.CONSUME(tokens.StringLiteral).payload;
 			return { name, value };
 		});

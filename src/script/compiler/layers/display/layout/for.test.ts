@@ -20,7 +20,11 @@ describe("For", () => {
 			}
 		}
 		`;
-		const result = compileScript(script);
+		const vars = new Map<string, unknown>();
+		vars.set("positions", 0);
+		vars.set("highscores", 0);
+
+		const result = compileScript(script, vars);
 		expect(result).toBeDefined();
 		const displayLayer = result.layers.find((layer) => layer.type === "display");
 		expect(displayLayer).toBeDefined();
@@ -32,7 +36,7 @@ describe("For", () => {
 		expect(menu).toEqual({
 			type: OP_TYPES.REPEAT,
 			from: 0,
-			count: 11,
+			count: 10,
 			index: "idx",
 			items: [
 				{
@@ -179,8 +183,7 @@ describe("For", () => {
 			display {
 			layout {
 				for $idx 0,10 {
-					text $positions.$idx at:90,$Ypos
-					text $highscores.$idx.score at:250,$Ypos
+					text $idx at:90,$Ypos
 				}
 			}
 			}

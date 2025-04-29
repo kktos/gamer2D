@@ -7,8 +7,8 @@ import { evalArg, evalNumber, evalValue, isStringInterpolable } from "../../scri
 import type { Trait } from "../../traits/Trait";
 import { type PathDefDTO, PathTrait } from "../../traits/path.trait";
 import { VariableTrait } from "../../traits/variable.trait";
-import type { TVars } from "../../types/engine.types";
 import { ArgExpression, ArgVariable } from "../../types/value.types";
+import type { TVars } from "../../utils/vars.utils";
 import type { DisplayLayer } from "../display.layer";
 import { EntitiesLayer } from "../entities.layer";
 

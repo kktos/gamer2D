@@ -1,6 +1,7 @@
 import { createTrait } from "../../traits/Trait.factory";
-import type { TResultValue, TVars } from "../../types/engine.types";
+import type { TResultValue } from "../../types/engine.types";
 import { ArgColor, ArgExpression, ArgIdentifier, ArgVariable, ValueTrait } from "../../types/value.types";
+import type { TVarTypes, TVars } from "../../utils/vars.utils";
 import type { TFunctionArg } from "../compiler/layers/display/layout/action.rules";
 
 export function isStringInterpolable(text: string) {
@@ -16,35 +17,33 @@ export function interpolateString({ vars }: { vars: TVars }, text: string) {
 	return text.replaceAll(/\$\{(.+?)\}/g, (m, varname) => String(evalVar({ vars }, varname)));
 }
 
-export function evalVar({ vars }: { vars: TVars }, varname: string) {
+export function resoleVar({ vars }: { vars: TVars }, varname: string): { value?: TVarTypes; prop?: string } {
 	const [name, ...parms] = varname.split(".");
-	if (!vars.has(name)) {
-		throw new TypeError(`unknown var "${name}"`);
-	}
+	if (!vars.has(name)) throw new TypeError(`unknown var "${name}"`);
 
 	let value = vars.get(name);
-	if (value === undefined) {
-		console.log(`undefined var "${name}"`, varname);
+	if (parms.length < 1) return { value };
+
+	for (let parmIdx = 0; parmIdx < parms.length - 1; parmIdx++) {
+		let parm = parms[parmIdx];
+		if (parm.match(/^\$/)) parm = String(vars.get(parm.substring(1)));
+		value = value?.[parm];
+		if (value === undefined) return { value };
+	}
+	let prop = parms.at(-1);
+	if (prop?.match(/^\$/)) prop = String(vars.get(prop.substring(1)));
+	return { value, prop };
+}
+
+export function evalVar({ vars }: { vars: TVars }, varname: string) {
+	const result = resoleVar({ vars }, varname);
+	if (result.value === undefined) {
+		console.log(`undefined var "${varname}"`);
 		return "";
 	}
-
-	for (let parmIdx = 0; parmIdx < parms.length; parmIdx++) {
-		let parm = parms[parmIdx];
-
-		if (parm.match(/^\$/)) {
-			parm = String(vars.get(parm.substring(1)));
-		}
-
-		value = value?.[parm];
-
-		if (value === undefined) {
-			console.log(`undefined var "${parm}"`, varname);
-			return "";
-		}
-	}
-
+	const value = result.prop ? result.value[result.prop] : result.value;
 	if (value === undefined) {
-		console.log("undefined var", varname);
+		console.log(`undefined var "${varname}"`);
 		return "";
 	}
 	return value;

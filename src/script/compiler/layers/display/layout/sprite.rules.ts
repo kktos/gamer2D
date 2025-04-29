@@ -13,6 +13,7 @@ export type TSprite = {
 	zoom: number;
 	range?: [number, number];
 	dir?: TupleToUnion<[typeof DIRECTIONS.LEFT, typeof DIRECTIONS.RIGHT]>;
+	anim?: { name: string };
 
 	bbox: () => BBox;
 	entity?: Entity;
@@ -34,7 +35,7 @@ export class SpriteRules {
 			const result: Partial<TSprite> = {
 				type: OP_TYPES.SPRITE,
 				sprite: $.CONSUME(tokens.StringLiteral).payload,
-				zoom: options?.zoom ?? 1,
+				// zoom: options?.zoom ?? 1,
 				pos: $.SUBRULE($.parm_at),
 			};
 
@@ -44,6 +45,15 @@ export class SpriteRules {
 
 			$.OPTION3(() => {
 				result.dir = $.SUBRULE($.parm_dir);
+			});
+
+			$.OPTION4(() => {
+				const { name, value, isParm } = $.SUBRULE($.textSpriteProps);
+
+				$.ACTION(() => {
+					if (!isParm) options[name] = value;
+					else result[name] = value;
+				});
 			});
 
 			if (id) result.id = id;

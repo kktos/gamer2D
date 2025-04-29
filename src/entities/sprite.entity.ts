@@ -5,14 +5,14 @@ import { Entity } from "./Entity";
 export default class SpriteEntity extends Entity {
 	private isAnimSprite: boolean;
 
-	constructor(resourceMgr: ResourceManager, x: number, y: number, sprite) {
+	constructor(resourceMgr: ResourceManager, sprite: string, x: number, y: number) {
 		const [sheet, spriteName] = sprite.split(":");
 
 		super(resourceMgr, x, y, sheet);
 
 		// this.isFixed = false;
 
-		this.isAnimSprite = spriteName.match(/^@/);
+		this.isAnimSprite = !!spriteName.match(/^@/);
 		if (this.isAnimSprite) {
 			const animTrait = new AnimationTrait();
 			this.addTrait(animTrait);

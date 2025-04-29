@@ -1,6 +1,5 @@
 import type { Entity } from "../../entities/Entity";
 import type { Layer } from "../../layers/Layer";
-import type { Grid } from "../../maths/grid.math";
 import type { Scene } from "../../scene/Scene";
 import type { Trait } from "../../traits/Trait";
 
@@ -24,15 +23,9 @@ export type GameOptions = {
 		scenes: string;
 		levels: string;
 	};
+	settings: string;
+
 	entities?: entityDefinition[];
 	traits?: TraitConstructor[];
 	layers?: layerDefinition[];
-
-	scenes: {
-		level: {
-			createGrid: (settings: Record<string, unknown>) => Grid;
-			layers: string[];
-		};
-	};
-	settings: string;
 };

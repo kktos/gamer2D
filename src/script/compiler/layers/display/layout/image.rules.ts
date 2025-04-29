@@ -1,3 +1,4 @@
+import type { BBox } from "../../../../../maths/math";
 import { OP_TYPES } from "../../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../../types/typescript.types";
 import { tokens } from "../../../lexer";
@@ -8,6 +9,8 @@ export type TImage = {
 	pos: [number, number];
 	zoom?: number;
 	range?: [number, number];
+
+	bbox: () => BBox;
 };
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class ImageRules {
@@ -15,7 +18,7 @@ export class ImageRules {
 		return $.RULE("layoutImage", (options) => {
 			$.CONSUME(tokens.Image);
 
-			const result: TImage = {
+			const result: Partial<TImage> = {
 				type: OP_TYPES.IMAGE,
 				sprite: $.CONSUME(tokens.StringLiteral).payload,
 				pos: $.SUBRULE($.parm_at),

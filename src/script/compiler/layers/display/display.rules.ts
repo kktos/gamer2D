@@ -12,10 +12,6 @@ export type SceneSheetUI = {
 
 export type TLayerDisplaySheet = {
 	type: "display";
-	// name: string;
-	// showCursor?: boolean;
-	// background?: ArgColor;
-	// layers?: string[];
 	ui?: SceneSheetUI;
 	font?: string;
 	layout?: unknown[];
@@ -26,8 +22,8 @@ export type TLayerDisplaySheet = {
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class DisplayRules {
-	static displaySheet($) {
-		return $.RULE("displaySheet", () => {
+	static displayLayerSheet($) {
+		return $.RULE("displayLayerSheet", () => {
 			$.CONSUME(tokens.Display);
 			const sheet = { type: "display" };
 
@@ -47,15 +43,12 @@ export class DisplayRules {
 	static displayProps($) {
 		return $.RULE("displayProps", (sheet) => {
 			return $.OR([
-				// { ALT: () => $.SUBRULE($.background) },
-				// { ALT: () => $.SUBRULE($.showCursor) },
 				{ ALT: () => $.SUBRULE($.font) },
 				{ ALT: () => $.SUBRULE($.layout) },
 				{ ALT: () => $.SUBRULE($.sound, { ARGS: [sheet] }) },
 				{ ALT: () => $.SUBRULE($.displayTimer, { ARGS: [sheet] }) },
 				{ ALT: () => $.SUBRULE($.displayOnEvent, { ARGS: [sheet] }) },
 				{ ALT: () => $.SUBRULE($.displayUI) },
-				// { ALT: () => $.SUBRULE($.displayLayers) },
 				{ ALT: () => $.SUBRULE($.displaySettings) },
 			]);
 		});
@@ -95,22 +88,4 @@ export class DisplayRules {
 			return result;
 		});
 	}
-
-	// static displayLayers($) {
-	// 	return $.RULE("displayLayers", () => {
-	// 		$.CONSUME(tokens.Layers);
-
-	// 		$.CONSUME(tokens.OpenCurly);
-
-	// 		const result: { name: string; value: string[] } = { name: "layers", value: [] };
-
-	// 		$.AT_LEAST_ONE(() => {
-	// 			result.value.push($.CONSUME(tokens.Identifier).image);
-	// 		});
-
-	// 		$.CONSUME(tokens.CloseCurly);
-
-	// 		return result;
-	// 	});
-	// }
 }

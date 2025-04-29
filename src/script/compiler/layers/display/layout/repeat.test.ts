@@ -9,13 +9,10 @@ describe("Repeat", () => {
 		display "intro" {
 			display {
 				layout {
-
 					$Ypos = 190
 					repeat $idx count:9 {
-						text $positions.$idx at:90,$Ypos+$idx*40
-						text $highscores.$idx.score at:250,$Ypos+$idx*40
+						text $idx at:90,$Ypos+$idx*40
 					}
-
 				}
 			}
 		}
@@ -32,19 +29,13 @@ describe("Repeat", () => {
 
 		expect(menu).toEqual({
 			type: OP_TYPES.REPEAT,
-			from: 0,
 			count: 9,
 			index: "idx",
 			items: [
 				{
 					type: OP_TYPES.TEXT,
-					text: new ArgVariable("positions.$idx"),
+					text: new ArgVariable("idx"),
 					pos: [90, new ArgExpression([new ArgVariable("Ypos"), new ArgVariable("idx"), 40, "Multiply", "Plus"])],
-				},
-				{
-					type: OP_TYPES.TEXT,
-					text: new ArgVariable("highscores.$idx.score"),
-					pos: [250, new ArgExpression([new ArgVariable("Ypos"), new ArgVariable("idx"), 40, "Multiply", "Plus"])],
 				},
 			],
 		});

@@ -7,13 +7,17 @@ import { DisplayLayer } from "./display.layer";
 import { EntitiesLayer } from "./entities.layer";
 import { WorldCollisionLayer } from "./worldcollision.layer";
 
-const layerClasses = {
-	BackgroundLayer,
-	WorldCollisionLayer,
-	DisplayLayer,
-	EntitiesLayer,
-};
+const layerClasses = {};
 const layerNames = {};
+
+setupLayers([
+	{ name: "background", classType: BackgroundLayer },
+	{ name: "worldcollision", classType: WorldCollisionLayer },
+	{ name: "display", classType: DisplayLayer },
+	{ name: "entities", classType: EntitiesLayer },
+	// { name: "game", classType: DisplayLayer },
+	// { name: "level", classType: DisplayLayer },
+]);
 
 export function setupLayers(layerDefinitions: layerDefinition[]) {
 	for (const def of layerDefinitions) setupLayer(def);
@@ -23,7 +27,7 @@ export function setupLayer(def: layerDefinition) {
 	const { name, classType } = def;
 	const className = getClassName(classType);
 	if (layerClasses[className]) return;
-	layerNames[name] = className;
+	layerNames[name] = classType;
 	layerClasses[className] = classType;
 }
 
@@ -32,4 +36,11 @@ export function createLayer(gc: GameContext, className: string, ...args: unknown
 		throw new TypeError(`Unknown Layer Type ${className}`);
 	}
 	return new layerClasses[className](gc, ...args);
+}
+
+export function createLayerByName(gc: GameContext, name: string, ...args: unknown[]): Layer {
+	if (!layerNames[name]) {
+		throw new TypeError(`Unknown Layer Type ${name}`);
+	}
+	return new layerNames[name](gc, ...args);
 }

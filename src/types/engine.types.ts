@@ -1,8 +1,4 @@
-import type { Entity } from "../entities/Entity";
 import type Audio from "../game/Audio";
-import type { System } from "../layers/display/views/System.view";
-import type { View } from "../layers/display/views/View";
-import type { Trait } from "../traits/Trait";
 
 export type TResultValue = string | number | boolean | TResultValue[];
 
@@ -31,6 +27,3 @@ export type TSpritesSheet = {
 	sprites: Record<string, { scale: number; tiles?: unknown; groups?: unknown; rect?: unknown; rects?: unknown }>;
 	animations: Record<string, TAnimation>;
 };
-
-export type TVarTypes = TResultValue | TVarSounds | Map<string, Entity> | Record<string, unknown> | View | System | Trait;
-export type TVars = Map<string, TVarTypes>;

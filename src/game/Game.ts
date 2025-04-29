@@ -1,14 +1,16 @@
 import { GAME_EVENTS } from "../constants/events.const";
 import { setupEntities, setupEntity } from "../entities/Entity.factory";
 import { setupLayer, setupLayers } from "../layers/Layer.factory";
+import { Timers } from "../layers/display/timers.class";
 import Director from "../scene/Director";
-import { setupScene } from "../scene/Scene.factory";
+import { GLOBAL_VARIABLES, setupScene } from "../scene/Scene.factory";
 import type { TSceneSheet } from "../script/compiler/scenes/scene.rules";
 import { setupTrait, setupTraits } from "../traits/Trait.factory";
 import { createViewport } from "../utils/canvas.utils";
 import { readGamepad } from "../utils/gamepad.util";
 import { path } from "../utils/path.util";
 import { parseSettings } from "../utils/settings.utils";
+import type { TVarTypes } from "../utils/vars.utils";
 import { FPSManager } from "./FPSManager";
 import { KeyMap } from "./KeyMap";
 import ResourceManager from "./ResourceManager";
@@ -32,6 +34,13 @@ export default class Game {
 		}
 
 		const settings = parseSettings(options.settings);
+
+		if (settings.has("LOGS")) {
+			const logs = settings.get("LOGS").split(/\s*,\s*/);
+			if (logs.includes("Timer")) {
+				Timers.wannaLog = true;
+			}
+		}
 
 		const FPS = settings.getNumber("FPS") ?? 60;
 		this.gc = {
@@ -60,6 +69,12 @@ export default class Game {
 			gravity: settings.getNumber("PHYSICS.GRAVITY") ?? 50,
 
 			wannaPauseOnBlur: true,
+
+			globals: {
+				set: (name: string, value: TVarTypes) => GLOBAL_VARIABLES.set(name, value),
+				get: (name: string) => GLOBAL_VARIABLES.get(name),
+				has: (name: string) => GLOBAL_VARIABLES.has(name),
+			},
 		};
 
 		this.gc.viewport.ctx.scale(this.gc.viewport.ratioWidth, this.gc.viewport.ratioHeight);
@@ -246,5 +261,12 @@ export default class Game {
 
 	addLayer(layerName: string, layerClass: LayerConstructor) {
 		setupLayer({ name: layerName, classType: layerClass });
+	}
+
+	setGlobal(name: string, value: unknown) {
+		this.gc.globals.set(name, value);
+	}
+	getGlobal(name: string) {
+		return this.gc.globals.get(name);
 	}
 }

@@ -1,6 +1,6 @@
 import type { Entity } from "../entities/Entity";
 import { evalValue } from "../script/engine/eval.script";
-import type { TVars } from "../types/engine.types";
+import type { TVars } from "../utils/vars.utils";
 import { Trait } from "./Trait";
 
 type TParams = { vars: TVars; propName: string; varName?: string; text?: string };

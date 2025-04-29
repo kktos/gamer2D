@@ -47,7 +47,8 @@ export class CollisionGridCell extends GridCell {
 
 export class WorldCollisionLayer extends Layer {
 	private collisionRects: TCellRect[] = [];
-	private grid: Grid | null = null;
+	// TODO: temporary solution - grid needs to be passed to others differently (event, task, ?)
+	public grid: Grid | null = null;
 
 	constructor(gc: GameContext, parent: Scene) {
 		super(gc, parent);

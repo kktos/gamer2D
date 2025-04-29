@@ -1,6 +1,7 @@
-import type { TVars } from "../../types/engine.types";
 import { ArgColor, ArgIdentifier, ArgVariable } from "../../types/value.types";
-import { evalValue, evalVar, interpolateString } from "./eval.script";
+import type { TVars } from "../../utils/vars.utils";
+import type { TActionStatement } from "../compiler/layers/display/layout/action.rules";
+import { evalValue, evalVar, interpolateString, resoleVar } from "./eval.script";
 
 function execFnCall({ vars }: { vars: TVars }, fnCall, objSource) {
 	const args: unknown[] = [];
@@ -51,12 +52,24 @@ function execFnCall({ vars }: { vars: TVars }, fnCall, objSource) {
 	return fn.call(self, ...args);
 }
 
-export function execAction({ vars }: { vars: TVars }, statementList) {
-	let result = undefined;
+export function execAction({ vars }: { vars: TVars }, statementList: TActionStatement[]) {
 	for (const statement of statementList) {
-		for (const fnCall of statement) {
-			result = execFnCall({ vars }, fnCall, result);
+		if (Array.isArray(statement)) {
+			let result = undefined;
+			for (const fnCall of statement) {
+				result = execFnCall({ vars }, fnCall, result);
+			}
+		} else {
+			const result = resoleVar({ vars }, statement.name);
+			if (result.value === undefined) {
+				console.log(`undefined var "${statement.name}"`);
+				return "";
+			}
+			if (result.prop === undefined) {
+				console.log(`undefined var "${statement.name}"`);
+				return "";
+			}
+			result.value[result.prop] = evalValue({ vars }, statement.value);
 		}
 	}
-	return result;
 }

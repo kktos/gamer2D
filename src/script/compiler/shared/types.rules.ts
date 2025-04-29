@@ -11,11 +11,11 @@ export class TypesRules {
 		});
 	}
 
-	static variable($) {
-		return $.RULE("variable", () => {
-			return new ArgVariable($.CONSUME(tokens.Variable).image.substring(1));
-		});
-	}
+	// static variable($) {
+	// 	return $.RULE("variable", () => {
+	// 		return new ArgVariable($.CONSUME(tokens.Variable).image.substring(1));
+	// 	});
+	// }
 
 	static definedVariable($) {
 		return $.RULE("definedVariable", () => {
@@ -68,13 +68,13 @@ export class TypesRules {
 
 	static strOrVar($) {
 		return $.RULE("strOrVar", () => {
-			return $.OR([{ ALT: () => $.CONSUME(tokens.StringLiteral).payload }, { ALT: () => $.SUBRULE($.variable) }]);
+			return $.OR([{ ALT: () => $.CONSUME(tokens.StringLiteral).payload }, { ALT: () => $.SUBRULE($.definedVariable) }]);
 		});
 	}
 
 	static varOrArrayOfVars($) {
 		return $.RULE("varOrArrayOfVars", () => {
-			return $.OR([{ ALT: () => $.SUBRULE($.variable) }, { ALT: () => $.SUBRULE($.arrayOfVars) }]);
+			return $.OR([{ ALT: () => $.SUBRULE($.definedVariable) }, { ALT: () => $.SUBRULE($.arrayOfVars) }]);
 		});
 	}
 
@@ -84,7 +84,7 @@ export class TypesRules {
 			$.CONSUME(tokens.OpenBracket);
 			$.MANY_SEP({
 				SEP: tokens.Comma,
-				DEF: () => result.push($.SUBRULE($.variable)),
+				DEF: () => result.push($.SUBRULE($.definedVariable)),
 			});
 			$.CONSUME(tokens.CloseBracket);
 			return result;

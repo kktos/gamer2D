@@ -176,7 +176,7 @@ export class Entity {
 		this._size = this.spritesheet.spriteSize(name);
 	}
 
-	// probably useless; commented out for now
+	// TODO: probably useless; commented out for now
 	// public setAnim(name: string, opt = { paused: false }) {
 	// 	if (!this.spritesheet || !this.spritesheet.hasAnim(name)) throw new Error(`no animation ${name}`);
 

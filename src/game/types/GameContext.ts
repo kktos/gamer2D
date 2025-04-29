@@ -36,4 +36,10 @@ export default interface GameContext {
 	gravity?: number;
 
 	wannaPauseOnBlur: boolean;
+
+	globals: {
+		set: (name, value) => void;
+		get: (name) => unknown;
+		has: (name) => boolean;
+	};
 }

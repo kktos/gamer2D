@@ -32,8 +32,8 @@ export class ForRules {
 							$.variablesDict.set(result.index, 0);
 						});
 
-						const range = $.SUBRULE($.layoutForTwoNumber);
-						result.count = range[1] - range[0] + 1;
+						const range = $.SUBRULE($.tupleNumOrVar);
+						result.count = range[1];
 						result.from = range[0];
 					},
 				},
@@ -41,6 +41,7 @@ export class ForRules {
 					// for <var> of <arrayVar | [<string|var>]>
 					ALT: () => {
 						result.var = $.CONSUME2(tokens.Variable).image.substring(1);
+						$.variablesDict.set(result.var, 0);
 						$.CONSUME2(tokens.Of);
 						result.list = $.OR2([
 							{
@@ -68,15 +69,6 @@ export class ForRules {
 			});
 
 			return result;
-		});
-	}
-
-	static layoutForTwoNumber($) {
-		return $.RULE("layoutForTwoNumber", () => {
-			const a = $.SUBRULE($.number);
-			$.CONSUME(tokens.Comma);
-			const b = $.SUBRULE2($.number);
-			return [a, b];
 		});
 	}
 }

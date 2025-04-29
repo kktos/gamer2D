@@ -16,17 +16,20 @@ import { SpriteRules } from "./layers/display/layout/sprite.rules";
 import { TextSpritePropsRules } from "./layers/display/layout/text-sprite-props.rules";
 import { TextRules } from "./layers/display/layout/text.rules";
 import { ViewRules } from "./layers/display/layout/view.rules";
-import { MiscRules } from "./layers/display/misc.rules";
 import { OnRules } from "./layers/display/on.rules";
 import { SoundRules } from "./layers/display/sound.rules";
 import { TimerRules } from "./layers/display/timer.rules";
 import { UIRules } from "./layers/display/ui.rules";
 import { EditorRules } from "./layers/editor/editor.rules";
+import { EntitiesLayerRules } from "./layers/entities/entities.rules";
 import { GameRules } from "./layers/game/game.rules";
 import { LevelRules } from "./layers/level/level.rules";
+import { UserDefinedLayerRules } from "./layers/user_defined/user_defined.rules";
 import { tokenList } from "./lexer";
 import { SceneSheetRules } from "./scenes/scene.rules";
 import { ExprRules } from "./shared/expr.rules";
+import { MiscRules } from "./shared/misc.rules";
+import { SettingsRules } from "./shared/settings.rules";
 import { TypesRules } from "./shared/types.rules";
 
 export class SheetParser extends EmbeddedActionsParser {
@@ -43,7 +46,7 @@ export class SheetParser extends EmbeddedActionsParser {
 	public sceneShowCursor = SceneSheetRules.sceneShowCursor(this);
 
 	public number = TypesRules.number(this);
-	public variable = TypesRules.variable(this);
+	// public variable = TypesRules.variable(this);
 	public definedVariable = TypesRules.definedVariable(this);
 	public htmlColor = TypesRules.htmlColor(this);
 	public numOrVar = TypesRules.numOrVar(this);
@@ -59,7 +62,10 @@ export class SheetParser extends EmbeddedActionsParser {
 	public exprScalar = ExprRules.exprScalar(this);
 	public exprSubExpr = ExprRules.exprSubExpr(this);
 
-	public displaySheet = DisplayRules.displaySheet(this);
+	public settingsBlock = SettingsRules.settingsBlock(this);
+	public settingsStatements = SettingsRules.settingsStatements(this);
+
+	public displayLayerSheet = DisplayRules.displayLayerSheet(this);
 	public displayProps = DisplayRules.displayProps(this);
 	public displaySettings = DisplayRules.displaySettings(this);
 	public displaySet = DisplayRules.displaySet(this);
@@ -86,6 +92,7 @@ export class SheetParser extends EmbeddedActionsParser {
 	public layoutMenuItems = MenuRules.layoutMenuItems(this);
 	public layoutMenuItem = MenuRules.layoutMenuItemGroup(this);
 	public layoutMenuSelection = MenuRules.layoutMenuSelection(this);
+	public layoutMenuSelectionBackground = MenuRules.layoutMenuSelectionBackground(this);
 	public layoutMenuSelectionColor = MenuRules.layoutMenuSelectionColor(this);
 	public layoutMenuSelectionSprite = MenuRules.layoutMenuSelectionSprite(this);
 	public layoutMenuSelectionVar = MenuRules.layoutMenuSelectionVar(this);
@@ -96,7 +103,6 @@ export class SheetParser extends EmbeddedActionsParser {
 	public layoutSetTrait = SetRules.layoutSetTrait(this);
 
 	public layoutFor = ForRules.layoutFor(this);
-	public layoutForTwoNumber = ForRules.layoutForTwoNumber(this);
 	public layoutRepeat = RepeatRules.layoutRepeat(this);
 	public layoutRepeatItems = RepeatRules.layoutRepeatItems(this);
 	public layoutView = ViewRules.layoutView(this);
@@ -113,11 +119,10 @@ export class SheetParser extends EmbeddedActionsParser {
 	public displayTimer = TimerRules.displayTimer(this);
 	public displayOnEvent = OnRules.displayOnEvent(this);
 
-	public gameSheet = GameRules.gameSheet(this);
+	public gameLayerSheet = GameRules.gameLayerSheet(this);
 
-	public levelSheet = LevelRules.levelSheet(this);
+	public levelLayerSheet = LevelRules.levelLayerSheet(this);
 	public levelProps = LevelRules.levelProps(this);
-	public levelSettings = LevelRules.levelSettings(this);
 	public levelSprite = LevelRules.levelSprite(this);
 
 	public editorSheet = EditorRules.editorSheet(this);
@@ -125,6 +130,10 @@ export class SheetParser extends EmbeddedActionsParser {
 	public backgroundLayerSheet = BackgroundLayerRules.backgroundLayerSheet(this);
 	public backgroundColor = BackgroundLayerRules.backgroundColor(this);
 
+	public userDefinedLayerSheet = UserDefinedLayerRules.userDefinedLayerSheet(this);
+
+	public entitiesLayerSheet = EntitiesLayerRules.entitiesLayerSheet(this);
+	public entitiesLayerSprite = EntitiesLayerRules.entitiesLayerSprite(this);
+
 	public font = MiscRules.font(this);
-	public background = MiscRules.background(this);
 }

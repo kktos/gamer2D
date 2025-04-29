@@ -2,8 +2,8 @@ import { tokens } from "../../lexer";
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class GameRules {
-	static gameSheet($) {
-		return $.RULE("gameSheet", () => {
+	static gameLayerSheet($) {
+		return $.RULE("gameLayerSheet", () => {
 			$.CONSUME(tokens.Game);
 			// const sheet = { type: "game", name: $.SUBRULE($.gameClause) };
 			const sheet = { type: "game" };

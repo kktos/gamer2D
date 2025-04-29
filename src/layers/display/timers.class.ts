@@ -18,6 +18,10 @@ class Timer {
 		this.repeatCount = repeatCount;
 		this.countdown = this.duration;
 		this.counter = repeatCount;
+
+		if (Timers.wannaLog) {
+			console.log("Timer.new", name, duration, repeatCount);
+		}
 	}
 
 	reset() {
@@ -28,16 +32,26 @@ class Timer {
 
 	stop() {
 		this.parent.stop(this.name);
+
+		if (Timers.wannaLog) {
+			console.log("Timer.stop", this.name);
+		}
 	}
 
 	start() {
 		this.parent.start(this.name);
+
+		if (Timers.wannaLog) {
+			console.log("Timer.start", this.name);
+		}
 	}
 }
 
 export class Timers {
 	stoppedTimers: Map<string, Timer>;
 	timers: Map<string, Timer>;
+
+	static wannaLog = false;
 
 	static createTimers(sheet) {
 		if (typeof sheet?.timers !== "object") return null;
@@ -93,6 +107,9 @@ export class Timers {
 		for (const [name, t] of this.timers) {
 			t.countdown -= gc.deltaTime;
 			if (t.countdown <= 0) {
+				if (Timers.wannaLog) {
+					console.log("Timer.EVENT_TIME_OUT", name);
+				}
 				scene.emit(DisplayLayer.EVENT_TIME_OUT, name);
 				t.countdown = t.duration;
 				t.counter--;

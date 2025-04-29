@@ -2,6 +2,7 @@ import { tokens } from "../lexer";
 
 export type TLayerDef = {
 	type: string;
+	name?: string;
 };
 
 export type TSceneSheet = {
@@ -26,12 +27,12 @@ export class SceneSheetRules {
 
 			$.AT_LEAST_ONE(() => {
 				const layer = $.OR([
-					{ ALT: () => $.SUBRULE($.displaySheet) },
-					{ ALT: () => $.SUBRULE($.gameSheet) },
-					{ ALT: () => $.SUBRULE($.levelSheet) },
+					{ ALT: () => $.SUBRULE($.displayLayerSheet) },
+					{ ALT: () => $.SUBRULE($.gameLayerSheet) },
+					{ ALT: () => $.SUBRULE($.levelLayerSheet) },
 					{ ALT: () => $.SUBRULE($.backgroundLayerSheet) },
-					// { ALT: () => $.SUBRULE($.editorSheet) },
-					// { ALT: () => $.SUBRULE($.debugSheet) },
+					{ ALT: () => $.SUBRULE($.entitiesLayerSheet) },
+					{ ALT: () => $.SUBRULE($.userDefinedLayerSheet) },
 				]);
 				sheet.layers.push(layer);
 			});
@@ -44,13 +45,7 @@ export class SceneSheetRules {
 
 	static sceneSheetTypeAndName($) {
 		return $.RULE("sceneSheetTypeAndName", () => {
-			const type = $.OR([
-				{ ALT: () => $.CONSUME(tokens.Display) },
-				{ ALT: () => $.CONSUME(tokens.Game) },
-				{ ALT: () => $.CONSUME(tokens.Level) },
-				// { ALT: () => $.CONSUME(tokens.Editor) },
-				// { ALT: () => $.CONSUME(tokens.Debug) },
-			]).image;
+			const type = $.OR([{ ALT: () => $.CONSUME(tokens.Display) }, { ALT: () => $.CONSUME(tokens.Game) }, { ALT: () => $.CONSUME(tokens.Level) }]).image;
 			const name = $.CONSUME(tokens.StringLiteral).payload;
 			return { type, name };
 		});
@@ -58,7 +53,7 @@ export class SceneSheetRules {
 
 	static sceneProps($) {
 		return $.RULE("sceneProps", () => {
-			return $.OR([{ ALT: () => $.SUBRULE($.font) }, { ALT: () => $.SUBRULE($.levelSettings) }, { ALT: () => $.SUBRULE($.levelSprite) }]);
+			return $.OR([{ ALT: () => $.SUBRULE($.font) }, { ALT: () => $.SUBRULE($.settingsBlock) }, { ALT: () => $.SUBRULE($.levelSprite) }]);
 		});
 	}
 

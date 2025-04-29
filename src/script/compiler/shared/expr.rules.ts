@@ -31,9 +31,12 @@ export class ExprRules {
 							case "Plus":
 								stack.push(stack.pop() + stack.pop());
 								break;
-							case "Minus":
-								stack.push(stack.pop() - stack.pop());
+							case "Minus": {
+								const op1 = stack.pop();
+								const op2 = stack.pop();
+								stack.push(op2 - op1);
 								break;
+							}
 						}
 					}
 				}
@@ -63,9 +66,12 @@ export class ExprRules {
 							case "Multiply":
 								stack.push(stack.pop() * stack.pop());
 								break;
-							case "Divide":
-								stack.push(stack.pop() / stack.pop());
+							case "Divide": {
+								const op1 = stack.pop();
+								const op2 = stack.pop();
+								stack.push(op2 / op1);
 								break;
+							}
 						}
 					}
 				}

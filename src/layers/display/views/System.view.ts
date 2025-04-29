@@ -1,10 +1,11 @@
 import type { Entity } from "../../../entities/Entity";
-import { createEntity } from "../../../entities/Entity.factory";
+import { createEntityByName } from "../../../entities/Entity.factory";
 import { EntityPool } from "../../../entities/EntityPool";
 import type GameContext from "../../../game/types/GameContext";
 import type { TText } from "../../../script/compiler/layers/display/layout/text.rules";
-import type { TVarSounds, TVars } from "../../../types/engine.types";
+import type { TVarSounds } from "../../../types/engine.types";
 import LocalDB from "../../../utils/storage.util";
+import type { TVars } from "../../../utils/vars.utils";
 import type { DisplayLayer } from "../../display.layer";
 import { EntitiesLayer } from "../../entities.layer";
 
@@ -54,7 +55,7 @@ export class System {
 	}
 
 	spawn(name: string, ...args: unknown[]) {
-		const entity = createEntity(this.gc.resourceManager, name, ...args);
+		const entity = createEntityByName(this.gc.resourceManager, name, ...args);
 		this.layer.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
 	}
 

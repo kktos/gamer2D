@@ -3,13 +3,14 @@ import type ResourceManager from "../../../game/ResourceManager";
 import type { AnimMap, SpriteMap, SpriteSheet } from "../../../game/Spritesheet";
 import type GameContext from "../../../game/types/GameContext";
 import { createViewport, drawPixelated } from "../../../utils/canvas.utils";
+import type { TVars } from "../../../utils/vars.utils";
 import type { UILayer } from "../../UILayer";
 import { View } from "./View";
 import type { ViewContext } from "./views";
 
 export class DebugView extends View {
 	private gc: GameContext;
-	private vars: Map<string, unknown>;
+	private vars: TVars;
 	private width: number;
 	private height: number;
 	private ctx: CanvasRenderingContext2D;

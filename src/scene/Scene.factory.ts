@@ -3,22 +3,17 @@ import type { SceneConstructor } from "../game/types/GameOptions";
 import { compileScript } from "../script/compiler/compiler";
 import type { TSceneSheet } from "../script/compiler/scenes/scene.rules";
 import LocalDB from "../utils/storage.util";
+import type { TVarDict, TVarTypes } from "../utils/vars.utils";
 import type { Scene } from "./Scene";
 import { DisplayScene } from "./display.scene";
 
-// export type TSceneGameSheet = {
-// 	type: "game";
-// 	name: string;
-// };
-// export type TSceneBaseSheet = TLayerDisplaySheet | TSceneLevelSheet | TSceneGameSheet;
-
-const GLOBAL_VARIABLES = new Map([
+export const GLOBAL_VARIABLES: TVarDict = new Map<string, TVarTypes>([
 	// display
-	["highscores", 0],
-	["player", 0],
+	// ["highscores", 0],
+	// ["player", 0],
 	["mouseX", 0],
 	["mouseY", 0],
-	["sprites", 0],
+	// ["sprites", 0],
 	["clientHeight", 0],
 	["clientWidth", 0],
 	["centerX", 0],

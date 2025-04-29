@@ -26,17 +26,13 @@ export function setupEntity(def: entityDefinition) {
 	entityClasses[className] = classType;
 }
 
-export function createEntity(resourceManager: ResourceManager, className: string, ...args: unknown[]): Entity {
-	if (!entityClasses[className]) {
-		throw new TypeError(`Unknown Entity Type ${className}`);
-	}
-	return new entityClasses[className](resourceManager, ...args);
-}
-
 export function createEntityByName(resourceManager: ResourceManager, name: string, ...args: unknown[]): Entity {
-	const className = entityNames[name];
-	if (!className) {
-		throw new TypeError(`Unknown Entity Type ${name}`);
-	}
-	return new entityClasses[className](resourceManager, ...args);
+	let className = entityNames[name];
+	if (!className) className = name;
+	const entityClass = entityClasses[className];
+	if (entityClass) return new entityClass(resourceManager, ...args);
+
+	className = "SpriteEntity";
+	return new entityClasses[className](resourceManager, name, ...args);
+	// throw new TypeError(`Unknown Entity Type ${className}`);
 }

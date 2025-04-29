@@ -7,9 +7,6 @@ const CONCAT = Symbol.for("concat");
 
 export type TSceneLevelSheet = {
 	type: "level";
-	// name: string;
-	// showCursor?: boolean;
-	// background?: ArgColor;
 	font?: string;
 	settings: Record<string, unknown>;
 	sprites?: {
@@ -21,13 +18,12 @@ export type TSceneLevelSheet = {
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class LevelRules {
-	static levelSheet($) {
-		return $.RULE("levelSheet", () => {
+	static levelLayerSheet($) {
+		return $.RULE("levelLayerSheet", () => {
 			$.CONSUME(tokens.Level);
 
 			const sheet: TSceneLevelSheet = {
 				type: "level",
-				// name: $.CONSUME(tokens.StringLiteral).payload,
 				settings: {},
 			};
 
@@ -53,34 +49,7 @@ export class LevelRules {
 
 	static levelProps($) {
 		return $.RULE("levelProps", () => {
-			return $.OR([
-				// { ALT: () => $.SUBRULE($.background) },
-				// { ALT: () => $.SUBRULE($.showCursor) },
-				{ ALT: () => $.SUBRULE($.font) },
-				{ ALT: () => $.SUBRULE($.levelSettings) },
-				{ ALT: () => $.SUBRULE($.levelSprite) },
-			]);
-		});
-	}
-
-	static levelSettings($) {
-		return $.RULE("levelSettings", () => {
-			$.CONSUME(tokens.Settings);
-
-			$.CONSUME(tokens.OpenCurly);
-			const settings = {};
-			$.MANY(() => {
-				const name = $.CONSUME(tokens.Identifier).image;
-
-				$.CONSUME(tokens.Equal);
-
-				const value = $.SUBRULE($.layoutSetValue);
-
-				settings[name] = value;
-			});
-			$.CONSUME(tokens.CloseCurly);
-
-			return { name: "settings", value: settings };
+			return $.OR([{ ALT: () => $.SUBRULE($.font) }, { ALT: () => $.SUBRULE($.settingsBlock) }, { ALT: () => $.SUBRULE($.levelSprite) }]);
 		});
 	}
 

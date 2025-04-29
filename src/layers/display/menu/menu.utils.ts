@@ -19,6 +19,7 @@ export function computeBBox(gc: GameContext, layer: DisplayLayer, items: TMenuIt
 				if (item.size) layer.font.size = item.size;
 				break;
 			}
+			case OP_TYPES.IMAGE:
 			case OP_TYPES.SPRITE: {
 				const { ss, sprite } = loadSprite(gc, item.sprite);
 				const size = ss.spriteSize(sprite);

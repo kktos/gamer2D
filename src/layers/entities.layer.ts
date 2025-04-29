@@ -3,8 +3,7 @@ import type GameContext from "../game/types/GameContext";
 import type { Grid } from "../maths/grid.math";
 import { intersectRect } from "../maths/math";
 import type { Scene } from "../scene/Scene";
-import type { TLayerDisplaySheet } from "../script/compiler/layers/display/display.rules";
-import type { TSceneLevelSheet } from "../script/compiler/layers/level/level.rules";
+import type { TEntitiesLayerSheet } from "../script/compiler/layers/entities/entities.rules";
 import { createLevelEntities } from "../utils/createLevelEntities.utils";
 import { Layer } from "./Layer";
 
@@ -12,17 +11,25 @@ export class EntitiesLayer extends Layer {
 	static TASK_REMOVE_ENTITY = Symbol.for("removeEntity");
 	static TASK_ADD_ENTITY = Symbol.for("addEntity");
 
-	private entities: Entity[];
-	private wannaShowCount: boolean;
+	private entities: Entity[] = [];
+	private sprites: TEntitiesLayerSheet["sprites"];
+	public wannaShowCount: boolean;
 
-	constructor(gc: GameContext, parent: Scene, sheet: TSceneLevelSheet | TLayerDisplaySheet, grid?: Grid) {
+	constructor(gc: GameContext, parent: Scene, sheet: TEntitiesLayerSheet, grid?: Grid) {
 		super(gc, parent);
 
-		this.entities = grid ? createLevelEntities(gc.resourceManager, grid, (sheet as TSceneLevelSheet).sprites) : [];
+		this.sprites = sheet.sprites;
+		if (grid) this.spawnEntities(grid);
 
 		this.wannaShowCount = sheet.settings?.show_entities_count === true;
 
 		this.setTaskHandlers();
+	}
+
+	public spawnEntities(grid: Grid) {
+		if (!this.sprites) return;
+		this.entities = createLevelEntities(this.gc.resourceManager, grid, this.sprites);
+		return this.entities.length;
 	}
 
 	public setTaskHandlers() {

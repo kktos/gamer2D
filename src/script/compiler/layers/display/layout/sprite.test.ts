@@ -26,13 +26,11 @@ describe("Sprite", () => {
 				pos: [90, 428],
 				type: OP_TYPES.SPRITE,
 				sprite: "BubblunEntity",
-				zoom: 1,
 			},
 			{
 				pos: [90, 428],
 				type: OP_TYPES.SPRITE,
 				sprite: "BubblunEntity",
-				zoom: 1,
 				dir: 1,
 			},
 		]);
@@ -61,7 +59,6 @@ describe("Sprite", () => {
 				pos: [90, 428],
 				type: OP_TYPES.SPRITE,
 				sprite: "BubblunEntity",
-				zoom: 1,
 			},
 		]);
 	});
@@ -75,5 +72,18 @@ describe("Sprite", () => {
 		}
 		`;
 		expect(() => compileScript(script)).toThrowError(/sad sad panda/);
+	});
+
+	it("should handle bad sprite definition - unknown var", () => {
+		const script = `
+		display "intro" {
+			display {
+				layout {
+					sprite "bubblun:life" at:20+($idx-1)*12,460
+				}
+			}
+		}
+		`;
+		expect(() => compileScript(script)).toThrowError(/Unknown variable "idx"/);
 	});
 });

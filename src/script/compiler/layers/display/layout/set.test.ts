@@ -20,12 +20,10 @@ describe("Set Var Value", () => {
 		const result = compileScript(script);
 		expect(result).toBeDefined();
 		const displayLayer = result.layers.find((layer) => layer.type === "display");
-		expect(displayLayer).toBeDefined();
 		expect(displayLayer).toHaveProperty("layout");
 		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
 		const menuItems = displayLayer.layout.find((op) => op.name === "menuItems");
-		expect(menuItems).toBeDefined();
 		expect(menuItems).toHaveProperty("type", OP_TYPES.SET);
 		expect(menuItems).toHaveProperty("value", ["play", "intro"]);
 	});
@@ -46,12 +44,10 @@ describe("Set Var Value", () => {
 		const result = compileScript(script);
 		expect(result).toBeDefined();
 		const displayLayer = result.layers.find((layer) => layer.type === "display");
-		expect(displayLayer).toBeDefined();
 		expect(displayLayer).toHaveProperty("layout");
 		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
 		const colors = displayLayer.layout.find((op) => op.name === "colors");
-		expect(colors).toBeDefined();
 		expect(colors).toHaveProperty("type", OP_TYPES.SET);
 		expect(colors).toHaveProperty("value", [new ArgColor("#11223344"), new ArgColor("#FF00FF")]);
 	});
@@ -72,12 +68,10 @@ describe("Set Var Value", () => {
 		const result = compileScript(script);
 		expect(result).toBeDefined();
 		const displayLayer = result.layers.find((layer) => layer.type === "display");
-		expect(displayLayer).toBeDefined();
 		expect(displayLayer).toHaveProperty("layout");
 		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
 		const numbers = displayLayer.layout.find((op) => op.name === "numbers");
-		expect(numbers).toBeDefined();
 		expect(numbers).toHaveProperty("type", OP_TYPES.SET);
 		expect(numbers).toHaveProperty("value", [350, 600]);
 	});
@@ -98,12 +92,10 @@ describe("Set Var Value", () => {
 		const result = compileScript(script);
 		expect(result).toBeDefined();
 		const displayLayer = result.layers.find((layer) => layer.type === "display");
-		expect(displayLayer).toBeDefined();
 		expect(displayLayer).toHaveProperty("layout");
 		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
 		const numbers = displayLayer.layout.find((op) => op.name === "traits");
-		expect(numbers).toBeDefined();
 		expect(numbers).toHaveProperty("type", OP_TYPES.SET);
 		expect(numbers).toHaveProperty("value", [new ArgVariable("one"), new ArgVariable("two")]);
 	});
@@ -122,17 +114,14 @@ describe("Set Var Value", () => {
 		const result = compileScript(script);
 		expect(result).toBeDefined();
 		const displayLayer = result.layers.find((layer) => layer.type === "display");
-		expect(displayLayer).toBeDefined();
 		expect(displayLayer).toHaveProperty("layout");
 		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
 		const fadein = displayLayer.layout.find((op) => op.name === "fadein");
-		expect(fadein).toBeDefined();
 		expect(fadein).toHaveProperty("type", OP_TYPES.SET);
 		expect(fadein).toHaveProperty("value", new ValueTrait("FadeTrait", ["in", new ArgColor("#00000000")]));
 
 		const mousX = displayLayer.layout.find((op) => op.name === "mousX");
-		expect(mousX).toBeDefined();
 		expect(mousX).toHaveProperty("type", OP_TYPES.SET);
 		expect(mousX).toHaveProperty("value", new ValueTrait("MouseXTrait", []));
 	});
