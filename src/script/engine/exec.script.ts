@@ -65,11 +65,9 @@ export function execAction({ vars }: { vars: TVars }, statementList: TActionStat
 				console.log(`undefined var "${statement.name}"`);
 				return "";
 			}
-			if (result.prop === undefined) {
-				console.log(`undefined var "${statement.name}"`);
-				return "";
-			}
-			result.value[result.prop] = evalValue({ vars }, statement.value);
+			const value = evalValue({ vars }, statement.value);
+			if (result.isObject) result.value[result.prop] = value;
+			else vars.set(result.prop, value);
 		}
 	}
 }

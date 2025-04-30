@@ -17,12 +17,17 @@ export function interpolateString({ vars }: { vars: TVars }, text: string) {
 	return text.replaceAll(/\$\{(.+?)\}/g, (m, varname) => String(evalVar({ vars }, varname)));
 }
 
-export function resoleVar({ vars }: { vars: TVars }, varname: string): { value?: TVarTypes; prop?: string } {
+type TResolvedVar =
+	| { value: TVarTypes; prop: string; isObject: true }
+	| { value?: TVarTypes; prop: string; isObject?: false }
+	| { value: undefined; isObject?: false };
+
+export function resoleVar({ vars }: { vars: TVars }, varname: string): TResolvedVar {
 	const [name, ...parms] = varname.split(".");
 	if (!vars.has(name)) throw new TypeError(`unknown var "${name}"`);
 
 	let value = vars.get(name);
-	if (parms.length < 1) return { value };
+	if (parms.length < 1) return { value, prop: name };
 
 	for (let parmIdx = 0; parmIdx < parms.length - 1; parmIdx++) {
 		let parm = parms[parmIdx];
@@ -30,9 +35,10 @@ export function resoleVar({ vars }: { vars: TVars }, varname: string): { value?:
 		value = value?.[parm];
 		if (value === undefined) return { value };
 	}
-	let prop = parms.at(-1);
+	if (value === undefined) return { value };
+	let prop = parms.at(-1) as string;
 	if (prop?.match(/^\$/)) prop = String(vars.get(prop.substring(1)));
-	return { value, prop };
+	return { value, prop, isObject: true };
 }
 
 export function evalVar({ vars }: { vars: TVars }, varname: string) {
@@ -41,7 +47,7 @@ export function evalVar({ vars }: { vars: TVars }, varname: string) {
 		console.log(`undefined var "${varname}"`);
 		return "";
 	}
-	const value = result.prop ? result.value[result.prop] : result.value;
+	const value = result.isObject ? result.value[result.prop] : result.value;
 	if (value === undefined) {
 		console.log(`undefined var "${varname}"`);
 		return "";
