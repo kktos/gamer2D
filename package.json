@@ -1,45 +1,45 @@
 {
-  "name": "gamer2d",
-  "version": "0.170.0",
-  "description": "A 2D Game Engine for Arkanoid, Bobble Bubble and more",
-  "author": "kktos",
-  "license": "ISC",
-  "module": "./game/Game.js",
-  "types": "./game/Game.d.ts",
-  "exports": {
-    "./entities/*": "./entities/*.js",
-    "./game/*": "./game/*.js",
-    "./layers/*": "./layers/*.js",
-    "./maths/*": "./maths/*.js",
-    "./scene/*": "./scene/*.js",
-    "./script/*": "./script/*.js",
-    "./traits/*": "./traits/*.js",
-    "./types/*": "./types/*.js"
-  },
-  "scripts": {
-    "build": "pnpm build:clean && pnpm build:make",
-    "build:make": "tsc ",
-    "build:clean": "rimraf ./dist",
-    "postbuild": "node build/postbuild.mjs",
-    "test": "vitest",
-    "lint": "biome ci",
-    "lint:fix": "biome lint --write --unsafe . && biome format --write .",
-    "publishIt": "cd dist && npm publish"
-  },
-  "packageManager": "pnpm@10.8.1",
-  "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "rimraf": "^6.0.1",
-    "typescript": "^5.8.3",
-    "vitest": "^3.1.1"
-  },
-  "dependencies": {
-    "chevrotain": "^11.0.3"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@biomejs/biome",
-      "esbuild"
-    ]
-  }
+    "name": "gamer2d",
+    "version": "0.176.0",
+    "description": "A 2D Game Engine for Arkanoid, Bobble Bubble and more",
+    "author": "kktos",
+    "license": "ISC",
+    "module": "./game/Game.js",
+    "types": "./game/Game.d.ts",
+    "exports": {
+        "./entities/*": "./entities/*.js",
+        "./game/*": "./game/*.js",
+        "./layers/*": "./layers/*.js",
+        "./maths/*": "./maths/*.js",
+        "./scene/*": "./scene/*.js",
+        "./script/*": "./script/*.js",
+        "./traits/*": "./traits/*.js",
+        "./types/*": "./types/*.js"
+    },
+    "scripts": {
+        "build": "pnpm build:clean && pnpm build:make",
+        "build:make": "tsc ",
+        "build:clean": "rimraf ./dist",
+        "postbuild": "node build/postbuild.mjs",
+        "test": "vitest",
+        "lint": "biome ci",
+        "lint:fix": "biome lint --write --unsafe . && biome format --write .",
+        "publishIt": "cd dist && npm publish"
+    },
+    "packageManager": "pnpm@10.8.1",
+    "devDependencies": {
+        "@biomejs/biome": "^1.9.4",
+        "rimraf": "^6.0.1",
+        "typescript": "^5.8.3",
+        "vitest": "^3.1.1"
+    },
+    "dependencies": {
+        "chevrotain": "^11.0.3"
+    },
+    "pnpm": {
+        "onlyBuiltDependencies": [
+            "@biomejs/biome",
+            "esbuild"
+        ]
+    }
 }

@@ -1,0 +1,10 @@
+
+#### BUG
+- works:			`text "${bubblun.lives}" at:80, 463 color:black size:1`
+- doesn't work:	`text $bubblun.lives at:80, 463 color:black size:1`
+
+
+#### FEAT
+- `pool "bubblun:life" id:"lifePool" at:0,460 count:10 spawn:$bubblun.lives`
+- works:	`EntityPool("bubblun:life").release()`
+- doesn't work:	`EntityPool("lifePool").release()`
