@@ -69,4 +69,9 @@ export class System {
 	sound(name: string) {
 		return (this.vars.get("sounds") as TVarSounds).get(name);
 	}
+
+	log(...args) {
+		console.log(...args);
+		return this;
+	}
 }
