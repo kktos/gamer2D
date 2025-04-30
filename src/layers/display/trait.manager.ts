@@ -1,4 +1,5 @@
 import type { Entity } from "../../entities/Entity";
+import type { TPool } from "../../script/compiler/layers/display/layout/pool.rules";
 import type { TSprite } from "../../script/compiler/layers/display/layout/sprite.rules";
 import type { TText } from "../../script/compiler/layers/display/layout/text.rules";
 import type { Trait } from "../../traits/Trait";
@@ -6,7 +7,7 @@ import { ArgVariable } from "../../types/value.types";
 import type { TVars } from "../../utils/vars.utils";
 
 // handling of "traits:[ trait1, trait2, ...]"
-export function setupTraits(op: (TText | TSprite) & { entity?: Entity }, entity: Entity, vars: TVars) {
+export function setupTraits(op: (TText | TSprite | TPool) & { entity?: Entity }, entity: Entity | Entity[], vars: TVars) {
 	if (!op.traits) return;
 
 	let traitsArray: ArgVariable[];
@@ -17,6 +18,10 @@ export function setupTraits(op: (TText | TSprite) & { entity?: Entity }, entity:
 	}
 	for (const traitName of traitsArray) {
 		const trait = vars.get(traitName.value) as Trait;
+		if (Array.isArray(entity)) {
+			for (const e of entity) e.addTrait(trait);
+			continue;
+		}
 		entity.addTrait(trait);
 	}
 }

@@ -13,9 +13,10 @@ import type { TEventHandlerDict } from "../script/compiler/layers/display/on.rul
 import { evalNumber, evalValue } from "../script/engine/eval.script";
 import { execAction } from "../script/engine/exec.script";
 import { OP_TYPES } from "../types/operation.types";
-import { TVars } from "../utils/vars.utils";
+import { type TVarTypes, TVars } from "../utils/vars.utils";
 import { UILayer } from "./UILayer";
 import { GameMenu } from "./display/menu/menu.manager";
+import { addPool } from "./display/pool.manager";
 import { repeat } from "./display/repeat.manager";
 import { initSounds } from "./display/sound.manager";
 import { addSprite } from "./display/sprite.manager";
@@ -58,7 +59,7 @@ export class DisplayLayer extends UILayer {
 		// this.lastJoyTime = 0;
 
 		this.vars = new TVars(GLOBAL_VARIABLES);
-		this.initVars(gc);
+		this.initVars();
 
 		this.views = this.layout.filter((op) => op.type === OP_TYPES.VIEW) as unknown as TViewDef[];
 		initViews({ canvas: gc.viewport.canvas, gc, vars: this.vars, layer: this });
@@ -81,25 +82,27 @@ export class DisplayLayer extends UILayer {
 		}
 	}
 
-	initVars(gc: GameContext) {
+	initVars() {
 		this.vars.set("mouseX", 0);
 		this.vars.set("mouseY", 0);
 
 		this.vars.set("sprites", new Map<string, Entity>());
 
-		this.vars.set("clientHeight", gc.viewport.height);
-		this.vars.set("clientWidth", gc.viewport.width);
-		this.vars.set("centerX", Math.floor(gc.viewport.width / 2));
-		this.vars.set("centerY", Math.floor(gc.viewport.height / 2));
-		this.vars.set("centerUIY", Math.floor((this.gc.viewport.bbox.height - gc.ui.height) / 2 / this.gc.viewport.ratioHeight));
+		this.vars.set("clientHeight", this.gc.viewport.height);
+		this.vars.set("clientWidth", this.gc.viewport.width);
+		this.vars.set("centerX", Math.floor(this.gc.viewport.width / 2));
+		this.vars.set("centerY", Math.floor(this.gc.viewport.height / 2));
+		this.vars.set("centerUIY", Math.floor((this.gc.viewport.bbox.height - this.gc.ui.height) / 2 / this.gc.viewport.ratioHeight));
 	}
 
 	initEventHandlers(EventHandlers: TEventHandlerDict, parent: Scene) {
 		for (const [name, value] of Object.entries(EventHandlers)) {
 			const [eventName, id] = name.split(":");
+			const params = value.args;
 			parent.on(Symbol.for(eventName), (...args) => {
 				// biome-ignore lint/suspicious/noDoubleEquals: <explanation>
 				if (id && args[0] != id) return;
+				if (params) for (let idx = 0; idx < params.length; idx++) this.vars.set(params[idx], args[idx + 1] as TVarTypes);
 				execAction({ vars: this.vars }, value.action);
 			});
 		}
@@ -122,6 +125,10 @@ export class DisplayLayer extends UILayer {
 				}
 				case OP_TYPES.SPRITE: {
 					op.entity = addSprite(this, op);
+					break;
+				}
+				case OP_TYPES.POOL: {
+					op.entity = addPool(this, op);
 					break;
 				}
 				case OP_TYPES.ANIM: {

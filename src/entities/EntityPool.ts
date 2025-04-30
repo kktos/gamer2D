@@ -1,30 +1,40 @@
 import type ResourceManager from "../game/ResourceManager";
 import type GameContext from "../game/types/GameContext";
-import type { Entity } from "./Entity";
+import { Entity } from "./Entity";
 import { createEntityByName } from "./Entity.factory";
 
-export class EntityPool {
+export class EntityPool extends Entity {
+	static POOL_SPAWNED = Symbol.for("POOL_SPAWNED");
+
 	static pools: Record<string, EntityPool> = {};
 
-	private pool: Entity[];
-	private available: boolean[];
+	readonly pool: Entity[];
+	private usedList: boolean[];
+	private usedCount: number;
 
 	static create(resourceManager: ResourceManager, name: string, size: number, ...args) {
-		const pool = new EntityPool(size, () => createEntityByName(resourceManager, name, ...args));
+		const pool = new EntityPool(resourceManager, size, () => createEntityByName(resourceManager, name, ...args));
+		pool.id = name;
 		EntityPool.pools[name] = pool;
 		return pool;
 	}
 
-	constructor(size: number, createObject) {
+	constructor(resourceManager: ResourceManager, size: number, createObject) {
+		super(resourceManager, 0, 0);
+
 		this.pool = Array.from({ length: size }, createObject);
-		this.available = Array(size).fill(true);
+		this.usedList = Array(size).fill(false);
+		this.usedCount = 0;
 	}
 
 	get() {
-		const index = this.available.indexOf(true);
+		const index = this.usedList.indexOf(false);
 		if (index !== -1) {
-			this.available[index] = false;
-			return this.pool[index];
+			this.usedList[index] = true;
+			const entity = this.pool[index];
+			this.usedCount++;
+			this.queue(EntityPool.POOL_SPAWNED, this.id, entity.id, this.usedCount, entity);
+			return entity;
 		}
 
 		// Optionally create a new object if the pool is empty
@@ -35,28 +45,25 @@ export class EntityPool {
 
 	release(obj) {
 		const index = this.pool.indexOf(obj);
-		if (index !== -1 && !this.available[index]) {
-			this.available[index] = true;
+		if (index !== -1 && this.usedList[index]) {
+			this.usedList[index] = false;
+			this.usedCount--;
 		}
 	}
 
 	public collides(gc: GameContext, target: Entity) {}
 
 	update(gc: GameContext, scene) {
-		for (let index = 0; index < this.available.length; index++) {
-			if (!this.available[index]) this.pool[index].update(gc, scene);
-		}
+		for (let index = 0; index < this.usedList.length; index++) if (this.usedList[index]) this.pool[index].update(gc, scene);
+		this.events.process("*", (...args: unknown[]) => gc.scene?.emit(args[0] as symbol, ...args.slice(1)));
+		this.events.clear();
 	}
 
 	finalize() {
-		for (let index = 0; index < this.available.length; index++) {
-			if (!this.available[index]) this.pool[index].finalize();
-		}
+		for (let index = 0; index < this.usedList.length; index++) if (this.usedList[index]) this.pool[index].finalize();
 	}
 
 	render(gc: GameContext) {
-		for (let index = 0; index < this.available.length; index++) {
-			if (!this.available[index]) this.pool[index].render(gc);
-		}
+		for (let index = 0; index < this.usedList.length; index++) if (this.usedList[index]) this.pool[index].render(gc);
 	}
 }
