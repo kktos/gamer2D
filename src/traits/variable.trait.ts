@@ -1,9 +1,10 @@
 import type { Entity } from "../entities/Entity";
 import { evalValue } from "../script/engine/eval.script";
+import type { ArgExpression } from "../types/value.types";
 import type { TVars } from "../utils/vars.utils";
 import { Trait } from "./Trait";
 
-type TParams = { vars: TVars; propName: string; varName?: string; text?: string };
+type TParams = { vars: TVars; propName: string; varName?: string; text?: ArgExpression | string };
 export class VariableTrait extends Trait {
 	private propName: string;
 	private value: () => unknown;

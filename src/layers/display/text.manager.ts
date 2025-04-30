@@ -4,13 +4,12 @@ import type { TFunctionCall } from "../../script/compiler/layers/display/layout/
 import { ALIGN_TYPES } from "../../script/compiler/layers/display/layout/text-sprite-props.rules";
 import type { TText } from "../../script/compiler/layers/display/layout/text.rules";
 import { evalArg, evalNumber, evalValue, isStringInterpolable } from "../../script/engine/eval.script";
-import type { Trait } from "../../traits/Trait";
 import { type PathDefDTO, PathTrait } from "../../traits/path.trait";
-import { VariableTrait } from "../../traits/variable.trait";
-import { ArgExpression, ArgVariable } from "../../types/value.types";
 import type { TVars } from "../../utils/vars.utils";
 import type { DisplayLayer } from "../display.layer";
 import { EntitiesLayer } from "../entities.layer";
+import { setupVariableProps } from "./prop.manager";
+import { setupTraits } from "./trait.manager";
 
 export function addText(layer: DisplayLayer, op: TText & { entity?: Entity }) {
 	const posX = evalValue({ vars: layer.vars }, op.pos[0]) as number;
@@ -52,53 +51,4 @@ function setupAnim(op: TText & { entity?: Entity }, entity: Entity, vars: TVars)
 		speed: anim.speed,
 	};
 	entity.addTrait(new PathTrait(animDTO, { evalArg: (arg) => evalArg({ vars }, arg) }));
-}
-
-// handling of "traits:[ trait1, trait2, ...]"
-function setupTraits(op: TText & { entity?: Entity }, entity: Entity, vars: TVars) {
-	if (!op.traits) return;
-
-	let traitsArray: ArgVariable[];
-	if (op.traits instanceof ArgVariable) {
-		traitsArray = vars.get(op.traits.value) as unknown as ArgVariable[];
-	} else {
-		traitsArray = op.traits;
-	}
-	for (const traitName of traitsArray) {
-		const trait = vars.get(traitName.value) as Trait;
-		entity.addTrait(trait);
-	}
-}
-
-// handling with VariableTrait of some props with variable value
-function setupVariableProps(op: TText & { entity?: Entity }, entity: Entity, vars: TVars) {
-	const varProps = [
-		{ propName: "pos", alias: ["left", "top"] },
-		{ propName: "width", alias: "width" },
-		{ propName: "height", alias: "height" },
-		{ propName: "text", alias: "text" },
-	];
-	const addTrait = (prop, alias) => {
-		if (typeof prop === "number") return;
-		if (typeof prop === "string") {
-			if (isStringInterpolable(prop)) {
-				entity.addTrait(new VariableTrait({ vars, propName: alias, text: op.text }));
-			}
-			return;
-		}
-		if (prop instanceof ArgVariable) {
-			entity.addTrait(new VariableTrait({ vars, propName: alias, varName: prop.value }));
-			return;
-		}
-		if (prop instanceof ArgExpression) entity.addTrait(new VariableTrait({ vars, propName: alias, text: op.text }));
-	};
-	for (const { propName, alias } of varProps) {
-		if (Array.isArray(op[propName])) {
-			for (let idx = 0; idx < op[propName].length; idx++) {
-				addTrait(op[propName][idx], alias[idx]);
-			}
-			continue;
-		}
-		addTrait(op[propName], alias);
-	}
 }

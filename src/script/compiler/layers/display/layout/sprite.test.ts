@@ -41,7 +41,7 @@ describe("Sprite", () => {
 		display "intro" {
 			display {
 				layout {
-					sprite id:"test" "BubblunEntity" at:90,428
+					sprite "BubblunEntity" id:"test" at:90,428
 				}
 			}
 		}
@@ -85,5 +85,18 @@ describe("Sprite", () => {
 		}
 		`;
 		expect(() => compileScript(script)).toThrowError(/Unknown variable "idx"/);
+	});
+
+	it("should handle bad sprite definition - no at:", () => {
+		const script = `
+		display "intro" {
+			display {
+				layout {
+					sprite "bubblun:life" id:"3"
+				}
+			}
+		}
+		`;
+		expect(() => compileScript(script)).toThrowError(/Missing required prop 'at:'/);
 	});
 });

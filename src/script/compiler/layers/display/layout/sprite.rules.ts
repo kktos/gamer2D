@@ -3,6 +3,7 @@ import type { BBox } from "../../../../../maths/math";
 import type { DIRECTIONS } from "../../../../../types/direction.type";
 import { OP_TYPES } from "../../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../../types/typescript.types";
+import type { ArgVariable } from "../../../../../types/value.types";
 import { tokens } from "../../../lexer";
 
 export type TSprite = {
@@ -14,6 +15,7 @@ export type TSprite = {
 	range?: [number, number];
 	dir?: TupleToUnion<[typeof DIRECTIONS.LEFT, typeof DIRECTIONS.RIGHT]>;
 	anim?: { name: string };
+	traits?: ArgVariable[] | ArgVariable;
 
 	bbox: () => BBox;
 	entity?: Entity;
@@ -25,38 +27,48 @@ export class SpriteRules {
 		return $.RULE("layoutSprite", (options) => {
 			$.CONSUME(tokens.Sprite);
 
-			let id: string | undefined;
-			$.OPTION(() => {
-				$.CONSUME(tokens.ID);
-				$.CONSUME2(tokens.Colon);
-				id = $.CONSUME3(tokens.StringLiteral).payload;
-			});
-
 			const result: Partial<TSprite> = {
 				type: OP_TYPES.SPRITE,
 				sprite: $.CONSUME(tokens.StringLiteral).payload,
-				// zoom: options?.zoom ?? 1,
-				pos: $.SUBRULE($.parm_at),
 			};
 
-			$.OPTION2(() => {
-				result.range = $.SUBRULE($.parm_range);
+			$.MANY(() => {
+				$.OR([
+					{
+						ALT: () => {
+							$.CONSUME(tokens.ID);
+							$.CONSUME2(tokens.Colon);
+							result.id = $.CONSUME3(tokens.StringLiteral).payload;
+						},
+					},
+					{
+						ALT: () => {
+							result.pos = $.SUBRULE($.parm_at);
+						},
+					},
+					{
+						ALT: () => {
+							result.range = $.SUBRULE($.parm_range);
+						},
+					},
+					{
+						ALT: () => {
+							result.dir = $.SUBRULE($.parm_dir);
+						},
+					},
+					{
+						ALT: () => {
+							const { name, value, isParm } = $.SUBRULE($.textSpriteProps);
+							$.ACTION(() => {
+								if (!isParm) options[name] = value;
+								else result[name] = value;
+							});
+						},
+					},
+				]);
 			});
 
-			$.OPTION3(() => {
-				result.dir = $.SUBRULE($.parm_dir);
-			});
-
-			$.OPTION4(() => {
-				const { name, value, isParm } = $.SUBRULE($.textSpriteProps);
-
-				$.ACTION(() => {
-					if (!isParm) options[name] = value;
-					else result[name] = value;
-				});
-			});
-
-			if (id) result.id = id;
+			if (!result.pos) throw new TypeError("Missing required prop 'at:'");
 
 			return result;
 		});

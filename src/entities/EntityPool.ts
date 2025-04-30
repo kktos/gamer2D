@@ -1,11 +1,12 @@
 import type ResourceManager from "../game/ResourceManager";
 import type GameContext from "../game/types/GameContext";
+import type { Entity } from "./Entity";
 import { createEntityByName } from "./Entity.factory";
 
 export class EntityPool {
-	static pools = {};
+	static pools: Record<string, EntityPool> = {};
 
-	private pool: EntityPool[];
+	private pool: Entity[];
 	private available: boolean[];
 
 	static create(resourceManager: ResourceManager, name: string, size: number, ...args) {
@@ -38,6 +39,8 @@ export class EntityPool {
 			this.available[index] = true;
 		}
 	}
+
+	public collides(gc: GameContext, target: Entity) {}
 
 	update(gc: GameContext, scene) {
 		for (let index = 0; index < this.available.length; index++) {

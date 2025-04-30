@@ -6,6 +6,8 @@ import { evalArg, evalValue } from "../../script/engine/eval.script";
 import { type PathDefDTO, PathTrait } from "../../traits/path.trait";
 import type { DisplayLayer } from "../display.layer";
 import { EntitiesLayer } from "../entities.layer";
+import { setupVariableProps } from "./prop.manager";
+import { setupTraits } from "./trait.manager";
 
 // addSprite(op:TSprite & { entity: Entity }) {
 export function addSprite(layer: DisplayLayer, op: TSprite & { entity?: Entity }) {
@@ -27,11 +29,15 @@ export function addSprite(layer: DisplayLayer, op: TSprite & { entity?: Entity }
 		};
 		entity.addTrait(new PathTrait(animDTO, { evalArg: (arg) => evalArg({ vars: layer.vars }, arg) }));
 	}
-	layer.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
+
+	if (op.traits) setupTraits(op, entity, layer.vars);
+	setupVariableProps(op, entity, layer.vars);
 
 	const sprites = layer.vars.get("sprites") as Map<string, Entity>; // as TVarSprites;
 	if (!sprites) throw new Error("No variable sprites !?!");
 	sprites.set(entity.id, entity); //.add(entity);
+
+	layer.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
 
 	return entity;
 }

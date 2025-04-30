@@ -1,5 +1,6 @@
 import type ResourceManager from "../game/ResourceManager";
 import AnimationTrait from "../traits/animation.trait";
+import { DIRECTIONS } from "../types/direction.type";
 import { Entity } from "./Entity";
 
 export default class SpriteEntity extends Entity {
@@ -24,6 +25,6 @@ export default class SpriteEntity extends Entity {
 
 	render(gc) {
 		const ctx = gc.viewport.ctx;
-		if (this.currSprite) this.spritesheet?.draw(this.currSprite, ctx, this.left, this.top);
+		if (this.currSprite) this.spritesheet?.draw(this.currSprite, ctx, this.left, this.top, { flip: this.dir === DIRECTIONS.RIGHT ? 1 : 0, zoom: 1 });
 	}
 }

@@ -25,10 +25,9 @@ export class System {
 			create: (name: string, size: number, ...args: unknown[]) => {
 				const pool = EntityPool.create(gc.resourceManager, name, size, ...args);
 				this.layer.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, pool);
+				return pool;
 			},
-			spawn: (name: string, ...args: unknown[]) => {
-				EntityPool.pools[name].get();
-			},
+			spawn: (name: string, ...args: unknown[]) => EntityPool.pools[name].get(),
 		});
 	}
 
