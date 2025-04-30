@@ -43,12 +43,7 @@ export class RepeatRules {
 			});
 
 			// count:<number>
-			const name = $.CONSUME(tokens.Identifier).image?.toLowerCase();
-			$.ACTION(() => {
-				if (name !== "count") {
-					throw new TypeError(`Missing required parm count for Repeat ${name}`);
-				}
-			});
+			$.CONSUME(tokens.Count);
 			$.CONSUME(tokens.Colon);
 			result.count = $.SUBRULE($.expr);
 

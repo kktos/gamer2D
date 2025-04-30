@@ -9,6 +9,7 @@ import { ImageRules } from "./layers/display/layout/image.rules";
 import { LayoutRules } from "./layers/display/layout/layout.rules";
 import { MenuRules } from "./layers/display/layout/menu.rules";
 import { ParmsRules } from "./layers/display/layout/parms.rules";
+import { EntityPoolRules } from "./layers/display/layout/pool.rules";
 import { RectRules } from "./layers/display/layout/rect.rules";
 import { RepeatRules } from "./layers/display/layout/repeat.rules";
 import { SetRules } from "./layers/display/layout/set.rules";
@@ -86,6 +87,8 @@ export class SheetParser extends EmbeddedActionsParser {
 	public layoutSprite = SpriteRules.layoutSprite(this);
 	public layoutImage = ImageRules.layoutImage(this);
 	public textSpriteProps = TextSpritePropsRules.textSpriteProps(this);
+
+	public layoutPool = EntityPoolRules.layoutPool(this);
 
 	public layoutMenu = MenuRules.layoutMenu(this);
 	public layoutMenuKeys = MenuRules.layoutMenuKeys(this);

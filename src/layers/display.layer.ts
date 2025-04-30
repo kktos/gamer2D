@@ -9,7 +9,7 @@ import type { TLayerDisplaySheet } from "../script/compiler/layers/display/displ
 import type { TStatement } from "../script/compiler/layers/display/layout/layout.rules";
 import type { TRect } from "../script/compiler/layers/display/layout/rect.rules";
 import type { TView } from "../script/compiler/layers/display/layout/view.rules";
-import type { TEventHandlers } from "../script/compiler/layers/display/on.rules";
+import type { TEventHandlerDict } from "../script/compiler/layers/display/on.rules";
 import { evalNumber, evalValue } from "../script/engine/eval.script";
 import { execAction } from "../script/engine/exec.script";
 import { OP_TYPES } from "../types/operation.types";
@@ -94,7 +94,7 @@ export class DisplayLayer extends UILayer {
 		this.vars.set("centerUIY", Math.floor((this.gc.viewport.bbox.height - gc.ui.height) / 2 / this.gc.viewport.ratioHeight));
 	}
 
-	initEventHandlers(EventHandlers: TEventHandlers, parent: Scene) {
+	initEventHandlers(EventHandlers: TEventHandlerDict, parent: Scene) {
 		for (const [name, value] of Object.entries(EventHandlers)) {
 			const [eventName, id] = name.split(":");
 			parent.on(Symbol.for(eventName), (...args) => {

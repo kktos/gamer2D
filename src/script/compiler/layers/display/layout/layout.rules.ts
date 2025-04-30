@@ -61,6 +61,7 @@ export class LayoutRules {
 				{ ALT: () => $.SUBRULE($.layoutView, { ARGS: [options] }) },
 				{ ALT: () => $.SUBRULE($.layoutRect, { ARGS: [options] }) },
 				{ ALT: () => $.SUBRULE($.layoutDefAnim, { ARGS: [options] }) },
+				{ ALT: () => $.SUBRULE($.layoutPool, { ARGS: [options] }) },
 			]);
 		});
 	}
