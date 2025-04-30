@@ -166,6 +166,10 @@ export class Entity {
 		if (trait) fn(trait);
 	}
 
+	public getTrait<T extends Trait>(name: string) {
+		return this.traits.get(name) as T;
+	}
+
 	public queue(name: symbol, ...args: unknown[]) {
 		this.events.queue(name, ...args);
 	}

@@ -38,6 +38,14 @@ export class System {
 		return EntityPool.pools[name];
 	}
 
+	entities(name: string) {
+		let entity: Entity | undefined;
+		this.layer.scene.useLayer("EntitiesLayer", (layer: EntitiesLayer) => {
+			entity = layer.get(name);
+		});
+		return entity;
+	}
+
 	goto(sceneName: string) {
 		this.gc.scene?.goto(sceneName);
 	}

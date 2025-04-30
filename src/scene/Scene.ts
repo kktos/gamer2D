@@ -65,7 +65,7 @@ export class Scene {
 		this.tasks = new TaskList();
 		this.setTaskHandlers(gc);
 
-		for (const layer of sheet.layers) this.addLayer(createLayerByName(gc, layer.type, this, layer));
+		for (const layerDef of sheet.layers) this.addLayer(createLayerByName(gc, layerDef.type, this, layerDef));
 	}
 
 	init(gc: GameContext) {

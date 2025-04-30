@@ -26,6 +26,11 @@ export class EntitiesLayer extends Layer {
 		this.setTaskHandlers();
 	}
 
+	public get(idxOrId: string | number) {
+		if (typeof idxOrId === "number") return this.entities[idxOrId];
+		return this.entities.find((entity) => entity.id === idxOrId);
+	}
+
 	public spawnEntities(grid: Grid) {
 		if (!this.sprites) return;
 		this.entities = createLevelEntities(this.gc.resourceManager, grid, this.sprites);
