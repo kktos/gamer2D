@@ -49,7 +49,7 @@ const tokenDefs: TokenDefs = {
 	Timer: { pattern: "timer", longer_alt: "Identifier" },
 	Font: { pattern: "font", longer_alt: "Identifier" },
 	Layout: { pattern: "layout", longer_alt: "Identifier" },
-	Layers: { pattern: "layers", longer_alt: "Identifier" },
+	Layer: { pattern: "layer", longer_alt: "Identifier" },
 
 	Align: { pattern: "align", longer_alt: "Identifier" },
 	VAlign: { pattern: "valign", longer_alt: "Identifier" },
@@ -177,7 +177,7 @@ export const tokenList = [
 	tokens.MS,
 	tokens.Font,
 	tokens.Layout,
-	tokens.Layers,
+	tokens.Layer,
 	tokens.Align,
 	tokens.VAlign,
 	tokens.Size,

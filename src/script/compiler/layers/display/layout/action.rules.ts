@@ -123,6 +123,12 @@ export class ActionRules {
 				{ ALT: () => $.CONSUME(tokens.Loop).image },
 				{ ALT: () => $.CONSUME(tokens.Play).image },
 				{ ALT: () => $.CONSUME(tokens.Text).image },
+				{ ALT: () => $.CONSUME(tokens.Entities).image },
+				{ ALT: () => $.CONSUME(tokens.Trait).image },
+				{ ALT: () => $.CONSUME(tokens.Traits).image },
+				{ ALT: () => $.CONSUME(tokens.Spawn).image },
+				{ ALT: () => $.CONSUME(tokens.Item).image },
+				{ ALT: () => $.CONSUME(tokens.Keys).image },
 			]);
 		});
 	}

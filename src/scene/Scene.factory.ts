@@ -1,5 +1,6 @@
 import type GameContext from "../game/types/GameContext";
 import type { SceneConstructor } from "../game/types/GameOptions";
+import { loadLayer } from "../layers/Layer.factory";
 import { compileScript } from "../script/compiler/compiler";
 import type { TSceneSheet } from "../script/compiler/scenes/scene.rules";
 import LocalDB from "../utils/storage.util";
@@ -69,6 +70,13 @@ export class SceneFactory {
 		// console.log("SceneFactory.load", JSON.stringify(sheet, undefined, 2), sheet);
 
 		if (!sheet) throw new Error(`Unknown Scene: ${name}`);
+
+		let idx = -1;
+		for await (const layerDef of sheet.layers) {
+			idx++;
+			if (layerDef.type !== "*") continue;
+			sheet.layers[idx] = await loadLayer(gc, String(layerDef.name));
+		}
 
 		let scene: Scene;
 		switch (sheet.type) {

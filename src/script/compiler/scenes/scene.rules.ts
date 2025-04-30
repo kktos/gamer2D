@@ -33,6 +33,12 @@ export class SceneSheetRules {
 					{ ALT: () => $.SUBRULE($.backgroundLayerSheet) },
 					{ ALT: () => $.SUBRULE($.entitiesLayerSheet) },
 					{ ALT: () => $.SUBRULE($.userDefinedLayerSheet) },
+					{
+						ALT: () => {
+							$.CONSUME(tokens.Layer);
+							return { type: "*", name: $.CONSUME(tokens.StringLiteral).payload };
+						},
+					},
 				]);
 				sheet.layers.push(layer);
 			});

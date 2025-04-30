@@ -1,6 +1,10 @@
 import type GameContext from "../game/types/GameContext";
 import type { layerDefinition } from "../game/types/GameOptions";
+import { GLOBAL_VARIABLES } from "../scene/Scene.factory";
+import { compileLayerScript } from "../script/compiler/compiler";
+import type { TLayerDef } from "../script/compiler/scenes/scene.rules";
 import { getClassName } from "../utils/object.util";
+import LocalDB from "../utils/storage.util";
 import type { Layer } from "./Layer";
 import { BackgroundLayer } from "./background.layer";
 import { DisplayLayer } from "./display.layer";
@@ -43,4 +47,18 @@ export function createLayerByName(gc: GameContext, name: string, ...args: unknow
 		throw new TypeError(`Unknown Layer Type ${name}`);
 	}
 	return new layerNames[name](gc, ...args);
+}
+
+export async function loadLayer(gc: GameContext, name: string) {
+	let sheet: TLayerDef | null = LocalDB.loadResource(name);
+	if (!sheet) {
+		try {
+			const scriptText = await gc.resourceManager.loadScene(name);
+			sheet = compileLayerScript(scriptText, GLOBAL_VARIABLES);
+		} catch (e) {
+			console.error((e as Error).message);
+		}
+	}
+	if (!sheet) throw new Error(`Unknown Layer: ${name}`);
+	return sheet;
 }

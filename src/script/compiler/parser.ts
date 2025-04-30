@@ -24,6 +24,7 @@ import { UIRules } from "./layers/display/ui.rules";
 import { EditorRules } from "./layers/editor/editor.rules";
 import { EntitiesLayerRules } from "./layers/entities/entities.rules";
 import { GameRules } from "./layers/game/game.rules";
+import { LayerSheetRules } from "./layers/layer.rules";
 import { LevelRules } from "./layers/level/level.rules";
 import { UserDefinedLayerRules } from "./layers/user_defined/user_defined.rules";
 import { tokenList } from "./lexer";
@@ -45,6 +46,8 @@ export class SheetParser extends EmbeddedActionsParser {
 	public sceneSheetTypeAndName = SceneSheetRules.sceneSheetTypeAndName(this);
 	public sceneProps = SceneSheetRules.sceneProps(this);
 	public sceneShowCursor = SceneSheetRules.sceneShowCursor(this);
+
+	public layerSheet = LayerSheetRules.layerSheet(this);
 
 	public number = TypesRules.number(this);
 	// public variable = TypesRules.variable(this);
