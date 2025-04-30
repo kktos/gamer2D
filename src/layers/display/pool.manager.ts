@@ -23,7 +23,7 @@ export function addPool(layer: DisplayLayer, op: TPool & { entity?: Entity }) {
 	if (!sprites) throw new Error("No variable sprites !?!");
 	sprites.set(entityPool.id, entityPool);
 
-	for (let idx = 0; idx < spawnCount; idx++) entityPool.get();
+	for (let idx = 0; idx < spawnCount; idx++) entityPool.use();
 
 	layer.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entityPool);
 

@@ -5,6 +5,7 @@ import { createEntityByName } from "./Entity.factory";
 
 export class EntityPool extends Entity {
 	static POOL_SPAWNED = Symbol.for("POOL_SPAWNED");
+	static POOL_RELEASED = Symbol.for("POOL_RELEASED");
 
 	static pools: Record<string, EntityPool> = {};
 
@@ -27,7 +28,12 @@ export class EntityPool extends Entity {
 		this.usedCount = 0;
 	}
 
-	get() {
+	get(idxOrId: string | number) {
+		if (typeof idxOrId === "number") return this.pool[idxOrId];
+		return this.pool.find((entity) => entity.id === idxOrId);
+	}
+
+	use() {
 		const index = this.usedList.indexOf(false);
 		if (index !== -1) {
 			this.usedList[index] = true;
@@ -44,10 +50,12 @@ export class EntityPool extends Entity {
 	}
 
 	release(obj) {
-		const index = this.pool.indexOf(obj);
+		const index = typeof obj === "undefined" ? this.usedList.lastIndexOf(true) : this.pool.indexOf(obj);
 		if (index !== -1 && this.usedList[index]) {
 			this.usedList[index] = false;
 			this.usedCount--;
+			const entity = this.pool[index];
+			this.queue(EntityPool.POOL_RELEASED, this.id, entity.id, this.usedCount, entity);
 		}
 	}
 

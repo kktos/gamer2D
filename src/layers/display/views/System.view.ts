@@ -21,14 +21,21 @@ export class System {
 
 		this.vars.set("SYSTEM", this);
 
-		this.vars.set("EntityPool", {
+		const EntityPoolStub = {
 			create: (name: string, size: number, ...args: unknown[]) => {
 				const pool = EntityPool.create(gc.resourceManager, name, size, ...args);
 				this.layer.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, pool);
 				return pool;
 			},
-			spawn: (name: string, ...args: unknown[]) => EntityPool.pools[name].get(),
-		});
+			// spawn: (name: string, ...args: unknown[]) => EntityPool.pools[name].use(),
+			// get: (name: string, idxOrId: string | number) => EntityPool.pools[name].get(idxOrId),
+		};
+
+		this.vars.set("EntityPool", EntityPoolStub);
+	}
+
+	EntityPool(name: string) {
+		return EntityPool.pools[name];
 	}
 
 	goto(sceneName: string) {

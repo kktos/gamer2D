@@ -153,7 +153,10 @@ describe("Menu", () => {
 			}
 		}
 		`;
-		const result = compileScript(script);
+		const globals = new Map<string, unknown>();
+		globals.set("scene", 0);
+
+		const result = compileScript(script, globals);
 		expect(result).toBeDefined();
 		const displayLayer = result.layers.find((layer) => layer.type === "display");
 		expect(displayLayer).toBeDefined();
