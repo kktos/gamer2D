@@ -5,6 +5,7 @@ import type { GridCell } from "../maths/grid.math";
 import type { TCollisionSide } from "../maths/math";
 import type { Scene } from "../scene/Scene";
 import { generateID } from "../utils/id.util";
+import { getClassName } from "../utils/object.util";
 
 export interface ITrait {
 	on(name: string, callback, count: number): Trait;
@@ -31,8 +32,7 @@ export class Trait {
 	private listeners: { name: string; callback: EventCallback; count: number }[];
 
 	constructor() {
-		const m = String(this.constructor).match(/class ([a-zA-Z0-9_]+)/);
-		this.class = m?.[1] ?? "Trait??";
+		this.class = getClassName(this.constructor);
 		this.id = generateID();
 
 		this.listeners = [];
@@ -49,7 +49,4 @@ export class Trait {
 			return --listener.count;
 		});
 	}
-
-	// collides() {}
-	// update() {}
 }

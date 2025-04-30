@@ -24,7 +24,7 @@ export default class TimerTrait extends Trait {
 
 		if (this.currentTime <= 0) {
 			this.reset();
-			entity.emit(TimerTrait.EVENT_TIMER, this.id);
+			entity.queue(TimerTrait.EVENT_TIMER, this.id);
 		}
 	}
 	// static EVENT_TIMER(EVENT_TIMER: any, id: string) {

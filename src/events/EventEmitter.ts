@@ -17,9 +17,7 @@ export class EventEmitter {
 
 	off(name: symbol, listenerToRemove: EventCallback) {
 		const cbList = this.events.get(name);
-		if (!cbList) {
-			throw new Error(`Can't remove a listener. Event "${String(name)}" doesn't exits.`);
-		}
+		if (!cbList) throw new Error(`Can't remove a listener. Event "${String(name)}" doesn't exits.`);
 
 		const filterListeners = (listener: EventCallback) => listener !== listenerToRemove;
 		this.events.set(name, cbList.filter(filterListeners));

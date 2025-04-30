@@ -61,6 +61,7 @@ export class Entity {
 		this._lifetime = 0;
 
 		this.events = new EventBuffer();
+
 		this.traits = new Map();
 		this.collidesTraits = [];
 		this.updateTraits = [];
@@ -165,8 +166,8 @@ export class Entity {
 		if (trait) fn(trait);
 	}
 
-	public emit(name: symbol, ...args: unknown[]) {
-		this.events.emit(name, ...args);
+	public queue(name: symbol, ...args: unknown[]) {
+		this.events.queue(name, ...args);
 	}
 
 	public setSprite(name: string) {
