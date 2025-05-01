@@ -2,7 +2,7 @@ import LocalDB from "../utils/storage.util";
 import { Trait } from "./Trait";
 
 export default class PlayerTrait extends Trait {
-	static EVENT_PLAYER_KILLED = Symbol.for("playerKilled");
+	static EVENT_PLAYER_KILLED = Symbol.for("EVENT_PLAYER_KILLED");
 
 	private lives: number;
 	private score: number;

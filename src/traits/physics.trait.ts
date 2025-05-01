@@ -10,6 +10,8 @@ import { Trait } from "./Trait";
  */
 export class PhysicsTrait extends Trait {
 	update(gc: GameContext, entity: Entity, scene: Scene) {
+		if (entity.isFixed) return;
+
 		scene.useLayer("WorldCollisionLayer", (layer: WorldCollisionLayer) => {
 			entity.left += entity.vel.x * gc.dt;
 			layer.checkX(entity);

@@ -28,7 +28,8 @@ export class FadeTrait extends Trait {
 	}
 
 	update(gc: GameContext, entity: TextEntity) {
-		if (!this.isRunning) return;
+		if (!this.isRunning || entity.isFixed) return;
+
 		this.alpha = this.alpha + (this.isFadein ? 1 : -1) * gc.dt * this.speed;
 		if (this.isFadein) {
 			if (this.alpha > 100) {

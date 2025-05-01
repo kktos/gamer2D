@@ -5,6 +5,8 @@ import { Trait } from "./Trait";
 
 export class MouseXYTrait extends Trait {
 	update(gc: GameContext, entity: Entity, scene: Scene) {
+		if (entity.isFixed) return;
+
 		const bbox = scene.bbox;
 
 		entity.left = gc.mouse.x;

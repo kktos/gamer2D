@@ -139,7 +139,7 @@ export class PathTrait extends Trait {
 */
 
 	update({ deltaTime }, entity: Entity, scene: Scene) {
-		if (!this.isRunning) return;
+		if (!this.isRunning || entity.isFixed) return;
 
 		entity.mass = 0;
 

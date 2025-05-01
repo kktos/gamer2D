@@ -4,6 +4,8 @@ import { Trait } from "./Trait";
 
 export class MouseXTrait extends Trait {
 	update(gc, entity: Entity, scene: Scene) {
+		if (entity.isFixed) return;
+
 		const bbox = scene.bbox;
 		entity.left = gc.mouse.x;
 		if (entity.left < bbox.left) entity.left = bbox.left;
