@@ -139,8 +139,17 @@ export class Entity {
 		return this._lifetime;
 	}
 
-	public set(propname, propvalue) {
-		this[propname] = propvalue;
+	public set(...args: unknown[]) {
+		if (args.length % 2) throw new TypeError("Needs key/value pairs");
+		for (let idx = 0; idx < args.length; idx += 2) {
+			if (typeof args[idx] !== "string") throw new TypeError(`Needs a propname string ${idx}:${args[idx]}`);
+			const propname: string = args[idx] as string;
+
+			if (!(propname in this)) throw new TypeError(`Not a valid propname ${idx}:${args[idx]}`);
+			const propvalue = args[idx + 1];
+			this[propname] = propvalue;
+		}
+		return this;
 	}
 
 	public pause() {
