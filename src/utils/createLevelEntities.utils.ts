@@ -10,6 +10,7 @@ export function createLevelEntities(resourceManager: ResourceManager, grid: Grid
 		for (const sprite of sprites) {
 			const [x, y] = grid.toCoord(sprite.pos[0] as number, sprite.pos[1] as number);
 			const entity = createEntityByName(resourceManager, sprite.name, x, y, sprite.dir);
+			if (sprite.id) entity.id = sprite.id;
 			entities.push(entity);
 		}
 	return entities;
