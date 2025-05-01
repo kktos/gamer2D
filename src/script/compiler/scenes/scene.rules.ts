@@ -59,7 +59,7 @@ export class SceneSheetRules {
 
 	static sceneProps($) {
 		return $.RULE("sceneProps", () => {
-			return $.OR([{ ALT: () => $.SUBRULE($.font) }, { ALT: () => $.SUBRULE($.settingsBlock) }, { ALT: () => $.SUBRULE($.levelSprite) }]);
+			return $.OR([{ ALT: () => $.SUBRULE($.font) }, { ALT: () => $.SUBRULE($.settingsBlock) }]);
 		});
 	}
 

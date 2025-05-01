@@ -49,22 +49,7 @@ export class LevelRules {
 
 	static levelProps($) {
 		return $.RULE("levelProps", () => {
-			return $.OR([{ ALT: () => $.SUBRULE($.font) }, { ALT: () => $.SUBRULE($.settingsBlock) }, { ALT: () => $.SUBRULE($.levelSprite) }]);
-		});
-	}
-
-	static levelSprite($) {
-		return $.RULE("levelSprite", () => {
-			$.CONSUME(tokens.Sprite);
-			return {
-				name: "sprites",
-				value: {
-					name: $.CONSUME(tokens.StringLiteral).payload,
-					pos: $.SUBRULE($.parm_at),
-					dir: $.SUBRULE($.parm_dir),
-				},
-				[CONCAT]: true,
-			};
+			return $.OR([{ ALT: () => $.SUBRULE($.font) }, { ALT: () => $.SUBRULE($.settingsBlock) }]);
 		});
 	}
 }

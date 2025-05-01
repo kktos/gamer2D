@@ -44,8 +44,6 @@ describe("TextSpriteProps", () => {
 					]
 				}
 
-				sprite "zen-chan" at:16,5 dir:left
-
 			}
 		}
 		`;
@@ -92,13 +90,6 @@ describe("TextSpriteProps", () => {
 					"*[_______________________________**",
 				],
 			},
-			sprites: [
-				{
-					name: "zen-chan",
-					pos: [16, 5],
-					dir: 0,
-				},
-			],
 		});
 	});
 });

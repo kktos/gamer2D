@@ -129,7 +129,6 @@ export class SheetParser extends EmbeddedActionsParser {
 
 	public levelLayerSheet = LevelRules.levelLayerSheet(this);
 	public levelProps = LevelRules.levelProps(this);
-	public levelSprite = LevelRules.levelSprite(this);
 
 	public editorSheet = EditorRules.editorSheet(this);
 	public debugSheet = DebugRules.debugSheet(this);

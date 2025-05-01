@@ -1,12 +1,8 @@
-import type { DIRECTIONS } from "../../../../types/direction.type";
-import type { TupleToUnion } from "../../../../types/typescript.types";
-import type { ArgExpression, ArgVariable } from "../../../../types/value.types";
 import { tokens } from "../../lexer";
+import type { TSprite } from "../display/layout/sprite.rules";
 
-export type TEntitiesLayerSprite = {
+export type TEntitiesLayerSprite = Pick<TSprite, "id" | "pos" | "range" | "dir"> & {
 	name: string;
-	pos: [number | ArgVariable | ArgExpression, number | ArgVariable | ArgExpression];
-	dir: TupleToUnion<[typeof DIRECTIONS.LEFT, typeof DIRECTIONS.RIGHT]>;
 };
 export type TEntitiesLayerSheet = {
 	type: "entities";
@@ -44,14 +40,55 @@ export class EntitiesLayerRules {
 		});
 	}
 
+	// static entitiesLayerSprite($) {
+	// 	return $.RULE("entitiesLayerSprite", () => {
+	// 		$.CONSUME(tokens.Sprite);
+	// 		return {
+	// 			name: $.CONSUME(tokens.StringLiteral).payload,
+	// 			pos: $.SUBRULE($.parm_at),
+	// 			dir: $.SUBRULE($.parm_dir),
+	// 		};
+	// 	});
+	// }
+
 	static entitiesLayerSprite($) {
-		return $.RULE("entitiesLayerSprite", () => {
+		return $.RULE("entitiesLayerSprite", (options) => {
 			$.CONSUME(tokens.Sprite);
-			return {
+
+			const result: Partial<TEntitiesLayerSprite> = {
 				name: $.CONSUME(tokens.StringLiteral).payload,
-				pos: $.SUBRULE($.parm_at),
-				dir: $.SUBRULE($.parm_dir),
 			};
+
+			$.MANY(() => {
+				$.OR([
+					{
+						ALT: () => {
+							$.CONSUME(tokens.ID);
+							$.CONSUME2(tokens.Colon);
+							result.id = $.CONSUME3(tokens.StringLiteral).payload;
+						},
+					},
+					{
+						ALT: () => {
+							result.pos = $.SUBRULE($.parm_at);
+						},
+					},
+					{
+						ALT: () => {
+							result.range = $.SUBRULE($.parm_range);
+						},
+					},
+					{
+						ALT: () => {
+							result.dir = $.SUBRULE($.parm_dir);
+						},
+					},
+				]);
+			});
+
+			if (!result.pos) throw new TypeError("Missing required prop 'at:'");
+
+			return result;
 		});
 	}
 }
