@@ -10,7 +10,7 @@ export function addPool(layer: DisplayLayer, op: TPool & { entity?: Entity }) {
 	const posX = evalValue({ vars: layer.vars }, op.pos[0]) as number;
 	const posY = evalValue({ vars: layer.vars }, op.pos[1]) as number;
 	const count = evalValue({ vars: layer.vars }, op.count) as number;
-	const spawnCount = evalValue({ vars: layer.vars }, op.spawn) as number;
+	const spawnCount = op.spawn ? (evalValue({ vars: layer.vars }, op.spawn) as number) : 0;
 
 	// const entity = createEntityByName(layer.gc.resourceManager, op.sprite, posX, posY);
 	const entityPool = EntityPool.create(layer.gc.resourceManager, op.sprite, count, posX, posY);
