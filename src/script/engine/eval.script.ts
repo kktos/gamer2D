@@ -55,27 +55,8 @@ export function evalVar({ vars }: { vars: TVars }, varname: string) {
 	return value;
 }
 
-// const VARNAME_REGEX = /\$[a-zA-Z_][a-zA-Z0-9_]*(?:\.\$?[a-zA-Z_][a-zA-Z0-9_]*)*/g;
-// export function oldEvalValue({ vars }: { vars: TVars }, varOrExpr: TResultValue[] | number | string | { expr: string } | ValueTrait): TVarTypes {
-// 	if (Array.isArray(varOrExpr) || typeof varOrExpr === "number") return varOrExpr;
-
-// 	if (typeof varOrExpr === "string") {
-// 		if (varOrExpr.match(/^\$/)) return evalVar({ vars }, varOrExpr.substring(1));
-// 		return interpolateString({ vars }, varOrExpr);
-// 	}
-
-// 	if (varOrExpr instanceof ValueTrait) {
-// 		return createTrait(varOrExpr.name, ...varOrExpr.args);
-// 	}
-
-// 	const exprSrc = varOrExpr.expr;
-// 	const expr = exprSrc.replaceAll(VARNAME_REGEX, (name) => evalVar({ vars }, name.substring(1)) as string);
-// 	// biome-ignore lint/security/noGlobalEval: <explanation>
-// 	return eval(expr);
-// }
-
-export function evalValue({ vars }: { vars: TVars }, expr: ArgExpression | ArgVariable | number | string | ValueTrait | TResultValue[]) {
-	if (Array.isArray(expr) || typeof expr === "number") return expr;
+export function evalValue({ vars }: { vars: TVars }, expr: ArgExpression | ArgVariable | number | boolean | string | ValueTrait | TResultValue[]) {
+	if (Array.isArray(expr) || typeof expr === "number" || typeof expr === "boolean") return expr;
 	if (typeof expr === "string") return interpolateString({ vars }, expr);
 	if (expr instanceof ArgVariable) return evalVar({ vars }, expr.value);
 	if (expr instanceof ValueTrait) return createTrait(expr.name, ...expr.args);

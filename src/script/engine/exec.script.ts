@@ -1,7 +1,7 @@
 import { ArgColor, ArgIdentifier, ArgVariable } from "../../types/value.types";
 import type { TVars } from "../../utils/vars.utils";
 import type { TActionStatement } from "../compiler/layers/display/layout/action.rules";
-import { evalValue, evalVar, interpolateString, resoleVar } from "./eval.script";
+import { evalValue, evalVar, interpolateString, isStringInterpolable, resoleVar } from "./eval.script";
 
 function execFnCall({ vars }: { vars: TVars }, fnCall, objSource) {
 	const args: unknown[] = [];
@@ -12,11 +12,8 @@ function execFnCall({ vars }: { vars: TVars }, fnCall, objSource) {
 			continue;
 		}
 		if (typeof arg === "string") {
-			const strMatches = arg.match(/^"(.*)"$/);
-			if (strMatches) {
-				args.push(interpolateString({ vars }, strMatches[1]));
-				continue;
-			}
+			args.push(isStringInterpolable(arg) ? interpolateString({ vars }, arg) : arg);
+			continue;
 		}
 		if (arg instanceof ArgVariable) {
 			args.push(evalVar({ vars }, arg.value));
