@@ -2,7 +2,7 @@ import LocalDB from "../utils/storage.util";
 import { Trait } from "./Trait";
 
 export default class PlayerTrait extends Trait {
-	static EVENT_PLAYER_KILLED = Symbol.for("EVENT_PLAYER_KILLED");
+	static EVENT_PLAYER_DEAD = Symbol.for("PLAYER_DEAD");
 
 	private lives: number;
 	private score: number;
@@ -29,7 +29,7 @@ export default class PlayerTrait extends Trait {
 		// 		this.paddle.traits.get(AnimationTrait).setAnim(this.paddle, "explosion");
 		// 		this.paddle.audio.play("die").then(() => {
 		// 			LocalDB.updateLives(this.lives);
-		// 			this.paddle.emit(PlayerTrait.EVENT_PLAYER_KILLED, this.lives);
+		// 			this.paddle.emit(PlayerTrait.EVENT_PLAYER_DEAD, this.lives);
 		// 		});
 		// 		return;
 		// 	}

@@ -33,8 +33,6 @@ type TViewDef = TView & {
 };
 
 export class DisplayLayer extends UILayer {
-	static EVENT_TIME_OUT = Symbol.for("TIME_OUT");
-
 	public timers: Timers | null;
 	public font: Font;
 	public vars: TVars;

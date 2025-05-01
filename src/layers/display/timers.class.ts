@@ -1,7 +1,6 @@
 import type GameContext from "../../game/types/GameContext";
 import type { Scene } from "../../scene/Scene";
 import type { TTimers } from "../../types/engine.types";
-import { DisplayLayer } from "../display.layer";
 
 class Timer {
 	public countdown: number;
@@ -48,6 +47,8 @@ class Timer {
 }
 
 export class Timers {
+	static EVENT_TIME_OUT = Symbol.for("TIME_OUT");
+
 	stoppedTimers: Map<string, Timer>;
 	timers: Map<string, Timer>;
 
@@ -110,7 +111,7 @@ export class Timers {
 				if (Timers.wannaLog) {
 					console.log("Timer.EVENT_TIME_OUT", name);
 				}
-				scene.emit(DisplayLayer.EVENT_TIME_OUT, name);
+				scene.emit(Timers.EVENT_TIME_OUT, name);
 				t.countdown = t.duration;
 				t.counter--;
 				if (t.counter <= 0) this.stop(name);

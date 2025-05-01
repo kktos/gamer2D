@@ -2,7 +2,7 @@ import { EventEmitter } from "../events/EventEmitter";
 import type { TAnimation } from "../types/engine.types";
 
 export default class Anim {
-	static EVENT_END = Symbol.for("end");
+	static EVENT_END = Symbol.for("ANIM_ENDED");
 
 	public frames: string[];
 	public len: number;

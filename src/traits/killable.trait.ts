@@ -4,7 +4,7 @@ import type { Scene } from "../scene/Scene";
 import { Trait } from "./Trait";
 
 export class KillableTrait extends Trait {
-	static EVENT_KILLED = Symbol.for("EVENT_KILLED");
+	static EVENT_KILLED = Symbol.for("KILLED");
 
 	public isDead: boolean;
 	public deadTime: number;
