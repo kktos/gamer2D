@@ -1,5 +1,5 @@
 import type ResourceManager from "../game/ResourceManager";
-import type { entityDefinition } from "../game/types/GameOptions";
+import type { TEntityDefinition } from "../game/types/GameOptions";
 import { getClassName } from "../utils/object.util";
 import type { Entity } from "./Entity";
 import BackgroundEntity from "./background.entity";
@@ -14,11 +14,11 @@ const entityClasses = {
 
 const entityNames = {};
 
-export function setupEntities(entitiesDefinitions: entityDefinition[]) {
+export function setupEntities(entitiesDefinitions: TEntityDefinition[]) {
 	for (const def of entitiesDefinitions) setupEntity(def);
 }
 
-export function setupEntity(def: entityDefinition) {
+export function setupEntity(def: TEntityDefinition) {
 	const { name, classType } = def;
 	const className = getClassName(classType);
 	if (entityClasses[className]) return;

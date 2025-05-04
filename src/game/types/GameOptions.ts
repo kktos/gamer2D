@@ -2,18 +2,15 @@ import type { Entity } from "../../entities/Entity";
 import type { Layer } from "../../layers/Layer";
 import type { Scene } from "../../scene/Scene";
 import type { Trait } from "../../traits/Trait";
+import type { Constructor } from "../../types/typescript.types";
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export type EntityConstructor = new (...args: any[]) => Entity;
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export type TraitConstructor = new (...args: any[]) => Trait;
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export type SceneConstructor = new (...args: any[]) => Scene;
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export type LayerConstructor = new (...args: any[]) => Layer;
+export type EntityConstructor = Constructor<Entity>;
+export type TraitConstructor = Constructor<Trait>;
+export type SceneConstructor = Constructor<Scene>;
+export type LayerConstructor = Constructor<Layer>;
 
-export type entityDefinition = { name: string; classType: EntityConstructor };
-export type layerDefinition = { name: string; classType: LayerConstructor };
+export type TEntityDefinition = { name: string; classType: EntityConstructor };
+export type TLayerDefinition = { name: string; classType: LayerConstructor };
 
 export type GameOptions = {
 	paths: {
@@ -25,7 +22,7 @@ export type GameOptions = {
 	};
 	settings: string;
 
-	entities?: entityDefinition[];
+	entities?: TEntityDefinition[];
 	traits?: TraitConstructor[];
-	layers?: layerDefinition[];
+	layers?: TLayerDefinition[];
 };
