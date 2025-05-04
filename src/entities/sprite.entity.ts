@@ -11,7 +11,7 @@ export default class SpriteEntity extends Entity {
 
 		super(resourceMgr, x, y, sheet);
 
-		// this.isFixed = false;
+		this.isFixed = false;
 
 		this.isAnimSprite = !!spriteName.match(/^@/);
 		if (this.isAnimSprite) {

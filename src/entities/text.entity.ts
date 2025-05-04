@@ -31,6 +31,8 @@ export class TextEntity extends Entity {
 	constructor(resourceMgr: ResourceManager, textObj: TextDTO) {
 		super(resourceMgr, textObj.pos[0], textObj.pos[1]);
 
+		this.isFixed = false;
+
 		this.font = resourceMgr.get("font", resourceMgr.mainFontName);
 		this.text = textObj.text;
 		this.color = textObj.color?.value ?? "white";
