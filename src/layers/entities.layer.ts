@@ -14,9 +14,9 @@ export class EntitiesLayer extends Layer {
 
 	private entities: Entity[] = [];
 	private sprites: TEntitiesLayerSheet["sprites"];
-	private wannaShowCount: boolean;
-	private wannaShowFrame: boolean | ArgColor;
-	private frameColor: string;
+	public wannaShowCount: boolean;
+	public wannaShowFrame: boolean;
+	public frameColor: string;
 
 	constructor(gc: GameContext, parent: Scene, sheet: TEntitiesLayerSheet, grid?: Grid) {
 		super(gc, parent);
