@@ -19,10 +19,24 @@ import type { TRepeat } from "./repeat.rules";
 export class ForRules {
 	static layoutFor($) {
 		return $.RULE("layoutFor", (options, isMenuItem: boolean) => {
+			const result: TRepeat = $.SUBRULE($.layoutForClause);
+
+			const items = $.SUBRULE($.layoutRepeatItems, {
+				ARGS: [options, isMenuItem],
+			});
+
+			$.ACTION(() => {
+				result.items = items;
+			});
+
+			return result;
+		});
+	}
+
+	static layoutForClause($) {
+		return $.RULE("layoutForClause", () => {
 			$.CONSUME(tokens.For);
-
 			const result: TRepeat = { type: OP_TYPES.REPEAT, from: 0, count: 0, items: [] };
-
 			$.OR([
 				{
 					// for <var> from,to
@@ -51,7 +65,7 @@ export class ForRules {
 									return varName;
 								},
 							},
-							{ ALT: () => $.SUBRULE($.arrayOfVarsAndStrings) },
+							{ ALT: () => $.SUBRULE($.arrayOfVarsStringsNumbers) },
 						]);
 
 						$.OPTION2(() => {
@@ -63,11 +77,6 @@ export class ForRules {
 					},
 				},
 			]);
-
-			result.items = $.SUBRULE($.layoutRepeatItems, {
-				ARGS: [options, isMenuItem],
-			});
-
 			return result;
 		});
 	}
