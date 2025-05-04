@@ -1,6 +1,7 @@
 import { ArgColor, ArgIdentifier, ArgVariable } from "../../types/value.types";
 import type { TVars } from "../../utils/vars.utils";
 import type { TActionStatement } from "../compiler/layers/display/layout/action.rules";
+import type { TSet } from "../compiler/layers/display/layout/set.rules";
 import { evalValue, evalVar, interpolateString, isStringInterpolable, resoleVar } from "./eval.script";
 
 function execFnCall({ vars }: { vars: TVars }, fnCall, objSource) {
@@ -49,6 +50,17 @@ function execFnCall({ vars }: { vars: TVars }, fnCall, objSource) {
 	return fn.call(self, ...args);
 }
 
+export function execSet({ vars }: { vars: TVars }, actionSet: TSet) {
+	const result = resoleVar({ vars }, actionSet.name);
+	if (result.value === undefined) {
+		console.log(`undefined var "${actionSet.name}"`);
+		return "";
+	}
+	const value = evalValue({ vars }, actionSet.value);
+	if (result.isObject) result.value[result.prop] = value;
+	else vars.set(result.prop, value);
+}
+
 export function execAction({ vars }: { vars: TVars }, statementList: TActionStatement[]) {
 	for (const statement of statementList) {
 		if (Array.isArray(statement)) {
@@ -56,15 +68,6 @@ export function execAction({ vars }: { vars: TVars }, statementList: TActionStat
 			for (const fnCall of statement) {
 				result = execFnCall({ vars }, fnCall, result);
 			}
-		} else {
-			const result = resoleVar({ vars }, statement.name);
-			if (result.value === undefined) {
-				console.log(`undefined var "${statement.name}"`);
-				return "";
-			}
-			const value = evalValue({ vars }, statement.value);
-			if (result.isObject) result.value[result.prop] = value;
-			else vars.set(result.prop, value);
-		}
+		} else execSet({ vars }, statement);
 	}
 }
