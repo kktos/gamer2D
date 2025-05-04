@@ -33,6 +33,7 @@ export class SceneSheetRules {
 					{ ALT: () => $.SUBRULE($.backgroundLayerSheet) },
 					{ ALT: () => $.SUBRULE($.entitiesLayerSheet) },
 					{ ALT: () => $.SUBRULE($.userDefinedLayerSheet) },
+					{ ALT: () => $.SUBRULE($.globalsLayerSheet) },
 					{
 						ALT: () => {
 							$.CONSUME(tokens.Layer);
