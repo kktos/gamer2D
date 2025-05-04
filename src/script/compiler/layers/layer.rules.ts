@@ -13,6 +13,7 @@ export class LayerSheetRules {
 				{ ALT: () => $.SUBRULE($.backgroundLayerSheet) },
 				{ ALT: () => $.SUBRULE($.entitiesLayerSheet) },
 				{ ALT: () => $.SUBRULE($.userDefinedLayerSheet) },
+				{ ALT: () => $.SUBRULE($.globalsLayerSheet) },
 			]);
 
 			return layer;
