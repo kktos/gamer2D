@@ -48,7 +48,7 @@ export default class Director {
 
 	run(name: string) {
 		this.pauseScene();
-		const sceneIdx = this.scenes.findIndex((scene) => scene.name === name);
+		const sceneIdx = this.scenes.findIndex((scene) => scene.filename === name);
 		if (sceneIdx >= 0) {
 			this.sceneIndex = sceneIdx;
 			this.currentScene.init(this.gc).run();
@@ -63,7 +63,14 @@ export default class Director {
 	}
 
 	handleEvent(gc: GameContext, e) {
-		if (this.currentScene) this.currentScene.handleEvent(gc, e);
+		if (!this.currentScene) return;
+
+		// TODO: add a settings to allow scene reload
+		if (e.type === "keyup" && e.key === "r") {
+			this.run(this.currentScene.filename);
+			return;
+		}
+		this.currentScene.handleEvent(gc, e);
 	}
 	update(gc: GameContext) {
 		if (!this.currentScene || !this.currentScene.isRunning) return;

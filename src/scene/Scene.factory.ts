@@ -50,17 +50,17 @@ export function createScene(gc: GameContext, className: string, ...args: unknown
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class SceneFactory {
-	static async load(gc: GameContext, name: string) {
+	static async load(gc: GameContext, filename: string) {
 		let sheet: TSceneSheet | null = null;
 
 		// console.log(`SceneFactory.load "${name}"`);
 
 		gc.wannaPauseOnBlur = true;
 
-		sheet = LocalDB.loadResource(name);
+		sheet = LocalDB.loadResource(filename);
 		if (!sheet) {
 			try {
-				const scriptText = await gc.resourceManager.loadScene(name);
+				const scriptText = await gc.resourceManager.loadScene(filename);
 				sheet = compileScript(scriptText, GLOBAL_VARIABLES);
 			} catch (e) {
 				console.error((e as Error).message);
@@ -69,7 +69,7 @@ export class SceneFactory {
 
 		// console.log("SceneFactory.load", JSON.stringify(sheet, undefined, 2), sheet);
 
-		if (!sheet) throw new Error(`Unknown Scene: ${name}`);
+		if (!sheet) throw new Error(`Unknown Scene: ${filename}`);
 
 		let idx = -1;
 		for await (const layerDef of sheet.layers) {
@@ -83,7 +83,7 @@ export class SceneFactory {
 			case "display":
 			case "level":
 			case "game":
-				scene = createScene(gc, sheet.type, sheet);
+				scene = createScene(gc, sheet.type, filename, sheet);
 				break;
 			default:
 				throw new Error("Unknown Scene type");

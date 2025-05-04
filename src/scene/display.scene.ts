@@ -4,8 +4,8 @@ import type { TSceneSheet } from "../script/compiler/scenes/scene.rules";
 import { Scene } from "./Scene";
 
 export class DisplayScene extends Scene {
-	constructor(gc: GameContext, sheet: TSceneSheet) {
-		super(gc, sheet.name, sheet);
+	constructor(gc: GameContext, filename: string, sheet: TSceneSheet) {
+		super(gc, filename, sheet);
 
 		this.useLayer("DisplayLayer", (layer: DisplayLayer) => {
 			this.receiver = layer;

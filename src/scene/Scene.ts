@@ -17,6 +17,7 @@ export class Scene {
 
 	public class: string;
 	public id: string;
+	public name: string;
 
 	public receiver: UILayer | null;
 	// once created always there (e.g : Game scene vs Level scene)
@@ -37,11 +38,12 @@ export class Scene {
 
 	constructor(
 		private gc: GameContext,
-		public name: string,
+		public filename: string,
 		sheet: TSceneSheet,
 	) {
 		this.class = getClassName(this.constructor);
 		this.id = generateID();
+		this.name = sheet.name;
 
 		this.screenWidth = gc.viewport.width;
 		this.screenHeight = gc.viewport.height;
@@ -99,7 +101,7 @@ export class Scene {
 	run() {
 		this.isRunning = true;
 		this.gc.scene = this;
-		this.events.emit(Scene.SCENE_STARTED, this.name);
+		this.events.emit(Scene.SCENE_STARTED, this.filename);
 		return this;
 	}
 
