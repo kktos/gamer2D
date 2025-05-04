@@ -2,8 +2,11 @@ import type { TraitConstructor } from "../game/types/GameOptions";
 import { getClassName } from "../utils/object.util";
 import type { Trait } from "./Trait";
 import { FadeTrait } from "./fade.trait";
+import { KillIfOffscreenTrait } from "./killOffscreen.trait";
+import { KillableTrait } from "./killable.trait";
 import { MouseXTrait } from "./mouseX.trait";
 import { MouseXYTrait } from "./mouseXY.trait";
+import { OffscreenTrait } from "./offscreen.trait";
 import { XDragTrait } from "./xdrag.trait";
 
 const traitClasses = {
@@ -11,6 +14,9 @@ const traitClasses = {
 	MouseXYTrait,
 	FadeTrait,
 	XDragTrait,
+	OffscreenTrait,
+	KillIfOffscreenTrait,
+	KillableTrait,
 };
 
 export function setupTraits(traitsDefinitions: TraitConstructor[]) {

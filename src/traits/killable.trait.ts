@@ -31,7 +31,10 @@ export class KillableTrait extends Trait {
 	update({ dt }, entity: Entity, scene: Scene) {
 		if (this.isDead) {
 			entity.isSolid = false;
+			// no entity collision
 			entity.isGhost = true;
+			// no movement
+			entity.isFixed = true;
 
 			if (!this.isEmitted) {
 				this.isEmitted = true;

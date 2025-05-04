@@ -29,7 +29,7 @@ export class Trait {
 	public class: string;
 	public id: string;
 
-	private listeners: { name: string; callback: EventCallback; count: number }[];
+	private listeners: { name: string | symbol; callback: EventCallback; count: number }[];
 
 	constructor() {
 		this.class = getClassName(this.constructor);
@@ -38,7 +38,7 @@ export class Trait {
 		this.listeners = [];
 	}
 
-	on(name: string, callback: EventCallback, count = Number.POSITIVE_INFINITY) {
+	on(name: string | symbol, callback: EventCallback, count = Number.POSITIVE_INFINITY) {
 		this.listeners.push({ name, callback, count });
 		return this;
 	}
