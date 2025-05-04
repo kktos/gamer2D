@@ -59,7 +59,7 @@ export class SheetParser extends EmbeddedActionsParser {
 	public strOrVar = TypesRules.strOrVar(this);
 	public varOrArrayOfVars = TypesRules.varOrArrayOfVars(this);
 	public arrayOfVars = TypesRules.arrayOfVars(this);
-	public arrayOfVarsAndStrings = TypesRules.arrayOfVarsAndStrings(this);
+	public arrayOfVarsStringsNumbers = TypesRules.arrayOfVarsStringsNumbers(this);
 
 	public expr = ExprRules.expr(this);
 	public exprAddition = ExprRules.exprAddition(this);
@@ -113,6 +113,7 @@ export class SheetParser extends EmbeddedActionsParser {
 	public layoutSetTrait = SetRules.layoutSetTrait(this);
 
 	public layoutFor = ForRules.layoutFor(this);
+	public layoutForClause = ForRules.layoutForClause(this);
 	public layoutRepeat = RepeatRules.layoutRepeat(this);
 	public layoutRepeatItems = RepeatRules.layoutRepeatItems(this);
 	public layoutView = ViewRules.layoutView(this);

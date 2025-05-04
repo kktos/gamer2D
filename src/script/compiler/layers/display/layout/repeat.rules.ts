@@ -69,7 +69,6 @@ export class RepeatRules {
 					{ ALT: () => $.SUBRULE($.layoutSprite, { ARGS: [options] }) },
 					{ ALT: () => $.SUBRULE($.layoutMenuItemGroup, { ARGS: [options] }) },
 					{ ALT: () => $.SUBRULE($.layoutImage, { ARGS: [options] }) },
-					// { ALT: () => $.SUBRULE($.mathAdd, { ARGS: [options] }) },
 				]);
 				items.push(item);
 			});

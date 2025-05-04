@@ -91,13 +91,16 @@ export class TypesRules {
 		});
 	}
 
-	static arrayOfVarsAndStrings($) {
-		return $.RULE("arrayOfVarsAndStrings", () => {
+	static arrayOfVarsStringsNumbers($) {
+		return $.RULE("arrayOfVarsStringsNumbers", () => {
 			const result: unknown[] = [];
 			$.CONSUME(tokens.OpenBracket);
 			$.MANY_SEP({
 				SEP: tokens.Comma,
-				DEF: () => result.push($.SUBRULE($.strOrVar)),
+				DEF: () =>
+					result.push(
+						$.OR([{ ALT: () => $.SUBRULE($.number) }, { ALT: () => $.CONSUME(tokens.StringLiteral).payload }, { ALT: () => $.SUBRULE($.definedVariable) }]),
+					),
 			});
 			$.CONSUME(tokens.CloseBracket);
 			return result;
