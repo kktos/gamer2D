@@ -1,34 +1,23 @@
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { OP_TYPES } from "../../../../../types/operation.types";
 import { ArgColor, ArgVariable } from "../../../../../types/value.types";
-import { compileScript } from "../../../compiler";
+import { compile, compileScript, setWannaLogError } from "../../../compiler";
 
 describe("Menu", () => {
+	beforeAll(() => {
+		setWannaLogError(true);
+	});
 	it("should create a simple menu", () => {
 		const script = `
-		display "intro" {
-			display {
-				layout {
-					menu {
-						items {
-							text "play" at:300,230 action:{ goto("play") }
-							text "intro" at:300,280 action:{ goto("intro") }
-							text "game" at:300,330
-						}
-					}
+			menu {
+				items {
+					text "play" at:300,230 action:{ goto("play") }
+					text "intro" at:300,280 action:{ goto("intro") }
+					text "game" at:300,330
 				}
 			}
-		}
 		`;
-		const result = compileScript(script);
-		expect(result).toBeDefined();
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
-		expect(displayLayer).toBeDefined();
-		expect(displayLayer).toHaveProperty("layout");
-		expect(Array.isArray(displayLayer.layout)).toBe(true);
-
-		const menu = displayLayer.layout.find((op) => op.type === OP_TYPES.MENU);
-
+		const menu = compile(script, "layoutMenu");
 		expect(menu).toEqual({
 			type: OP_TYPES.MENU,
 			items: [
@@ -55,29 +44,15 @@ describe("Menu", () => {
 
 	it("should create a menu with grouped items", () => {
 		const script = `
-		display "intro" {
-			display {
-			layout {
-				menu {
-					items {
-						item { text "play" at:300,230 } action:{ goto("play") }
-						item { text "intro" at:300,280 sprite "boom" at:350,280 } action:{ goto("intro") }
-						item { text "game" at:300,330 }
-					}
+			menu {
+				items {
+					item { text "play" at:300,230 } action:{ goto("play") }
+					item { text "intro" at:300,280 sprite "boom" at:350,280 } action:{ goto("intro") }
+					item { text "game" at:300,330 }
 				}
 			}
-			}
-		}
 		`;
-		const result = compileScript(script);
-		expect(result).toBeDefined();
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
-		expect(displayLayer).toBeDefined();
-		expect(displayLayer).toHaveProperty("layout");
-		expect(Array.isArray(displayLayer.layout)).toBe(true);
-
-		const menu = displayLayer.layout.find((op) => op.type === OP_TYPES.MENU);
-
+		const menu = compile(script, "layoutMenu");
 		expect(menu).toEqual({
 			type: OP_TYPES.MENU,
 			items: [

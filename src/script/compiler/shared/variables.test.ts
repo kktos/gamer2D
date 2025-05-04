@@ -3,7 +3,7 @@ import { ArgVariable } from "../../../types/value.types";
 import { compileScript } from "../compiler";
 
 describe("Variables", () => {
-	it("should do addition", () => {
+	it("should set  a variable from a global variable", () => {
 		const script = `
 		display "intro" {
 			display {
