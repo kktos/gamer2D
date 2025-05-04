@@ -32,61 +32,67 @@ export class TextRules {
 		return $.RULE("layoutText", (options, isMenuItem: boolean) => {
 			$.CONSUME(tokens.Text);
 
-			let id: string | undefined;
-			$.OPTION(() => {
-				$.CONSUME(tokens.ID);
-				$.CONSUME2(tokens.Colon);
-				id = $.CONSUME3(tokens.StringLiteral).payload;
-			});
-
 			const result: Partial<TText> = {
 				type: OP_TYPES.TEXT,
 				text: $.SUBRULE($.strOrVar),
-				pos: $.SUBRULE2($.parm_at),
+				// pos: $.SUBRULE2($.parm_at),
 			};
 
-			if (options?.size) {
-				result.size = options.size;
-			}
-			if (options?.align) {
-				result.align = options.align;
-			}
-			if (options?.valign) {
-				result.valign = options.valign;
-			}
-			if (options?.color) {
-				result.color = options.color;
-			}
-			if (options?.anim) {
-				result.anim = options.anim;
-			}
-			if (options?.bgcolor) {
-				result.bgcolor = options.bgcolor;
-			}
+			if (options?.size) result.size = options.size;
+			if (options?.align) result.align = options.align;
+			if (options?.valign) result.valign = options.valign;
+			if (options?.color) result.color = options.color;
+			if (options?.anim) result.anim = options.anim;
+			if (options?.bgcolor) result.bgcolor = options.bgcolor;
 
-			$.OPTION2(() => {
-				result.width = $.SUBRULE($.layoutViewWidth);
-				result.height = $.SUBRULE($.layoutViewHeight);
-			});
-
-			$.OPTION3(() => {
-				const { name, value, isParm } = $.SUBRULE($.textSpriteProps);
-
-				$.ACTION(() => {
-					if (!isParm) options[name] = value;
-					else result[name] = value;
-				});
+			$.MANY(() => {
+				$.OR([
+					{
+						ALT: () => {
+							$.CONSUME(tokens.ID);
+							$.CONSUME2(tokens.Colon);
+							result.id = $.CONSUME3(tokens.StringLiteral).payload;
+						},
+					},
+					{
+						ALT: () => {
+							result.pos = $.SUBRULE($.parm_at);
+						},
+					},
+					{
+						ALT: () => {
+							result.width = $.SUBRULE($.layoutViewWidth);
+						},
+					},
+					{
+						ALT: () => {
+							result.height = $.SUBRULE($.layoutViewHeight);
+						},
+					},
+					{
+						ALT: () => {
+							result.traits = $.SUBRULE($.parm_traits);
+						},
+					},
+					{
+						ALT: () => {
+							const { name, value, isParm } = $.SUBRULE($.textSpriteProps);
+							$.ACTION(() => {
+								if (!isParm) options[name] = value;
+								else result[name] = value;
+							});
+						},
+					},
+				]);
 			});
 
 			// action: { <statements> } OPTIONAL as user can manage is with events
-			$.OPTION4({
+			$.OPTION({
 				GATE: () => isMenuItem,
 				DEF: () => {
 					result.action = $.SUBRULE3($.layoutAction);
 				},
 			});
-
-			if (id) result.id = id;
 
 			return result;
 		});

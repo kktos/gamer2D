@@ -1,56 +1,28 @@
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { OP_TYPES } from "../../../../../types/operation.types";
-import { ArgExpression, ArgVariable } from "../../../../../types/value.types";
-import { compileScript } from "../../../compiler";
+import { ArgColor, ArgExpression, ArgVariable } from "../../../../../types/value.types";
+import { compile, setWannaLogError } from "../../../compiler";
 
 describe("Text", () => {
-	it("should create a text with ID", () => {
-		const script = `
-		display "intro" {
-			display {
-				layout {
-					text id:"test" "Hello World" at:110,428
-				}
-			}
-		}
-		`;
-		const result = compileScript(script);
-		expect(result).toBeDefined();
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
-		expect(displayLayer).toBeDefined();
-		expect(displayLayer).toHaveProperty("layout");
-		expect(Array.isArray(displayLayer.layout)).toBe(true);
+	beforeAll(() => {
+		setWannaLogError(true);
+	});
 
-		expect(displayLayer.layout).toEqual([
-			{
-				id: "test",
-				pos: [110, 428],
-				type: OP_TYPES.TEXT,
-				text: "Hello World",
-			},
-		]);
+	it("should create a text with ID", () => {
+		const script = `text "Hello World" id:"test" at:110,428`;
+		const text = compile(script, "layoutText");
+		expect(text).toEqual({
+			id: "test",
+			pos: [110, 428],
+			type: OP_TYPES.TEXT,
+			text: "Hello World",
+		});
 	});
 
 	it("should create a text with position using expressions", () => {
-		const script = `
-		display "intro" {
-			display {
-				layout {
-					$posX=90
-					text id:"test" "Hello World" at:$posX*2,428
-				}
-			}
-		}
-		`;
-		const result = compileScript(script);
-		expect(result).toBeDefined();
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
-		expect(displayLayer).toBeDefined();
-		expect(displayLayer).toHaveProperty("layout");
-		expect(Array.isArray(displayLayer.layout)).toBe(true);
-
-		const text = displayLayer.layout.find((op) => op.type === OP_TYPES.TEXT);
-		expect(text).toBeDefined();
+		const script = `text "Hello World" id:"test" at:$posX*2,428`;
+		const globals = new Map<string, unknown>([["posX", 80]]);
+		const text = compile(script, "layoutText", globals);
 		expect(text).toEqual({
 			id: "test",
 			pos: [new ArgExpression([new ArgVariable("posX"), 2, "Multiply"]), 428],
@@ -59,14 +31,32 @@ describe("Text", () => {
 		});
 	});
 
-	it.skip("should handle bad text definition", () => {
-		const script = `
-		display "intro" {
-			layout {
-				text id:"test" at:80,428
-			}
-		}
-		`;
-		expect(() => compileScript(script)).toThrowError(/sad sad panda/);
+	it("should create a text using all props", () => {
+		const script = `text "Hello World" id:"test" at:$posX*2,428 width:10 height:20 anim:"test" align:left valign:top size:2 color:red background:blue traits:$traitOne`;
+		const globals = new Map<string, unknown>([
+			["posX", 80],
+			["traitOne", []],
+		]);
+		const text = compile(script, "layoutText", globals);
+		expect(text).toEqual({
+			id: "test",
+			pos: [new ArgExpression([new ArgVariable("posX"), 2, "Multiply"]), 428],
+			type: OP_TYPES.TEXT,
+			text: "Hello World",
+			anim: { name: "test" },
+			align: 1,
+			valign: 3,
+			size: 2,
+			color: new ArgColor("red"),
+			bgcolor: new ArgColor("blue"),
+			width: 10,
+			height: 20,
+			traits: new ArgVariable("traitOne"),
+		});
+	});
+
+	it("should handle bad text definition", () => {
+		const script = `text id:"test" at:80,428`;
+		expect(() => compile(script, "layoutText")).toThrowError(/SYNTAX ERROR LINE 1 at "id"/);
 	});
 });
