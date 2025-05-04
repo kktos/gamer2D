@@ -4,7 +4,7 @@ import type { TPool } from "../../script/compiler/layers/display/layout/pool.rul
 import { evalValue } from "../../script/engine/eval.script";
 import type { DisplayLayer } from "../display.layer";
 import { EntitiesLayer } from "../entities.layer";
-import { setupTraits } from "./trait.manager";
+import { addTraits } from "./trait.manager";
 
 export function addPool(layer: DisplayLayer, op: TPool & { entity?: Entity }) {
 	const posX = evalValue({ vars: layer.vars }, op.pos[0]) as number;
@@ -13,10 +13,9 @@ export function addPool(layer: DisplayLayer, op: TPool & { entity?: Entity }) {
 	const spawnCount = op.spawn ? (evalValue({ vars: layer.vars }, op.spawn) as number) : 0;
 
 	// const entity = createEntityByName(layer.gc.resourceManager, op.sprite, posX, posY);
-	const entityPool = EntityPool.create(layer.gc.resourceManager, op.sprite, count, posX, posY);
-	if (op.id) entityPool.id = op.id;
+	const entityPool = EntityPool.create(layer.gc.resourceManager, op.id, op.sprite, count, posX, posY);
 
-	if (op.traits) setupTraits(op, entityPool.pool, layer.vars);
+	if (op.traits) addTraits(op.traits, entityPool.pool, layer.vars);
 	// setupVariableProps(op, entity, layer.vars);
 
 	const sprites = layer.vars.get("sprites") as Map<string, Entity>; // as TVarSprites;

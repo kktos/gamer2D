@@ -13,11 +13,16 @@ export class EntityPool extends Entity {
 	private usedList: boolean[];
 	private usedCount: number;
 
-	static create(resourceManager: ResourceManager, name: string, size: number, ...args) {
-		const pool = new EntityPool(resourceManager, size, () => createEntityByName(resourceManager, name, ...args));
-		pool.id = name;
-		EntityPool.pools[name] = pool;
+	static create(rm: ResourceManager, id: string | undefined, name: string, size: number, ...args) {
+		const poolID = id ?? name;
+		if (EntityPool.pools[poolID]) throw new TypeError(`EntityPool already exists with this id ${poolID}`);
+		const pool = new EntityPool(rm, size, () => createEntityByName(rm, name, ...args));
+		pool.id = poolID;
+		EntityPool.pools[poolID] = pool;
 		return pool;
+	}
+	static clear() {
+		EntityPool.pools = {};
 	}
 
 	constructor(resourceManager: ResourceManager, size: number, createObject) {
@@ -49,7 +54,7 @@ export class EntityPool extends Entity {
 		// return this.pool[newIndex];
 	}
 
-	release(obj) {
+	release(obj?) {
 		const index = typeof obj === "undefined" ? this.usedList.lastIndexOf(true) : this.pool.indexOf(obj);
 		if (index !== -1 && this.usedList[index]) {
 			this.usedList[index] = false;
@@ -59,7 +64,8 @@ export class EntityPool extends Entity {
 		}
 	}
 
-	public collides(gc: GameContext, target: Entity) {}
+	// TODO: to handle collision with entities in the pool ? any use ?!?
+	// public collides(gc: GameContext, target: Entity) {}
 
 	update(gc: GameContext, scene) {
 		for (let index = 0; index < this.usedList.length; index++) if (this.usedList[index]) this.pool[index].update(gc, scene);
