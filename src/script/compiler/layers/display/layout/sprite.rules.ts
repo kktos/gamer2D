@@ -58,6 +58,11 @@ export class SpriteRules {
 					},
 					{
 						ALT: () => {
+							result.traits = $.SUBRULE($.parm_traits);
+						},
+					},
+					{
+						ALT: () => {
 							const { name, value, isParm } = $.SUBRULE($.textSpriteProps);
 							$.ACTION(() => {
 								if (!isParm) options[name] = value;
