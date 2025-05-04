@@ -8,7 +8,6 @@ import { ForRules } from "./layers/display/layout/for.rules";
 import { ImageRules } from "./layers/display/layout/image.rules";
 import { LayoutRules } from "./layers/display/layout/layout.rules";
 import { MenuRules } from "./layers/display/layout/menu.rules";
-import { ParmsRules } from "./layers/display/layout/parms.rules";
 import { EntityPoolRules } from "./layers/display/layout/pool.rules";
 import { RectRules } from "./layers/display/layout/rect.rules";
 import { RepeatRules } from "./layers/display/layout/repeat.rules";
@@ -24,6 +23,7 @@ import { UIRules } from "./layers/display/ui.rules";
 import { EditorRules } from "./layers/editor/editor.rules";
 import { EntitiesLayerRules } from "./layers/entities/entities.rules";
 import { GameRules } from "./layers/game/game.rules";
+import { GlobalsLayerRules } from "./layers/globals/globals.rules";
 import { LayerSheetRules } from "./layers/layer.rules";
 import { LevelRules } from "./layers/level/level.rules";
 import { UserDefinedLayerRules } from "./layers/user_defined/user_defined.rules";
@@ -31,6 +31,7 @@ import { tokenList } from "./lexer";
 import { SceneSheetRules } from "./scenes/scene.rules";
 import { ExprRules } from "./shared/expr.rules";
 import { MiscRules } from "./shared/misc.rules";
+import { ParmsRules } from "./shared/parms.rules";
 import { SettingsRules } from "./shared/settings.rules";
 import { TypesRules } from "./shared/types.rules";
 
@@ -76,15 +77,18 @@ export class SheetParser extends EmbeddedActionsParser {
 
 	public sound = SoundRules.sound(this);
 
-	public layout = LayoutRules.layout(this);
-	public layoutStatement = LayoutRules.layoutStatement(this);
 	public parm_at = ParmsRules.parm_at(this);
 	public parm_range = ParmsRules.parm_range(this);
 	public parm_dir = ParmsRules.parm_dir(this);
+	public parm_traits = ParmsRules.parm_traits(this);
+
+	public layout = LayoutRules.layout(this);
+	public layoutStatement = LayoutRules.layoutStatement(this);
 	public layoutText = TextRules.layoutText(this);
 	public layoutAction = ActionRules.layoutAction(this);
 	public layoutActionBlock = ActionRules.layoutActionBlock(this);
 	public layoutActionStatement = ActionRules.layoutActionStatement(this);
+	public layoutActionFunctionCallList = ActionRules.layoutActionFunctionCallList(this);
 	public layoutActionFunctionCall = ActionRules.layoutActionFunctionCall(this);
 	public layoutActionFunctionName = ActionRules.layoutActionFunctionName(this);
 	public layoutSprite = SpriteRules.layoutSprite(this);
@@ -136,6 +140,7 @@ export class SheetParser extends EmbeddedActionsParser {
 	public backgroundColor = BackgroundLayerRules.backgroundColor(this);
 
 	public userDefinedLayerSheet = UserDefinedLayerRules.userDefinedLayerSheet(this);
+	public globalsLayerSheet = GlobalsLayerRules.globalsLayerSheet(this);
 
 	public entitiesLayerSheet = EntitiesLayerRules.entitiesLayerSheet(this);
 	public entitiesLayerSprite = EntitiesLayerRules.entitiesLayerSprite(this);

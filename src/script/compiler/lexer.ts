@@ -43,6 +43,7 @@ const tokenDefs: TokenDefs = {
 	Debug: { pattern: "debug", longer_alt: "Identifier" },
 	Editor: { pattern: "editor", longer_alt: "Identifier" },
 	Entities: { pattern: "entities", longer_alt: "Identifier" },
+	Globals: { pattern: "globals", longer_alt: "Identifier" },
 
 	Background: { pattern: "background", longer_alt: "Identifier" },
 	ShowCursor: { pattern: "showCursor", longer_alt: "Identifier" },
@@ -165,6 +166,8 @@ export const tokenList = [
 	tokens.Debug,
 	tokens.Editor,
 	tokens.Entities,
+	tokens.Globals,
+
 	tokens.Background,
 	tokens.ShowCursor,
 	tokens.On,
