@@ -1,7 +1,7 @@
 import { tokens } from "../../lexer";
 import type { TSprite } from "../display/layout/sprite.rules";
 
-export type TEntitiesLayerSprite = Pick<TSprite, "id" | "pos" | "range" | "dir"> & {
+export type TEntitiesLayerSprite = Pick<TSprite, "id" | "pos" | "range" | "dir" | "traits"> & {
 	name: string;
 };
 export type TEntitiesLayerSheet = {
@@ -40,17 +40,6 @@ export class EntitiesLayerRules {
 		});
 	}
 
-	// static entitiesLayerSprite($) {
-	// 	return $.RULE("entitiesLayerSprite", () => {
-	// 		$.CONSUME(tokens.Sprite);
-	// 		return {
-	// 			name: $.CONSUME(tokens.StringLiteral).payload,
-	// 			pos: $.SUBRULE($.parm_at),
-	// 			dir: $.SUBRULE($.parm_dir),
-	// 		};
-	// 	});
-	// }
-
 	static entitiesLayerSprite($) {
 		return $.RULE("entitiesLayerSprite", (options) => {
 			$.CONSUME(tokens.Sprite);
@@ -81,6 +70,11 @@ export class EntitiesLayerRules {
 					{
 						ALT: () => {
 							result.dir = $.SUBRULE($.parm_dir);
+						},
+					},
+					{
+						ALT: () => {
+							result.traits = $.SUBRULE($.parm_traits);
 						},
 					},
 				]);

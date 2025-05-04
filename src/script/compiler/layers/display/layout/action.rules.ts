@@ -42,34 +42,33 @@ export class ActionRules {
 
 	static layoutActionStatement($) {
 		return $.RULE("layoutActionStatement", (actionOptions) => {
-			let result: TFunctionCall[] | unknown;
-
-			$.OR([
+			const result: TFunctionCall[] | unknown = $.OR([
 				{
-					ALT: () => {
-						const calls: TFunctionCall[] = [];
-						// <functionName>(...parms)[.<functionName>(...parms)][.<functionName>(...parms)]....
-						// to allow something like sprite("Bubblun").set("mass", 0)
-						$.AT_LEAST_ONE_SEP({
-							SEP: tokens.Dot,
-							DEF: () => {
-								calls.push($.SUBRULE($.layoutActionFunctionCall));
-							},
-						});
-						$.ACTION(() => {
-							if (!actionOptions?.noSystem && calls[0].name.length === 1) calls[0].name.unshift("SYSTEM");
-						});
-						result = calls;
-					},
+					ALT: () => $.SUBRULE($.layoutActionFunctionCallList, { ARGS: [actionOptions] }),
 				},
 				{
-					ALT: () => {
-						result = $.SUBRULE($.layoutSet);
-					},
+					ALT: () => $.SUBRULE($.layoutSet),
 				},
 			]);
-
 			return result;
+		});
+	}
+
+	static layoutActionFunctionCallList($) {
+		return $.RULE("layoutActionFunctionCallList", (actionOptions) => {
+			const calls: TFunctionCall[] = [];
+			// <functionName>(...parms)[.<functionName>(...parms)][.<functionName>(...parms)]....
+			// to allow something like sprite("Bubblun").set("mass", 0)
+			$.AT_LEAST_ONE_SEP({
+				SEP: tokens.Dot,
+				DEF: () => {
+					calls.push($.SUBRULE($.layoutActionFunctionCall));
+				},
+			});
+			$.ACTION(() => {
+				if (!actionOptions?.noSystem && calls[0].name.length === 1) calls[0].name.unshift("SYSTEM");
+			});
+			return calls;
 		});
 	}
 
