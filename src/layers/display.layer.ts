@@ -1,4 +1,5 @@
 import type { Entity } from "../entities/Entity";
+import { EntityPool } from "../entities/EntityPool";
 import type Font from "../game/Font";
 import type GameContext from "../game/types/GameContext";
 import type { GameEvent } from "../game/types/GameEvent";
@@ -10,8 +11,8 @@ import type { TStatement } from "../script/compiler/layers/display/layout/layout
 import type { TRect } from "../script/compiler/layers/display/layout/rect.rules";
 import type { TView } from "../script/compiler/layers/display/layout/view.rules";
 import type { TEventHandlerDict } from "../script/compiler/layers/display/on.rules";
-import { evalNumber, evalValue } from "../script/engine/eval.script";
-import { execAction } from "../script/engine/exec.script";
+import { evalNumber } from "../script/engine/eval.script";
+import { execAction, execSet } from "../script/engine/exec.script";
 import { OP_TYPES } from "../types/operation.types";
 import { type TVarTypes, TVars } from "../utils/vars.utils";
 import { UILayer } from "./UILayer";
@@ -58,6 +59,7 @@ export class DisplayLayer extends UILayer {
 
 		this.vars = new TVars(GLOBAL_VARIABLES);
 		this.initVars();
+		EntityPool.clear();
 
 		this.views = this.layout.filter((op) => op.type === OP_TYPES.VIEW) as unknown as TViewDef[];
 		initViews({ canvas: gc.viewport.canvas, gc, vars: this.vars, layer: this });
@@ -134,8 +136,7 @@ export class DisplayLayer extends UILayer {
 					break;
 				}
 				case OP_TYPES.SET: {
-					const value = evalValue({ vars: this.vars }, op.value);
-					this.vars.set(op.name, value);
+					execSet({ vars: this.vars }, op);
 					break;
 				}
 				case OP_TYPES.REPEAT:
