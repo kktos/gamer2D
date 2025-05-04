@@ -25,17 +25,28 @@ export class EntitiesLayerRules {
 				if (Object.keys(settings).length) sheet.settings = settings;
 			});
 
-			$.OPTION2(() => {
-				const sprites: TEntitiesLayerSprite[] = [];
-				$.MANY(() => {
-					const sprite = $.SUBRULE($.entitiesLayerSprite);
-					sprites.push(sprite);
-				});
-				if (sprites.length) sheet.sprites = sprites;
+			const sprites: TEntitiesLayerSprite[] = [];
+			$.MANY(() => {
+				$.OR([
+					{
+						ALT: () => {
+							$.SUBRULE($.layoutForClause);
+							$.CONSUME2(tokens.OpenCurly);
+							$.MANY2(() => {
+								sprites.push($.SUBRULE2($.entitiesLayerSprite));
+							});
+							$.CONSUME2(tokens.CloseCurly);
+						},
+					},
+					{
+						ALT: () => sprites.push($.SUBRULE($.entitiesLayerSprite)),
+					},
+				]);
 			});
 
 			$.CONSUME(tokens.CloseCurly);
 
+			if (sprites.length) sheet.sprites = sprites;
 			return sheet;
 		});
 	}
