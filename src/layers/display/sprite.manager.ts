@@ -7,7 +7,7 @@ import { type PathDefDTO, PathTrait } from "../../traits/path.trait";
 import type { DisplayLayer } from "../display.layer";
 import { EntitiesLayer } from "../entities.layer";
 import { setupVariableProps } from "./prop.manager";
-import { setupTraits } from "./trait.manager";
+import { addTraits } from "./trait.manager";
 
 // addSprite(op:TSprite & { entity: Entity }) {
 export function addSprite(layer: DisplayLayer, op: TSprite & { entity?: Entity }) {
@@ -30,7 +30,7 @@ export function addSprite(layer: DisplayLayer, op: TSprite & { entity?: Entity }
 		entity.addTrait(new PathTrait(animDTO, { evalArg: (arg) => evalArg({ vars: layer.vars }, arg) }));
 	}
 
-	if (op.traits) setupTraits(op, entity, layer.vars);
+	if (op.traits) addTraits(op.traits, entity, layer.vars);
 	setupVariableProps(op, entity, layer.vars);
 
 	const sprites = layer.vars.get("sprites") as Map<string, Entity>; // as TVarSprites;

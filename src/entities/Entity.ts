@@ -127,8 +127,20 @@ export class Entity {
 		this._mass = newValue;
 	}
 
+	// TODO: no direct access to object; use class instead
 	public get vel() {
 		return this._vel;
+		// const handler = {
+		// 	get(target, prop, receiver) {
+		// 		return Reflect.get(target, prop, receiver);
+		// 	},
+		// 	set(target, prop, value) {
+		// 		console.log(prop, value);
+		// 		return Reflect.set(target, prop, value);
+		// 	},
+		// };
+		// const proxy = new Proxy(this._vel, handler);
+		// return proxy; //this._vel;
 	}
 	public set vel(newValue: Point) {
 		this.previousVel = this._vel;

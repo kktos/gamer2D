@@ -9,7 +9,7 @@ import type { TVars } from "../../utils/vars.utils";
 import type { DisplayLayer } from "../display.layer";
 import { EntitiesLayer } from "../entities.layer";
 import { setupVariableProps } from "./prop.manager";
-import { setupTraits } from "./trait.manager";
+import { addTraits } from "./trait.manager";
 
 export function addText(layer: DisplayLayer, op: TText & { entity?: Entity }) {
 	const posX = evalValue({ vars: layer.vars }, op.pos[0]) as number;
@@ -31,8 +31,12 @@ export function addText(layer: DisplayLayer, op: TText & { entity?: Entity }) {
 	if (op.id) entity.id = op.id;
 
 	if (op.anim) setupAnim(op, entity, layer.vars);
-	if (op.traits) setupTraits(op, entity, layer.vars);
+	if (op.traits) addTraits(op.traits, entity, layer.vars);
 	setupVariableProps(op, entity, layer.vars);
+
+	const sprites = layer.vars.get("sprites") as Map<string, Entity>; // as TVarSprites;
+	if (!sprites) throw new Error("No variable sprites !?!");
+	sprites.set(entity.id, entity); //.add(entity);
 
 	layer.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
 	return entity;

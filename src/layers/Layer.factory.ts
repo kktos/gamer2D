@@ -1,5 +1,5 @@
 import type GameContext from "../game/types/GameContext";
-import type { layerDefinition } from "../game/types/GameOptions";
+import type { TLayerDefinition } from "../game/types/GameOptions";
 import { GLOBAL_VARIABLES } from "../scene/Scene.factory";
 import { compileLayerScript } from "../script/compiler/compiler";
 import type { TLayerDef } from "../script/compiler/scenes/scene.rules";
@@ -9,6 +9,7 @@ import type { Layer } from "./Layer";
 import { BackgroundLayer } from "./background.layer";
 import { DisplayLayer } from "./display.layer";
 import { EntitiesLayer } from "./entities.layer";
+import { GlobalsLayer } from "./globals.layer";
 import { WorldCollisionLayer } from "./worldcollision.layer";
 
 const layerClasses = {};
@@ -19,15 +20,17 @@ setupLayers([
 	{ name: "worldcollision", classType: WorldCollisionLayer },
 	{ name: "display", classType: DisplayLayer },
 	{ name: "entities", classType: EntitiesLayer },
-	// { name: "game", classType: DisplayLayer },
-	// { name: "level", classType: DisplayLayer },
+	{ name: "globals", classType: GlobalsLayer },
 ]);
 
-export function setupLayers(layerDefinitions: layerDefinition[]) {
-	for (const def of layerDefinitions) setupLayer(def);
+export function setupLayers(layerDefinitions: TLayerDefinition[]) {
+	for (const def of layerDefinitions) {
+		if (!def.classType) console.error("setupLayers: missing classType for layer", def);
+		else setupLayer(def);
+	}
 }
 
-export function setupLayer(def: layerDefinition) {
+export function setupLayer(def: TLayerDefinition) {
 	const { name, classType } = def;
 	const className = getClassName(classType);
 	if (layerClasses[className]) return;

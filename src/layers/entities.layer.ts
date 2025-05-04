@@ -4,6 +4,7 @@ import type { Grid } from "../maths/grid.math";
 import { intersectRect } from "../maths/math";
 import type { Scene } from "../scene/Scene";
 import type { TEntitiesLayerSheet } from "../script/compiler/layers/entities/entities.rules";
+import { ArgColor } from "../types/value.types";
 import { createLevelEntities } from "../utils/createLevelEntities.utils";
 import { Layer } from "./Layer";
 
@@ -13,7 +14,9 @@ export class EntitiesLayer extends Layer {
 
 	private entities: Entity[] = [];
 	private sprites: TEntitiesLayerSheet["sprites"];
-	public wannaShowCount: boolean;
+	private wannaShowCount: boolean;
+	private wannaShowFrame: boolean | ArgColor;
+	private frameColor: string;
 
 	constructor(gc: GameContext, parent: Scene, sheet: TEntitiesLayerSheet, grid?: Grid) {
 		super(gc, parent);
@@ -22,8 +25,14 @@ export class EntitiesLayer extends Layer {
 		if (grid) this.spawnEntities(grid);
 
 		this.wannaShowCount = sheet.settings?.show_entities_count === true;
+		this.wannaShowFrame = !!sheet.settings?.show_entity_frame;
+		this.frameColor = sheet.settings?.show_entity_frame instanceof ArgColor ? sheet.settings?.show_entity_frame.value : "red";
 
 		this.setTaskHandlers();
+	}
+
+	public clear() {
+		this.entities = [];
 	}
 
 	public get(idxOrId: string | number) {
@@ -74,7 +83,16 @@ export class EntitiesLayer extends Layer {
 			const ctx = gc.viewport.ctx;
 			ctx.fillStyle = "#fff";
 			ctx.font = "10px";
-			ctx.fillText(`${this.entities.length}`, 500, 15);
+			ctx.textAlign = "right";
+			ctx.fillText(`${this.entities.length}`, gc.viewport.width - 5, 12);
+		}
+
+		if (this.wannaShowFrame) {
+			const ctx = gc.viewport.ctx;
+			for (const entity of this.entities) {
+				ctx.strokeStyle = this.frameColor;
+				ctx.strokeRect(entity.left, entity.top, entity.width, entity.height);
+			}
 		}
 	}
 }
