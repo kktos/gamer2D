@@ -22,8 +22,8 @@ export class System {
 		this.vars.set("SYSTEM", this);
 
 		const EntityPoolStub = {
-			create: (name: string, size: number, ...args: unknown[]) => {
-				const pool = EntityPool.create(gc.resourceManager, name, size, ...args);
+			create: (id: string, name: string, size: number, ...args: unknown[]) => {
+				const pool = EntityPool.create(gc.resourceManager, id, name, size, ...args);
 				this.layer.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, pool);
 				return pool;
 			},
@@ -34,8 +34,8 @@ export class System {
 		this.vars.set("EntityPool", EntityPoolStub);
 	}
 
-	EntityPool(name: string) {
-		return EntityPool.pools[name];
+	EntityPool(id: string) {
+		return EntityPool.pools[id];
 	}
 
 	entities(name: string) {
