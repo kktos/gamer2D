@@ -13,10 +13,10 @@ export class PhysicsTrait extends Trait {
 		if (entity.isFixed) return;
 
 		scene.useLayer("WorldCollisionLayer", (layer: WorldCollisionLayer) => {
-			entity.left += entity.vel.x * gc.dt;
+			entity.bbox.left += entity.vel.x * gc.dt;
 			layer.checkX(entity);
 
-			entity.top += entity.vel.y * gc.dt;
+			entity.bbox.top += entity.vel.y * gc.dt;
 			layer.checkY(entity);
 
 			entity.vel.y += scene.gravity * entity.mass * gc.dt;

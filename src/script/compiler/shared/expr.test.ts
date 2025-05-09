@@ -1,100 +1,98 @@
 import { describe, expect, it } from "vitest";
-import { compileScript } from "../compiler";
+import { ArgExpression, ArgVariable } from "../../../types/value.types";
+import { compile } from "../compiler";
 
 describe("Expr", () => {
-	it("should do addition", () => {
-		const script = `
-		display "intro" { display { layout { $fadein = 6+6 } } }
+	describe("+ - * /", () => {
+		it("should do addition", () => {
+			const script = `
+			6+6
 		`;
-		const result = compileScript(script);
-		expect(result).toBeDefined();
+			const result = compile(script, "expr");
+			expect(result).toEqual(12);
+		});
 
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
-		expect(displayLayer).toHaveProperty("layout");
-		expect(Array.isArray(displayLayer.layout)).toBe(true);
+		it("should do substraction", () => {
+			const script = `
+			12-2-2
+		`;
+			const result = compile(script, "expr");
+			expect(result).toEqual(8);
+		});
 
-		const fadein = displayLayer.layout.find((op) => op.name === "fadein");
-		expect(fadein).toHaveProperty("value", 12);
+		it("should do multiplication", () => {
+			const script = `
+			8*4*2
+		`;
+			const result = compile(script, "expr");
+			expect(result).toEqual(64);
+		});
+
+		it("should do division", () => {
+			const script = `
+			64/2/2
+		`;
+			const result = compile(script, "expr");
+			expect(result).toEqual(16);
+		});
 	});
 
-	it("should do substraction", () => {
-		const script = `
-		display "intro" { display { layout { $fadein = 12-2-2 } } }
+	describe("Priorities & Parenthesis", () => {
+		it("should respect priorities", () => {
+			const script = `
+			4-2+4/2*2
 		`;
-		const result = compileScript(script);
-		expect(result).toBeDefined();
+			const result = compile(script, "expr");
+			expect(result).toEqual(6);
+		});
 
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
-		expect(displayLayer).toHaveProperty("layout");
-		expect(Array.isArray(displayLayer.layout)).toBe(true);
-
-		const fadein = displayLayer.layout.find((op) => op.name === "fadein");
-		expect(fadein).toHaveProperty("value", 8);
+		it("should deal with sub expr ()", () => {
+			const script = `
+			(4-2)+4/(2*2)
+		`;
+			const result = compile(script, "expr");
+			expect(result).toEqual(3);
+		});
 	});
 
-	it("should do multiplication", () => {
-		const script = `
-		display "intro" { display { layout { $fadein = 8*4*2 } } }
-		`;
-		const result = compileScript(script);
-		expect(result).toBeDefined();
-
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
-		expect(displayLayer).toHaveProperty("layout");
-		expect(Array.isArray(displayLayer.layout)).toBe(true);
-
-		const fadein = displayLayer.layout.find((op) => op.name === "fadein");
-		expect(fadein).toHaveProperty("value", 64);
+	describe("Variables", () => {
+		it("should deal with variables", () => {
+			const script = `
+				2*$pos+$idx
+			`;
+			const globals = new Map<string, unknown>([
+				["pos", 0],
+				["idx", 0],
+			]);
+			const result = compile(script, "expr", globals);
+			expect(result).toEqual(new ArgExpression([2, new ArgVariable("pos"), "Multiply", new ArgVariable("idx"), "Plus"]));
+		});
 	});
 
-	it("should do division", () => {
-		const script = `
-		display "intro" { display { layout {
-			$fadein = 64/2/2
-		} } }
-		`;
-		const result = compileScript(script);
-		expect(result).toBeDefined();
+	describe("Negative Numbers", () => {
+		it("should deal with negative numbers as second operand", () => {
+			const script = `
+				2*-1
+			`;
+			const result = compile(script, "expr");
+			expect(result).toEqual(-2);
+		});
 
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
-		expect(displayLayer).toHaveProperty("layout");
-		expect(Array.isArray(displayLayer.layout)).toBe(true);
+		it("should deal with negative numbers as first operand", () => {
+			const script = `
+				-1*2
+			`;
+			const result = compile(script, "expr");
+			expect(result).toEqual(-2);
+		});
 
-		const fadein = displayLayer.layout.find((op) => op.name === "fadein");
-		expect(fadein).toHaveProperty("value", 16);
-	});
-
-	it("should do respect priorities", () => {
-		const script = `
-		display "intro" { display { layout {
-			$fadein = 4-2+4/2*2
-		} } }
-		`;
-		const result = compileScript(script);
-		expect(result).toBeDefined();
-
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
-		expect(displayLayer).toHaveProperty("layout");
-		expect(Array.isArray(displayLayer.layout)).toBe(true);
-
-		const fadein = displayLayer.layout.find((op) => op.name === "fadein");
-		expect(fadein).toHaveProperty("value", 6);
-	});
-
-	it("should do deal with sub expr ()", () => {
-		const script = `
-		display "intro" { display { layout {
-			$fadein = (4-2)+4/(2*2)
-		} } }
-		`;
-		const result = compileScript(script);
-		expect(result).toBeDefined();
-
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
-		expect(displayLayer).toHaveProperty("layout");
-		expect(Array.isArray(displayLayer.layout)).toBe(true);
-
-		const fadein = displayLayer.layout.find((op) => op.name === "fadein");
-		expect(fadein).toHaveProperty("value", 3);
+		it("should deal with negative numbers", () => {
+			const script = `
+				600+($ypos*-1)
+			`;
+			const globals = new Map<string, unknown>([["ypos", 0]]);
+			const result = compile(script, "expr", globals);
+			expect(result).toEqual(new ArgExpression([600, new ArgVariable("ypos"), -1, "Multiply", "Plus"]));
+		});
 	});
 });

@@ -4,9 +4,11 @@ import type { System } from "../layers/display/views/System.view";
 import type { View } from "../layers/display/views/View";
 import type { Trait } from "../traits/Trait";
 import type { TResultValue, TVarSounds } from "../types/engine.types";
+import type { ArgVariable } from "../types/value.types";
 
-export type TVarTypes = TResultValue | TVarSounds | Map<string, Entity> | Record<string, unknown> | View | System | Trait | Anim;
-export type TVarDict = Map<string, TVarTypes>;
+export type TVarTypes = TResultValue | TVarSounds | Map<string, Entity> | Record<string, unknown> | View | System | Trait | Anim | ArgVariable[];
+// export type TVarDict = Map<string, TVarTypes>;
+export type TVarDict = Map<string, unknown>;
 
 export class TVars {
 	constructor(
@@ -14,12 +16,12 @@ export class TVars {
 		private locals: TVarDict = new Map(),
 	) {}
 
-	public get(key: string): TVarTypes | undefined {
-		if (this.globals.has(key)) return this.globals.get(key);
-		return this.locals.get(key);
+	public get<T extends TVarTypes>(key: string): T {
+		if (this.globals.has(key)) return this.globals.get(key) as T;
+		return this.locals.get(key) as T;
 	}
 
-	public set(key: string, value: TVarTypes): void {
+	public set(key: string, value: unknown): void {
 		if (this.globals.has(key)) this.globals.set(key, value);
 		else this.locals.set(key, value);
 	}

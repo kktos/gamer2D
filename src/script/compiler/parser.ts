@@ -55,7 +55,7 @@ export class SheetParser extends EmbeddedActionsParser {
 	public definedVariable = TypesRules.definedVariable(this);
 	public htmlColor = TypesRules.htmlColor(this);
 	public numOrVar = TypesRules.numOrVar(this);
-	public tupleNumOrVar = TypesRules.tupleNumOrVar(this);
+	public tupleExpr = TypesRules.tupleExpr(this);
 	public strOrVar = TypesRules.strOrVar(this);
 	public varOrArrayOfVars = TypesRules.varOrArrayOfVars(this);
 	public arrayOfVars = TypesRules.arrayOfVars(this);
@@ -81,6 +81,8 @@ export class SheetParser extends EmbeddedActionsParser {
 	public parm_range = ParmsRules.parm_range(this);
 	public parm_dir = ParmsRules.parm_dir(this);
 	public parm_traits = ParmsRules.parm_traits(this);
+	public parm_width = ParmsRules.parm_width(this);
+	public parm_height = ParmsRules.parm_height(this);
 
 	public layout = LayoutRules.layout(this);
 	public layoutStatement = LayoutRules.layoutStatement(this);
@@ -118,8 +120,6 @@ export class SheetParser extends EmbeddedActionsParser {
 	public layoutRepeatItems = RepeatRules.layoutRepeatItems(this);
 	public layoutView = ViewRules.layoutView(this);
 	public layoutViewType = ViewRules.layoutViewType(this);
-	public layoutViewWidth = ViewRules.layoutViewWidth(this);
-	public layoutViewHeight = ViewRules.layoutViewHeight(this);
 	public layoutRect = RectRules.layoutRect(this);
 	public layoutDefAnim = DefAnimRules.layoutDefAnim(this);
 	public layoutDefAnimPath = DefAnimRules.layoutDefAnimPath(this);

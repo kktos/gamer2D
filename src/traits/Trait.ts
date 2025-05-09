@@ -24,7 +24,33 @@ export interface ITraitUpdate {
 export interface ITraitObstructedOn {
 	obstructedOn(gc: GameContext, entity: Entity, side: TCollisionSide, cell: GridCell): void;
 }
-
+export class TraitDict extends Map<string, Trait> {
+	private traits: Map<string, Trait> = new Map();
+	get(name: string) {
+		return this.traits.get(name);
+	}
+	set(name: string, trait: Trait) {
+		this.traits.set(name, trait);
+		return this;
+	}
+	has(name: string) {
+		return this.traits.has(name);
+	}
+	delete(name: string) {
+		return this.traits.delete(name);
+	}
+	clear() {
+		this.traits.clear();
+	}
+	[Symbol.iterator]() {
+		return this.traits[Symbol.iterator]();
+	}
+	[Symbol.for("inspect")]() {
+		const result: string[] = [];
+		for (const [_, trait] of this.traits) result.push(trait[Symbol.for("inspect")]());
+		return result;
+	}
+}
 export class Trait {
 	public class: string;
 	public id: string;
@@ -48,5 +74,9 @@ export class Trait {
 			entity.events.process(listener.name, listener.callback);
 			return --listener.count;
 		});
+	}
+
+	[Symbol.for("inspect")]() {
+		return `${this.class}(${this.id})`;
 	}
 }

@@ -57,8 +57,8 @@ export class TypesRules {
 		});
 	}
 
-	static tupleNumOrVar($) {
-		return $.RULE("tupleNumOrVar", () => {
+	static tupleExpr($) {
+		return $.RULE("tupleExpr", () => {
 			const x = $.SUBRULE($.expr);
 			$.CONSUME(tokens.Comma);
 			const y = $.SUBRULE2($.expr);

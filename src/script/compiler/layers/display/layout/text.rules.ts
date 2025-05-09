@@ -1,8 +1,8 @@
 import type { TextEntity } from "../../../../../entities/text.entity";
-import type { BBox } from "../../../../../maths/math";
+import type { BBox } from "../../../../../maths/BBox.class";
 import { OP_TYPES } from "../../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../../types/typescript.types";
-import type { ArgColor, ArgExpression, ArgVariable } from "../../../../../types/value.types";
+import type { ArgColor, ArgExpression, ArgVariable, ValueTrait } from "../../../../../types/value.types";
 import { tokens } from "../../../lexer";
 import type { TAlignType } from "./text-sprite-props.rules";
 
@@ -20,7 +20,7 @@ export type TText = {
 	width?: number | ArgVariable;
 	height?: number | ArgVariable;
 	bgcolor?: ArgColor;
-	traits?: ArgVariable[] | ArgVariable;
+	traits?: (ArgVariable | ValueTrait)[] | ArgVariable;
 
 	bbox: () => BBox;
 	entity?: TextEntity;
@@ -61,12 +61,12 @@ export class TextRules {
 					},
 					{
 						ALT: () => {
-							result.width = $.SUBRULE($.layoutViewWidth);
+							result.width = $.SUBRULE($.parm_width);
 						},
 					},
 					{
 						ALT: () => {
-							result.height = $.SUBRULE($.layoutViewHeight);
+							result.height = $.SUBRULE($.parm_height);
 						},
 					},
 					{

@@ -62,7 +62,7 @@ export class RepeatRules {
 
 			$.CONSUME(tokens.OpenCurly);
 			// list of
-			// text | sprite | item | add
+			// text | sprite | item | image
 			$.AT_LEAST_ONE(() => {
 				const item = $.OR([
 					{ ALT: () => $.SUBRULE($.layoutText, { ARGS: [options, isMenuItem] }) },

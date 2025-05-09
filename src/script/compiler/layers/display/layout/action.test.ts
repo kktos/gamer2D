@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { OP_TYPES } from "../../../../../types/operation.types";
-import { compileScript } from "../../../compiler";
+import { ArgColor, ArgExpression, ArgIdentifier, ArgVariable } from "../../../../../types/value.types";
+import { compile, compileScript } from "../../../compiler";
 
 describe("Action", () => {
 	it("should define a simple action", () => {
@@ -23,6 +24,111 @@ describe("Action", () => {
 			FAKE: {
 				action: [{ name: "myVar", type: OP_TYPES.SET, value: 3 }, [{ name: ["SYSTEM", "call"], args: [1, 2, 3] }]],
 			},
+		});
+	});
+
+	describe("layoutActionFunctionCallList", () => {
+		it("should parse a single system function call", () => {
+			const script = `call(1, "test")`;
+			// We compile using layoutActionStatement which calls layoutActionFunctionCallList
+			const result = compile(script, "layoutActionStatement");
+			expect(result).toEqual([
+				{
+					name: ["SYSTEM", "call"], // "SYSTEM" should be prepended
+					args: [1, "test"],
+				},
+			]);
+		});
+
+		it("should parse a single non-system function call when noSystem is true", () => {
+			const script = "myFunc(1)";
+			// Pass actionOptions with noSystem: true
+			const result = compile(script, "layoutActionStatement", undefined, { noSystem: true });
+			expect(result).toEqual([
+				{
+					name: ["myFunc"], // "SYSTEM" should NOT be prepended
+					args: [1],
+				},
+			]);
+		});
+
+		it("should parse chained function calls (system first)", () => {
+			const script = `call(1).next("arg").another()`;
+			const result = compile(script, "layoutActionStatement");
+			expect(result).toEqual([
+				{
+					name: ["SYSTEM", "call"], // "SYSTEM" prepended to the first call
+					args: [1],
+				},
+				{
+					name: ["next"],
+					args: ["arg"],
+				},
+				{
+					name: ["another"],
+					args: [],
+				},
+			]);
+		});
+
+		it("should parse chained function calls (object method style)", () => {
+			const script = "myObject.method(true).another(null)"; // null is parsed as an identifier
+			const result = compile(script, "layoutActionStatement");
+			expect(result).toEqual([
+				{
+					name: ["myObject", "method"],
+					args: [true], // true/false are identifiers here
+				},
+				{
+					name: ["another"],
+					args: [new ArgIdentifier("null")],
+				},
+			]);
+		});
+
+		it("should parse chained function calls (object method style, noSystem)", () => {
+			const script = "myObject.method(true).another(null)";
+			const result = compile(script, "layoutActionStatement");
+			expect(result).toEqual([
+				{
+					name: ["myObject", "method"], // No SYSTEM prepended
+					args: [true],
+				},
+				{
+					name: ["another"],
+					args: [new ArgIdentifier("null")],
+				},
+			]);
+		});
+
+		it("should parse function call with various argument types", () => {
+			const script = 'func("string", 123, $var, ident, #FF00AA, left, $var*2)';
+			const globals = new Map([["var", 0]]);
+			const result = compile(script, "layoutActionStatement", globals);
+			expect(result).toEqual([
+				{
+					name: ["SYSTEM", "func"],
+					args: [
+						"string",
+						123,
+						new ArgVariable("var"),
+						new ArgIdentifier("ident"),
+						new ArgColor("#FF00AA"),
+						new ArgIdentifier("left"),
+						new ArgExpression([new ArgVariable("var"), 2, "Multiply"]),
+					],
+				},
+			]);
+		});
+
+		it("should parse function names that are keywords", () => {
+			const script = 'Timer("t1").Sprite("s1").Dir(left)';
+			const result = compile(script, "layoutActionStatement");
+			expect(result).toEqual([
+				{ name: ["SYSTEM", "Timer"], args: ["t1"] },
+				{ name: ["Sprite"], args: ["s1"] },
+				{ name: ["Dir"], args: [new ArgIdentifier("left")] },
+			]);
 		});
 	});
 });

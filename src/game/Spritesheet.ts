@@ -82,16 +82,14 @@ export class SpriteSheet {
 		{
 			let width = 0;
 			let height = 0;
-			// spriteDef.forEach(([offsets, name]) => {
 			for (let idx = 0; idx < spriteDef.length; idx++) {
 				const [[col, row, countX, countY], name] = spriteDef[idx];
-				// const [col, row, countX, countY]= offsets;
 				if (name) {
 					const s = this.spriteSize(name);
-					if (countY) height += s.y * countY;
-					if (countX) width += s.x * countX;
-					if (width < s.x) width = s.x;
-					if (height < s.y) height = s.y;
+					if (countY) height += s.height * countY;
+					if (countX) width += s.width * countX;
+					if (width < s.width) width = s.width;
+					if (height < s.height) height = s.height;
 				} else {
 					height += row;
 					width += col;
@@ -107,23 +105,21 @@ export class SpriteSheet {
 		let dx = 0;
 		let dy = 0;
 
-		// spriteDef.forEach(([offsets, name]) => {
-		// 	const [col, row, countX, countY]= offsets;
 		for (let idx = 0; idx < spriteDef.length; idx++) {
 			const [[col, row, countX, countY], name] = spriteDef[idx];
-			let spriteSize = { x: 0, y: 0 };
+			let spriteSize = { width: 0, height: 0 };
 			if (name) {
 				spriteSize = this.spriteSize(name);
 				if (countY) {
 					dy = height;
-					height += spriteSize.y * countY;
+					height += spriteSize.height * countY;
 				}
 				if (countX) {
 					dx = width;
-					width += spriteSize.x * countX;
+					width += spriteSize.width * countX;
 				}
-				if (width < spriteSize.x) width = spriteSize.x;
-				if (height < spriteSize.y) height = spriteSize.y;
+				if (width < spriteSize.width) width = spriteSize.width;
+				if (height < spriteSize.height) height = spriteSize.height;
 			} else {
 				height += row;
 				width += col;
@@ -135,15 +131,15 @@ export class SpriteSheet {
 
 			if (countY > 1) {
 				for (let idx = 0; idx < countY; idx++) {
-					ctx.drawImage(sprites[0], 0, 0, spriteSize.x, spriteSize.y, dx, dy, spriteSize.x, spriteSize.y);
-					dy += spriteSize.y;
+					ctx.drawImage(sprites[0], 0, 0, spriteSize.width, spriteSize.height, dx, dy, spriteSize.width, spriteSize.height);
+					dy += spriteSize.height;
 				}
 			} else if (countX > 1) {
 				for (let idx = 0; idx < countX; idx++) {
-					ctx.drawImage(sprites[0], 0, 0, spriteSize.x, spriteSize.y, dx, dy, spriteSize.x, spriteSize.y);
-					dx += spriteSize.x;
+					ctx.drawImage(sprites[0], 0, 0, spriteSize.width, spriteSize.height, dx, dy, spriteSize.width, spriteSize.height);
+					dx += spriteSize.width;
 				}
-			} else ctx.drawImage(sprites[0], 0, 0, spriteSize.x, spriteSize.y, dx, dy, spriteSize.x, spriteSize.y);
+			} else ctx.drawImage(sprites[0], 0, 0, spriteSize.width, spriteSize.height, dx, dy, spriteSize.width, spriteSize.height);
 		}
 
 		this.sprites.set(name, [canvas]);
@@ -167,7 +163,7 @@ export class SpriteSheet {
 			throw new Error(`Unable to find sprite "${name}"`);
 		}
 		const sprite = sprites[0];
-		return { x: sprite.width, y: sprite.height };
+		return { width: sprite.width, height: sprite.height };
 	}
 
 	draw(name: string, ctx: CanvasRenderingContext2D, x: number, y: number, { flip, zoom } = { flip: 0, zoom: 1 }) {

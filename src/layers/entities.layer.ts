@@ -1,19 +1,23 @@
 import type { Entity } from "../entities/Entity";
 import type GameContext from "../game/types/GameContext";
 import type { Grid } from "../maths/grid.math";
-import { intersectRect } from "../maths/math";
 import type { Scene } from "../scene/Scene";
-import type { TEntitiesLayerSheet } from "../script/compiler/layers/entities/entities.rules";
+import { GLOBAL_VARIABLES } from "../scene/Scene.factory";
+import type { TEntitiesLayerSheet, TEntitiesLayerSprite, TEntitiesLayerStatement } from "../script/compiler/layers/entities/entities.rules";
+import { OP_TYPES } from "../types/operation.types";
 import { ArgColor } from "../types/value.types";
 import { createLevelEntities } from "../utils/createLevelEntities.utils";
+import { TVars } from "../utils/vars.utils";
 import { Layer } from "./Layer";
+import { repeat } from "./display/repeat.manager";
 
 export class EntitiesLayer extends Layer {
 	static TASK_REMOVE_ENTITY = Symbol.for("removeEntity");
 	static TASK_ADD_ENTITY = Symbol.for("addEntity");
 
-	private entities: Entity[] = [];
-	private sprites: TEntitiesLayerSheet["sprites"];
+	private selectedEntity: Entity | undefined;
+	public entities: Entity[] = [];
+	private sprites: TEntitiesLayerSprite[] | undefined;
 	public wannaShowCount: boolean;
 	public wannaShowFrame: boolean;
 	public frameColor: string;
@@ -21,7 +25,8 @@ export class EntitiesLayer extends Layer {
 	constructor(gc: GameContext, parent: Scene, sheet: TEntitiesLayerSheet, grid?: Grid) {
 		super(gc, parent);
 
-		this.sprites = sheet.sprites;
+		if (sheet.statements) this.sprites = this.prepareRendering(sheet.statements);
+
 		if (grid) this.spawnEntities(grid);
 
 		this.wannaShowCount = sheet.settings?.show_entities_count === true;
@@ -32,7 +37,7 @@ export class EntitiesLayer extends Layer {
 	}
 
 	public clear() {
-		this.entities = [];
+		this.entities.length = 0;
 	}
 
 	public get(idxOrId: string | number) {
@@ -44,6 +49,23 @@ export class EntitiesLayer extends Layer {
 		if (!this.sprites) return;
 		this.entities = createLevelEntities(this.gc.resourceManager, grid, this.sprites);
 		return this.entities.length;
+	}
+
+	public selectEntity(idxOrId: string | number) {
+		this.selectedEntity = this.get(idxOrId);
+		return this.selectedEntity;
+	}
+
+	private prepareRendering(statements: TEntitiesLayerStatement[]) {
+		const repeatList = statements.filter((statement) => statement.type === OP_TYPES.REPEAT);
+		if (!repeatList.length) return statements as unknown as TEntitiesLayerSprite[];
+
+		const vars = new TVars(GLOBAL_VARIABLES, GLOBAL_VARIABLES);
+		const sprites: TEntitiesLayerSprite[] = [];
+		for (const repeatItem of repeatList) repeat(repeatItem, (item) => sprites.push(item as unknown as TEntitiesLayerSprite), vars);
+
+		const spriteList = statements.filter((statement) => statement.type === OP_TYPES.SPRITE);
+		return spriteList.concat(sprites);
 	}
 
 	public setTaskHandlers() {
@@ -62,9 +84,8 @@ export class EntitiesLayer extends Layer {
 	private handleCollisions(gc: GameContext) {
 		for (let targetIdx = 0; targetIdx < this.entities.length; targetIdx++) {
 			const target = this.entities[targetIdx];
-			for (let idx = targetIdx + 1; idx < this.entities.length; idx++) {
-				if (intersectRect(target, this.entities[idx])) target.collides(gc, this.entities[idx]);
-			}
+			for (let idx = targetIdx + 1; idx < this.entities.length; idx++)
+				if (target.bbox.intersects(this.entities[idx].bbox)) target.collides(gc, this.entities[idx]);
 		}
 	}
 
@@ -91,8 +112,14 @@ export class EntitiesLayer extends Layer {
 			const ctx = gc.viewport.ctx;
 			for (const entity of this.entities) {
 				ctx.strokeStyle = this.frameColor;
-				ctx.strokeRect(entity.left, entity.top, entity.width, entity.height);
+				ctx.strokeRect(entity.bbox.left, entity.bbox.top, entity.bbox.width, entity.bbox.height);
 			}
+		}
+
+		if (this.selectedEntity) {
+			const ctx = gc.viewport.ctx;
+			ctx.strokeStyle = "red";
+			ctx.strokeRect(this.selectedEntity.bbox.left, this.selectedEntity.bbox.top, this.selectedEntity.bbox.width, this.selectedEntity.bbox.height);
 		}
 	}
 }

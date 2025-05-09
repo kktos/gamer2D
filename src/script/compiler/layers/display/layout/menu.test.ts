@@ -78,7 +78,7 @@ describe("Menu", () => {
 						{
 							type: OP_TYPES.SPRITE,
 							pos: [350, 280],
-							sprite: "boom",
+							name: "boom",
 						},
 					],
 					action: [[{ args: ["intro"], name: ["SYSTEM", "goto"] }]],

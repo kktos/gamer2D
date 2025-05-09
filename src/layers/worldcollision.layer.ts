@@ -1,7 +1,8 @@
 import type { Entity } from "../entities/Entity";
 import type GameContext from "../game/types/GameContext";
+import type { BBox } from "../maths/BBox.class";
 import { type Grid, GridCell } from "../maths/grid.math";
-import { type BBox, COLLISION_SIDES } from "../maths/math";
+import { COLLISION_SIDES } from "../maths/math";
 import type { Scene } from "../scene/Scene";
 import { Layer } from "./Layer";
 
@@ -22,11 +23,11 @@ interface ICollisionGridCellY {
 export class CollisionGridCell extends GridCell {
 	collisionX(gc: GameContext, entity: Entity) {
 		if (entity.vel.x > 0) {
-			if (entity.right > this.left) {
+			if (entity.bbox.right > this.left) {
 				entity.obstructedOn(gc, COLLISION_SIDES.RIGHT, this);
 			}
 		} else if (entity.vel.x < 0) {
-			if (entity.left < this.right) {
+			if (entity.bbox.left < this.right) {
 				entity.obstructedOn(gc, COLLISION_SIDES.LEFT, this);
 			}
 		}
@@ -34,11 +35,11 @@ export class CollisionGridCell extends GridCell {
 
 	collisionY(gc: GameContext, entity: Entity) {
 		if (entity.vel.y > 0) {
-			if (entity.bottom > this.top) {
+			if (entity.bbox.bottom > this.top) {
 				entity.obstructedOn(gc, COLLISION_SIDES.BOTTOM, this);
 			}
 		} else if (entity.vel.y < 0) {
-			if (entity.top < this.bottom) {
+			if (entity.bbox.top < this.bottom) {
 				entity.obstructedOn(gc, COLLISION_SIDES.TOP, this);
 			}
 		}
@@ -58,16 +59,16 @@ export class WorldCollisionLayer extends Layer {
 	checkX(entity: Entity) {
 		if (!entity.vel.x || !this.grid) return;
 
-		const x = entity.vel.x > 0 ? entity.right : entity.left;
-		const matches = this.grid.searchByRange(x, x, entity.top, entity.bottom);
+		const x = entity.vel.x > 0 ? entity.bbox.right : entity.bbox.left;
+		const matches = this.grid.searchByRange(x, x, entity.bbox.top, entity.bbox.bottom);
 		for (const match of matches) if ("collisionX" in match) (match as ICollisionGridCellX).collisionX(this.gc, entity);
 	}
 
 	checkY(entity: Entity) {
 		if (!entity.vel.y || !this.grid) return;
 
-		const y = entity.vel.y > 0 ? entity.bottom : entity.top;
-		const matches = this.grid.searchByRange(entity.left, entity.right, y, y);
+		const y = entity.vel.y > 0 ? entity.bbox.bottom : entity.bbox.top;
+		const matches = this.grid.searchByRange(entity.bbox.left, entity.bbox.right, y, y);
 		for (const match of matches) if ("collisionY" in match) (match as ICollisionGridCellY).collisionY(this.gc, entity);
 	}
 

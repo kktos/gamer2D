@@ -1,5 +1,5 @@
 import type GameContext from "../../../game/types/GameContext";
-import type { BBox } from "../../../maths/math";
+import { BBox } from "../../../maths/BBox.class";
 import type { TMenuItemRendered } from "../../../script/compiler/layers/display/layout/menu.rules";
 import { OP_TYPES } from "../../../types/operation.types";
 import type { DisplayLayer } from "../../display.layer";
@@ -21,34 +21,22 @@ export function computeBBox(gc: GameContext, layer: DisplayLayer, items: TMenuIt
 			}
 			case OP_TYPES.IMAGE:
 			case OP_TYPES.SPRITE: {
-				const { ss, sprite } = loadSprite(gc, item.sprite);
+				const { ss, sprite } = loadSprite(gc, item.name);
 				const size = ss.spriteSize(sprite);
-				const bbox: BBox = {
+				const bbox = BBox.create({
 					left: item.pos[0],
 					top: item.pos[1],
-					right: item.pos[0] + size.x,
-					bottom: +item.pos[1] + size.y,
-				};
+					width: size.width,
+					height: size.height,
+				});
 				item.bbox = () => bbox;
 				break;
 			}
 			case OP_TYPES.GROUP: {
 				computeBBox(gc, layer, item.items);
 				item.bbox = () => {
-					const bbox = {
-						left: Number.POSITIVE_INFINITY,
-						top: Number.POSITIVE_INFINITY,
-						right: Number.NEGATIVE_INFINITY,
-						bottom: Number.NEGATIVE_INFINITY,
-					};
-					for (let idx = 0; idx < item.items.length; idx++) {
-						const currBBox = item.items[idx].bbox();
-						bbox.left = Math.min(bbox.left, currBBox.left);
-						bbox.top = Math.min(bbox.top, currBBox.top);
-
-						bbox.right = Math.max(bbox.right, currBBox.right);
-						bbox.bottom = Math.max(bbox.bottom, currBBox.bottom);
-					}
+					const bbox = BBox.createSmallest();
+					for (let idx = 0; idx < item.items.length; idx++) bbox.mergeWith(item.items[idx].bbox());
 					return bbox;
 				};
 				break;

@@ -23,8 +23,8 @@ export class ViewRules {
 				name: $.CONSUME(tokens.StringLiteral).payload,
 				view: $.SUBRULE($.layoutViewType),
 				pos: $.SUBRULE($.parm_at),
-				width: $.SUBRULE($.layoutViewWidth),
-				height: $.SUBRULE($.layoutViewHeight),
+				width: $.SUBRULE($.parm_width),
+				height: $.SUBRULE($.parm_height),
 			};
 
 			return result;
@@ -36,22 +36,6 @@ export class ViewRules {
 			$.CONSUME(tokens.Type);
 			$.CONSUME(tokens.Colon);
 			return $.CONSUME(tokens.Identifier).image;
-		});
-	}
-
-	static layoutViewWidth($) {
-		return $.RULE("layoutViewWidth", () => {
-			$.CONSUME(tokens.Width);
-			$.CONSUME(tokens.Colon);
-			return $.SUBRULE($.numOrVar);
-		});
-	}
-
-	static layoutViewHeight($) {
-		return $.RULE("layoutViewHeight", () => {
-			$.CONSUME(tokens.Height);
-			$.CONSUME(tokens.Colon);
-			return $.SUBRULE($.numOrVar);
 		});
 	}
 }

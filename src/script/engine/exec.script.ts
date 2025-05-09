@@ -2,12 +2,12 @@ import { ArgColor, ArgIdentifier, ArgVariable } from "../../types/value.types";
 import type { TVars } from "../../utils/vars.utils";
 import type { TActionStatement } from "../compiler/layers/display/layout/action.rules";
 import type { TSet } from "../compiler/layers/display/layout/set.rules";
-import { evalValue, evalVar, interpolateString, isStringInterpolable, resoleVar } from "./eval.script";
+import { type TEvalValue, evalValue, evalVar, interpolateString, isStringInterpolable, resoleVar } from "./eval.script";
 
-function execFnCall({ vars }: { vars: TVars }, fnCall, objSource) {
+export function execParseArgs({ vars }: { vars: TVars }, fnArgs: unknown[]) {
 	const args: unknown[] = [];
 
-	for (const arg of fnCall.args) {
+	for (const arg of fnArgs) {
 		if (typeof arg === "number") {
 			args.push(arg);
 			continue;
@@ -28,8 +28,17 @@ function execFnCall({ vars }: { vars: TVars }, fnCall, objSource) {
 			args.push(arg.value);
 			continue;
 		}
-		args.push(evalValue({ vars }, arg));
+		args.push(evalValue({ vars }, arg as TEvalValue));
 	}
+
+	return args;
+}
+
+// method
+// obj.method
+// obj.obj.method
+export function execFnCall({ vars }: { vars: TVars }, fnCall: { name: string[]; args: unknown[] }, objSource) {
+	const args: unknown[] = execParseArgs({ vars }, fnCall.args);
 
 	let self = objSource;
 	let fn = self;
@@ -40,6 +49,7 @@ function execFnCall({ vars }: { vars: TVars }, fnCall, objSource) {
 			fn = self;
 		} else {
 			fn = fn[part];
+			if (typeof fn === "object") self = fn;
 		}
 		if (!fn) {
 			console.error("unknown action !", fnCall.name.join("."), args);

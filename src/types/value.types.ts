@@ -30,6 +30,6 @@ export class ArgColor {
 export class ValueTrait {
 	constructor(
 		public name: string,
-		public args: unknown[],
+		public args: (ArgColor | ArgIdentifier | ArgVariable | string | number | ArgExpression)[],
 	) {}
 }

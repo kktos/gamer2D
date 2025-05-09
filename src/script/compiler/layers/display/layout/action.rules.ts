@@ -93,11 +93,9 @@ export class ActionRules {
 				SEP: tokens.Comma,
 				DEF: () => {
 					$.OR([
-						// { ALT: () => args.push($.SUBRULE($.number)) },
 						{ ALT: () => args.push(new ArgIdentifier($.CONSUME2(tokens.Identifier).image)) },
 						{ ALT: () => args.push(new ArgIdentifier($.CONSUME2(tokens.Left).image)) },
 						{ ALT: () => args.push(new ArgIdentifier($.CONSUME2(tokens.Right).image)) },
-						// { ALT: () => args.push(new ArgVariable($.CONSUME2(tokens.Variable).image.substring(1))) },
 						{ ALT: () => args.push($.SUBRULE($.expr)) },
 						{ ALT: () => args.push($.CONSUME2(tokens.StringLiteral).payload) },
 						{ ALT: () => args.push(new ArgColor($.CONSUME2(tokens.HexNumber).image)) },

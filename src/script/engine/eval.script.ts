@@ -1,8 +1,9 @@
-import { createTrait } from "../../traits/Trait.factory";
+import { createTraitByName } from "../../traits/Trait.factory";
 import type { TResultValue } from "../../types/engine.types";
 import { ArgColor, ArgExpression, ArgIdentifier, ArgVariable, ValueTrait } from "../../types/value.types";
 import type { TVarTypes, TVars } from "../../utils/vars.utils";
 import type { TFunctionArg } from "../compiler/layers/display/layout/action.rules";
+import { execParseArgs } from "./exec.script";
 
 export function isStringInterpolable(text: string) {
 	if (typeof text !== "string") return false;
@@ -55,11 +56,16 @@ export function evalVar({ vars }: { vars: TVars }, varname: string) {
 	return value;
 }
 
-export function evalValue({ vars }: { vars: TVars }, expr: ArgExpression | ArgVariable | number | boolean | string | ValueTrait | TResultValue[]) {
+export type TEvalValue = ArgExpression | ArgVariable | number | boolean | string | ValueTrait | TResultValue[];
+
+export function evalValue({ vars }: { vars: TVars }, expr: TEvalValue) {
 	if (Array.isArray(expr) || typeof expr === "number" || typeof expr === "boolean") return expr;
 	if (typeof expr === "string") return interpolateString({ vars }, expr);
 	if (expr instanceof ArgVariable) return evalVar({ vars }, expr.value);
-	if (expr instanceof ValueTrait) return createTrait(expr.name, ...expr.args);
+	if (expr instanceof ValueTrait) {
+		const args = execParseArgs({ vars }, expr.args);
+		return createTraitByName(expr.name, ...args);
+	}
 	return evalExpr({ vars }, expr);
 }
 

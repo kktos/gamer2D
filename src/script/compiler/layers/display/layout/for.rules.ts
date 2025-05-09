@@ -46,7 +46,7 @@ export class ForRules {
 							$.variablesDict.set(result.index, 0);
 						});
 
-						const range = $.SUBRULE($.tupleNumOrVar);
+						const range = $.SUBRULE($.tupleExpr);
 						result.count = range[1];
 						result.from = range[0];
 					},

@@ -1,5 +1,6 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { ArgIdentifier, ArgVariable } from "../../../../types/value.types";
+import { OP_TYPES } from "../../../../types/operation.types";
+import { ArgIdentifier, ArgVariable, ValueTrait } from "../../../../types/value.types";
 import { compile, setWannaLogError } from "../../compiler";
 
 describe("Entities Layers", () => {
@@ -41,13 +42,15 @@ describe("Entities Layers", () => {
 			const result = compile(script, "entitiesLayerSheet");
 			expect(result).toEqual({
 				type: "entities",
-				sprites: [
+				statements: [
 					{
+						type: OP_TYPES.SPRITE,
 						name: "zen-chan",
 						pos: [16, 5],
 						dir: 0,
 					},
 					{
+						type: OP_TYPES.SPRITE,
 						name: "bubblun",
 						pos: [16, 11],
 						dir: 0,
@@ -66,16 +69,18 @@ describe("Entities Layers", () => {
 			const result = compile(script, "entitiesLayerSheet");
 			expect(result).toEqual({
 				type: "entities",
-				sprites: [
+				statements: [
 					{
+						type: OP_TYPES.SPRITE,
 						name: "zen-chan",
 						pos: [16, 5],
-						traits: [[{ name: ["FakeTrait"], args: [] }]],
+						traits: [new ValueTrait("FakeTrait", [])],
 					},
 					{
+						type: OP_TYPES.SPRITE,
 						name: "bubblun",
 						pos: [16, 11],
-						traits: [[{ name: ["AnotherFakeTrait"], args: [] }]],
+						traits: [new ValueTrait("AnotherFakeTrait", [])],
 					},
 				],
 			});
@@ -101,12 +106,22 @@ describe("Entities Layers", () => {
 			const result = compile(script, "entitiesLayerSheet");
 			expect(result).toEqual({
 				type: "entities",
-				sprites: [
+				statements: [
 					{
-						name: "zen-chan",
-						pos: [17, new ArgVariable("ypos")],
-						dir: 0,
-						traits: [[{ name: ["ZenChanNormalBehaviourTrait"], args: [250, new ArgIdentifier("left"), 70] }], [{ name: ["XDragTrait"], args: [600, 70] }]],
+						type: OP_TYPES.REPEAT,
+						from: 0,
+						count: 0,
+						list: [-5, -8, 11],
+						var: "ypos",
+						items: [
+							{
+								type: OP_TYPES.SPRITE,
+								name: "zen-chan",
+								pos: [17, new ArgVariable("ypos")],
+								dir: 0,
+								traits: [new ValueTrait("ZenChanNormalBehaviourTrait", [250, new ArgIdentifier("left"), 70]), new ValueTrait("XDragTrait", [600, 70])],
+							},
+						],
 					},
 				],
 			});

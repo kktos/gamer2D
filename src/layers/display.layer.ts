@@ -3,7 +3,7 @@ import { EntityPool } from "../entities/EntityPool";
 import type Font from "../game/Font";
 import type GameContext from "../game/types/GameContext";
 import type { GameEvent } from "../game/types/GameEvent";
-import type { BBox } from "../maths/math";
+import { BBox } from "../maths/BBox.class";
 import type { Scene } from "../scene/Scene";
 import { GLOBAL_VARIABLES } from "../scene/Scene.factory";
 import type { TLayerDisplaySheet } from "../script/compiler/layers/display/display.rules";
@@ -165,12 +165,7 @@ export class DisplayLayer extends UILayer {
 
 		viewDef.component = new views[viewDef.view](ctx);
 		viewDef.canvas = canvas;
-		viewDef.bbox = {
-			left,
-			top,
-			right: width + left,
-			bottom: height + top,
-		};
+		viewDef.bbox = new BBox(left, top, width, height);
 		this.vars.set(viewDef.name, viewDef.component || 0);
 	}
 

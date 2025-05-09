@@ -48,7 +48,7 @@ export class BounceTrait extends Trait {
 
 			case COLLISION_SIDES.BOTTOM:
 				entity.vel.y *= this.repulsiveFactor;
-				entity.bottom = target.top - 1;
+				entity.bbox.bottom = target.bbox.top - 1;
 
 				target.vel.y *= this.repulsiveFactor;
 				break;

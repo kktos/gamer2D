@@ -1,21 +1,24 @@
 import type { Entity } from "../../../../../entities/Entity";
-import type { BBox } from "../../../../../maths/math";
+import type { BBox } from "../../../../../maths/BBox.class";
 import type { DIRECTIONS } from "../../../../../types/direction.type";
 import { OP_TYPES } from "../../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../../types/typescript.types";
-import type { ArgVariable } from "../../../../../types/value.types";
+import type { ArgVariable, ValueTrait } from "../../../../../types/value.types";
 import { tokens } from "../../../lexer";
 
+// TODO: set proper type for pos and others using expr/var
 export type TSprite = {
 	type: TupleToUnion<[typeof OP_TYPES.SPRITE]>;
-	sprite: string;
+	name: string;
 	id?: string;
 	pos: [number, number];
+	width: number;
+	height: number;
 	zoom: number;
 	range?: [number, number];
 	dir?: TupleToUnion<[typeof DIRECTIONS.LEFT, typeof DIRECTIONS.RIGHT]>;
 	anim?: { name: string };
-	traits?: ArgVariable[] | ArgVariable;
+	traits?: (ArgVariable | ValueTrait)[] | ArgVariable;
 
 	bbox: () => BBox;
 	entity?: Entity;
@@ -29,7 +32,7 @@ export class SpriteRules {
 
 			const result: Partial<TSprite> = {
 				type: OP_TYPES.SPRITE,
-				sprite: $.CONSUME(tokens.StringLiteral).payload,
+				name: $.CONSUME(tokens.StringLiteral).payload,
 			};
 
 			$.MANY(() => {
@@ -59,6 +62,16 @@ export class SpriteRules {
 					{
 						ALT: () => {
 							result.traits = $.SUBRULE($.parm_traits);
+						},
+					},
+					{
+						ALT: () => {
+							result.width = $.SUBRULE($.parm_width);
+						},
+					},
+					{
+						ALT: () => {
+							result.height = $.SUBRULE($.parm_height);
 						},
 					},
 					{

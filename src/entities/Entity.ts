@@ -2,10 +2,12 @@ import { EventBuffer } from "../events/EventBuffer";
 import type ResourceManager from "../game/ResourceManager";
 import type { SpriteSheet } from "../game/Spritesheet";
 import type GameContext from "../game/types/GameContext";
+import { BBox } from "../maths/BBox.class";
 import type { GridCell } from "../maths/grid.math";
-import type { BBox, Point, TCollisionSide } from "../maths/math";
+import type { Point, TCollisionSide } from "../maths/math";
 import type { Scene } from "../scene/Scene";
-import type { ITraitCollides, ITraitObstructedOn, ITraitUpdate, Trait } from "../traits/Trait";
+import { type ITraitCollides, type ITraitObstructedOn, type ITraitUpdate, type Trait, TraitDict } from "../traits/Trait";
+import { getTraitClassname } from "../traits/Trait.factory";
 import { DIRECTIONS } from "../types/direction.type";
 import { generateID } from "../utils/id.util";
 import { getClassName } from "../utils/object.util";
@@ -25,15 +27,14 @@ export class Entity {
 	// a ghost won't interact with the player
 	public isGhost: boolean;
 
-	public previousBbox: BBox;
-	private traits: Map<string, Trait>;
+	private traits: TraitDict;
 	public events: EventBuffer;
+
+	public bbox: BBox;
 
 	private _lifetime: number;
 	private _vel: Point = { x: 0, y: 0 };
 	private _mass = 0;
-	private _pos: Point;
-	private _size: Point = { x: 0, y: 0 };
 	private previousVel: Point = { x: 0, y: 0 };
 	private previousMass = 0;
 
@@ -45,8 +46,8 @@ export class Entity {
 		this.class = getClassName(this.constructor);
 		this.id = generateID();
 
-		this._pos = { x, y };
-		this.previousBbox = { left: x, top: y, right: 0, bottom: 0 };
+		// this._pos = { x, y };
+		this.bbox = new BBox(x, y, 0, 0);
 		this.vel = { x: 0, y: 0 };
 		this.speed = 0;
 		this.mass = 1;
@@ -62,61 +63,13 @@ export class Entity {
 
 		this.events = new EventBuffer();
 
-		this.traits = new Map();
+		this.traits = new TraitDict();
 		this.collidesTraits = [];
 		this.updateTraits = [];
 		this.obstructedOnTraits = [];
 
 		this.currSprite = null;
 		this.spritesheet = sheetFilename ? (resourceMgr.get("sprite", sheetFilename) as SpriteSheet) : null;
-	}
-
-	public get left() {
-		return this._pos.x;
-	}
-	public get right() {
-		return this._pos.x + this._size.x;
-	}
-	public get top() {
-		return this._pos.y;
-	}
-	public get bottom() {
-		return this._pos.y + this._size.y;
-	}
-	public get width() {
-		return this._size.x;
-	}
-	public get height() {
-		return this._size.y;
-	}
-
-	public set left(x) {
-		this.previousBbox.left = this._pos.x;
-		this.previousBbox.right = this._pos.x + this._size.x;
-		this._pos.x = x;
-	}
-	public set top(y) {
-		this.previousBbox.top = this._pos.y;
-		this.previousBbox.bottom = this._pos.y + this._size.y;
-		this._pos.y = y;
-	}
-	public set right(x) {
-		this.previousBbox.left = this._pos.x;
-		this.previousBbox.right = this._pos.x + this._size.x;
-		this._pos.x = x - this._size.x;
-	}
-	public set bottom(y) {
-		this.previousBbox.top = this._pos.y;
-		this.previousBbox.bottom = this._pos.y + this._size.y;
-		this._pos.y = y - this._size.y;
-	}
-	public set width(w) {
-		this.previousBbox.right = this.right;
-		this._size.x = w;
-	}
-	public set height(h) {
-		this.previousBbox.bottom = this.bottom;
-		this._size.y = h;
 	}
 
 	public get mass() {
@@ -187,8 +140,8 @@ export class Entity {
 		if (trait) fn(trait);
 	}
 
-	public getTrait<T extends Trait>(name: string) {
-		return this.traits.get(name) as T;
+	public trait<T extends Trait>(name: string) {
+		return this.traits.get(getTraitClassname(name)) as T;
 	}
 
 	public queue(name: symbol, ...args: unknown[]) {
@@ -199,7 +152,7 @@ export class Entity {
 		if (!this.spritesheet || !this.spritesheet.has(name)) throw new Error(`no sprite ${name}`);
 
 		this.currSprite = name;
-		this._size = this.spritesheet.spriteSize(name);
+		this.bbox.setSize(this.spritesheet.spriteSize(name));
 	}
 
 	// TODO: probably useless; commented out for now
@@ -237,13 +190,13 @@ export class Entity {
 	public render(gc: GameContext) {
 		const ctx = gc.viewport.ctx;
 		ctx.fillStyle = "gray";
-		ctx.fillRect(this.left, this.top, this.width, this.height);
+		ctx.fillRect(this.bbox.left, this.bbox.top, this.bbox.width, this.bbox.height);
 		ctx.strokeStyle = "black";
 		ctx.beginPath();
-		ctx.moveTo(this.left, this.top);
-		ctx.lineTo(this.right, this.bottom);
-		ctx.moveTo(this.right, this.top);
-		ctx.lineTo(this.left, this.bottom);
+		ctx.moveTo(this.bbox.left, this.bbox.top);
+		ctx.lineTo(this.bbox.right, this.bbox.bottom);
+		ctx.moveTo(this.bbox.right, this.bbox.top);
+		ctx.lineTo(this.bbox.left, this.bbox.bottom);
 		ctx.stroke();
 	}
 }

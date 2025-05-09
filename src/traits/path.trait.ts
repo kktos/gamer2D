@@ -94,7 +94,7 @@ export class PathTrait extends Trait {
 		if (!point) {
 			if (this.currentProvider >= this.pointProviders.length - 1) this.isRunning = false;
 			this.currentProvider = (this.currentProvider + 1) % this.pointProviders.length;
-			point = { x: entity.left, y: entity.top };
+			point = { x: entity.bbox.left, y: entity.bbox.top };
 		}
 		return point;
 	}
@@ -144,8 +144,7 @@ export class PathTrait extends Trait {
 		entity.mass = 0;
 
 		const { x, y } = this.getNextPoint(deltaTime, entity);
-		entity.left = x;
-		entity.top = y;
+		entity.bbox.setPosition(x, y);
 	}
 }
 
@@ -172,7 +171,7 @@ function createLinePointProvider(step: number, fromX: number, fromY: number, toX
 	const slope = (toY - fromY) / (toX - fromX);
 	const offset = fromY - slope * fromX;
 	const linePointProvider = (deltaTime: number, entity: Entity): Point | null => {
-		const x = entity.left + step * speed * deltaTime;
+		const x = entity.bbox.left + step * speed * deltaTime;
 		if (x < fromX || x > toX) return null;
 		const y = slope * x + offset;
 		return {

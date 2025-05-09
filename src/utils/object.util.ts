@@ -1,27 +1,27 @@
-import { ArgColor, ArgExpression, ArgIdentifier, ArgVariable } from "../types/value.types";
+import { ArgColor, ArgExpression, ArgIdentifier, ArgVariable, ValueTrait } from "../types/value.types";
 
 // https://gist.github.com/Ely-S/4191458
 export function clone<T>(original: T, duplicata: Record<string, unknown> = {}): T {
 	for (const i in original) {
 		if (original[i] && typeof original[i] === "object") {
 			if (original[i] instanceof ArgColor) {
-				const col = new ArgColor(original[i].value);
-				duplicata[i] = col;
+				duplicata[i] = new ArgColor(original[i].value);
 				continue;
 			}
 			if (original[i] instanceof ArgVariable) {
-				const col = new ArgVariable(original[i].value);
-				duplicata[i] = col;
+				duplicata[i] = new ArgVariable(original[i].value);
 				continue;
 			}
 			if (original[i] instanceof ArgIdentifier) {
-				const col = new ArgIdentifier(original[i].value);
-				duplicata[i] = col;
+				duplicata[i] = new ArgIdentifier(original[i].value);
 				continue;
 			}
 			if (original[i] instanceof ArgExpression) {
-				const col = new ArgExpression(original[i].stack);
-				duplicata[i] = col;
+				duplicata[i] = new ArgExpression(original[i].stack);
+				continue;
+			}
+			if (original[i] instanceof ValueTrait) {
+				duplicata[i] = new ValueTrait(original[i].name, [...original[i].args]);
 				continue;
 			}
 			(duplicata as T)[i] = clone(original[i], original[i].constructor());

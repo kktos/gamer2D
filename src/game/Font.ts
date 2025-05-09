@@ -1,4 +1,4 @@
-import type { BBox } from "../maths/math";
+import { BBox } from "../maths/BBox.class";
 import { ALIGN_TYPES, type TAlignType } from "../script/compiler/layers/display/layout/text-sprite-props.rules";
 import type { RequireAllOrNone } from "../types/typescript.types";
 import { nameToRgba } from "../utils/canvas.utils";
@@ -99,7 +99,7 @@ export default class Font {
 	print(options: PrintOptions): BBox {
 		const { ctx, text, x, y, color, width, height, bgcolor } = options;
 
-		if (text === undefined || text === null || text === "") return { left: x, top: y, right: x, bottom: y };
+		if (text === undefined || text === null || text === "") return new BBox(x, y, 0, 0);
 
 		const key = JSON.stringify([text, x, y, color]);
 		if (!this.cache.has(key)) {
@@ -141,7 +141,7 @@ export default class Font {
 		}
 
 		const canvas = this.cache.get(key);
-		if (!canvas) return { left: x, top: y, right: x, bottom: y };
+		if (!canvas) return new BBox(x, y, 0, 0);
 
 		let newX = 0;
 		let newY = 0;
@@ -184,6 +184,6 @@ export default class Font {
 		}
 
 		ctx.drawImage(canvas, x + newX, y + newY);
-		return { left: x + newX, top: y + newY, right: x + newX + canvas.width, bottom: y + newY + canvas.height };
+		return new BBox(x + newX, y + newY, canvas.width, canvas.height);
 	}
 }

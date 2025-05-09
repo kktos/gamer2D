@@ -9,22 +9,22 @@ export class SolidTrait extends Trait implements ITraitObstructedOn {
 		switch (side) {
 			case COLLISION_SIDES.LEFT:
 				entity.vel.x = 0;
-				entity.left = cell.right;
+				entity.bbox.left = cell.right;
 				break;
 
 			case COLLISION_SIDES.RIGHT:
 				entity.vel.x = 0;
-				entity.right = cell.left;
+				entity.bbox.right = cell.left;
 				break;
 
 			case COLLISION_SIDES.TOP:
 				entity.vel.y = 0;
-				entity.top = cell.bottom;
+				entity.bbox.top = cell.bottom;
 				break;
 
 			case COLLISION_SIDES.BOTTOM:
 				entity.vel.y = 0;
-				entity.bottom = cell.top;
+				entity.bbox.bottom = cell.top;
 				break;
 		}
 	}

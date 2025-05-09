@@ -23,8 +23,8 @@ export class RectRules {
 			const result: TRect = {
 				type: OP_TYPES.RECT,
 				pos: $.SUBRULE($.parm_at),
-				width: $.SUBRULE($.layoutViewWidth),
-				height: $.SUBRULE($.layoutViewHeight),
+				width: $.SUBRULE($.parm_width),
+				height: $.SUBRULE($.parm_height),
 				// action: undefined,
 			};
 
@@ -37,7 +37,7 @@ export class RectRules {
 			$.OPTION2(() => {
 				$.CONSUME(tokens.Pad);
 				$.CONSUME2(tokens.Colon);
-				result.pad = $.SUBRULE($.tupleNumOrVar);
+				result.pad = $.SUBRULE($.tupleExpr);
 			});
 
 			$.ACTION(() => {

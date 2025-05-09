@@ -7,7 +7,7 @@ export class OffscreenTrait extends Trait {
 	static EVENT_OFF_SCREEN = Symbol.for("OFF_SCREEN");
 
 	update(gc: GameContext, entity: Entity, scene: Scene) {
-		if (scene.bbox.left <= entity.left && entity.left <= scene.bbox.right && entity.bottom <= scene.bbox.bottom && entity.top >= scene.bbox.top) return;
+		if (scene.bbox.contains(entity.bbox)) return;
 		entity.queue(OffscreenTrait.EVENT_OFF_SCREEN, entity);
 	}
 }

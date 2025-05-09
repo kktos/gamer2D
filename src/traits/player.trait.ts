@@ -1,25 +1,15 @@
-import LocalDB from "../utils/storage.util";
+import type { Entity } from "../entities/Entity";
+import type GameContext from "../game/types/GameContext";
 import { Trait } from "./Trait";
+import { KillableTrait } from "./killable.trait";
 
 export default class PlayerTrait extends Trait {
 	static EVENT_PLAYER_DEAD = Symbol.for("PLAYER_DEAD");
 
-	private lives: number;
-	private score: number;
-	private highscore: number;
-	private paddle: unknown;
-	private maxLifes: number;
-
-	constructor(paddle) {
+	constructor() {
 		super();
 
-		const currentStats = LocalDB.currentPlayer();
-		this.lives = currentStats.lives;
-		this.maxLifes = 0; //ENV.MAX_LIFES;
-		this.score = currentStats.score;
-		this.highscore = currentStats.highscore;
-
-		this.paddle = paddle;
+		this.on(KillableTrait.EVENT_KILLED, (entity) => {});
 
 		// this.on(KillableTrait.EVENT_KILLED, (entity) => {
 		// 	if (entity instanceof BallEntity) {
@@ -44,9 +34,5 @@ export default class PlayerTrait extends Trait {
 		// });
 	}
 
-	addLife() {
-		this.lives++;
-		if (this.lives > this.maxLifes) this.lives = this.maxLifes;
-		LocalDB.updateLives(this.lives);
-	}
+	collides(gc: GameContext, entity: Entity, target: Entity): void {}
 }

@@ -281,10 +281,10 @@ export class DebugView extends View {
 			const sprite = this.spritesheet.sprites.get(frameSprite);
 			if (!sprite) return;
 
-			const x = this.width / 2 - frameSpriteSize.x;
-			const y = this.height / 2 - frameSpriteSize.y;
-			drawPixelated(sprite[0], this.ctx, 2, x - frameSpriteSize.x - 5, y);
-			drawPixelated(sprite[1], this.ctx, 2, x + frameSpriteSize.x + 5, y);
+			const x = this.width / 2 - frameSpriteSize.width;
+			const y = this.height / 2 - frameSpriteSize.height;
+			drawPixelated(sprite[0], this.ctx, 2, x - frameSpriteSize.width - 5, y);
+			drawPixelated(sprite[1], this.ctx, 2, x + frameSpriteSize.width + 5, y);
 			return;
 		}
 
@@ -303,10 +303,10 @@ export class DebugView extends View {
 			const sprite = this.spritesheet.sprites.get(name);
 			if (!sprite) return;
 
-			const x = this.width / 2 - spriteSize.x;
-			const y = this.height / 2 - spriteSize.y;
-			drawPixelated(sprite[0], this.ctx, 2, x - spriteSize.x - 5, y);
-			drawPixelated(sprite[1], this.ctx, 2, x + spriteSize.x + 5, y);
+			const x = this.width / 2 - spriteSize.width;
+			const y = this.height / 2 - spriteSize.height;
+			drawPixelated(sprite[0], this.ctx, 2, x - spriteSize.width - 5, y);
+			drawPixelated(sprite[1], this.ctx, 2, x + spriteSize.width + 5, y);
 		}
 	}
 }

@@ -1,13 +1,17 @@
+import { OP_TYPES } from "../../../../types/operation.types";
 import { tokens } from "../../lexer";
+import type { TRepeat, TRepeatItem } from "../display/layout/repeat.rules";
 import type { TSprite } from "../display/layout/sprite.rules";
 
-export type TEntitiesLayerSprite = Pick<TSprite, "id" | "pos" | "range" | "dir" | "traits"> & {
+export type TEntitiesLayerSprite = Pick<TSprite, "type" | "id" | "pos" | "range" | "dir" | "traits" | "width" | "height"> & {
 	name: string;
 };
+export type TEntitiesLayerStatement = TEntitiesLayerSprite | TRepeat;
+
 export type TEntitiesLayerSheet = {
 	type: "entities";
 	settings?: Record<string, unknown>;
-	sprites?: TEntitiesLayerSprite[];
+	statements?: TEntitiesLayerStatement[];
 };
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
@@ -25,28 +29,31 @@ export class EntitiesLayerRules {
 				if (Object.keys(settings).length) sheet.settings = settings;
 			});
 
-			const sprites: TEntitiesLayerSprite[] = [];
+			const statements: TEntitiesLayerStatement[] = [];
 			$.MANY(() => {
 				$.OR([
 					{
 						ALT: () => {
-							$.SUBRULE($.layoutForClause);
+							const sprites: TRepeatItem[] = [];
+							const result: TRepeat = $.SUBRULE($.layoutForClause);
 							$.CONSUME2(tokens.OpenCurly);
-							$.MANY2(() => {
-								sprites.push($.SUBRULE2($.entitiesLayerSprite));
-							});
+							$.MANY2(() => sprites.push($.SUBRULE2($.entitiesLayerSprite)));
 							$.CONSUME2(tokens.CloseCurly);
+							$.ACTION(() => {
+								result.items = sprites;
+								statements.push(result);
+							});
 						},
 					},
 					{
-						ALT: () => sprites.push($.SUBRULE($.entitiesLayerSprite)),
+						ALT: () => statements.push($.SUBRULE($.entitiesLayerSprite)),
 					},
 				]);
 			});
 
 			$.CONSUME(tokens.CloseCurly);
 
-			if (sprites.length) sheet.sprites = sprites;
+			if (statements.length) sheet.statements = statements;
 			return sheet;
 		});
 	}
@@ -56,6 +63,7 @@ export class EntitiesLayerRules {
 			$.CONSUME(tokens.Sprite);
 
 			const result: Partial<TEntitiesLayerSprite> = {
+				type: OP_TYPES.SPRITE,
 				name: $.CONSUME(tokens.StringLiteral).payload,
 			};
 
@@ -86,6 +94,16 @@ export class EntitiesLayerRules {
 					{
 						ALT: () => {
 							result.traits = $.SUBRULE($.parm_traits);
+						},
+					},
+					{
+						ALT: () => {
+							result.width = $.SUBRULE($.parm_width);
+						},
+					},
+					{
+						ALT: () => {
+							result.height = $.SUBRULE($.parm_height);
 						},
 					},
 				]);

@@ -8,11 +8,11 @@ export function setWannaLogError(value: boolean) {
 	wannaLogError = value;
 }
 
-export function compile(text: string, startRule: string, globals?: Map<string, unknown>) {
+export function compile(text: string, startRule: string, globals?: Map<string, unknown>, options?: unknown) {
 	const lexingResult = SheetLexer.tokenize(text);
 	parser.input = lexingResult.tokens;
 	parser.variablesDict = globals ? globals : new Map();
-	const result = parser[startRule]();
+	const result = parser[startRule](options);
 	if (parser.errors.length > 0) {
 		if (wannaLogError) console.error(parser.errors);
 		const line = parser.errors[0].token.startLine;
@@ -22,5 +22,5 @@ export function compile(text: string, startRule: string, globals?: Map<string, u
 	return result;
 }
 
-export const compileScript = (text: string, globals?: Map<string, unknown>) => compile(text, "sceneSheet", globals);
-export const compileLayerScript = (text: string, globals?: Map<string, unknown>) => compile(text, "layerSheet", globals);
+export const compileScript = (text: string, globals?: Map<string, unknown>, options?: unknown) => compile(text, "sceneSheet", globals, options);
+export const compileLayerScript = (text: string, globals?: Map<string, unknown>, options?: unknown) => compile(text, "layerSheet", globals, options);

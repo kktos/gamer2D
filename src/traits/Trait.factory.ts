@@ -7,6 +7,7 @@ import { KillableTrait } from "./killable.trait";
 import { MouseXTrait } from "./mouseX.trait";
 import { MouseXYTrait } from "./mouseXY.trait";
 import { OffscreenTrait } from "./offscreen.trait";
+import TrapTrait from "./trap.trait";
 import { XDragTrait } from "./xdrag.trait";
 
 const traitClasses = {
@@ -17,6 +18,18 @@ const traitClasses = {
 	OffscreenTrait,
 	KillIfOffscreenTrait,
 	KillableTrait,
+	TrapTrait,
+};
+
+const traitNames = {
+	mousex: "MouseXTrait",
+	mousexy: "MouseXYTrait",
+	fade: "FadeTrait",
+	xdrag: "XDragTrait",
+	offscreen: "OffscreenTrait",
+	killifoffscreen: "KillIfOffscreenTrait",
+	killable: "KillableTrait",
+	trap: "TrapTrait",
 };
 
 export function setupTraits(traitsDefinitions: TraitConstructor[]) {
@@ -29,17 +42,16 @@ export function setupTrait(def: TraitConstructor) {
 	traitClasses[className] = def;
 }
 
-export function createTrait(className: string, ...args: unknown[]): Trait {
+export function getTraitClassname(name: string) {
+	let className = traitNames[name.toLowerCase()];
+	if (!className) className = name;
+	return className;
+}
+
+export function createTraitByName(name: string, ...args: unknown[]): Trait {
+	const className = getTraitClassname(name);
 	if (!traitClasses[className]) {
 		throw new TypeError(`Unknown Trait Type ${className}`);
 	}
 	return new traitClasses[className](...args);
 }
-
-// export function createTraitByName(resourceManager: ResourceManager, name: string, ...args: unknown[]): Trait {
-// 	const className = traitNames[name];
-// 	if (!className) {
-// 		throw new TypeError(`Unknown Trait Type ${name}`);
-// 	}
-// 	return new className(resourceManager, ...args);
-// }

@@ -23,7 +23,6 @@ export default class SpawnerTrait extends Trait {
 	update(gc: GameContext, entity: Entity, scene: Scene) {
 		if (!this.wannaSpawn || !this.entities.length) return;
 		this.wannaSpawn = false;
-		// this.entities.forEach(entity => scene.addTask(LevelScene.TASK_ADD_ENTITY, entity));
 		for (let idx = 0; idx < this.entities.length; idx++) {
 			const entity = this.entities[idx];
 			scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);

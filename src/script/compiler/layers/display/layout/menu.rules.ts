@@ -1,4 +1,4 @@
-import type { BBox } from "../../../../../maths/math";
+import type { BBox } from "../../../../../maths/BBox.class";
 import { OP_TYPES } from "../../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../../types/typescript.types";
 import type { ArgColor } from "../../../../../types/value.types";

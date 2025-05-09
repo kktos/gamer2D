@@ -1,5 +1,6 @@
+import type { BBox } from "./BBox.class";
+
 export type Point = { x: number; y: number };
-export type BBox = { left: number; top: number; right: number; bottom: number };
 
 export function getRandom(min, max) {
 	return Math.random() * (max - min) + min;

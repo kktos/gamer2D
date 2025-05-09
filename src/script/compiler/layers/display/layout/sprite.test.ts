@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { OP_TYPES } from "../../../../../types/operation.types";
-import { compileScript } from "../../../compiler";
+import { compile, compileScript } from "../../../compiler";
 
 describe("Sprite", () => {
 	it("should create a sprite", () => {
@@ -25,12 +25,12 @@ describe("Sprite", () => {
 			{
 				pos: [90, 428],
 				type: OP_TYPES.SPRITE,
-				sprite: "BubblunEntity",
+				name: "BubblunEntity",
 			},
 			{
 				pos: [90, 428],
 				type: OP_TYPES.SPRITE,
-				sprite: "BubblunEntity",
+				name: "BubblunEntity",
 				dir: 1,
 			},
 		]);
@@ -58,9 +58,24 @@ describe("Sprite", () => {
 				id: "test",
 				pos: [90, 428],
 				type: OP_TYPES.SPRITE,
-				sprite: "BubblunEntity",
+				name: "BubblunEntity",
 			},
 		]);
+	});
+
+	it("should create a sprite with with and height", () => {
+		const script = `
+			sprite "*" id:"test" width:10 height:20 at:90,428
+		`;
+		const result = compile(script, "layoutSprite");
+		expect(result).toEqual({
+			id: "test",
+			pos: [90, 428],
+			type: OP_TYPES.SPRITE,
+			name: "*",
+			width: 10,
+			height: 20,
+		});
 	});
 
 	it.skip("should handle bad sprite definition", () => {

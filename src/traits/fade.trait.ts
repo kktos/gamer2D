@@ -1,6 +1,5 @@
 import type { TextEntity } from "../entities/text.entity";
 import type GameContext from "../game/types/GameContext";
-import type { ArgColor } from "../types/value.types";
 import { hexToRgb } from "../utils/canvas.utils";
 import { Trait } from "./Trait";
 
@@ -13,9 +12,9 @@ export class FadeTrait extends Trait {
 	isRunning = false;
 	speed: number;
 
-	constructor(inOrOut: "in" | "out", color: ArgColor, speed = 60) {
+	constructor(inOrOut: "in" | "out", color: string, speed = 60) {
 		super();
-		const rgb = hexToRgb(color.value) || [0, 0, 0];
+		const rgb = hexToRgb(color) || [0, 0, 0];
 		this.color = `${rgb[0]}, ${rgb[1]}, ${rgb[2]}`;
 		this.isFadein = inOrOut === "in";
 		this.speed = speed / 5;

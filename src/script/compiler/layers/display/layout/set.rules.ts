@@ -38,7 +38,12 @@ export class SetRules {
 				{ ALT: () => $.CONSUME(tokens.StringLiteral).payload },
 				{ ALT: () => $.SUBRULE($.expr) },
 				{ ALT: () => $.SUBRULE($.layoutSetValueArray) },
-				{ ALT: () => $.SUBRULE($.layoutSetTrait) },
+				{
+					ALT: () => {
+						$.CONSUME(tokens.Trait);
+						return $.SUBRULE($.layoutSetTrait);
+					},
+				},
 				{ ALT: () => $.SUBRULE($.htmlColor) },
 			]);
 		});
@@ -46,30 +51,23 @@ export class SetRules {
 
 	static layoutSetTrait($) {
 		return $.RULE("layoutSetTrait", () => {
-			$.CONSUME(tokens.Trait);
 			const name = $.CONSUME(tokens.Identifier).image;
 
 			$.CONSUME(tokens.OpenParent);
-			const args: (ArgColor | ArgIdentifier | ArgVariable | string | number)[] = [];
+			const args: ValueTrait["args"] = [];
 			$.MANY_SEP({
 				SEP: tokens.Comma,
 				DEF: () => {
 					$.OR([
-						{ ALT: () => args.push($.SUBRULE($.number)) },
 						{ ALT: () => args.push(new ArgIdentifier($.CONSUME2(tokens.Identifier).image)) },
 						{ ALT: () => args.push(new ArgIdentifier($.CONSUME2(tokens.Left).image)) },
 						{ ALT: () => args.push(new ArgIdentifier($.CONSUME2(tokens.Right).image)) },
-						{ ALT: () => args.push(new ArgVariable($.CONSUME2(tokens.Variable).image.substring(1))) },
+						{ ALT: () => args.push($.SUBRULE($.expr)) },
 						{ ALT: () => args.push($.CONSUME2(tokens.StringLiteral).payload) },
 						{ ALT: () => args.push(new ArgColor($.CONSUME2(tokens.HexNumber).image)) },
 					]);
 				},
 			});
-
-			// $.ACTION(() => {
-			// 	if (args.length < 1 || typeof args[0] !== "string") throw new TypeError("Needs a name for trait");
-			// 	name = args.shift() as string;
-			// });
 
 			$.CONSUME(tokens.CloseParent);
 			return new ValueTrait(name, args);

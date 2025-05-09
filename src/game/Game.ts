@@ -1,5 +1,6 @@
 import { GAME_EVENTS } from "../constants/events.const";
 import { setupEntities, setupEntity } from "../entities/Entity.factory";
+import { enableDebugInspectors } from "../inspectors/debug.manager";
 import { setupLayer, setupLayers } from "../layers/Layer.factory";
 import { Timers } from "../layers/display/timers.class";
 import Director from "../scene/Director";
@@ -22,6 +23,7 @@ export default class Game {
 	private fpsManager: FPSManager;
 	private gc: GameContext;
 	private coppola: Director | null;
+	private isDebugEnabled = false;
 
 	constructor(
 		canvas: HTMLCanvasElement,
@@ -156,11 +158,13 @@ export default class Game {
 				return;
 
 			case "keyup":
-			case "keydown":
+			case "keydown": {
 				evt.type = e.type;
-				(evt as KeyEvent).key = (e as KeyboardEvent).key;
-				this.gc.keys.set((e as KeyboardEvent).key, evt.type === "keydown");
+				const key = (e as KeyboardEvent).key;
+				(evt as KeyEvent).key = key;
+				this.gc.keys.set(key, evt.type === "keydown");
 				break;
+			}
 
 			case "click":
 			case "mousemove": {
@@ -245,6 +249,12 @@ export default class Game {
 
 		// console.log("play()");
 		this.play();
+	}
+
+	enableDebug() {
+		if (!this.coppola) return;
+		this.isDebugEnabled = true;
+		enableDebugInspectors(this.coppola);
 	}
 
 	addEntity(entityName: string, entityClass: EntityConstructor) {

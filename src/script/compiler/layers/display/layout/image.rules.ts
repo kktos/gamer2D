@@ -1,11 +1,11 @@
-import type { BBox } from "../../../../../maths/math";
+import type { BBox } from "../../../../../maths/BBox.class";
 import { OP_TYPES } from "../../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../../types/typescript.types";
 import { tokens } from "../../../lexer";
 
 export type TImage = {
 	type: TupleToUnion<[typeof OP_TYPES.IMAGE]>;
-	sprite: string;
+	name: string;
 	pos: [number, number];
 	zoom?: number;
 	range?: [number, number];
@@ -20,7 +20,7 @@ export class ImageRules {
 
 			const result: Partial<TImage> = {
 				type: OP_TYPES.IMAGE,
-				sprite: $.CONSUME(tokens.StringLiteral).payload,
+				name: $.CONSUME(tokens.StringLiteral).payload,
 				pos: $.SUBRULE($.parm_at),
 			};
 			if (options?.zoom) {

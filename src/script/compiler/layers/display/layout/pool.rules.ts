@@ -1,5 +1,5 @@
 import type { Entity } from "../../../../../entities/Entity";
-import type { BBox } from "../../../../../maths/math";
+import type { BBox } from "../../../../../maths/BBox.class";
 import type { DIRECTIONS } from "../../../../../types/direction.type";
 import { OP_TYPES } from "../../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../../types/typescript.types";

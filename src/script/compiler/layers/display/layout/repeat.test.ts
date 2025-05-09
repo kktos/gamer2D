@@ -1,33 +1,20 @@
 import { describe, expect, it } from "vitest";
 import { OP_TYPES } from "../../../../../types/operation.types";
 import { ArgExpression, ArgVariable } from "../../../../../types/value.types";
-import { compileScript } from "../../../compiler";
+import { compile } from "../../../compiler";
 
 describe("Repeat", () => {
 	it("should do a repeat loop", () => {
 		const script = `
-		display "intro" {
-			display {
-				layout {
-					$Ypos = 190
-					repeat $idx count:9 {
-						text $idx at:90,$Ypos+$idx*40
-					}
-				}
+			repeat $idx count:9 {
+				text $idx at:90,$Ypos+$idx*40
 			}
-		}
 		`;
 
-		const result = compileScript(script);
+		const globals = new Map<string, unknown>([["Ypos", 0]]);
+		const result = compile(script, "layoutRepeat", globals);
 		expect(result).toBeDefined();
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
-		expect(displayLayer).toBeDefined();
-		expect(displayLayer).toHaveProperty("layout");
-		expect(Array.isArray(displayLayer.layout)).toBe(true);
-
-		const menu = displayLayer.layout.find((op) => op.type === OP_TYPES.REPEAT);
-
-		expect(menu).toEqual({
+		expect(result).toEqual({
 			type: OP_TYPES.REPEAT,
 			count: 9,
 			index: "idx",

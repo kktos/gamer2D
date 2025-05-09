@@ -1,9 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { OP_TYPES } from "../../../../../types/operation.types";
 import { ArgColor, ArgExpression, ArgVariable, ValueTrait } from "../../../../../types/value.types";
-import { compileScript } from "../../../compiler";
+import { compile, compileScript, setWannaLogError } from "../../../compiler";
 
 describe("Set Var Value", () => {
+	beforeAll(() => {
+		setWannaLogError(true);
+	});
+
 	it("should set an array of strings", () => {
 		const script = `
 		display "intro" {
@@ -78,52 +82,32 @@ describe("Set Var Value", () => {
 
 	it("should set an array of variables", () => {
 		const script = `
-		display "intro" {
-			display {
-			layout {
 				$traits = [
 					$one,
 					$two
 				]
-			}
-			}
-		}
 		`;
-		const result = compileScript(script);
+		const result = compile(script, "layoutSet");
 		expect(result).toBeDefined();
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
-		expect(displayLayer).toHaveProperty("layout");
-		expect(Array.isArray(displayLayer.layout)).toBe(true);
-
-		const numbers = displayLayer.layout.find((op) => op.name === "traits");
-		expect(numbers).toHaveProperty("type", OP_TYPES.SET);
-		expect(numbers).toHaveProperty("value", [new ArgVariable("one"), new ArgVariable("two")]);
+		expect(result).toHaveProperty("type", OP_TYPES.SET);
+		expect(result).toHaveProperty("value", [new ArgVariable("one"), new ArgVariable("two")]);
 	});
 
-	it("should set traits", () => {
-		const script = `
-		display "intro" {
-			display {
-			layout {
-				$fadein = trait FadeTrait("in", #00000000)
-				$mousX =  trait MouseXTrait()
-			}
-			}
-		}
+	describe("Set Traits", () => {
+		it("should deal with traits as var value", () => {
+			const script = `
+				trait FadeTrait("in", #00000000)
 		`;
-		const result = compileScript(script);
-		expect(result).toBeDefined();
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
-		expect(displayLayer).toHaveProperty("layout");
-		expect(Array.isArray(displayLayer.layout)).toBe(true);
+			const result = compile(script, "layoutSetValue");
+			expect(result).toEqual(new ValueTrait("FadeTrait", ["in", new ArgColor("#00000000")]));
+		});
 
-		const fadein = displayLayer.layout.find((op) => op.name === "fadein");
-		expect(fadein).toHaveProperty("type", OP_TYPES.SET);
-		expect(fadein).toHaveProperty("value", new ValueTrait("FadeTrait", ["in", new ArgColor("#00000000")]));
-
-		const mousX = displayLayer.layout.find((op) => op.name === "mousX");
-		expect(mousX).toHaveProperty("type", OP_TYPES.SET);
-		expect(mousX).toHaveProperty("value", new ValueTrait("MouseXTrait", []));
+		it("should deal with traits with expression", () => {
+			const globals = new Map<string, unknown>([["ypos", 0]]);
+			const script = "trait XDragTrait(600+($ypos*-1),70)";
+			const result = compile(script, "layoutSetValue", globals);
+			expect(result).toEqual(new ValueTrait("XDragTrait", [new ArgExpression([600, new ArgVariable("ypos"), -1, "Multiply", "Plus"]), 70]));
+		});
 	});
 
 	it("should set expr", () => {

@@ -5,7 +5,7 @@ import type GameContext from "../game/types/GameContext";
 import type { Layer } from "../layers/Layer";
 import { createLayerByName } from "../layers/Layer.factory";
 import type { UILayer } from "../layers/UILayer";
-import type { BBox } from "../maths/math";
+import { BBox } from "../maths/BBox.class";
 import type { TSceneSheet } from "../script/compiler/scenes/scene.rules";
 import { generateID } from "../utils/id.util";
 import { getClassName } from "../utils/object.util";
@@ -47,12 +47,7 @@ export class Scene {
 
 		this.screenWidth = gc.viewport.width;
 		this.screenHeight = gc.viewport.height;
-		this.bbox = {
-			left: 0,
-			top: 0,
-			right: this.screenWidth,
-			bottom: this.screenHeight,
-		};
+		this.bbox = new BBox(0, 0, this.screenWidth, this.screenHeight);
 
 		this.events = new EventEmitter();
 		this.layers = new Map<string, Layer>();

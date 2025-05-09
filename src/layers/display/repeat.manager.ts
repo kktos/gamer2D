@@ -2,8 +2,9 @@ import type { TImage } from "../../script/compiler/layers/display/layout/image.r
 import type { TRepeat, TRepeatItem } from "../../script/compiler/layers/display/layout/repeat.rules";
 import type { TSprite } from "../../script/compiler/layers/display/layout/sprite.rules";
 import type { TText } from "../../script/compiler/layers/display/layout/text.rules";
-import { evalNumberValue, evalString } from "../../script/engine/eval.script";
+import { evalExpr, evalNumberValue, evalString, evalVar } from "../../script/engine/eval.script";
 import { OP_TYPES } from "../../types/operation.types";
+import { ArgExpression, ArgVariable, ValueTrait } from "../../types/value.types";
 import { clone } from "../../utils/object.util";
 import type { TVarTypes, TVars } from "../../utils/vars.utils";
 
@@ -47,17 +48,32 @@ function processItem(item: TSprite | TText | TImage, idx: number, vars: TVars) {
 	switch (item.type) {
 		case OP_TYPES.TEXT:
 			item.text = evalString({ vars }, item.text);
-			item.pos[0] = evalNumberValue({ vars }, item.pos[0]);
-			item.pos[1] = evalNumberValue({ vars }, item.pos[1]);
 			break;
 		case OP_TYPES.IMAGE:
 		case OP_TYPES.SPRITE:
-			item.sprite = evalString({ vars }, item.sprite);
-			item.pos[0] = evalNumberValue({ vars }, item.pos[0]);
-			item.pos[1] = evalNumberValue({ vars }, item.pos[1]);
+			item.name = evalString({ vars }, item.name);
 			break;
 	}
 
-	// (item.pos as number[])[0] += (idx - from) * op.step.pos[0];
-	// (item.pos as number[])[1] += (idx - from) * op.step.pos[1];
+	item.pos[0] = evalNumberValue({ vars }, item.pos[0]);
+	item.pos[1] = evalNumberValue({ vars }, item.pos[1]);
+
+	// TODO: delay the eval until instanciation of the SPRITE|TEXT|IMAGE
+	// here, we do an immediate evaluation because of the loop iterator
+	// we need to find a way to add the iterator value...
+	if ("traits" in item && Array.isArray(item.traits)) {
+		for (const trait of item.traits) {
+			if (trait instanceof ValueTrait)
+				for (let idx = 0; idx < trait.args.length; idx++) {
+					const arg = trait.args[idx];
+					if (arg instanceof ArgVariable) {
+						trait.args[idx] = evalVar({ vars }, arg.value);
+						continue;
+					}
+					if (arg instanceof ArgExpression) {
+						trait.args[idx] = evalExpr({ vars }, arg);
+					}
+				}
+		}
+	}
 }
