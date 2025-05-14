@@ -1,0 +1,10 @@
+{
+	"name": "level-numbers",
+	"height": 11,
+	"width": 8,
+	"charset": "0123456789",
+	"img": "images/level-numbers.png",
+	"offsetX": 0,
+	"offsetY": 0,
+	"gapX": 1
+}

@@ -1,0 +1,49 @@
+2025-05-09T08:12:49.073439Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo"), AnchoredSystemPathBuf(".turbo\\cookies"), AnchoredSystemPathBuf(".turbo\\cookies\\1.cookie")}
+2025-05-09T08:12:49.073470Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-09T08:12:49.171811Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages\\gamer2d"), AnchoredSystemPathBuf("packages\\gamer2d\\.turbo"), AnchoredSystemPathBuf(".turbo\\cookies\\2.cookie")}
+2025-05-09T08:12:49.171835Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }, WorkspacePackage { name: Other("gamer2d"), path: AnchoredSystemPathBuf("packages\\gamer2d") }}))
+2025-05-09T08:12:49.281359Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("node_modules")}
+2025-05-09T08:12:49.281383Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-09T08:12:49.871276Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages\\gamer2d")}
+2025-05-09T08:12:49.871295Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("gamer2d"), path: AnchoredSystemPathBuf("packages\\gamer2d") }}))
+2025-05-09T08:12:49.871384Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-09T08:12:51.068020Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\cookies")}
+2025-05-09T08:12:51.068037Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-09T08:12:52.066850Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages\\gamer2d")}
+2025-05-09T08:12:52.066873Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("gamer2d"), path: AnchoredSystemPathBuf("packages\\gamer2d") }}))
+2025-05-09T08:12:52.315002Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-09T08:12:52.379336Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages\\gamer2d\\package.json")}
+2025-05-09T08:12:52.379358Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("gamer2d"), path: AnchoredSystemPathBuf("packages\\gamer2d") }}))
+2025-05-09T08:13:25.471705Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("README.md"), AnchoredSystemPathBuf("packages\\gamer2d\\README.md"), AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("packages\\gamer2d")}
+2025-05-09T08:13:25.471722Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }, WorkspacePackage { name: Other("gamer2d"), path: AnchoredSystemPathBuf("packages\\gamer2d") }}))
+2025-05-09T08:13:30.177992Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\cookies\\3.cookie")}
+2025-05-09T08:13:30.178010Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-09T08:13:30.270792Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\cookies"), AnchoredSystemPathBuf(".turbo\\cookies\\4.cookie")}
+2025-05-09T08:13:30.270812Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-09T08:13:30.971457Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages\\gamer2d")}
+2025-05-09T08:13:30.971478Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("gamer2d"), path: AnchoredSystemPathBuf("packages\\gamer2d") }}))
+2025-05-09T08:13:30.971583Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-09T08:13:32.472530Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("packages\\gamer2d")}
+2025-05-09T08:13:32.472548Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("gamer2d"), path: AnchoredSystemPathBuf("packages\\gamer2d") }}))
+2025-05-09T08:13:32.959250Z  WARN turborepo_lib::package_changes_watcher: hashes are the same, no need to rerun
+2025-05-09T08:13:33.068519Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\cookies"), AnchoredSystemPathBuf(".turbo\\cookies\\5.cookie"), AnchoredSystemPathBuf("apps\\test-bed\\.turbo"), AnchoredSystemPathBuf("packages\\gamer2d\\package.json"), AnchoredSystemPathBuf("apps\\test-bed"), AnchoredSystemPathBuf(".turbo\\cookies\\6.cookie")}
+2025-05-09T08:13:33.068543Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("my-game-app"), path: AnchoredSystemPathBuf("apps\\test-bed") }, WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }, WorkspacePackage { name: Other("gamer2d"), path: AnchoredSystemPathBuf("packages\\gamer2d") }}))
+2025-05-09T08:15:46.076099Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(""), AnchoredSystemPathBuf("_tmp_6088_72218fdcaf4e35f4826eb3b4d6d16880")}
+2025-05-09T08:15:46.076119Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-09T08:15:46.277505Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("node_modules")}
+2025-05-09T08:15:46.277530Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))
+2025-05-09T08:17:15.866088Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\test-bed\\src\\main.ts")}
+2025-05-09T08:17:15.866109Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("my-game-app"), path: AnchoredSystemPathBuf("apps\\test-bed") }}))
+2025-05-09T08:17:34.368671Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\test-bed\\src\\main.ts")}
+2025-05-09T08:17:34.368692Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("my-game-app"), path: AnchoredSystemPathBuf("apps\\test-bed") }}))
+2025-05-09T08:18:24.270204Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\test-bed\\src\\main.ts")}
+2025-05-09T08:18:24.270223Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("my-game-app"), path: AnchoredSystemPathBuf("apps\\test-bed") }}))
+2025-05-09T08:18:36.564829Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\test-bed\\src\\main.ts")}
+2025-05-09T08:18:36.564847Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("my-game-app"), path: AnchoredSystemPathBuf("apps\\test-bed") }}))
+2025-05-09T08:18:47.766169Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\test-bed\\src\\main.ts")}
+2025-05-09T08:18:47.766185Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("my-game-app"), path: AnchoredSystemPathBuf("apps\\test-bed") }}))
+2025-05-09T08:18:56.166135Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf("apps\\test-bed\\src\\main.ts")}
+2025-05-09T08:18:56.166150Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Other("my-game-app"), path: AnchoredSystemPathBuf("apps\\test-bed") }}))
+2025-05-09T09:22:47.861172Z  WARN daemon_server:listen_socket{pid_path=AbsoluteSystemPath("C:\\Users\\tmbar\\AppData\\Local\\Temp\\turbod\\8d9a7da16490d79f\\turbod.pid") sock_path=AbsoluteSystemPath("C:\\Users\\tmbar\\AppData\\Local\\Temp\\turbod\\8d9a7da16490d79f\\turbod.sock") running=true}: pidlock: stale pid file at "C:\\Users\\tmbar\\AppData\\Local\\Temp\\turbod\\8d9a7da16490d79f\\turbod.pid"    
+2025-05-09T09:22:49.078549Z  WARN turborepo_lib::package_changes_watcher: changed_files: {AnchoredSystemPathBuf(".turbo\\cookies")}
+2025-05-09T09:22:49.078685Z  WARN turborepo_lib::package_changes_watcher: changed_packages: Ok(Some({WorkspacePackage { name: Root, path: AnchoredSystemPathBuf("") }}))

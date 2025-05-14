@@ -1,0 +1,17 @@
+spritesheet "items" {
+	image "images/all-in-one-transparent.png"
+
+	sprites {
+
+		grid 16,17 //inc:1,0 gap:3,0
+
+		for $xPos of [8,29,47,65,84,102,119,137,155,173,191,209,227,245] index:$idx {
+			"item-${idx}" scale:2 { tiles at:$xPos,801 count:1 }
+		}
+	}
+
+//	animations {
+//		"zen-chan" { frames "zen-chan" range:0,3 }
+//	}
+
+}

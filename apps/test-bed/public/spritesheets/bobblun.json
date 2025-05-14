@@ -1,0 +1,95 @@
+{
+	"img": "images/bobblun.png",
+	"sprites": {
+		"bobblun": {
+			"scale": 1,
+			"tiles": {
+				"pos": [9, 14],
+				"size": [16, 16],
+				"increment": [1, 0],
+				"offset": [1, 0],
+				"count": 7
+			}			
+		},
+		"bobblun-idle": {
+			"scale": 1,
+			"tiles": {
+				"pos": [9, 14],
+				"size": [16, 16],
+				"increment": [2, 0],
+				"offset": [1, 0],
+				"count": 2
+			}			
+		},
+		"bobblun-burp": {
+			"scale": 1,
+			"tiles": {
+				"pos": [9, 34],
+				"size": [16, 16],
+				"increment": [1, 0],
+				"offset": [1, 0],
+				"count": 16
+			}			
+		},
+		"bobblun-death": {
+			"scale": 1,
+			"groups": [
+				{
+					"tiles": {
+						"pos": [9, 74],
+						"size": [16, 16],
+						"increment": [1, 0],
+						"offset": [1, 0],
+						"count": 6
+					}
+				},
+				{
+					"rects": [
+						[111, 74, 18, 16],
+						[130, 74, 21, 16],
+						[152, 74, 22, 16]
+					]
+				},
+				{
+					"tiles": {
+						"pos": [175, 74],
+						"size": [16, 16],
+						"increment": [1, 0],
+						"offset": [1, 0],
+						"count": 7
+					}
+				}				
+			]
+		},
+		"in-bobble": {
+			"rects": [
+				[134, 181, 30, 32],
+				[169, 181, 30, 32]
+			]
+		},
+		"life": {
+			"rect":	[69, 4, 7, 6]
+		}
+
+	},
+	"animations": {
+
+		"bobblun": {
+			"len": 6,
+			"frames": { "name": "bobblun", "range": [0, 4] }
+		},
+		"bobblun-burp": {
+			"len": 0.1,
+			"frames": { "name": "bobblun-burp", "range": [0, 15] }
+		},
+		"bobblun-death": {
+			"len": 0.1,
+			"frames": { "name": "bobblun-death", "range": [0, 15] }
+		},
+		"in-bobble": {
+			"len": 0.1,
+			"frames": { "name": "in-bobble", "range": [0, 1] }
+		}
+
+	}
+}

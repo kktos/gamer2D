@@ -1,0 +1,53 @@
+layer display {
+
+	// timer "death" ms:1000 repeat:3
+	// on "TIME_OUT:death" {
+	// 	EntityPool("lifePool").release()
+	// 	$bubblun.lives= $bubblun.lives-1
+	// 	entities("player1").trait("KillableTrait").kill()
+	// }
+
+	on PLAYER_DEAD {
+		EntityPool("lifePool").release()
+		$bubblun.lives= $bubblun.lives-1
+	}
+
+	on SCENE_STARTED {
+		log("SCENE_STARTED");
+		// timer("death").start()
+	}
+
+	on "POOL_SPAWNED:lifePool" $id $count {
+		$pos= 20+($count-1)*12
+		log("POOL_SPAWNED", $id, $count, $pos)
+		EntityPool("lifePool").get($count-1).bbox.setPosition($pos, 460)
+	}
+
+	on "POOL_RELEASED:lifePool" $id $count {
+		log("POOL_RELEASED", $id, $count)
+	}
+
+	on "TRAPPED:trigRound" $target {
+		entities("round1").trait("KillableTrait").kill()
+		entities("round2").trait("KillableTrait").kill()
+		entities("trigRound").trait("KillableTrait").kill()
+	}
+
+	layout {
+		size 3
+		text "1UP" at:130,0 align:right color:#00FF00
+		text "HIGH SCORE" at:300,0 align:center color:#FF0000
+		text "2UP" at:500,0 color:#00BBFF align:center
+
+		text "${bubblun.score}" at:155,24 align:right
+		text $highscore at:300,24 align:center
+		text "00" at:560,24 align:right
+
+		text "ROUND  1" at:230,265 id:"round1" align:left size:2 traits:[Killable()]
+		text "READY !" at:230,285 id:"round2" align:left size:2 traits:[KillableTrait()]
+
+		pool "bubblun:life" id:"lifePool" at:0,460 count:10 spawn:$bubblun.lives
+		// text "${bubblun.lives}" at:80, 463 color:black size:1
+
+	}
+}

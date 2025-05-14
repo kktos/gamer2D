@@ -1,0 +1,40 @@
+display "menu" {
+
+	showCursor
+	debug false
+
+	background {
+		color #222
+	}
+
+	display {
+		font "bubble-bobble"
+
+		ui {
+			pos top
+		}
+
+		on SPRITESHEET_LOADED $spritesheet {
+			$viewer.spritesheet= $spritesheet
+		}
+
+		layout {
+
+			// text "this is a test !" at:220,10 size:1
+
+			$ypos=($clientHeight/3)*2
+			view SpritesheetEditorView id:"editor" at:0,0 width:$clientWidth height:$ypos
+
+			$ypos2=$clientHeight/3-20
+			view SpritesheetViewerView id:"viewer" at:0,$ypos+10 width:$clientWidth height:$ypos2
+		}
+
+	}
+
+	entities {
+		settings {
+			show_entities_count = true
+		}
+	}
+	
+}
