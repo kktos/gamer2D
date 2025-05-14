@@ -1,6 +1,6 @@
 import type { Entity } from "../entities/Entity";
 import Anim from "../game/Anim";
-import type GameContext from "../game/types/GameContext";
+import type { GameContext } from "../game/types/GameContext";
 import { Trait } from "./Trait";
 
 export default class AnimationTrait extends Trait {

@@ -3,18 +3,13 @@ import type ResourceManager from "../../../game/ResourceManager";
 import type { AnimMap, SpriteMap, SpriteSheet } from "../../../game/Spritesheet";
 import type { GameContext } from "../../../game/types/GameContext";
 import { drawPixelated } from "../../../utils/canvas.utils";
-import type { TVars } from "../../../utils/vars.utils";
 import type { UILayer } from "../../UILayer";
 import { View } from "./View";
 import type { ViewContext } from "./View.factory";
 
 export class DebugView extends View {
-	private gc: GameContext;
-	private vars: TVars;
 	private width: number;
 	private height: number;
-	private ctx: CanvasRenderingContext2D;
-	private canvas: HTMLCanvasElement;
 	private rezMgr: ResourceManager;
 	private spritesheetList: string[];
 	private names: string[] = [];

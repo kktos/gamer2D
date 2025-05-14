@@ -1,6 +1,6 @@
 import type { Entity } from "../entities/Entity";
 import { GLOBAL_VARIABLES } from "../game/globals";
-import type GameContext from "../game/types/GameContext";
+import type { GameContext } from "../game/types/GameContext";
 import type { Grid } from "../maths/grid.math";
 import type { Scene } from "../scene/Scene";
 import type { TEntitiesLayerSheet, TEntitiesLayerSprite, TEntitiesLayerStatement } from "../script/compiler/layers/entities/entities.rules";

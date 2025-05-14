@@ -1,4 +1,4 @@
-import type Font from "../game/Font";
+import type { Font } from "../game/Font";
 import type ResourceManager from "../game/ResourceManager";
 import { ALIGN_TYPES, type TAlignType } from "../script/compiler/layers/display/layout/text-sprite-props.rules";
 import type { ArgColor } from "../types/value.types";

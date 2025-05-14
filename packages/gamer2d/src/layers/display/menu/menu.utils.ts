@@ -1,4 +1,4 @@
-import type GameContext from "../../../game/types/GameContext";
+import type { GameContext } from "../../../game/types/GameContext";
 import { BBox } from "../../../maths/BBox.class";
 import type { TMenuItemRendered } from "../../../script/compiler/layers/display/layout/menu.rules";
 import { OP_TYPES } from "../../../types/operation.types";

@@ -9,7 +9,7 @@
     "clean": "turbo run clean && rm -rf node_modules"
   },
   "devDependencies": {
-    "turbo": "^1.13.3"
+    "turbo": "^2.5.3"
   },
-    "packageManager": "pnpm@10.10.0"
+    "packageManager": "pnpm@10.11.0"
 }

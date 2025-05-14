@@ -1,5 +1,5 @@
 import { GP_BUTTONS, GP_STICKS_AXES } from "../constants/gamepad.const";
-import type GameContext from "../game/types/GameContext";
+import type { GameContext } from "../game/types/GameContext";
 import type { GameEvent } from "../game/types/GameEvent";
 import type Director from "../scene/Director";
 

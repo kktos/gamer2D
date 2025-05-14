@@ -1,5 +1,5 @@
 import type { Entity } from "../entities/Entity";
-import type GameContext from "../game/types/GameContext";
+import type { GameContext } from "../game/types/GameContext";
 import type { WorldCollisionLayer } from "../layers/worldcollision.layer";
 import type { Scene } from "../scene/Scene";
 import { Trait } from "./Trait";

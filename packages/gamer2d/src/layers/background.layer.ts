@@ -1,4 +1,4 @@
-import type GameContext from "../game/types/GameContext";
+import type { GameContext } from "../game/types/GameContext";
 import type { Scene } from "../scene/Scene";
 import type { TSceneBackgroundSheet } from "../script/compiler/layers/background/background.rules";
 import { Layer } from "./Layer";

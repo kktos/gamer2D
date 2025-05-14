@@ -1,5 +1,5 @@
 import { GLOBAL_VARIABLES } from "../game/globals";
-import type GameContext from "../game/types/GameContext";
+import type { GameContext } from "../game/types/GameContext";
 import type { TLayerDefinition } from "../game/types/GameOptions";
 import { compileLayerScript } from "../script/compiler/compiler";
 import type { TLayerDef } from "../script/compiler/scenes/scene.rules";

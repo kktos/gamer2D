@@ -1,5 +1,5 @@
 import type ResourceManager from "../game/ResourceManager";
-import type GameContext from "../game/types/GameContext";
+import type { GameContext } from "../game/types/GameContext";
 import { Entity } from "./Entity";
 import { createEntityByName } from "./Entity.factory";
 

@@ -1,7 +1,7 @@
 import type { Entity } from "../../../entities/Entity";
 import { createEntityByName } from "../../../entities/Entity.factory";
 import { EntityPool } from "../../../entities/EntityPool";
-import type GameContext from "../../../game/types/GameContext";
+import type { GameContext } from "../../../game/types/GameContext";
 import type { TText } from "../../../script/compiler/layers/display/layout/text.rules";
 import type { TVarSounds } from "../../../types/engine.types";
 import LocalDB from "../../../utils/storage.util";

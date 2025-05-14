@@ -308,8 +308,8 @@ export class ResizablePanel extends HTMLElement {
 	private _upgradeProperty(prop: TProps) {
 		if (Object.hasOwn(this, prop)) {
 			const value = this[prop];
-			delete this[prop]; // Remove temporary setter
-			this[prop] = value; // Call actual setter
+			delete this[prop];
+			this[prop] = value;
 		}
 	}
 

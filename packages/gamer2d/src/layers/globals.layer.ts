@@ -1,5 +1,5 @@
 import { GLOBAL_VARIABLES } from "../game/globals";
-import type GameContext from "../game/types/GameContext";
+import type { GameContext } from "../game/types/GameContext";
 import type { Scene } from "../scene/Scene";
 import type { TGlobalsLayerSheet } from "../script/compiler/layers/globals/globals.rules";
 import { execSet } from "../script/engine/exec.script";

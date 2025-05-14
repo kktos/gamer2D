@@ -1,4 +1,4 @@
-import type GameContext from "../game/types/GameContext";
+import type { GameContext } from "../game/types/GameContext";
 import type { DisplayLayer } from "../layers/display.layer";
 import type { TSceneSheet } from "../script/compiler/scenes/scene.rules";
 import { Scene } from "./Scene";

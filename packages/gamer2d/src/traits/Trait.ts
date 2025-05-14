@@ -1,6 +1,6 @@
 import type { Entity } from "../entities/Entity";
 import type { EventCallback } from "../events/EventBuffer";
-import type GameContext from "../game/types/GameContext";
+import type { GameContext } from "../game/types/GameContext";
 import type { GridCell } from "../maths/grid.math";
 import type { TCollisionSide } from "../maths/math";
 import type { Scene } from "../scene/Scene";

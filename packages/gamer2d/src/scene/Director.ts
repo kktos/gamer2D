@@ -1,4 +1,4 @@
-import type GameContext from "../game/types/GameContext";
+import type { GameContext } from "../game/types/GameContext";
 import { Scene } from "./Scene";
 import { SceneFactory } from "./Scene.factory";
 

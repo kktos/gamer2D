@@ -1,5 +1,5 @@
 import type { Entity } from "../entities/Entity";
-import type GameContext from "../game/types/GameContext";
+import type { GameContext } from "../game/types/GameContext";
 import type { BBox } from "../maths/BBox.class";
 import { type Grid, GridCell } from "../maths/grid.math";
 import { COLLISION_SIDES } from "../maths/math";
