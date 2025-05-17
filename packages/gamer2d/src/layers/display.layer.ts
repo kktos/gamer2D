@@ -196,7 +196,7 @@ export class DisplayLayer extends UILayer {
 		for (let idx = 0; idx < this.views.length; idx++) {
 			const view = this.views[idx];
 
-			if ("x" in e) {
+			if ("x" in e && !["keyup", "keydown"].includes(e.type)) {
 				if (!view.bbox?.isPointInside(e.x, e.y)) continue;
 				e.x = e.x - view.bbox.left;
 				e.y = e.y - view.bbox.top;
