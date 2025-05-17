@@ -91,6 +91,7 @@ function createUI() {
 	FloatingWindowElement.bootstrap();
 	const panel = document.createElement("floating-window") as FloatingWindowElement;
 	panel.title = "Tools";
+	panel.id = "Tools-floating-window";
 
 	const width = 600;
 	const height = 450;
@@ -106,5 +107,6 @@ function createUI() {
 
 	document.body.appendChild(panel);
 
+	panel.restoreState();
 	return panel;
 }

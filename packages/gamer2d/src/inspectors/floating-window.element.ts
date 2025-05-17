@@ -34,17 +34,18 @@ export class FloatingWindowElement extends HTMLElement {
 		this.closeButton = this.shadow.querySelector(".close-button") as HTMLButtonElement;
 		this.minimizeButton = this.shadow.querySelector(".minimize-button") as HTMLButtonElement;
 		this.windowContainer = this.shadow.querySelector(".window-container") as HTMLElement;
-		this.contentArea = this.shadow.querySelector(".content-area") as HTMLElement; // Initialize contentArea
+		this.contentArea = this.shadow.querySelector(".content-area") as HTMLElement;
 
 		this._initDrag();
 		this._initResize();
 		this._initControls();
+		this.restoreState();
 	}
 
 	connectedCallback() {
 		this._updateTitle();
 		this._updateCloseButtonVisibility();
-		this._applyInitialGeometry();
+		this.setInitialValues();
 		// Ensure minimized state is correctly applied if set initially
 		if (this.hasAttribute("minimized")) {
 			this._updateMinimizedState(true);
@@ -66,15 +67,12 @@ export class FloatingWindowElement extends HTMLElement {
 			case "initial-height":
 			case "initial-top":
 			case "initial-left":
-				if (!this.isDragging && !this.isResizing) {
-					// Avoid conflicts during active operations
-					this._applyInitialGeometry();
-				}
+				if (!this.isDragging && !this.isResizing) this.setInitialValues();
 				break;
 		}
 	}
 
-	private _applyInitialGeometry() {
+	private setInitialValues() {
 		const width = this.getAttribute("initial-width");
 		const height = this.getAttribute("initial-height");
 		const top = this.getAttribute("initial-top");
@@ -169,6 +167,7 @@ export class FloatingWindowElement extends HTMLElement {
 		this.isDragging = false;
 		document.removeEventListener("mousemove", this._onDrag);
 		document.removeEventListener("mouseup", this._onDragEnd);
+		this.saveState();
 	};
 
 	private _initResize() {
@@ -256,6 +255,30 @@ export class FloatingWindowElement extends HTMLElement {
 				this.dispatchEvent(new CustomEvent("minimized"));
 			}
 		});
+	}
+
+	public saveState() {
+		if (this.id) {
+			const state = {
+				width: this.style.width,
+				height: this.style.height,
+				left: this.style.left,
+				top: this.style.top,
+			};
+			localStorage.setItem(this.id, JSON.stringify(state));
+		}
+	}
+	public restoreState() {
+		if (this.id) {
+			const state = localStorage.getItem(this.id);
+			if (state) {
+				const { left, top, width, height } = JSON.parse(state);
+				this.style.left = left;
+				this.style.top = top;
+				this.style.width = width;
+				this.style.height = `${height}px`;
+			}
+		}
 	}
 
 	/**
