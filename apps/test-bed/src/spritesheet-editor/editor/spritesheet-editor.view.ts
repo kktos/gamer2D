@@ -22,6 +22,7 @@ type TCMD = typeof CMD_MOVE | typeof CMD_SELECT | typeof CMD_MOVING | typeof CMD
 
 export class SpritesheetEditorView extends View {
 	static EVENT_SPRITESHEET_LOADED = Symbol.for("SPRITESHEET_LOADED");
+	static EVENT_ANIM_CREATE = Symbol.for("ANIM_CREATE");
 
 	private srcImage: HTMLImageElement | HTMLCanvasElement | undefined;
 	private imageOffsetX: number;
@@ -93,7 +94,18 @@ export class SpritesheetEditorView extends View {
 			case "select-cmd":
 				this.cmdSelect();
 				break;
-			case "btnDetectSprites": {
+			case "create-anim": {
+				const form = this.contentElement.querySelector<HTMLFormElement>("#animForm");
+				if (!form) break;
+				const data = new FormData(form);
+				const options = {
+					name: data.get("name"),
+					length: data.get("length"),
+				};
+				this.layer.scene.emit(SpritesheetEditorView.EVENT_ANIM_CREATE, options);
+				break;
+			}
+			case "detect-sprites": {
 				const form = this.contentElement.querySelector<HTMLFormElement>("#spritesDetectForm");
 				if (!form) break;
 				const data = new FormData(form);
@@ -464,15 +476,6 @@ export class SpritesheetEditorView extends View {
 					output = multiple(foundRects);
 					break;
 			}
-			// const size = foundRects.reduce(
-			// 	(acc, r) => {
-			// 		acc.width = Math.max(r.width, acc.width);
-			// 		acc.height = Math.max(r.height, acc.height);
-			// 		return acc;
-			// 	},
-			// 	{ width: 0, height: 0 },
-			// );
-			// console.log(`grid ${size.width},${size.height}`);
 			console.log(`grid ${gridW},${gridH}`);
 			console.log(output.join("\n"));
 		}
