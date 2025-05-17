@@ -10,12 +10,15 @@ display "Spritesheet Editor" {
 	display {
 		font "bubble-bobble"
 
-		ui {
-			pos top
-		}
+		ui { pos bottom }
 
 		on SPRITESHEET_LOADED $spritesheet {
 			$viewer.spritesheet= $spritesheet
+		}
+
+		on ANIM_CREATE $options {
+			log("ANIM_CREATE", $options);
+			// $viewer.spritesheet= $spritesheet
 		}
 
 		layout {
