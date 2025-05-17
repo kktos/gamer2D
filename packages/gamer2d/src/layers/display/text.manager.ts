@@ -1,8 +1,8 @@
 import type { Entity } from "../../entities/Entity";
 import { type TextDTO, TextEntity } from "../../entities/text.entity";
-import type { TFunctionCall } from "../../script/compiler/layers/display/layout/action.rules";
 import { ALIGN_TYPES } from "../../script/compiler/layers/display/layout/text-sprite-props.rules";
 import type { TText } from "../../script/compiler/layers/display/layout/text.rules";
+import type { TFunctionCall } from "../../script/compiler/shared/action.rules";
 import { evalArg, evalNumber, evalValue, isStringInterpolable } from "../../script/engine/eval.script";
 import { type PathDefDTO, PathTrait } from "../../traits/path.trait";
 import type { TVars } from "../../utils/vars.utils";

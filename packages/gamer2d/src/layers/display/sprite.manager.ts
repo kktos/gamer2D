@@ -1,7 +1,7 @@
 import type { Entity } from "../../entities/Entity";
 import { createEntityByName } from "../../entities/Entity.factory";
-import type { TFunctionCall } from "../../script/compiler/layers/display/layout/action.rules";
 import type { TSprite } from "../../script/compiler/layers/display/layout/sprite.rules";
+import type { TFunctionCall } from "../../script/compiler/shared/action.rules";
 import { evalArg, evalNumberValue } from "../../script/engine/eval.script";
 import { type PathDefDTO, PathTrait } from "../../traits/path.trait";
 import type { DisplayLayer } from "../display.layer";
