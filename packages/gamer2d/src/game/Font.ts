@@ -26,9 +26,9 @@ type TPrintOptionsBase = {
 	x: number;
 	y: number;
 	color?: string;
+	bgcolor?: string;
 	width: number;
 	height: number;
-	bgcolor?: string;
 };
 export type PrintOptions = RequireAllOrNone<TPrintOptionsBase, "width" | "height">;
 
@@ -58,6 +58,8 @@ export class Font {
 	public valign: TAlignType;
 	public spritesheet: SpriteSheet;
 	public hasLowercase: boolean;
+	public color!: string;
+	public bgcolor!: string;
 
 	private spriteHeight: number;
 	private spriteWidth: number;
@@ -107,7 +109,8 @@ export class Font {
 
 		if (text === undefined || text === null || text === "") return new BBox(x, y, 0, 0);
 
-		const key = JSON.stringify([text, x, y, color]);
+		const textColor = color ?? this.color ?? "white";
+		const key = JSON.stringify([text, x, y, textColor]);
 		if (!this.cache.has(key)) {
 			const canvas = document.createElement("canvas");
 			const str = this.hasLowercase ? String(text) : String(text).toUpperCase();
@@ -128,8 +131,8 @@ export class Font {
 			//     ctx.fillRect(0, 0, canvas.width, canvas.height);
 			// }
 
-			if (color) {
-				const [r, g, b, a = 255] = nameToRgba(color);
+			if (textColor !== "white") {
+				const [r, g, b, a = 255] = nameToRgba(textColor);
 				const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 				const data = imageData.data;
 				for (let i = 0; i < data.length; i += 4) {
@@ -185,7 +188,7 @@ export class Font {
 					newY += height;
 					break;
 			}
-			ctx.fillStyle = bgcolor ?? "transparent";
+			ctx.fillStyle = bgcolor ?? this.bgcolor ?? "transparent";
 			ctx.fillRect(x, y, width, height);
 		}
 

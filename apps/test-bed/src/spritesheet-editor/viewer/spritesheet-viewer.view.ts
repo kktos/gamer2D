@@ -139,6 +139,8 @@ export class SpritesheetViewerView extends View {
 			let ypos = SPRITES_YPOS_START - 12;
 
 			this.font.valign = ALIGN_TYPES.CENTER;
+			this.font.color = "black";
+			this.font.bgcolor = "white";
 			this.font.print({
 				ctx: this.ctx,
 				text: ` Sprites: ${ss.sprites.size}`,
@@ -146,8 +148,6 @@ export class SpritesheetViewerView extends View {
 				y: ypos - 6,
 				width: this.canvas.width,
 				height: 13,
-				color: "black",
-				bgcolor: "white",
 			});
 
 			let idx = 0;
@@ -160,8 +160,6 @@ export class SpritesheetViewerView extends View {
 						text: `${key} ${sprite[0].width}x${sprite[0].height}`,
 						x: 100 - this.imageOffsetX,
 						y: SPRITES_YPOS_START - 11,
-						color: "black",
-						bgcolor: "white",
 					});
 				}
 
@@ -191,8 +189,6 @@ export class SpritesheetViewerView extends View {
 				y: ypos - 3,
 				width: this.canvas.width,
 				height: 13,
-				color: "black",
-				bgcolor: "white",
 			});
 			ypos += 10;
 			ss.animations.forEach((anim, key) => {
