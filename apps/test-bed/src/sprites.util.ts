@@ -10,7 +10,11 @@ import type { Rect } from "gamer2d/maths/math";
  * @returns An array of SpriteBoundingBox objects, each representing a detected sprite.
  *          Coordinates in SpriteBoundingBox are relative to the top-left of the `captureRect`.
  */
-export function findSpritesInCanvasRect(canvas: HTMLCanvasElement, captureRect: { x: number; y: number; width: number; height: number }): Rect[] {
+export function findSpritesInCanvasRect(
+	canvas: HTMLCanvasElement,
+	captureRect: Rect,
+	isBackground: (data: Uint8ClampedArray<ArrayBufferLike>, pixelIndex: number) => boolean,
+) {
 	const ctx = canvas.getContext("2d");
 	if (!ctx) {
 		console.error("Canvas 2D context not available. Cannot find sprites.");
@@ -38,100 +42,129 @@ export function findSpritesInCanvasRect(canvas: HTMLCanvasElement, captureRect: 
 	// 2D array to keep track of visited pixels
 	const visited: boolean[][] = Array.from({ length: imgHeight }, () => Array(imgWidth).fill(false));
 
-	for (let r = 0; r < imgHeight; r++) {
-		// r for row (y-coordinate in the captured area)
-		for (let c = 0; c < imgWidth; c++) {
-			// c for column (x-coordinate in the captured area)
+	const bfs = (c, r) => {
+		if (visited[r][c]) return;
 
-			if (visited[r][c]) {
-				continue; // Skip already visited pixels
-			}
+		const pixelStartIndex = (r * imgWidth + c) * 4; // Each pixel has 4 components (R,G,B,A)
+		// const alpha = data[pixelStartIndex + 3]; // Alpha component is the 4th one (index 3)
+		// if (alpha === 0) {
 
-			const pixelStartIndex = (r * imgWidth + c) * 4; // Each pixel has 4 components (R,G,B,A)
-			const alpha = data[pixelStartIndex + 3]; // Alpha component is the 4th one (index 3)
+		if (isBackground(data, pixelStartIndex)) {
+			// Pixel is transparent
+			visited[r][c] = true; // Mark as visited and continue
+			return;
+		}
 
-			if (alpha === 0) {
-				// Pixel is transparent
-				visited[r][c] = true; // Mark as visited and continue
-				continue;
-			}
+		// Found an unvisited, non-transparent pixel: this is the start of a new sprite region
+		let minSpriteX = c;
+		let maxSpriteX = c;
+		let minSpriteY = r;
+		let maxSpriteY = r;
 
-			// Found an unvisited, non-transparent pixel: this is the start of a new sprite region
-			let minSpriteX = c;
-			let maxSpriteX = c;
-			let minSpriteY = r;
-			let maxSpriteY = r;
+		// Use a queue for Breadth-First Search (BFS) to find all connected non-transparent pixels
+		const queue: { x: number; y: number }[] = [{ x: c, y: r }];
+		visited[r][c] = true; // Mark the starting pixel as visited
+		let head = 0; // BFS queue pointer
 
-			// Use a queue for Breadth-First Search (BFS) to find all connected non-transparent pixels
-			const queue: { x: number; y: number }[] = [{ x: c, y: r }];
-			visited[r][c] = true; // Mark the starting pixel as visited
-			let head = 0; // BFS queue pointer
+		while (head < queue.length) {
+			const { x: currentX, y: currentY } = queue[head++];
 
-			while (head < queue.length) {
-				const { x: currentX, y: currentY } = queue[head++];
+			// Update the bounding box for the current sprite being formed
+			minSpriteX = Math.min(minSpriteX, currentX);
+			maxSpriteX = Math.max(maxSpriteX, currentX);
+			minSpriteY = Math.min(minSpriteY, currentY);
+			maxSpriteY = Math.max(maxSpriteY, currentY);
 
-				// Update the bounding box for the current sprite being formed
-				minSpriteX = Math.min(minSpriteX, currentX);
-				maxSpriteX = Math.max(maxSpriteX, currentX);
-				minSpriteY = Math.min(minSpriteY, currentY);
-				maxSpriteY = Math.max(maxSpriteY, currentY);
+			// Define 4-directional neighbors (up, down, left, right)
+			// const neighbors = [
+			// 	{ dx: 0, dy: -1 }, // Up
+			// 	{ dx: 0, dy: 1 }, // Down
+			// 	{ dx: -1, dy: 0 }, // Left
+			// 	{ dx: 1, dy: 0 }, // Right
+			// ];
+			const neighbors = [
+				{ dx: 0, dy: -1 }, // Up
+				{ dx: 0, dy: 1 }, // Down
+				{ dx: -1, dy: 0 }, // Left
+				{ dx: 1, dy: 0 }, // Right
+				{ dx: -1, dy: -1 },
+				{ dx: 1, dy: -1 },
+				{ dx: -1, dy: 1 },
+				{ dx: 1, dy: 1 },
+			];
 
-				// Define 4-directional neighbors (up, down, left, right)
-				// const neighbors = [
-				// 	{ dx: 0, dy: -1 }, // Up
-				// 	{ dx: 0, dy: 1 }, // Down
-				// 	{ dx: -1, dy: 0 }, // Left
-				// 	{ dx: 1, dy: 0 }, // Right
-				// ];
-				const neighbors = [
-					{ dx: 0, dy: -1 }, // Up
-					{ dx: 0, dy: 1 }, // Down
-					{ dx: -1, dy: 0 }, // Left
-					{ dx: 1, dy: 0 }, // Right
-					{ dx: -1, dy: -1 },
-					{ dx: 1, dy: -1 },
-					{ dx: -1, dy: 1 },
-					{ dx: 1, dy: 1 },
-				];
+			for (const { dx, dy } of neighbors) {
+				const neighborX = currentX + dx;
+				const neighborY = currentY + dy;
 
-				for (const { dx, dy } of neighbors) {
-					const neighborX = currentX + dx;
-					const neighborY = currentY + dy;
+				// Check if the neighbor is within the bounds of the captured image
+				if (neighborX >= 0 && neighborX < imgWidth && neighborY >= 0 && neighborY < imgHeight) {
+					if (!visited[neighborY][neighborX]) {
+						// If neighbor hasn't been visited
+						const neighborPixelStartIndex = (neighborY * imgWidth + neighborX) * 4;
+						// const neighborAlpha = data[neighborPixelStartIndex + 3];
 
-					// Check if the neighbor is within the bounds of the captured image
-					if (neighborX >= 0 && neighborX < imgWidth && neighborY >= 0 && neighborY < imgHeight) {
-						if (!visited[neighborY][neighborX]) {
-							// If neighbor hasn't been visited
-							const neighborPixelStartIndex = (neighborY * imgWidth + neighborX) * 4;
-							const neighborAlpha = data[neighborPixelStartIndex + 3];
+						visited[neighborY][neighborX] = true;
 
-							if (neighborAlpha > 0) {
-								// If neighbor is non-transparent
-								visited[neighborY][neighborX] = true; // Mark as visited
-								queue.push({ x: neighborX, y: neighborY }); // Add to BFS queue
-							} else {
-								// If neighbor is transparent, mark it as visited so we don't check it again
-								visited[neighborY][neighborX] = true;
-							}
-						}
+						// If neighbor is non-transparent Add to BFS queue
+						// if (neighborAlpha > 0) queue.push({ x: neighborX, y: neighborY });
+						if (!isBackground(data, neighborPixelStartIndex)) queue.push({ x: neighborX, y: neighborY });
 					}
 				}
 			}
-
-			// BFS for this connected component (sprite) is complete.
-			// Store its bounding box.
-			sprites.push({
-				x: minSpriteX,
-				y: minSpriteY,
-				width: maxSpriteX - minSpriteX + 1,
-				height: maxSpriteY - minSpriteY + 1,
-			});
 		}
-	}
+
+		// BFS for this connected component (sprite) is complete.
+		// Store its bounding box.
+		sprites.push({
+			x: minSpriteX,
+			y: minSpriteY,
+			width: maxSpriteX - minSpriteX + 1,
+			height: maxSpriteY - minSpriteY + 1,
+		});
+	};
+
+	if (imgWidth > imgHeight)
+		// c for column (x-coordinate in the captured area)
+		for (let c = 0; c < imgWidth; c++) {
+			// r for row (y-coordinate in the captured area)
+			for (let r = 0; r < imgHeight; r++) {
+				bfs(c, r);
+			}
+		}
+	else
+		for (let r = 0; r < imgHeight; r++) {
+			for (let c = 0; c < imgWidth; c++) {
+				bfs(c, r);
+			}
+		}
 
 	return sprites;
 }
+/*
+function logVisited(visited, imgWidth, imgHeight, minSpriteX) {
+	const newCanvas = document.createElement("canvas");
+	newCanvas.width = imgWidth;
+	newCanvas.height = imgHeight;
+	const ctx = newCanvas.getContext("2d") as CanvasRenderingContext2D;
+	ctx.fillStyle = "black";
+	ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
 
+	for (let c = 0; c < newCanvas.width; c++) {
+		for (let r = 0; r < newCanvas.height; r++) {
+			if (visited[r][c]) {
+				ctx.fillStyle = "red";
+				ctx.fillRect(c, r, 1, 1);
+			}
+			if (c === minSpriteX) {
+				ctx.fillStyle = "white";
+				ctx.fillRect(c, r, 1, 1);
+			}
+		}
+	}
+	console.log("%c     ", `font-size:${newCanvas.height}px; background:url(${newCanvas.toDataURL()}) no-repeat;`, minSpriteX);
+}
+*/
 /**
  * Creates a new canvas containing a copy of a specified rectangular area from an existing canvas.
  *

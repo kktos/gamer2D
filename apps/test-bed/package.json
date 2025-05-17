@@ -9,8 +9,8 @@
   },
   "devDependencies": {
     "http-server": "^14.1.1",
-    "typescript": "^5.2.2",
-    "vite": "^5.2.0"
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
   },
   "dependencies": {
     "gamer2d": "workspace:*"

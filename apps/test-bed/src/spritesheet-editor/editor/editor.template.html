@@ -1,0 +1,189 @@
+<style>
+	@import url("src/spritesheet-editor/base.css");
+	@import url("src/spritesheet-editor/editor/editor.css");
+	@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css");
+</style>
+
+<div class="action-panel">
+
+	<div class="section-title">Commands</div>
+	<div class="button-group">
+		<button id="move-cmd" class="action-btn selected">
+			<i class="fas fa-arrows-alt"></i>
+			<span>Move</span>
+		</button>
+		<button id="select-cmd" class="action-btn">
+			<i class="fas fa-mouse-pointer"></i>
+			<span>Select</span>
+		</button>
+	</div>
+
+	<div class="section-title">File Actions</div>
+	<div class="button-group last-group">
+		<button id="open-image" class="action-btn primary">
+			<i class="fa-solid fa-file-image"></i>
+			<span>Open Image</span>
+		</button>
+		<button id="open-spritesheet" class="action-btn primary">
+			<i class="fas fa-th"></i>
+			<span>Open Spritesheet</span>
+		</button>
+		<button id="new-spritesheet" class="action-btn primary">
+			<i class="fas fa-plus"></i>
+			<span>New Spritesheet</span>
+		</button>
+	</div>
+
+	<!-- <div id="btnOpenImage" class="btn">Open Image</div>
+	<div id="btnOpenSpriteSheet" class="btn">Open SpriteSheet</div>
+	<div id="btnNewSpriteSheet" class="btn">New SpriteSheet</div>
+	<div class="sep-1 align-self-center"></div>
+	<div id="btnMove" class="btn on">Move</div>
+	<div id="btnSelect" class="btn">Select</div> -->
+</div>
+
+
+<div class="tabs-container">
+	<div class="tabs">
+		<button class="tab-btn active" data-tab="command-tab">Sprites Detector</button>
+		<button class="tab-btn" data-tab="action-tab">Editor</button>
+	</div>
+
+	<div class="tab-content">
+		<div id="command-tab" class="tab-pane active">
+
+			<form id="spritesDetectForm">
+				<div class="grid gap-6 p-6 rounded shadow" style="min-width:320px; max-width:400px;">
+
+					<div class="grid gap-2">
+						<div class="font-semibold">Detection Mode:</div>
+						<div class="flex gap-4">
+							<label class="flex items-center gap-1">
+								<input type="radio" value="single" name="mode" checked>
+								<span>Single Sprite</span>
+							</label>
+							<label class="flex items-center gap-1">
+								<input type="radio" value="multiple" name="mode">
+								<span>Multiple Sprites</span>
+							</label>
+						</div>
+					</div>
+
+					<div>
+						<label for="spriteName" class="font-semibold">Sprite Name</label>
+						<input type="text" name="spriteName" placeholder="Sprite Name" class="input w-full mt-1">
+					</div>
+
+					<div class="grid grid-cols-2 gap-4">
+						<div>
+							<div class="font-semibold mb-1">Min Size (px)</div>
+							<label for="minSpriteWidth" class="block text-xs">Width</label>
+							<input type="number" name="minSpriteWidth" placeholder="e.g., 4" value="4" min="1"
+								class="input w-full">
+							<label for="minSpriteHeight" class="block text-xs mt-2">Height</label>
+							<input type="number" name="minSpriteHeight" placeholder="e.g., 4" value="4" min="1"
+								class="input w-full">
+						</div>
+						<div>
+							<div class="font-semibold mb-1">Expected Size (px)</div>
+							<label for="expectedSpriteWidth" class="block text-xs">Width</label>
+							<input type="number" name="expectedSpriteWidth" placeholder="e.g., 32" min="1" value="16"
+								class="input w-full">
+							<label for="expectedSpriteHeight" class="block text-xs mt-2">Height</label>
+							<input type="number" name="expectedSpriteHeight" placeholder="e.g., 32" min="1" value="16"
+								class="input w-full">
+						</div>
+					</div>
+
+					<div class="flex justify-center mt-4">
+						<div id="btnDetectSprites" class="btn btn-primary px-6 py-2">Detect</div>
+					</div>
+				</div>
+			</form>
+
+		</div>
+
+		<div id="action-tab" class="tab-pane rows-1-a">
+
+			<textarea id="script"></textarea>
+			<div class="grid">
+				<div class="sep-1 align-self-end"></div>
+				<div id="btnCompile" class="btn justify-self-end m-2 p-b-4 p-i-12">Compile</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<!-- 
+		<div class="tabs-panel" role="tablist">
+	<button id="btnSpritesDetector" class="tab-btn" role="tab" aria-selected="false" tabindex="0">
+		Sprites Detector
+	</button>
+	<button id="btnEditor" class="tab-btn active" role="tab" aria-selected="true" tabindex="1">
+		Editor
+	</button>
+</div>
+<div class="content-panel">
+
+	<div class="tab inactive grid place-center" id="detectOptions">
+		<form id="spritesDetectForm">
+			<div class="grid gap-6 p-6 rounded shadow" style="min-width:320px; max-width:400px;">
+
+				<div class="grid gap-2">
+					<div class="font-semibold">Detection Mode:</div>
+					<div class="flex gap-4">
+						<label class="flex items-center gap-1">
+							<input type="radio" value="single" name="mode" checked>
+							<span>Single Sprite</span>
+						</label>
+						<label class="flex items-center gap-1">
+							<input type="radio" value="multiple" name="mode">
+							<span>Multiple Sprites</span>
+						</label>
+					</div>
+				</div>
+
+				<div>
+					<label for="spriteName" class="font-semibold">Sprite Name</label>
+					<input type="text" name="spriteName" placeholder="Sprite Name" class="input w-full mt-1">
+				</div>
+
+				<div class="grid grid-cols-2 gap-4">
+					<div>
+						<div class="font-semibold mb-1">Min Size (px)</div>
+						<label for="minSpriteWidth" class="block text-xs">Width</label>
+						<input type="number" name="minSpriteWidth" placeholder="e.g., 4" value="4" min="1"
+							class="input w-full">
+						<label for="minSpriteHeight" class="block text-xs mt-2">Height</label>
+						<input type="number" name="minSpriteHeight" placeholder="e.g., 4" value="4" min="1"
+							class="input w-full">
+					</div>
+					<div>
+						<div class="font-semibold mb-1">Expected Size (px)</div>
+						<label for="expectedSpriteWidth" class="block text-xs">Width</label>
+						<input type="number" name="expectedSpriteWidth" placeholder="e.g., 32" min="1" value="16"
+							class="input w-full">
+						<label for="expectedSpriteHeight" class="block text-xs mt-2">Height</label>
+						<input type="number" name="expectedSpriteHeight" placeholder="e.g., 32" min="1" value="16"
+							class="input w-full">
+					</div>
+				</div>
+
+				<div class="flex justify-center mt-4">
+					<div id="btnDetectSprites" class="btn btn-primary px-6 py-2">Detect</div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div class="tab active grid rows-1-a" id="scriptEditor">
+		<textarea id="script"></textarea>
+		<div class="grid">
+			<div class="sep-1 align-self-end"></div>
+			<div id="btnCompile" class="btn justify-self-end m-2 p-b-4 p-i-12">Compile</div>
+		</div>
+	</div>
+
+</div> 
+-->

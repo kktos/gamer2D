@@ -40,7 +40,7 @@ export class UILayer extends Layer {
 	}
 
 	bindEvents(elm: Element, handler) {
-		const btnList = elm.querySelectorAll(".btn");
+		const btnList = elm.querySelectorAll(".btn,BUTTON");
 		for (let idx = 0; idx < btnList.length; idx++) {
 			btnList[idx].addEventListener("click", (evt) => evt.target instanceof Element && evt.isTrusted && handler.onClickUIBtn(btnList[idx].id));
 		}
@@ -93,11 +93,11 @@ function createUI() {
 	panel.title = "Tools";
 
 	const width = 600;
-	const height = 400;
+	const height = 450;
 	panel.setAttribute("initial-width", String(width));
 	panel.setAttribute("initial-height", String(height));
-	panel.setAttribute("initial-top", `${document.body.clientHeight - height - 20}px`);
-	panel.setAttribute("initial-left", `${document.body.clientWidth - width - 20}px`);
+	panel.setAttribute("initial-top", `${document.body.clientHeight - height - 10}px`);
+	panel.setAttribute("initial-left", `${document.body.clientWidth - width - 10}px`);
 
 	panel.style.setProperty("--window-bg-color", "rgb(0 0 0 / 85%)");
 	panel.style.setProperty("--window-title-bg-color", "rgb(22 88 120 / 85%)");

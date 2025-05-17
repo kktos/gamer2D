@@ -1,0 +1,29 @@
+spritesheet "level-tiles" {
+	image "images/level-tiles.png"
+
+	sprites {
+
+		grid 16,16 inc:0,1 gap:0,5
+
+		"level-L" scale:2 {
+			tiles at:72,23 count:4
+		}
+
+		grid 16,16 inc:0,1 gap:0,4
+		"level-L2" scale:2 {
+			tiles at:72,106 count:3
+		}
+
+		grid 16,16 inc:0,1 gap:0,5
+		"level-L3" scale:2 {
+			tiles at:72,167 count:3
+		}
+
+		grid 16,16 inc:0,1 gap:0,4
+		"level-L4" scale:2 {
+			tiles at:72,229 count:6
+		}
+
+	}
+
+}

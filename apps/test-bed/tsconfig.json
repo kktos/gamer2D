@@ -12,7 +12,7 @@
     "noImplicitAny": false,                            /* Enable error reporting for expressions and declarations with an implied 'any' type. */
     "skipLibCheck": true,
     "noEmit": true,
-    "lib": ["ESNext", "DOM" ],
+    "lib": ["ESNext", "DOM", "DOM.Iterable" ],
         "composite": false,
     "declaration": true,
     "declarationMap": true,
