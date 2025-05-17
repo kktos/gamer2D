@@ -126,30 +126,17 @@ export class SpritesheetEditorView extends View {
 	}
 
 	handleEvent(gc, e) {
-		if (e.type === "keyup") {
-			switch (e.key) {
-				case "Escape":
-					this.capturedArea = null;
-					break;
-				case "s":
-					this.cmdSelect();
-					break;
-				case "m":
-					this.cmdMove();
-					break;
-				case "o":
-					this.openImage();
-					break;
-				case "d":
-					// this.openSpritesDetector();
-					break;
-			}
-			return;
-		}
-
 		if (!this.srcImage) return;
 
 		switch (e.type) {
+			case "keyup":
+				switch (e.key) {
+					case "Escape":
+						this.capturedArea = null;
+						break;
+				}
+				break;
+
 			case "wheel":
 				this.zoom += e.deltaY * 0.001;
 				this.zoom = Math.min(this.zoom, 10);
