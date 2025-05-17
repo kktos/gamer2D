@@ -254,7 +254,7 @@ export class SpriteSheetRules {
 	static spriteSheetGrid($) {
 		return $.RULE("spriteSheetGrid", () => {
 			$.CONSUME(tokens.Grid);
-			const grid: TSpriteSheetGrid = { size: $.SUBRULE($.tupleExpr) };
+			const grid: TSpriteSheetGrid = { inc: [1, 0], gap: [0, 0], size: $.SUBRULE($.tupleExpr) };
 			$.OPTION(() => {
 				$.MANY(() => {
 					$.OR([

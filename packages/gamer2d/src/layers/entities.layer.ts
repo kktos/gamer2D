@@ -81,6 +81,7 @@ export class EntitiesLayer extends Layer {
 		});
 	}
 
+	// TODO: check Matter-js collisions : https://github.com/liabru/matter-js/blob/master/src/collision/Collision.js
 	private handleCollisions(gc: GameContext) {
 		for (let targetIdx = 0; targetIdx < this.entities.length; targetIdx++) {
 			const target = this.entities[targetIdx];

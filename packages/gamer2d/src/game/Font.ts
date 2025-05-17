@@ -44,7 +44,7 @@ export function loadFontData(sheetDef: TFontSheet) {
 			for (const [index, char] of [...sheetDef.charset].entries()) {
 				const x = offsetX + (index % charsPerLine) * charWidth;
 				const y = offsetY + Math.floor(index / charsPerLine) * charHeight;
-				fontSprite.define(char, x, y, sheetDef.width, sheetDef.height);
+				fontSprite.define(char, { x, y, width: sheetDef.width, height: sheetDef.height });
 			}
 			return new Font(sheetDef.name, fontSprite, sheetDef.height, sheetDef.width, sheetDef.hasLowercase);
 		})
@@ -138,7 +138,7 @@ export class Font {
 						data[i + 1] = g;
 						data[i + 2] = b;
 						data[i + 3] = a;
-					}
+					} else data[i + 3] = 0;
 				}
 				ctx.putImageData(imageData, 0, 0);
 			}

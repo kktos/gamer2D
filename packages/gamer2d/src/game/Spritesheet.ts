@@ -1,6 +1,7 @@
+import type { Rect } from "../maths/math";
 import { compile } from "../script/compiler/compiler";
-import type { TSpriteSheet } from "../script/compiler/ressources/spritesheet.rules";
-import { drawZoomedImage } from "../utils/canvas.utils";
+import type { TSpriteSheet, TSpriteSheetGrid } from "../script/compiler/ressources/spritesheet.rules";
+import { type TImageData, drawZoomedImage } from "../utils/canvas.utils";
 import { createSpriteSheet } from "../utils/createSpriteSheet.util";
 import { loadImage, loadText } from "../utils/loaders.util";
 import Anim from "./Anim";
@@ -8,13 +9,18 @@ import Anim from "./Anim";
 export type SpriteMap = Map<string, HTMLCanvasElement[]>;
 export type AnimMap = Map<string, Anim>;
 
+type TDefineOptions = {
+	gridSize?: TSpriteSheetGrid["size"];
+	scale?: number;
+};
+
 export class SpriteSheet {
 	public animations: AnimMap;
 	public sprites: SpriteMap;
 	public name: string;
 
 	readonly img: HTMLImageElement | HTMLCanvasElement;
-	private data: { imgData: Uint8ClampedArray<ArrayBufferLike>; width: number };
+	private data: TImageData;
 
 	static loadScript(filename: string) {
 		return loadText(filename)
@@ -47,30 +53,59 @@ export class SpriteSheet {
 		this.animations = new Map();
 	}
 
-	define(name: string, x: number, y: number, w: number, h: number, { scale = 1 } = {}) {
+	define(name: string, r: Rect, { gridSize, scale }: TDefineOptions = {}) {
+		scale = scale ?? 1;
+		gridSize = gridSize ?? [1, 1];
 		const sprites = [false, true].map((flip) => {
 			const canvas = document.createElement("canvas");
 			const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 			ctx.imageSmoothingEnabled = false;
 
-			canvas.width = w * scale;
-			canvas.height = h * scale;
+			const srcWidth = r.width * scale;
+			const srcHeight = r.height * scale;
+			let destWidth = srcWidth;
+			let destHeight = srcHeight;
+
+			let destX = 0;
+			if (r.width < gridSize[0]) {
+				const dx = gridSize[0] - r.width;
+				destX = Math.floor(dx / 2);
+				destWidth = gridSize[0] * scale;
+			}
+
+			let destY = 0;
+			if (r.height < gridSize[1]) {
+				const dy = gridSize[1] - r.height;
+				destY = Math.floor(dy / 2);
+				destHeight = gridSize[1] * scale;
+			}
+
+			// console.log(name, destX, destY, gridSize[0], r.width);
+			canvas.width = destWidth;
+			canvas.height = destHeight;
 
 			if (flip) {
 				ctx.scale(-1, 1);
-				ctx.translate(-w * scale, 0);
+				ctx.translate(-r.width * scale, 0);
 			}
 
 			if (scale > 1)
-				drawZoomedImage(this.data, ctx, scale, {
-					x,
-					y,
-					w: canvas.width,
-					h: canvas.height,
-				});
+				drawZoomedImage(
+					this.data,
+					ctx,
+					scale,
+					{
+						x: r.x,
+						y: r.y,
+						w: srcWidth,
+						h: srcHeight,
+					},
+					destX,
+					destY,
+				);
 			else {
 				ctx.scale(Math.abs(scale), Math.abs(scale));
-				ctx.drawImage(this.img, x, y, w, h, 0, 0, w, h);
+				ctx.drawImage(this.img, r.x, r.y, r.width, r.height, destX, destY, r.width, r.height);
 			}
 
 			return canvas;

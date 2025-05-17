@@ -46,7 +46,6 @@ export class Scene {
 		this.id = generateID();
 		this.name = sheet.name;
 
-		console.log("sheet.debug", sheet.debug);
 		switch (sheet.debug) {
 			case true:
 				enableDebug();
