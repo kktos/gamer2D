@@ -1,4 +1,4 @@
-display "menu" {
+display "Spritesheet Editor" {
 
 	showCursor
 	debug false

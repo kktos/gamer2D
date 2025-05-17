@@ -79,7 +79,7 @@ try {
 	addView("editor", SpritesheetEditorView);
 	addView("viewer", SpritesheetViewerView);
 
-	game.start("menu", resources);
+	game.start("editor", resources);
 } catch (err) {
 	console.error("GAME ERROR", err);
 }
