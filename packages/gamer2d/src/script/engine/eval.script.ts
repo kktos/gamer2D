@@ -2,7 +2,7 @@ import { createTraitByName } from "../../traits/Trait.factory";
 import type { TResultValue } from "../../types/engine.types";
 import { ArgColor, ArgExpression, ArgIdentifier, ArgVariable, ValueTrait } from "../../types/value.types";
 import type { TVarTypes, TVars } from "../../utils/vars.utils";
-import type { TFunctionArg } from "../compiler/layers/display/layout/action.rules";
+import type { TFunctionArg } from "../compiler/shared/action.rules";
 import { execParseArgs } from "./exec.script";
 
 export function isStringInterpolable(text: string) {

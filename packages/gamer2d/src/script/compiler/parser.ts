@@ -2,7 +2,6 @@ import { EmbeddedActionsParser } from "chevrotain";
 import { BackgroundLayerRules } from "./layers/background/background.rules";
 import { DebugRules } from "./layers/debug/debug.rules";
 import { DisplayRules } from "./layers/display/display.rules";
-import { ActionRules } from "./layers/display/layout/action.rules";
 import { DefAnimRules } from "./layers/display/layout/defanim.rules";
 import { ForRules } from "./layers/display/layout/for.rules";
 import { ImageRules } from "./layers/display/layout/image.rules";
@@ -30,6 +29,7 @@ import { UserDefinedLayerRules } from "./layers/user_defined/user_defined.rules"
 import { tokenList } from "./lexer";
 import { SpriteSheetRules } from "./ressources/spritesheet.rules";
 import { SceneSheetRules } from "./scenes/scene.rules";
+import { ActionRules } from "./shared/action.rules";
 import { ExprRules } from "./shared/expr.rules";
 import { MiscRules } from "./shared/misc.rules";
 import { ParmsRules } from "./shared/parms.rules";
@@ -105,14 +105,15 @@ export class SheetParser extends EmbeddedActionsParser {
 	public layoutStatement = LayoutRules.layoutStatement(this);
 	public layoutText = TextRules.layoutText(this);
 	public layoutAction = ActionRules.layoutAction(this);
-	public layoutActionBlock = ActionRules.layoutActionBlock(this);
-	public layoutActionStatement = ActionRules.layoutActionStatement(this);
-	public layoutActionFunctionCallList = ActionRules.layoutActionFunctionCallList(this);
-	public layoutActionFunctionCall = ActionRules.layoutActionFunctionCall(this);
-	public layoutActionFunctionName = ActionRules.layoutActionFunctionName(this);
 	public layoutSprite = SpriteRules.layoutSprite(this);
 	public layoutImage = ImageRules.layoutImage(this);
 	public textSpriteProps = TextSpritePropsRules.textSpriteProps(this);
+
+	public actionBlock = ActionRules.actionBlock(this);
+	public actionStatement = ActionRules.actionStatement(this);
+	public actionFunctionCallList = ActionRules.actionFunctionCallList(this);
+	public actionFunctionCall = ActionRules.actionFunctionCall(this);
+	public actionFunctionName = ActionRules.actionFunctionName(this);
 
 	public layoutPool = EntityPoolRules.layoutPool(this);
 

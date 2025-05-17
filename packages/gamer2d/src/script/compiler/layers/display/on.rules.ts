@@ -1,5 +1,5 @@
 import { tokens } from "../../lexer";
-import type { TActionList } from "./layout/action.rules";
+import type { TActionList } from "../../shared/action.rules";
 
 export type TEventHandlerDef = { action: TActionList; args?: string[] };
 export type TEventHandlerDict = Record<string, TEventHandlerDef>;
@@ -28,7 +28,7 @@ export class OnRules {
 				});
 			});
 
-			const handlerDef: TEventHandlerDef = { action: $.SUBRULE($.layoutActionBlock) };
+			const handlerDef: TEventHandlerDef = { action: $.SUBRULE($.actionBlock) };
 			handlers[eventName] = handlerDef;
 			if (args.length) handlerDef.args = args;
 

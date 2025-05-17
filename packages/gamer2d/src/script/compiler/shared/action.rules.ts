@@ -1,6 +1,6 @@
-import { ArgColor, ArgIdentifier, type ArgVariable } from "../../../../../types/value.types";
-import { tokens } from "../../../lexer";
-import type { TSet } from "./set.rules";
+import { ArgColor, ArgIdentifier, ArgVariable } from "../../../types/value.types";
+import type { TSet } from "../layers/display/layout/set.rules";
+import { tokens } from "../lexer";
 
 export type TFunctionArg = ArgVariable | ArgIdentifier | ArgColor | number | string;
 export type TFunctionCall = {
@@ -13,25 +13,26 @@ export type TActionList = TActionStatement[];
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class ActionRules {
 	static layoutAction($) {
+		// TODO: should be moved to menu rules
 		return $.RULE("layoutAction", () => {
 			// action:
 			$.CONSUME(tokens.Action);
 			$.CONSUME(tokens.Colon);
 
 			// { <statements> }
-			return $.SUBRULE($.layoutActionBlock);
+			return $.SUBRULE($.actionBlock);
 		});
 	}
 
-	static layoutActionBlock($) {
-		return $.RULE("layoutActionBlock", (actionOptions) => {
+	static actionBlock($) {
+		return $.RULE("actionBlock", (actionOptions) => {
 			const result: TActionStatement[] = [];
 
 			// {
 			$.CONSUME(tokens.OpenCurly);
 			// statements list
 			$.AT_LEAST_ONE(() => {
-				result.push($.SUBRULE($.layoutActionStatement, { ARGS: [actionOptions] }));
+				result.push($.SUBRULE($.actionStatement, { ARGS: [actionOptions] }));
 			});
 			// }
 			$.CONSUME(tokens.CloseCurly);
@@ -40,11 +41,11 @@ export class ActionRules {
 		});
 	}
 
-	static layoutActionStatement($) {
-		return $.RULE("layoutActionStatement", (actionOptions) => {
+	static actionStatement($) {
+		return $.RULE("actionStatement", (actionOptions) => {
 			const result: TFunctionCall[] | unknown = $.OR([
 				{
-					ALT: () => $.SUBRULE($.layoutActionFunctionCallList, { ARGS: [actionOptions] }),
+					ALT: () => $.SUBRULE($.actionFunctionCallList, { ARGS: [actionOptions] }),
 				},
 				{
 					ALT: () => $.SUBRULE($.layoutSet),
@@ -54,15 +55,15 @@ export class ActionRules {
 		});
 	}
 
-	static layoutActionFunctionCallList($) {
-		return $.RULE("layoutActionFunctionCallList", (actionOptions) => {
+	static actionFunctionCallList($) {
+		return $.RULE("actionFunctionCallList", (actionOptions) => {
 			const calls: TFunctionCall[] = [];
 			// <functionName>(...parms)[.<functionName>(...parms)][.<functionName>(...parms)]....
 			// to allow something like sprite("Bubblun").set("mass", 0)
 			$.AT_LEAST_ONE_SEP({
 				SEP: tokens.Dot,
 				DEF: () => {
-					calls.push($.SUBRULE($.layoutActionFunctionCall));
+					calls.push($.SUBRULE($.actionFunctionCall));
 				},
 			});
 			$.ACTION(() => {
@@ -72,8 +73,8 @@ export class ActionRules {
 		});
 	}
 
-	static layoutActionFunctionCall($) {
-		return $.RULE("layoutActionFunctionCall", () => {
+	static actionFunctionCall($) {
+		return $.RULE("actionFunctionCall", () => {
 			const result: TFunctionCall = {
 				name: [],
 				args: [],
@@ -82,7 +83,11 @@ export class ActionRules {
 			$.AT_LEAST_ONE_SEP({
 				SEP: tokens.Dot,
 				DEF: () => {
-					result.name.push($.SUBRULE($.layoutActionFunctionName));
+					const name = $.SUBRULE($.actionFunctionName);
+					$.ACTION(() => {
+						if (typeof name === "string") result.name.push(name);
+						else result.name.push(...name);
+					});
 				},
 			});
 
@@ -109,9 +114,20 @@ export class ActionRules {
 		});
 	}
 
-	static layoutActionFunctionName($) {
-		return $.RULE("layoutActionFunctionName", () => {
+	static actionFunctionName($) {
+		return $.RULE("actionFunctionName", () => {
 			return $.OR([
+				// TODO: should be a defined variable but as it is used in ON_EVENT....
+				{
+					ALT: () => {
+						const name = $.CONSUME(tokens.Variable).image.substring(1);
+						return $.ACTION(() => {
+							const parts = name.split(".");
+							if (parts.length > 1) return [new ArgVariable(parts[0]), ...parts.slice(1)];
+							return [new ArgVariable(name)];
+						});
+					},
+				},
 				{ ALT: () => $.CONSUME(tokens.Identifier).image },
 				{ ALT: () => $.CONSUME(tokens.Timer).image },
 				{ ALT: () => $.CONSUME(tokens.Sprite).image },

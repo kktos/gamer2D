@@ -18,7 +18,6 @@ export class ParmsRules {
 							SEP: tokens.Comma,
 							DEF: () =>
 								$.OR2([
-									// { ALT: () => traitsList.push($.SUBRULE($.layoutActionFunctionCallList, { ARGS: [{ noSystem: true }] })) },
 									{ ALT: () => traitsList.push($.SUBRULE($.layoutSetTrait)) },
 
 									{

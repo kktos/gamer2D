@@ -1,7 +1,7 @@
 import { ArgColor, ArgIdentifier, ArgVariable } from "../../types/value.types";
 import type { TVars } from "../../utils/vars.utils";
-import type { TActionStatement } from "../compiler/layers/display/layout/action.rules";
 import type { TSet } from "../compiler/layers/display/layout/set.rules";
+import type { TActionStatement } from "../compiler/shared/action.rules";
 import { type TEvalValue, evalValue, evalVar, interpolateString, isStringInterpolable, resoleVar } from "./eval.script";
 
 export function execParseArgs({ vars }: { vars: TVars }, fnArgs: unknown[]) {
@@ -35,7 +35,7 @@ export function execParseArgs({ vars }: { vars: TVars }, fnArgs: unknown[]) {
 }
 
 // method
-// obj.method
+// (obj | $var).method
 // obj.obj.method
 export function execFnCall({ vars }: { vars: TVars }, fnCall: { name: string[]; args: unknown[] }, objSource) {
 	const args: unknown[] = execParseArgs({ vars }, fnCall.args);

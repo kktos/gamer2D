@@ -34,7 +34,6 @@ type TokenDefs = Record<string, TokenDef>;
 
 const tokenDefs: TokenDefs = {
 	Identifier: { pattern: /[a-zA-Z_]\w*/ },
-	// Variable: { pattern: /\$[a-zA-Z]\w*/ },
 	Variable: { pattern: /\$[a-zA-Z]\w*(\.\$?\w+)*/ },
 
 	Display: { pattern: "display", longer_alt: "Identifier" },
