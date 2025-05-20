@@ -92,9 +92,10 @@ function createUI() {
 	const panel = document.createElement("floating-window") as FloatingWindowElement;
 	panel.title = "Tools";
 	panel.id = "Tools-floating-window";
+	panel.resizable = true;
 
 	const width = 600;
-	const height = 450;
+	const height = 650;
 	panel.setAttribute("initial-width", String(width));
 	panel.setAttribute("initial-height", String(height));
 	panel.setAttribute("initial-top", `${document.body.clientHeight - height - 10}px`);

@@ -17,7 +17,7 @@ export class FloatingWindowElement extends HTMLElement {
 	private initialMousePos: { x: number; y: number } | null = null;
 
 	static get observedAttributes() {
-		return ["title", "closeable", "minimized", "initial-width", "initial-height", "initial-top", "initial-left"];
+		return ["title", "closeable", "resizable", "minimizable", "minimized", "initial-width", "initial-height", "initial-top", "initial-left"];
 	}
 
 	static bootstrap() {
@@ -45,11 +45,36 @@ export class FloatingWindowElement extends HTMLElement {
 	connectedCallback() {
 		this._updateTitle();
 		this._updateCloseButtonVisibility();
+		this._updateResizable();
+		this._updateMinimizeButtonVisibility();
+
 		this.setInitialValues();
 		// Ensure minimized state is correctly applied if set initially
 		if (this.hasAttribute("minimized")) {
 			this._updateMinimizedState(true);
 		}
+	}
+
+	get closable(): boolean {
+		return this.hasAttribute("closeable");
+	}
+	set closable(val: boolean) {
+		if (val) this.setAttribute("closeable", "");
+		else this.removeAttribute("closeable");
+	}
+	get resizable(): boolean {
+		return this.hasAttribute("resizable");
+	}
+	set resizable(val: boolean) {
+		if (val) this.setAttribute("resizable", "");
+		else this.removeAttribute("resizable");
+	}
+	get minimizable(): boolean {
+		return this.hasAttribute("minimizable");
+	}
+	set minimizable(val: boolean) {
+		if (val) this.setAttribute("minimizable", "");
+		else this.removeAttribute("minimizable");
 	}
 
 	attributeChangedCallback(name: string, oldValue: string, newValue: string) {
@@ -59,6 +84,12 @@ export class FloatingWindowElement extends HTMLElement {
 				break;
 			case "closeable":
 				this._updateCloseButtonVisibility();
+				break;
+			case "resizable":
+				this._updateResizable();
+				break;
+			case "minimizable":
+				this._updateMinimizeButtonVisibility();
 				break;
 			case "minimized":
 				this._updateMinimizedState(newValue !== null);
@@ -101,6 +132,23 @@ export class FloatingWindowElement extends HTMLElement {
 		} else {
 			this.closeButton.classList.add("hidden");
 		}
+	}
+
+	private _updateMinimizeButtonVisibility() {
+		const isMinimizable = this.hasAttribute("minimizable");
+		if (isMinimizable) {
+			this.minimizeButton.classList.remove("hidden");
+		} else {
+			this.minimizeButton.classList.add("hidden");
+		}
+	}
+
+	private _updateResizable() {
+		const show = this.hasAttribute("resizable");
+		// biome-ignore lint/complexity/noForEach: <explanation>
+		this.shadow.querySelectorAll<HTMLElement>(".resize-handle").forEach((handle) => {
+			handle.style.display = show ? "" : "none";
+		});
 	}
 
 	private _updateMinimizedState(isMinimized: boolean) {
@@ -336,6 +384,7 @@ function createTemplate() {
 	  --window-z-index: 1000;
 	  --window-title-bg-color: #444;
 	  --window-content-padding: 10px;
+	  --window-min-width: 80px;
 
       background-color: var(--window-bg-color);
       z-index: var(--window-z-index);
@@ -343,7 +392,7 @@ function createTemplate() {
 
       display: block;
       position: fixed;
-      min-width: 150px;
+      min-width: var(--window-min-width);
       min-height: 100px; /* Includes title bar */
       border: 1px solid #555;
       box-shadow: 0 5px 15px rgba(0,0,0,0.3);
@@ -403,6 +452,9 @@ function createTemplate() {
     }
 
     .close-button.hidden {
+      display: none;
+    }
+    .minimize-button.hidden {
       display: none;
     }
 
