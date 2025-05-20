@@ -4,7 +4,7 @@ import type { TSpriteSheet, TSpriteSheetGrid } from "../script/compiler/ressourc
 import { type TImageData, drawZoomedImage } from "../utils/canvas.utils";
 import { createSpriteSheet } from "../utils/createSpriteSheet.util";
 import { loadImage, loadText } from "../utils/loaders.util";
-import Anim from "./Anim";
+import { Anim } from "./Anim";
 
 export type SpriteMap = Map<string, HTMLCanvasElement[]>;
 export type AnimMap = Map<string, Anim>;
@@ -24,7 +24,7 @@ export class SpriteSheet {
 
 	static loadScript(filename: string) {
 		return loadText(filename)
-			.then((script) => compile(script, "spriteSheet"))
+			.then((script) => compile<TSpriteSheet>(script, "spriteSheet"))
 			.then((sheet) => SpriteSheet.loadData(sheet));
 	}
 
