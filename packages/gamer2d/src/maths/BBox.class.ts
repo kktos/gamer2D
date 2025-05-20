@@ -1,3 +1,5 @@
+import type { Rect } from "./math";
+
 export class BBox {
 	private _left: number;
 	private _top: number;
@@ -5,7 +7,8 @@ export class BBox {
 	private _height: number;
 	private _previous!: { left: number; top: number; width: number; height: number };
 
-	static create(bbox: { left: number; top: number; width: number; height: number }): BBox {
+	static create(bbox: { left: number; top: number; width: number; height: number } | Rect): BBox {
+		if ("x" in bbox) return new BBox(bbox.x, bbox.y, bbox.width, bbox.height);
 		return new BBox(bbox.left, bbox.top, bbox.width, bbox.height);
 	}
 
