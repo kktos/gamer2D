@@ -5,11 +5,15 @@ import { evalValue } from "../script/engine/eval.script";
 import { type TVarTypes, TVars } from "./vars.utils";
 
 export function createSpriteSheet(sheet: TSpriteSheet, img: HTMLImageElement | HTMLCanvasElement) {
+	const s = new SpriteSheet(sheet.name, img);
+	addDefsToSpriteSheet(sheet, s);
+	return s;
+}
+
+// this function to allow the editor to add definitions to the sprite sheet
+export function addDefsToSpriteSheet(sheet: Partial<TSpriteSheet>, s: SpriteSheet) {
 	let grid: TSpriteSheetGrid;
 	const vars = new TVars(new Map<string, TVarTypes>());
-	const s = new SpriteSheet(sheet.name, img);
-
-	console.log("createSpriteSheet", sheet);
 
 	let nameSuffix = 0;
 
@@ -44,7 +48,6 @@ export function createSpriteSheet(sheet: TSpriteSheet, img: HTMLImageElement | H
 	const processSpriteDefinition = (spriteDef: TDefs) => {
 		if ("size" in spriteDef) {
 			grid = spriteDef;
-			console.log("GRID SIZE", grid.size);
 			return;
 		}
 
@@ -75,8 +78,6 @@ export function createSpriteSheet(sheet: TSpriteSheet, img: HTMLImageElement | H
 		}
 	};
 
-	for (const spriteDef of sheet.sprites) processSpriteDefinition(spriteDef);
+	if (sheet.sprites) for (const spriteDef of sheet.sprites) processSpriteDefinition(spriteDef);
 	if (sheet.animations) for (const [name, animDef] of Object.entries(sheet.animations)) s.defineAnim(name, animDef);
-
-	return s;
 }
