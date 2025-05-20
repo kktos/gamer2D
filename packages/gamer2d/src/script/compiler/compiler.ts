@@ -1,5 +1,7 @@
+import type { TLayerSheet } from "./layers/layer.rules";
 import { SheetLexer } from "./lexer";
 import { SheetParser } from "./parser";
+import type { TSceneSheet } from "./scenes/scene.rules";
 
 const parser = new SheetParser();
 
@@ -8,7 +10,7 @@ export function setWannaLogError(value: boolean) {
 	wannaLogError = value;
 }
 
-export function compile(text: string, startRule: string, globals?: Map<string, unknown>, options?: unknown) {
+export function compile<T>(text: string, startRule: string, globals?: Map<string, unknown>, options?: unknown) {
 	const lexingResult = SheetLexer.tokenize(text);
 	parser.input = lexingResult.tokens;
 	parser.variablesDict = globals ? globals : new Map();
@@ -19,8 +21,9 @@ export function compile(text: string, startRule: string, globals?: Map<string, u
 		const word = parser.errors[0].token.image;
 		throw new SyntaxError(`SYNTAX ERROR LINE ${line} at "${word}"`, { cause: parser.errors });
 	}
-	return result;
+	return result as T;
 }
 
-export const compileScript = (text: string, globals?: Map<string, unknown>, options?: unknown) => compile(text, "sceneSheet", globals, options);
-export const compileLayerScript = (text: string, globals?: Map<string, unknown>, options?: unknown) => compile(text, "layerSheet", globals, options);
+export const compileScript = (text: string, globals?: Map<string, unknown>, options?: unknown) => compile<TSceneSheet>(text, "sceneSheet", globals, options);
+export const compileLayerScript = (text: string, globals?: Map<string, unknown>, options?: unknown) =>
+	compile<TLayerSheet>(text, "layerSheet", globals, options);
