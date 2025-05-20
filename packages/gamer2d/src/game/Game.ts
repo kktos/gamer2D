@@ -143,6 +143,7 @@ export class Game {
 				evt.deltaX = (e as WheelEvent).deltaX;
 				evt.deltaY = (e as WheelEvent).deltaY;
 				evt.deltaZ = (e as WheelEvent).deltaZ;
+				e.preventDefault();
 				break;
 
 			case "contextmenu":
@@ -250,7 +251,7 @@ export class Game {
 		this.fpsManager.on(onTimerUpdate);
 		coppola.run(startScene);
 
-		for (let idx = 0; idx < GAME_EVENTS.length; idx++) window.addEventListener(GAME_EVENTS[idx], this);
+		for (let idx = 0; idx < GAME_EVENTS.length; idx++) window.addEventListener(GAME_EVENTS[idx], this, { passive: false });
 
 		// console.log("play()");
 		this.play();
