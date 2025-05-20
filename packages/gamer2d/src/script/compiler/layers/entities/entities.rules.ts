@@ -3,15 +3,15 @@ import { tokens } from "../../lexer";
 import type { TRepeat, TRepeatItem } from "../display/layout/repeat.rules";
 import type { TSprite } from "../display/layout/sprite.rules";
 
-export type TEntitiesLayerSprite = Pick<TSprite, "type" | "id" | "pos" | "range" | "dir" | "traits" | "width" | "height"> & {
+export type TLayerEntitiesSprite = Pick<TSprite, "type" | "id" | "pos" | "range" | "dir" | "traits" | "width" | "height"> & {
 	name: string;
 };
-export type TEntitiesLayerStatement = TEntitiesLayerSprite | TRepeat;
+export type TLayerEntitiesStatement = TLayerEntitiesSprite | TRepeat;
 
-export type TEntitiesLayerSheet = {
+export type TLayerEntitiesSheet = {
 	type: "entities";
 	settings?: Record<string, unknown>;
-	statements?: TEntitiesLayerStatement[];
+	statements?: TLayerEntitiesStatement[];
 };
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
@@ -20,7 +20,7 @@ export class EntitiesLayerRules {
 		return $.RULE("entitiesLayerSheet", () => {
 			$.CONSUME(tokens.Entities);
 
-			const sheet: TEntitiesLayerSheet = { type: "entities" };
+			const sheet: TLayerEntitiesSheet = { type: "entities" };
 
 			$.CONSUME(tokens.OpenCurly);
 
@@ -29,7 +29,7 @@ export class EntitiesLayerRules {
 				if (Object.keys(settings).length) sheet.settings = settings;
 			});
 
-			const statements: TEntitiesLayerStatement[] = [];
+			const statements: TLayerEntitiesStatement[] = [];
 			$.MANY(() => {
 				$.OR([
 					{
@@ -62,7 +62,7 @@ export class EntitiesLayerRules {
 		return $.RULE("entitiesLayerSprite", (options) => {
 			$.CONSUME(tokens.Sprite);
 
-			const result: Partial<TEntitiesLayerSprite> = {
+			const result: Partial<TLayerEntitiesSprite> = {
 				type: OP_TYPES.SPRITE,
 				name: $.CONSUME(tokens.StringLiteral).payload,
 			};

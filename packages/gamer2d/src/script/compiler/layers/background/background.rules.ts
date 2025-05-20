@@ -1,7 +1,7 @@
 import type { ArgColor } from "../../../../types/value.types";
 import { tokens } from "../../lexer";
 
-export type TSceneBackgroundSheet = {
+export type TLayerBackgroundSheet = {
 	type: "background";
 	color: ArgColor; // | number;
 };

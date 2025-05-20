@@ -1,7 +1,7 @@
 import { tokens } from "../../lexer";
 import type { TSet } from "../display/layout/set.rules";
 
-export type TGlobalsLayerSheet = {
+export type TLayerGlobalsSheet = {
 	type: "globals";
 	variables: TSet[];
 };
@@ -10,7 +10,7 @@ export type TGlobalsLayerSheet = {
 export class GlobalsLayerRules {
 	static globalsLayerSheet($) {
 		return $.RULE("globalsLayerSheet", () => {
-			const sheet: TGlobalsLayerSheet = { type: "globals", variables: [] };
+			const sheet: TLayerGlobalsSheet = { type: "globals", variables: [] };
 
 			$.CONSUME(tokens.Globals);
 			$.CONSUME(tokens.OpenCurly);

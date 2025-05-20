@@ -1,5 +1,9 @@
 import { tokens } from "../../lexer";
 
+export type TLayerGameSheet = {
+	type: "game";
+};
+
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class GameRules {
 	static gameLayerSheet($) {

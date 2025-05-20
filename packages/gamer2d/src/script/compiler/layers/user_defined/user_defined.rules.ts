@@ -1,6 +1,6 @@
 import { tokens } from "../../lexer";
 
-type TUserDefinedLayerSheet = {
+export type TLayerUserDefinedSheet = {
 	type: string;
 	settings?: Record<string, unknown>;
 };
@@ -11,7 +11,7 @@ export class UserDefinedLayerRules {
 		return $.RULE("userDefinedLayerSheet", () => {
 			const type = $.CONSUME(tokens.Identifier).image;
 
-			const sheet: TUserDefinedLayerSheet = { type };
+			const sheet: TLayerUserDefinedSheet = { type };
 
 			$.CONSUME(tokens.OpenCurly);
 

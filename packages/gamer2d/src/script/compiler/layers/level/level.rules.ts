@@ -5,7 +5,7 @@ import { tokens } from "../../lexer";
 
 const CONCAT = Symbol.for("concat");
 
-export type TSceneLevelSheet = {
+export type TLayerLevelSheet = {
 	type: "level";
 	font?: string;
 	settings: Record<string, unknown>;
@@ -22,7 +22,7 @@ export class LevelRules {
 		return $.RULE("levelLayerSheet", () => {
 			$.CONSUME(tokens.Level);
 
-			const sheet: TSceneLevelSheet = {
+			const sheet: TLayerLevelSheet = {
 				type: "level",
 				settings: {},
 			};
