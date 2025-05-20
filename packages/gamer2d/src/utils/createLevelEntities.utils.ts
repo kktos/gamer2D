@@ -4,10 +4,10 @@ import type ResourceManager from "../game/ResourceManager";
 import { GLOBAL_VARIABLES } from "../game/globals";
 import { addTraits } from "../layers/display/trait.manager";
 import type { Grid } from "../maths/grid.math";
-import type { TEntitiesLayerSprite } from "../script/compiler/layers/entities/entities.rules";
+import type { TLayerEntitiesSprite } from "../script/compiler/layers/entities/entities.rules";
 import { TVars } from "./vars.utils";
 
-export function createLevelEntities(resourceManager: ResourceManager, grid: Grid, sprites: TEntitiesLayerSprite[]) {
+export function createLevelEntities(resourceManager: ResourceManager, grid: Grid, sprites: TLayerEntitiesSprite[]) {
 	const entities: Entity[] = [];
 	if (sprites) {
 		const vars = new TVars(GLOBAL_VARIABLES, GLOBAL_VARIABLES);
