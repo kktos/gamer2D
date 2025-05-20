@@ -1,27 +1,10 @@
-export function setupUi(root: HTMLElement, onClick: (id: string) => void) {
+import type { TCommandEvent } from "../shared/types.js";
+
+export function setupUi(root: HTMLElement, onClick: (id: string, data?: unknown) => void) {
 	loadFonts(root);
 
 	const commandButtons = root.querySelectorAll<HTMLButtonElement>("#move-cmd, #select-cmd");
 	const actionButtons = root.querySelectorAll<HTMLButtonElement>("#open-image, #open-spritesheet, #new-spritesheet");
-	const tabButtons = root.querySelectorAll<HTMLButtonElement>(".tab-btn");
-	const tabPanes = root.querySelectorAll(".tab-pane");
-
-	// Handle tab switching
-	// biome-ignore lint/complexity/noForEach: <explanation>
-	tabButtons.forEach((button) => {
-		button.addEventListener("click", () => {
-			// Remove active class from all tabs
-			// biome-ignore lint/complexity/noForEach: <explanation>
-			tabButtons.forEach((btn) => btn.classList.remove("active"));
-			// biome-ignore lint/complexity/noForEach: <explanation>
-			tabPanes.forEach((pane) => pane.classList.remove("active"));
-
-			// Add active class to clicked tab and corresponding content
-			button.classList.add("active");
-			const tabId = button.getAttribute("data-tab");
-			if (tabId) root.querySelector(`#${tabId}`)?.classList.add("active");
-		});
-	});
 
 	// Handle command buttons (radio button behavior)
 	// biome-ignore lint/complexity/noForEach: <explanation>
@@ -34,7 +17,7 @@ export function setupUi(root: HTMLElement, onClick: (id: string) => void) {
 			// Add selected class to clicked button
 			button.classList.add("selected");
 
-			onClick(button.id);
+			onClick(button.id, "command");
 		});
 	});
 
@@ -50,8 +33,13 @@ export function setupUi(root: HTMLElement, onClick: (id: string) => void) {
 				button.style.backgroundColor = originalBg;
 			}, 200);
 
-			onClick(button.id);
+			onClick(button.id, "action");
 		});
+	});
+
+	root.addEventListener("command", (e) => {
+		const command = (e as TCommandEvent).detail;
+		onClick(command.id, command.data);
 	});
 }
 

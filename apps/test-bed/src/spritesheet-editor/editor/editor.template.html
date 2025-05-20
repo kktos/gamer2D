@@ -4,7 +4,7 @@
 	@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css");
 </style>
 
-<div class="action-panel">
+<!-- <div class="action-panel">
 
 	<div class="section-title">Commands</div>
 	<div class="button-group">
@@ -32,102 +32,31 @@
 			<i class="fas fa-plus"></i>
 			<span>New Spritesheet</span>
 		</button>
+		<button id="gen-spritesheet" class="action-btn primary">
+			<i class="fas fa-plus"></i>
+			<span>Generate Spritesheet</span>
+		</button>
 	</div>
+</div> -->
 
-	<!-- <div id="btnOpenImage" class="btn">Open Image</div>
-	<div id="btnOpenSpriteSheet" class="btn">Open SpriteSheet</div>
-	<div id="btnNewSpriteSheet" class="btn">New SpriteSheet</div>
-	<div class="sep-1 align-self-center"></div>
-	<div id="btnMove" class="btn on">Move</div>
-	<div id="btnSelect" class="btn">Select</div> -->
-</div>
+<tabs-container>
+	<tab-pane label="Sprite" id="sprite-tab" active>
+		<!-- Sprite tab content here -->
+	</tab-pane>
 
+	<tab-pane label="Anim" id="anims-tab">
+		<anims-dlg></anims-dlg>
+	</tab-pane>
 
-<div class="tabs-container">
-	<div class="tabs">
-		<button class="tab-btn active" data-tab="detect-tab">Sprites Detector</button>
-		<button class="tab-btn" data-tab="anims-tab">Anims Editor</button>
-		<button class="tab-btn" data-tab="editor-tab">Editor</button>
-	</div>
-
-	<div class="tab-content">
-		<div id="detect-tab" class="tab-pane active">
-
-			<form id="spritesDetectForm">
-				<div class="grid gap-6 p-6 rounded shadow" style="min-width:320px; max-width:400px;">
-
-					<div class="grid gap-2">
-						<div class="font-semibold">Detection Mode:</div>
-						<div class="flex gap-4">
-							<label class="flex items-center gap-1">
-								<input type="radio" value="single" name="mode" checked>
-								<span>Single Sprite</span>
-							</label>
-							<label class="flex items-center gap-1">
-								<input type="radio" value="multiple" name="mode">
-								<span>Multiple Sprites</span>
-							</label>
-						</div>
-					</div>
-
-					<div>
-						<label for="spriteName" class="font-semibold">Sprite Name</label>
-						<input type="text" name="spriteName" placeholder="Sprite Name" class="input w-full mt-1">
-					</div>
-
-					<div class="grid grid-cols-2 gap-4">
-						<div>
-							<div class="font-semibold mb-1">Min Size (px)</div>
-							<label for="minSpriteWidth" class="block text-xs">Width</label>
-							<input type="number" name="minSpriteWidth" placeholder="e.g., 4" value="4" min="1"
-								class="input w-full">
-							<label for="minSpriteHeight" class="block text-xs mt-2">Height</label>
-							<input type="number" name="minSpriteHeight" placeholder="e.g., 4" value="4" min="1"
-								class="input w-full">
-						</div>
-						<div>
-							<div class="font-semibold mb-1">Expected Size (px)</div>
-							<label for="expectedSpriteWidth" class="block text-xs">Width</label>
-							<input type="number" name="expectedSpriteWidth" placeholder="e.g., 32" min="1" value="16"
-								class="input w-full">
-							<label for="expectedSpriteHeight" class="block text-xs mt-2">Height</label>
-							<input type="number" name="expectedSpriteHeight" placeholder="e.g., 32" min="1" value="16"
-								class="input w-full">
-						</div>
-					</div>
-
-					<div class="flex justify-center mt-4">
-						<div id="detect-sprites" class="btn btn-primary px-6 py-2">Detect</div>
-					</div>
-				</div>
-			</form>
-
+	<tab-pane label="Editor" id="editor-tab" class="grid rows-1-a">
+		<textarea id="script"></textarea>
+		<div class="grid">
+			<div class="sep-1 align-self-end"></div>
+			<div id="btnCompile" class="btn justify-self-end m-2 p-b-4 p-i-12">Compile</div>
 		</div>
+	</tab-pane>
 
-		<div id="editor-tab" class="tab-pane rows-1-a">
-			<textarea id="script"></textarea>
-			<div class="grid">
-				<div class="sep-1 align-self-end"></div>
-				<div id="btnCompile" class="btn justify-self-end m-2 p-b-4 p-i-12">Compile</div>
-			</div>
-		</div>
-
-		<div id="anims-tab" class="tab-pane rows-1-a">
-			<form id="animForm">
-				<div class="grid gap-6 p-6 rounded shadow" style="min-width:320px; max-width:400px;">
-					<div>
-						<label for="name" class="font-semibold">Animation Name</label>
-						<input type="text" name="name" placeholder="Animation Name" class="input w-full mt-1">
-					</div>
-					<div>
-						<label for="length" class="font-semibold">Animation Length</label>
-						<input type="number" name="length" min="1" class="input w-full mt-1">
-					</div>
-					<div class="flex justify-center mt-4">
-						<div id="create-anim" class="btn btn-primary px-6 py-2">Create Animation</div>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
-</div>
+	<tab-pane label="Sprites Detector" id="detect-tab">
+		<sprites-detector-dlg></sprites-detector-dlg>
+	</tab-pane>
+</tabs-container>

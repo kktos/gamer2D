@@ -4,8 +4,8 @@ import type { GameOptions } from "gamer2d/game/types/GameOptions";
 import "./index.css";
 import type { TFontSheet } from "gamer2d/game/Font";
 import { addView } from "gamer2d/game/GameHelpers";
-import { SpritesheetEditorView } from "./spritesheet-editor/editor/spritesheet-editor.view.js";
-import { SpritesheetViewerView } from "./spritesheet-editor/viewer/spritesheet-viewer.view.js";
+import { SpritesheetEditorView } from "./spritesheet-editor/editor/editor.view.js";
+import { SpritesheetViewerView } from "./spritesheet-editor/viewer/viewer.view.js";
 
 const settings = `
 	FPS = 60

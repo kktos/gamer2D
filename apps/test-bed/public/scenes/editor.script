@@ -12,21 +12,20 @@ display "Spritesheet Editor" {
 
 		ui { pos bottom }
 
-		on SPRITESHEET_LOADED $spritesheet {
-			$viewer.spritesheet= $spritesheet
-		}
+		on SPRITESHEET_LOADED $spritesheet { $viewer.spritesheet= $spritesheet }
+		on ANIM_CREATE $options { viewer.createAnim($options); }
+		on SPRITE_CREATE $sheet { viewer.createSprite($sheet); }
+		on GENERATE_SPRITESHEET { viewer.generateSpritesheet(); }
 
-		on ANIM_CREATE $options {
-			log("ANIM_CREATE", $options);
-			// $viewer.spritesheet= $spritesheet
-		}
+		on SPRITE_SELECTED $sprite { sheetEditor.selectSprite($sprite); }
+		on ANIM_SELECTED $anim { sheetEditor.selectAnim($anim); }
 
 		layout {
 
 			// text "this is a test !" at:220,10 size:1
 
 			$ypos=($clientHeight/3)*2
-			view SpritesheetEditorView id:"editor" at:0,0 width:$clientWidth height:$ypos
+			view SpritesheetEditorView id:"sheetEditor" at:0,0 width:$clientWidth height:$ypos
 
 			$ypos2=$clientHeight/3-20
 			view SpritesheetViewerView id:"viewer" at:0,$ypos+10 width:$clientWidth height:$ypos2

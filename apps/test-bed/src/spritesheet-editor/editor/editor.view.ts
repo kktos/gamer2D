@@ -1,13 +1,27 @@
+import type { Anim } from "gamer2d/game/Anim";
 import { SpriteSheet } from "gamer2d/game/Spritesheet";
+import type { FloatingWindowElement } from "gamer2d/inspectors/floating-window.element";
 import { View } from "gamer2d/layers/display/views/View";
 import type { ViewContext } from "gamer2d/layers/display/views/View.factory";
 import { type Rect, clampPointInRect, ptInRect } from "gamer2d/maths/math";
 import { compile } from "gamer2d/script/compiler/compiler";
+import type { TSpriteSheet } from "gamer2d/script/compiler/ressources/spritesheet.rules";
 import { createSpriteSheet } from "gamer2d/utils/createSpriteSheet.util";
+import { loadText } from "gamer2d/utils/loaders.util";
 import { detectSprites } from "../../sprites-claude.util.js";
 import { createCanvasFromRect } from "../../sprites.util.js";
-import template from "./editor.template.html?raw";
+import { selectedAnim } from "./anims.store.js";
+import propTemplate from "./editor.template.html?raw";
+import { AnimsDlg } from "./elements/animsDlg.element.js";
+import { SpritesDetectorDlg } from "./elements/spritesDetectorDlg.element.js";
+import { TabsContainer } from "./elements/tabs.element.js";
+import toolsTemplate from "./tools.template.html?raw";
 import { setupUi } from "./ui.setup.js";
+
+// to avoid VSC from removing the imports
+TabsContainer;
+AnimsDlg;
+SpritesDetectorDlg;
 
 const INFO_PANEL_WIDTH = 75;
 const INFO_PANEL_HEIGHT = 15;
@@ -23,8 +37,12 @@ type TCMD = typeof CMD_MOVE | typeof CMD_SELECT | typeof CMD_MOVING | typeof CMD
 export class SpritesheetEditorView extends View {
 	static EVENT_SPRITESHEET_LOADED = Symbol.for("SPRITESHEET_LOADED");
 	static EVENT_ANIM_CREATE = Symbol.for("ANIM_CREATE");
+	static EVENT_SPRITE_CREATE = Symbol.for("SPRITE_CREATE");
+	static EVENT_GENERATE_SPRITESHEET = Symbol.for("GENERATE_SPRITESHEET");
 
 	private srcImage: HTMLImageElement | HTMLCanvasElement | undefined;
+	private sheet: TSpriteSheet | undefined;
+
 	private imageOffsetX: number;
 	private imageOffsetY: number;
 	private lastMouseX: number;
@@ -40,7 +58,7 @@ export class SpritesheetEditorView extends View {
 	constructor(ctx: ViewContext) {
 		super(ctx);
 
-		this.buildUI([]);
+		this.buildUI();
 
 		this.srcImage = undefined;
 		this.imageOffsetX = 0;
@@ -56,25 +74,40 @@ export class SpritesheetEditorView extends View {
 
 	destroy() {}
 
-	buildUI(list: string[]) {
-		// const options = list.map((item, idx) => `<option value="${idx}">${item.replace(/^[^:]+:/, "")}</option>`);
-		const options = list.map((item, idx) => `<option value="${idx}">${item}</option>`);
+	buildUI() {
+		const panel = document.createElement("floating-window") as FloatingWindowElement;
+		panel.title = " ";
+		panel.id = "commands-floating-window";
+		panel.setAttribute("initial-top", "260");
+		panel.setAttribute("initial-left", "5");
+		panel.setAttribute("initial-width", "40");
+		panel.setAttribute("initial-height", "300");
+		panel.style.setProperty("--window-content-padding", "0");
+		panel.style.setProperty("--window-min-width", "40px");
+
+		panel.minimizable = false;
+		document.body.appendChild(panel);
 
 		this.contentElement = document.createElement("div");
-		this.contentElement.innerHTML = template;
-		this.contentElement.className = "layout";
+		this.contentElement.innerHTML = toolsTemplate;
+		this.contentElement.className = "layout tools";
+		panel.setContent(this.contentElement);
+
+		this.contentElement = document.createElement("div");
+		this.contentElement.innerHTML = propTemplate;
+		this.contentElement.className = "layout props";
 		this.layer.setContent(this.contentElement, this);
 
 		const scriptText = localStorage.getItem("gamer2d-script") ?? "";
 		const scriptElement = this.contentElement.querySelector("#script") as HTMLTextAreaElement;
 		scriptElement.value = scriptText;
 
-		setupUi(this.contentElement, (id: string) => this.onClickUIBtn(id));
+		setupUi(this.contentElement, (id: string, data?: unknown) => this.onClickUIBtn(id, data));
 	}
 
 	onChangeUI(el: HTMLInputElement | HTMLSelectElement) {}
 
-	onClickUIBtn(id: string) {
+	onClickUIBtn(id: string, data?: unknown) {
 		switch (id) {
 			case "open-image":
 				this.openImage();
@@ -86,7 +119,7 @@ export class SpritesheetEditorView extends View {
 				this.newSpriteSheet();
 				break;
 			case "btnCompile":
-				this.compile();
+				this.compileSpritesheet();
 				break;
 			case "move-cmd":
 				this.cmdMove();
@@ -95,31 +128,17 @@ export class SpritesheetEditorView extends View {
 				this.cmdSelect();
 				break;
 			case "create-anim": {
-				const form = this.contentElement.querySelector<HTMLFormElement>("#animForm");
-				if (!form) break;
-				const data = new FormData(form);
-				const options = {
-					name: data.get("name"),
-					length: data.get("length"),
-				};
-				this.layer.scene.emit(SpritesheetEditorView.EVENT_ANIM_CREATE, options);
+				if (!data) return;
+				this.layer.scene.emit(SpritesheetEditorView.EVENT_ANIM_CREATE, data);
 				break;
 			}
 			case "detect-sprites": {
-				const form = this.contentElement.querySelector<HTMLFormElement>("#spritesDetectForm");
-				if (!form) break;
-				const data = new FormData(form);
-
-				const options = {
-					mode: data.get("mode"),
-					name: data.get("spriteName"),
-					minHeight: data.get("minSpriteHeight"),
-					minWidth: data.get("minSpriteWidth"),
-					height: data.get("expectedSpriteHeight"),
-					width: data.get("expectedSpriteWidth"),
-				};
-
-				this.makeSpritesFromCanvas(options);
+				if (!data) return;
+				this.findSpritesOnCanvas(data);
+				break;
+			}
+			case "gen-spritesheet": {
+				this.layer.scene.emit(SpritesheetEditorView.EVENT_GENERATE_SPRITESHEET);
 				break;
 			}
 		}
@@ -131,6 +150,35 @@ export class SpritesheetEditorView extends View {
 		switch (e.type) {
 			case "keyup":
 				switch (e.key) {
+					case "ArrowLeft": {
+						if (!this.capturedArea) return;
+						if (gc.keys.isPressed("Shift")) {
+							this.capturedArea.width -= 1;
+						} else this.capturedArea.x -= 1;
+						break;
+					}
+					case "ArrowRight": {
+						if (!this.capturedArea) return;
+						if (gc.keys.isPressed("Shift")) {
+							this.capturedArea.width += 1;
+						} else this.capturedArea.x += 1;
+						break;
+					}
+					case "ArrowUp": {
+						if (!this.capturedArea) return;
+						if (gc.keys.isPressed("Shift")) {
+							this.capturedArea.height -= 1;
+						} else this.capturedArea.y -= 1;
+
+						break;
+					}
+					case "ArrowDown": {
+						if (!this.capturedArea) return;
+						if (gc.keys.isPressed("Shift")) {
+							this.capturedArea.height += 1;
+						} else this.capturedArea.y += 1;
+						break;
+					}
 					case "Escape":
 						this.capturedArea = null;
 						break;
@@ -138,10 +186,14 @@ export class SpritesheetEditorView extends View {
 				break;
 
 			case "wheel":
-				this.zoom += e.deltaY * 0.001;
-				this.zoom = Math.min(this.zoom, 10);
-				this.zoom = Math.max(this.zoom, 1);
-				this.zoom = Math.floor(this.zoom * 10) / 10;
+				if (gc.keys.isPressed("Control")) {
+					this.zoom += -e.deltaY * 0.001;
+					this.zoom = Math.min(this.zoom, 10);
+					this.zoom = Math.max(this.zoom, 1);
+					this.zoom = Math.floor(this.zoom * 10) / 10;
+				} else {
+					this.offsetImage(0, e.deltaY);
+				}
 				break;
 
 			case "mousedown":
@@ -293,6 +345,24 @@ export class SpritesheetEditorView extends View {
 		btnSelect?.classList.remove("on");
 	}
 
+	public selectSprite(name: string) {
+		console.log(`selectSprite "${name}"`);
+
+		const foundSprite = this.sheet?.sprites.filter((sprite) => {
+			if (!("name" in sprite)) return false;
+			if (sprite.name === name) return true;
+			if (sprite.name === name.replace(/-\d+$/, "")) return true;
+		});
+
+		console.log(foundSprite?.[0]);
+	}
+
+	public selectAnim(animDef: { name: string; anim: Anim }) {
+		console.log(`selectAnim "${animDef.name}"`, animDef.anim);
+		if (!animDef.anim) return;
+		selectedAnim.value = animDef;
+	}
+
 	async openImage() {
 		const pickerOpts = {
 			types: [
@@ -317,13 +387,13 @@ export class SpritesheetEditorView extends View {
 		scriptElement.value = scriptElement.value.replace(/image\s+"([^"]+)"/, `image "images/${this.filename}"`);
 
 		const blob = await file.arrayBuffer();
-		return new Promise((resolve) => {
+		return new Promise<string>((resolve) => {
 			const img = new Image();
 			img.src = URL.createObjectURL(new Blob([blob]));
 			img.onload = () => {
 				this.srcImage = img;
 				this.zoom = 1;
-				resolve(true);
+				resolve(`images/${this.filename}`);
 			};
 		});
 	}
@@ -348,39 +418,46 @@ export class SpritesheetEditorView extends View {
 		const text = await file.text();
 		// console.log(file);
 		if (file.type === "application/json") {
-			const json = JSON.parse(text);
-			const ss = await SpriteSheet.loadData(json);
+			this.sheet = JSON.parse(text);
+			if (!this.sheet) return;
+			const ss = await SpriteSheet.loadData(this.sheet);
 			if (ss.img) {
 				this.srcImage = ss.img;
 				this.zoom = 1;
-				this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITESHEET_LOADED, ss);
+				this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITESHEET_LOADED, { ss, image: this.sheet.image });
 			}
 		} else {
 			const content = this.layer.getContent();
 			const scriptElement = content?.querySelector("#script") as HTMLTextAreaElement;
 			scriptElement.value = text;
 
-			const ss = await SpriteSheet.loadScript(`spritesheets/${file.name}`);
+			const ssSource = await loadText(`spritesheets/${file.name}`);
+			this.sheet = compile<TSpriteSheet>(ssSource, "spriteSheet");
+
+			console.log(this.sheet);
+
+			const ss = await SpriteSheet.loadData(this.sheet);
 			if (ss.img) {
 				this.srcImage = ss.img;
 				this.zoom = 1;
-				this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITESHEET_LOADED, ss);
+				this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITESHEET_LOADED, { ss, image: this.sheet.image });
 			}
 		}
 	}
 
 	async newSpriteSheet() {
-		if (!this.srcImage) await this.openImage();
+		let imagePath = "";
+		if (!this.srcImage) imagePath = await this.openImage();
 		if (!this.srcImage) return;
 
 		const ss = new SpriteSheet("????", this.srcImage);
-		this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITESHEET_LOADED, ss);
+		this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITESHEET_LOADED, { ss, image: imagePath });
 		const content = this.layer.getContent();
 		const scriptElement = content?.querySelector("#script") as HTMLTextAreaElement;
 		scriptElement.value = ['spritesheet "????" {', "", `    image "images/${this.filename}"`, "", "}"].join("\n");
 	}
 
-	private compile() {
+	private compileSpritesheet() {
 		if (!this.srcImage) return;
 
 		const content = this.layer.getContent();
@@ -388,13 +465,13 @@ export class SpritesheetEditorView extends View {
 		const script = scriptElement?.value;
 		if (script) {
 			localStorage.setItem("gamer2d-script", script);
-			const sheet = compile(script, "spriteSheet");
+			const sheet = compile<TSpriteSheet>(script, "spriteSheet");
 			const ss = createSpriteSheet(sheet, this.srcImage);
-			this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITESHEET_LOADED, ss);
+			this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITESHEET_LOADED, { ss, image: sheet.image });
 		}
 	}
 
-	private makeSpritesFromCanvas(options) {
+	private findSpritesOnCanvas(options) {
 		if (!this.srcImage || !this.capturedArea) return;
 
 		let name = options.name.trim();
@@ -425,22 +502,6 @@ export class SpritesheetEditorView extends View {
 		this.capturedArea.y = Math.floor(this.capturedArea.y);
 		const capturedArea = createCanvasFromRect(this.srcImage, this.capturedArea);
 		if (capturedArea) {
-			// const areaRect = { x: 0, y: 0, width: capturedArea.width, height: capturedArea.height };
-			// // topLeft pixel is considered background
-			// const isBackground = (data: Uint8ClampedArray<ArrayBufferLike>, pixelIndex: number) => {
-			// 	// return data[0] === data[pixelIndex] && data[1] === data[pixelIndex + 1] && data[2] === data[pixelIndex + 2] && data[3] === data[pixelIndex + 3];
-			// 	return data[pixelIndex + 3] === 0;
-			// };
-			// let foundRects = findSpritesInCanvasRect(capturedArea, areaRect, isBackground);
-			// foundRects = foundRects.filter((r, idx) => {
-			// 	if (r.width <= minGridW && r.height <= minGridH) return false;
-			// 	if (idx > 0) {
-			// 		const prev = foundRects[idx - 1];
-			// 		if (r.x < prev.x + prev.width) return false;
-			// 	}
-			// 	return true;
-			// });
-
 			console.log(
 				"%c                                                                                              ",
 				`font-size:${capturedArea.height}px; background:url(${capturedArea.toDataURL()}) no-repeat;`,
@@ -449,9 +510,13 @@ export class SpritesheetEditorView extends View {
 			const detectOptions = {
 				minWidth: options.minWidth,
 				minHeight: options.minHeight,
-				backgroundColor: [0, 0, 0, 0],
-				tolerance: 0,
+				backgroundColor: options.bgcolor, //[0, 0, 0, 0],
+				toleranceRGB: options.toleranceRGB,
+				toleranceAlpha: options.toleranceAlpha,
 			};
+
+			console.log("detectOptions", detectOptions);
+
 			const foundRects = detectSprites(capturedArea, detectOptions);
 
 			let output: string[] = [];
@@ -463,8 +528,15 @@ export class SpritesheetEditorView extends View {
 					output = multiple(foundRects);
 					break;
 			}
-			console.log(`grid ${gridW},${gridH}`);
-			console.log(output.join("\n"));
+			const script = `
+			sprites {
+				grid ${gridW},${gridH}
+				${output.join("\n")}
+			}
+			`;
+			const sheet = compile(script, "spriteSheetSprites");
+			console.log(script, sheet);
+			this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITE_CREATE, sheet);
 		}
 	}
 

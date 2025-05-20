@@ -15,7 +15,6 @@ type ScrollbarState = {
 export class CanvasHorizontalScrollbar {
 	private state: ScrollbarState;
 	private onScroll: (value: number) => void;
-	private canvas: HTMLCanvasElement;
 
 	static trackColor = "#f1f1f1";
 	static thumbColor = "#d4d4d4";
@@ -25,12 +24,11 @@ export class CanvasHorizontalScrollbar {
 	static thumbBorderWidth = 1;
 	static thumbRadius = 6;
 
-	constructor(canvas: HTMLCanvasElement, x: number, y: number, width: number, height: number, onScroll: (value: number) => void) {
-		this.canvas = canvas;
+	constructor(width: number, height: number, onScroll: (value: number) => void) {
 		this.onScroll = onScroll;
 		this.state = {
-			x,
-			y,
+			x: 0,
+			y: 0,
 			width,
 			height,
 			min: 0,
@@ -41,7 +39,6 @@ export class CanvasHorizontalScrollbar {
 			dragOffset: 0,
 			hover: false,
 		};
-		// this.attachEvents();
 	}
 
 	setScroll(min: number, max: number, value: number, page: number) {
@@ -52,76 +49,42 @@ export class CanvasHorizontalScrollbar {
 	}
 
 	setThumb(value: number) {
-		this.state.value = value * (this.state.max - this.state.page); //Math.max(this.state.min, Math.min(this.state.max - this.state.page, value));
-		console.log("Scrollbar value", this.state.value);
-	}
-
-	draw(ctx: CanvasRenderingContext2D, x: number, y: number) {
-		const { width, height, min, max, value, page, hover, dragging } = this.state;
-		// Track
-		ctx.save();
-		ctx.globalAlpha = 0.7;
-		ctx.fillStyle = CanvasHorizontalScrollbar.trackColor;
-		ctx.fillRect(x, y, width, height);
-		ctx.globalAlpha = 1.0;
-
-		// Thumb
-		const range = max - min;
-		const thumbW = Math.max(30, (page / range) * width);
-		const thumbX = x + ((value - min) / range) * (width - thumbW);
-
-		ctx.fillStyle = dragging
-			? CanvasHorizontalScrollbar.thumbDragColor
-			: hover
-				? CanvasHorizontalScrollbar.thumbHoverColor
-				: CanvasHorizontalScrollbar.thumbColor;
-		ctx.strokeStyle = CanvasHorizontalScrollbar.thumbBorderColor;
-		ctx.lineWidth = CanvasHorizontalScrollbar.thumbBorderWidth;
-		ctx.beginPath();
-		ctx.roundRect(thumbX, y + 2, thumbW, height - 4, CanvasHorizontalScrollbar.thumbRadius);
-		ctx.fill();
-		ctx.stroke();
-
-		ctx.restore();
+		this.state.value = value * (this.state.max - this.state.page);
 	}
 
 	handleEvent(gc, e): boolean {
 		switch (e.type) {
-			case "mousemove": {
+			case "wheel": {
+				const delta = (e.deltaX || e.deltaY) / 100;
+				if (delta) {
+					const { min, max, value, page } = this.state;
+					this.state.value = Math.min(Math.max(delta * page + value, min), max - page);
+					this.onScroll(this.state.value);
+					return true;
+				}
+				break;
+			}
+			case "mousemove":
 				return this.onMouseMove(e);
-			}
-			case "mousedown": {
+			case "mousedown":
 				return this.onMouseDown(e);
-			}
-			case "mouseup": {
+			case "mouseup":
 				return this.onMouseUp(e);
-			}
-			case "mouseleave": {
+			case "mouseleave":
 				return this.onMouseLeave(e);
-			}
 		}
 		return false;
 	}
 
-	// private attachEvents() {
-	// 	this.canvas.addEventListener("mousedown", this.onMouseDown);
-	// 	this.canvas.addEventListener("mousemove", this.onMouseMove);
-	// 	this.canvas.addEventListener("mouseup", this.onMouseUp);
-	// 	this.canvas.addEventListener("mouseleave", this.onMouseLeave);
-	// }
-
 	private getThumbRect() {
 		const { x, y, width, height, min, max, value, page } = this.state;
-		const range = max - min;
+		const range = max - min - page;
 		const thumbW = Math.max(30, (page / range) * width);
 		const thumbX = x + ((value - min) / range) * (width - thumbW);
 		return { x: thumbX, y: y + 2, width: thumbW, height: height - 4 };
 	}
 
 	private onMouseDown = (e: MouseEvent) => {
-		// const rect = this.canvas.getBoundingClientRect();
-		// const mx = e.clientX - rect.left;
-		// const my = e.clientY - rect.top;
 		const thumb = this.getThumbRect();
 		const mx = e.x;
 		const my = e.y;
@@ -135,21 +98,26 @@ export class CanvasHorizontalScrollbar {
 	};
 
 	private onMouseMove = (e: MouseEvent) => {
-		// const rect = this.canvas.getBoundingClientRect();
-		// const mx = e.clientX - rect.left;
-		// const my = e.clientY - rect.top;
 		const thumb = this.getThumbRect();
 		const mx = e.x;
 		const my = e.y;
 
 		if (this.state.dragging) {
 			const { x, width, min, max, page } = this.state;
-			const range = max - min;
+			// const range = max - min;
+			// const thumbW = thumb.width;
+			// let newThumbX = mx - this.state.dragOffset;
+			// newThumbX = Math.max(x, Math.min(x + width - thumbW, newThumbX));
+			// const newValue = min + ((newThumbX - x) / (width - thumbW)) * (range - page);
+			// this.state.value = Math.max(min, Math.min(max - page, newValue));
+
 			const thumbW = thumb.width;
+			const scrollRange = max - min - page;
 			let newThumbX = mx - this.state.dragOffset;
 			newThumbX = Math.max(x, Math.min(x + width - thumbW, newThumbX));
-			const newValue = min + ((newThumbX - x) / (width - thumbW)) * (range - page);
+			const newValue = min + ((newThumbX - x) / (width - thumbW)) * scrollRange;
 			this.state.value = Math.max(min, Math.min(max - page, newValue));
+
 			this.onScroll(this.state.value);
 			return true;
 		}
@@ -168,4 +136,38 @@ export class CanvasHorizontalScrollbar {
 		this.state.hover = false;
 		return false;
 	};
+
+	draw(ctx: CanvasRenderingContext2D, x: number, y: number) {
+		const { width, height, min, max, value, page, hover, dragging } = this.state;
+		this.state.x = x;
+		this.state.y = y;
+		// Track
+		ctx.save();
+		ctx.globalAlpha = 0.7;
+		ctx.fillStyle = CanvasHorizontalScrollbar.trackColor;
+		ctx.fillRect(x, y, width, height);
+		ctx.globalAlpha = 1.0;
+
+		// Thumb
+		const scrollRange = max - min - page;
+		const thumbW = Math.max(30, (page / (max - min)) * width);
+		const thumbX = x + ((value - min) / scrollRange) * (width - thumbW);
+
+		ctx.fillStyle = dragging
+			? CanvasHorizontalScrollbar.thumbDragColor
+			: hover
+				? CanvasHorizontalScrollbar.thumbHoverColor
+				: CanvasHorizontalScrollbar.thumbColor;
+		ctx.strokeStyle = CanvasHorizontalScrollbar.thumbBorderColor;
+		ctx.lineWidth = CanvasHorizontalScrollbar.thumbBorderWidth;
+		ctx.beginPath();
+		ctx.roundRect(thumbX, y + 2, thumbW, height - 4, CanvasHorizontalScrollbar.thumbRadius);
+		ctx.fill();
+		ctx.stroke();
+
+		// ctx.fillStyle = "white";
+		// ctx.fillText(`${(((value - min) / scrollRange) * 100).toFixed(0)}`, thumbX + thumbW / 2, y + height / 2);
+
+		ctx.restore();
+	}
 }

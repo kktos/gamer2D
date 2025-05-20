@@ -17,11 +17,14 @@ export function detectSprites(canvas, options = {}) {
 		minWidth: 10,
 		minHeight: 10,
 		backgroundColor: [0, 0, 0, 0], // Default transparent (RGBA)
-		tolerance: 10, // Default color tolerance
+		toleranceRGB: 10, // Default color tolerance
+		toleranceAlpha: 0,
 	};
 
 	// Merge options with defaults
 	const config = { ...defaultOptions, ...options };
+
+	console.log(config.backgroundColor);
 
 	// Get canvas context and image data
 	const ctx = canvas.getContext("2d");
@@ -45,10 +48,11 @@ export function detectSprites(canvas, options = {}) {
 
 		// Check if color is within tolerance of background color
 		return (
-			Math.abs(r - config.backgroundColor[0]) <= config.tolerance &&
-			Math.abs(g - config.backgroundColor[1]) <= config.tolerance &&
-			Math.abs(b - config.backgroundColor[2]) <= config.tolerance &&
-			Math.abs(a - config.backgroundColor[3]) <= config.tolerance
+			Math.abs(r - config.backgroundColor[0]) <= config.toleranceRGB &&
+			Math.abs(g - config.backgroundColor[1]) <= config.toleranceRGB &&
+			Math.abs(b - config.backgroundColor[2]) <= config.toleranceRGB &&
+			// (config.backgroundColor[3] === 0 || Math.abs(a - config.backgroundColor[3]) <= config.toleranceAlpha)
+			Math.abs(a - config.backgroundColor[3]) <= config.toleranceAlpha
 		);
 	}
 
@@ -109,17 +113,13 @@ export function detectSprites(canvas, options = {}) {
 	for (let y = 0; y < canvas.height; y++) {
 		for (let x = 0; x < canvas.width; x++) {
 			// Skip if already visited or is background
-			if (visited[y * canvas.width + x] || isBackground(x, y)) {
-				continue;
-			}
+			if (visited[y * canvas.width + x] || isBackground(x, y)) continue;
 
 			// This is a new sprite, perform flood fill
 			const sprite = floodFill(x, y);
 
 			// Only add sprite if it meets the minimum size requirements
-			if (sprite.width >= config.minWidth && sprite.height >= config.minHeight) {
-				sprites.push(sprite);
-			}
+			if (sprite.width >= config.minWidth && sprite.height >= config.minHeight) sprites.push(sprite);
 		}
 	}
 

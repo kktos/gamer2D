@@ -1,21 +1,17 @@
 .layout {
-	display: grid;
-	grid-template:
-		"actions tabs" auto
-		"actions tabs" 1fr / auto 1fr;
 	height: 100%;
-	font-size: 12px;
 
 	--bg-color-primary: #4f46e5;
 	--bg-color-actions: #252836;
 	--color-actions: white;
 }
-
-.action-panel {
-	grid-area: actions;
+.layout.tools {
+	font-size: 10px;
 }
-.tabs-container {
-	grid-area: tabs;
+.layout.props {
+	display: grid;
+	grid-template: 1fr / auto 1fr;
+	font-size: 12px;
 }
 
 .action-panel {
@@ -47,24 +43,30 @@
 	font-weight: 600;
 }
 .button-group {
-	padding: 5px 15px 20px;
-	border-bottom: 1px solid #393c4f;
+	/* padding: 5px 15px 20px; */
+	/* border-bottom: 1px solid #393c4f; */
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin-bottom: 5px;
 }
 .last-group {
-	border-bottom: none;
+	/* border-bottom: none; */
+	margin-bottom: 0px;
 }
 .action-btn {
 	display: flex;
 	align-items: center;
 	width: 100%;
-	padding: 12px 15px;
-	margin-bottom: 8px;
+	/* padding: 12px 15px; */
+	padding-block: 8px;
+	/* margin-bottom: 8px; */
 	border: none;
-	border-radius: 8px;
+	/* border-radius: 8px; */
 	background-color: #323546;
 	color: #a1a1aa;
 	cursor: pointer;
-	text-align: left;
+	/* text-align: left; */
 	transition: all 0.2s ease;
 }
 .action-btn:hover {
@@ -94,7 +96,7 @@
 	min-width: 30px;
 	text-align: center;
 }
-.tabs-container {
+tabs-container {
 	overflow: hidden;
 	display: grid;
 	grid-template-rows: auto 1fr;

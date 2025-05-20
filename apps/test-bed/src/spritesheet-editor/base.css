@@ -43,9 +43,11 @@
 .m-4 {
 	margin: 1rem 0;
 }
-
 .m-t-4 {
 	margin-top: 1rem;
+}
+.mb-1 {
+	margin-bottom: 0.25rem;
 }
 
 .w-50 {
@@ -117,7 +119,6 @@ input[type="number"]:focus {
 
 /* Label styles */
 label {
-	font-size: 0.95rem;
 	color: white;
 	margin-bottom: 0.15rem;
 	display: block;
@@ -153,9 +154,11 @@ input[type="radio"] {
 	justify-self: end;
 }
 
-/* Responsive columns for input rows */
 .grid-cols-2 {
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: repeat(2, 1fr);
+}
+.grid-cols-4 {
+	grid-template-columns: repeat(4, 1fr);
 }
 
 .items-center {
