@@ -3,7 +3,7 @@ import { GLOBAL_VARIABLES } from "../game/globals";
 import type { GameContext } from "../game/types/GameContext";
 import type { Grid } from "../maths/grid.math";
 import type { Scene } from "../scene/Scene";
-import type { TEntitiesLayerSheet, TEntitiesLayerSprite, TEntitiesLayerStatement } from "../script/compiler/layers/entities/entities.rules";
+import type { TLayerEntitiesSheet, TLayerEntitiesSprite, TLayerEntitiesStatement } from "../script/compiler/layers/entities/entities.rules";
 import { OP_TYPES } from "../types/operation.types";
 import { ArgColor } from "../types/value.types";
 import { createLevelEntities } from "../utils/createLevelEntities.utils";
@@ -17,12 +17,12 @@ export class EntitiesLayer extends Layer {
 
 	private selectedEntity: Entity | undefined;
 	public entities: Entity[] = [];
-	private sprites: TEntitiesLayerSprite[] | undefined;
+	private sprites: TLayerEntitiesSprite[] | undefined;
 	public wannaShowCount: boolean;
 	public wannaShowFrame: boolean;
 	public frameColor: string;
 
-	constructor(gc: GameContext, parent: Scene, sheet: TEntitiesLayerSheet, grid?: Grid) {
+	constructor(gc: GameContext, parent: Scene, sheet: TLayerEntitiesSheet, grid?: Grid) {
 		super(gc, parent);
 
 		if (sheet.statements) this.sprites = this.prepareRendering(sheet.statements);
@@ -56,13 +56,13 @@ export class EntitiesLayer extends Layer {
 		return this.selectedEntity;
 	}
 
-	private prepareRendering(statements: TEntitiesLayerStatement[]) {
+	private prepareRendering(statements: TLayerEntitiesStatement[]) {
 		const repeatList = statements.filter((statement) => statement.type === OP_TYPES.REPEAT);
-		if (!repeatList.length) return statements as unknown as TEntitiesLayerSprite[];
+		if (!repeatList.length) return statements as unknown as TLayerEntitiesSprite[];
 
 		const vars = new TVars(GLOBAL_VARIABLES, GLOBAL_VARIABLES);
-		const sprites: TEntitiesLayerSprite[] = [];
-		for (const repeatItem of repeatList) repeat(repeatItem, (item) => sprites.push(item as unknown as TEntitiesLayerSprite), vars);
+		const sprites: TLayerEntitiesSprite[] = [];
+		for (const repeatItem of repeatList) repeat(repeatItem, (item) => sprites.push(item as unknown as TLayerEntitiesSprite), vars);
 
 		const spriteList = statements.filter((statement) => statement.type === OP_TYPES.SPRITE);
 		return spriteList.concat(sprites);

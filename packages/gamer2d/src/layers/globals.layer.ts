@@ -1,7 +1,7 @@
 import { GLOBAL_VARIABLES } from "../game/globals";
 import type { GameContext } from "../game/types/GameContext";
 import type { Scene } from "../scene/Scene";
-import type { TGlobalsLayerSheet } from "../script/compiler/layers/globals/globals.rules";
+import type { TLayerGlobalsSheet } from "../script/compiler/layers/globals/globals.rules";
 import { execSet } from "../script/engine/exec.script";
 import { TVars } from "../utils/vars.utils";
 import { Layer } from "./Layer";
@@ -9,7 +9,7 @@ import { Layer } from "./Layer";
 const EMPTY_OBJECT: Record<string, unknown> = {};
 
 export class GlobalsLayer extends Layer {
-	constructor(gc: GameContext, parent: Scene, sheet: TGlobalsLayerSheet) {
+	constructor(gc: GameContext, parent: Scene, sheet: TLayerGlobalsSheet) {
 		super(gc, parent);
 
 		const vars = new TVars(GLOBAL_VARIABLES, GLOBAL_VARIABLES);
