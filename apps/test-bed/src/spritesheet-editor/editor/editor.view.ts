@@ -1,6 +1,6 @@
 import type { Anim } from "gamer2d/game/Anim";
 import { SpriteSheet } from "gamer2d/game/Spritesheet";
-import type { FloatingWindowElement } from "gamer2d/inspectors/floating-window.element";
+import { FloatingWindowElement } from "gamer2d/inspectors/floating-window.element";
 import { View } from "gamer2d/layers/display/views/View";
 import type { ViewContext } from "gamer2d/layers/display/views/View.factory";
 import { type Rect, clampPointInRect, ptInRect } from "gamer2d/maths/math";
@@ -16,7 +16,7 @@ import { AnimsDlg } from "./elements/animsDlg.element.js";
 import { SpritesDetectorDlg } from "./elements/spritesDetectorDlg.element.js";
 import { TabsContainer } from "./elements/tabs.element.js";
 import toolsTemplate from "./tools.template.html?raw";
-import { setupUi } from "./ui.setup.js";
+import { newWindow, setupUi } from "./ui.setup.js";
 
 // to avoid VSC from removing the imports
 TabsContainer;
@@ -54,6 +54,8 @@ export class SpritesheetEditorView extends View {
 	private previousCmd: TCMD;
 	private contentElement!: HTMLElement;
 	private filename!: string;
+	private toolsWindow!: FloatingWindowElement;
+	private scriptElement!: HTMLTextAreaElement;
 
 	constructor(ctx: ViewContext) {
 		super(ctx);
@@ -75,39 +77,42 @@ export class SpritesheetEditorView extends View {
 	destroy() {}
 
 	buildUI() {
-		const panel = document.createElement("floating-window") as FloatingWindowElement;
-		panel.title = " ";
-		panel.id = "commands-floating-window";
-		panel.setAttribute("initial-top", "260");
-		panel.setAttribute("initial-left", "5");
-		panel.setAttribute("initial-width", "40");
-		panel.setAttribute("initial-height", "300");
-		panel.style.setProperty("--window-content-padding", "0");
-		panel.style.setProperty("--window-min-width", "40px");
+		FloatingWindowElement.bootstrap();
 
-		panel.minimizable = false;
-		document.body.appendChild(panel);
+		const rootElement = document.createElement("div");
+		document.body.appendChild(rootElement);
+		rootElement.className = "root-editor";
 
+		const cmdWindow = newWindow(" ", "commands", 5, 260, 40, 300);
 		this.contentElement = document.createElement("div");
 		this.contentElement.innerHTML = toolsTemplate;
 		this.contentElement.className = "layout tools";
-		panel.setContent(this.contentElement);
+		cmdWindow.setContent(this.contentElement);
+		cmdWindow.restoreState();
+		rootElement.appendChild(cmdWindow);
+		setupUi(cmdWindow.getContentElement(), (id: string, data?: unknown) => this.onClickUIBtn(id, data));
 
+		this.toolsWindow = newWindow("Props", "props", document.body.clientWidth - 450 - 10, document.body.clientHeight - 650 - 10, 450, 650);
 		this.contentElement = document.createElement("div");
 		this.contentElement.innerHTML = propTemplate;
 		this.contentElement.className = "layout props";
-		this.layer.setContent(this.contentElement, this);
+		this.toolsWindow.setContent(this.contentElement);
+		this.toolsWindow.minimizable = true;
+		this.toolsWindow.resizable = true;
+		this.toolsWindow.restoreState();
+		rootElement.appendChild(this.toolsWindow);
+		setupUi(this.toolsWindow.getContentElement(), (id: string, data?: unknown) => this.onClickUIBtn(id, data));
 
 		const scriptText = localStorage.getItem("gamer2d-script") ?? "";
-		const scriptElement = this.contentElement.querySelector("#script") as HTMLTextAreaElement;
-		scriptElement.value = scriptText;
-
-		setupUi(this.contentElement, (id: string, data?: unknown) => this.onClickUIBtn(id, data));
+		this.scriptElement = this.contentElement.querySelector("#script") as HTMLTextAreaElement;
+		this.scriptElement.value = scriptText;
 	}
 
 	onChangeUI(el: HTMLInputElement | HTMLSelectElement) {}
 
 	onClickUIBtn(id: string, data?: unknown) {
+		console.log("onClickUIBtn", id, data);
+
 		switch (id) {
 			case "open-image":
 				this.openImage();
@@ -221,7 +226,6 @@ export class SpritesheetEditorView extends View {
 					case CMD_SELECT: {
 						this.cmd = CMD_SELECTING;
 						this.capturedArea = { x: e.x / this.zoom - this.imageOffsetX + 0.5, y: e.y / this.zoom - this.imageOffsetY + 0.5, width: 0, height: 0 };
-						console.log("CMD_SELECT", this.capturedArea);
 						// this.capturedArea = { x: e.x + 0.5, y: e.y + 0.5, width: 0, height: 0 };
 						break;
 					}
@@ -382,9 +386,7 @@ export class SpritesheetEditorView extends View {
 
 		this.filename = file.name;
 
-		const content = this.layer.getContent();
-		const scriptElement = content?.querySelector("#script") as HTMLTextAreaElement;
-		scriptElement.value = scriptElement.value.replace(/image\s+"([^"]+)"/, `image "images/${this.filename}"`);
+		this.scriptElement.value = this.scriptElement.value.replace(/image\s+"([^"]+)"/, `image "images/${this.filename}"`);
 
 		const blob = await file.arrayBuffer();
 		return new Promise<string>((resolve) => {
@@ -427,9 +429,7 @@ export class SpritesheetEditorView extends View {
 				this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITESHEET_LOADED, { ss, image: this.sheet.image });
 			}
 		} else {
-			const content = this.layer.getContent();
-			const scriptElement = content?.querySelector("#script") as HTMLTextAreaElement;
-			scriptElement.value = text;
+			this.scriptElement.value = text;
 
 			const ssSource = await loadText(`spritesheets/${file.name}`);
 			this.sheet = compile<TSpriteSheet>(ssSource, "spriteSheet");
@@ -452,17 +452,14 @@ export class SpritesheetEditorView extends View {
 
 		const ss = new SpriteSheet("????", this.srcImage);
 		this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITESHEET_LOADED, { ss, image: imagePath });
-		const content = this.layer.getContent();
-		const scriptElement = content?.querySelector("#script") as HTMLTextAreaElement;
-		scriptElement.value = ['spritesheet "????" {', "", `    image "images/${this.filename}"`, "", "}"].join("\n");
+
+		this.scriptElement.value = ['spritesheet "????" {', "", `    image "images/${this.filename}"`, "", "}"].join("\n");
 	}
 
 	private compileSpritesheet() {
 		if (!this.srcImage) return;
 
-		const content = this.layer.getContent();
-		const scriptElement = content?.querySelector("#script") as HTMLTextAreaElement;
-		const script = scriptElement?.value;
+		const script = this.scriptElement?.value;
 		if (script) {
 			localStorage.setItem("gamer2d-script", script);
 			const sheet = compile<TSpriteSheet>(script, "spriteSheet");
