@@ -1,16 +1,16 @@
 import { EventEmitter } from "../events/EventEmitter";
 import type { TAnimation } from "../script/compiler/ressources/spritesheet.rules";
 
-export default class Anim {
+export class Anim {
 	static EVENT_END = Symbol.for("ANIM_ENDED");
 
 	public frames: string[];
 	public len: number;
+	public loop: number;
 
 	readonly name: string;
 	private events: EventEmitter;
 	private step: number;
-	private loop: number;
 	private loopInitialValue: number;
 	private frameIdx = -1;
 	private lastHearbeat: number | null = null;
