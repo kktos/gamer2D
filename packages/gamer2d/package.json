@@ -1,13 +1,16 @@
 {
     "name": "gamer2d",
-    "version": "0.252.0",
+    "version": "0.253.0",
     "description": "A 2D Game Engine for Arkanoid, Bobble Bubble and more",
     "author": "kktos",
     "license": "ISC",
     "module": "./game/Game.js",
     "types": "./game/Game.d.ts",
     "exports": {
-        "./*": "./src/*.ts"
+        "./*": {
+            "development":"./src/*.ts",
+            "default":"./*.ts"
+        }
     },
     "scripts": {
         "build": "pnpm build:clean && pnpm build:make",

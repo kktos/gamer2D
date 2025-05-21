@@ -18,5 +18,6 @@
     "declarationMap": true,
     "esModuleInterop": true,
     "types": ["vite/client"],
+    "customConditions": ["development"]
   }
 }

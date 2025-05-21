@@ -12,7 +12,9 @@ export default defineConfig({  // config options
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-
+  define: {
+    'process.env.NODE_ENV': '"development"'
+  }
   // server: {
   //   watch: {
   //     paths: ['./public/**/*'],
