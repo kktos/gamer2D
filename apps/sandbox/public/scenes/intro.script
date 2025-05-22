@@ -1,0 +1,74 @@
+display "intro" {
+	showCursor
+
+	background {
+		color #000
+	}
+
+	display {
+		font "bubble-bobble"
+		sound "music:intro" play
+
+		timer "spawner" ms:30 repeat
+		on "TIME_OUT:spawner" {
+			log("TIME_OUT:spawner");
+			EntityPool("bubbles").use()
+		}
+
+		timer "end" ms:5000
+		on "TIME_OUT:end" {
+			timer("spawner").stop()
+		}
+
+		on SCENE_STARTED {
+			timer("spawner").start()
+			timer("end").start()
+		}
+
+		layout {
+			$offscreenTrait = trait OffscreenTrait()
+			$poolTrait = trait PoolTrait("bubbles")
+
+			pool "BubbleEntity" id:"bubbles" at:300,300 count:500 traits:[$offscreenTrait, $poolTrait]
+
+			$fadein = trait FadeTrait("in", #FF0000, 90)
+			$strings = [
+				"NOW, IT IS BEGINNING OF A",
+				"FANTASTIC STORY!! LET'S MAKE A",
+				"JOURNEY TO THE CAVE OF MONSTERS!",
+				"GOOD LUCK!"
+			]
+
+			align center
+			color #000000
+			size 2
+
+			$Ypos= 80
+			for $string of $strings index:$idx{
+				text $string at:300,$Ypos+$idx*40 traits:[$fadein]
+			}
+
+			def anim "clockwise" {
+				path { 
+					circle(380,300,20,0)
+					loop()
+				}
+				speed 20
+			}
+			def anim "counter-clockwise" {
+				path { 
+					circle(150,300,20,180)
+					loop()
+				}
+				speed -20
+			}
+
+			sprite "BubblunEntity" at:380,300 dir:right anim:"clockwise"
+			sprite "BubblunEntity" at:150,300 dir:left anim:"counter-clockwise"
+
+		}
+	}
+
+	entities {
+	}	
+}

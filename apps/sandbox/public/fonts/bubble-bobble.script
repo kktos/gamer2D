@@ -1,0 +1,20 @@
+font "bubble-bobble" {
+	image "images/font-bubble-bobble.png"
+
+	// characters width & height
+	size 8,8
+
+	// pos on the canvas of the top left character
+	offset 1,1
+
+	// gap X&Y between each character
+	gap 1,0
+
+	charset [
+		" !\"#$%&'()*+,-./",
+		"0123456789:;<=>?©",
+		"ABCDEFGHIJKLMNOPQ",
+		"RSTUVWXYZ[]"
+	]
+	hasLowercase
+}

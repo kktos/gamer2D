@@ -1,0 +1,19 @@
+{
+  "name": "sandbox",
+  "version": "1.0.0",
+  "type": "module",
+  "description": " gamer2d: workspace:* ",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "http-server ./dist -o -d -c-1"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  },
+  "dependencies": {
+    "gamer2d": "0.264"
+  }
+}

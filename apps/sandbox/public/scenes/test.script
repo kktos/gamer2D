@@ -1,0 +1,79 @@
+display "" {
+
+	background {
+		color #000
+	}
+	
+	display {
+		font "bubble-bobble"
+
+		layout {
+
+			align center
+			size 4
+
+			$strings = [
+				"THIS",
+				"IS",
+				"SPARTA"
+			]
+
+			def anim "fade" {
+				path { 
+					prop("text", $strings)
+					loop()
+				}
+				speed 5
+			}
+
+			// text "BOBBLE BUBBLE" at:298,104 anim:"fade" traits:[$fadeout]
+			text "BUBBLE BOBBLE" at:298,104 anim:"fade"
+
+			def anim "toRight" {
+				path { 
+					dir(right)
+					line(1,55,28,520,28)
+					dir(left)
+					line(-1,55,28,520,28)
+					loop()
+				}
+				speed 50
+			}
+			def anim "toLeft" {
+				path { 
+					dir(left)
+					line(-1,55,28,520,28)
+					dir(right)
+					line(1,55,28,520,28)
+					loop()
+				}
+				speed 60
+			}
+
+			sprite "zen-chan" at:55,28 dir:right anim:"toRight"
+			sprite "zen-chan" at:520,28 dir:left anim:"toLeft"
+
+			image "level-tiles:levels-S-0" at:48,60 range:32,0
+			image "level-tiles:levels-L-0" at:48,60 range:0,13
+			image "level-tiles:levels-L-0" at:528,60 range:0,13
+			image "level-tiles:levels-S-0" at:48,460 range:32,0
+
+			size 1
+			$top = $clientHeight - 110
+			$width = $clientWidth - 50
+			color white
+			align center
+			valign center
+			background #FFFFFF50
+			text "(${mouseX},${mouseY}) ${clientWidth}x${clientHeight}" at:10,$top width:580 height:20			
+		}
+	}
+
+	entities {
+		settings {
+			show_entities_count = true
+		}
+	}
+
+
+}
