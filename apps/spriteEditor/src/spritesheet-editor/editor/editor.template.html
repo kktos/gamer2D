@@ -1,0 +1,27 @@
+<style>
+	@import url("src/spritesheet-editor/base.css");
+	@import url("src/spritesheet-editor/editor/editor.css");
+	@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css");
+</style>
+
+<tabs-container>
+	<tab-pane label="Sprite" id="sprite-tab" active>
+		<!-- Sprite tab content here -->
+	</tab-pane>
+
+	<tab-pane label="Anim" id="anims-tab">
+		<anims-dlg></anims-dlg>
+	</tab-pane>
+
+	<tab-pane label="Editor" id="editor-tab" class="grid rows-1-a">
+		<textarea id="script"></textarea>
+		<div class="grid">
+			<div class="sep-1 align-self-end"></div>
+			<div id="btnCompile" class="btn justify-self-end m-2 p-b-4 p-i-12">Compile</div>
+		</div>
+	</tab-pane>
+
+	<tab-pane label="Sprites Detector" id="detect-tab">
+		<sprites-detector-dlg></sprites-detector-dlg>
+	</tab-pane>
+</tabs-container>

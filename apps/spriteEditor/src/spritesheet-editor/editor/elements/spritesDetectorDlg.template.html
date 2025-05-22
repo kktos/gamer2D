@@ -1,0 +1,85 @@
+<form id="spritesDetectForm">
+	<div class="grid gap-6 p-6 rounded shadow" style="min-width:320px; max-width:400px;">
+
+		<div class="grid gap-2">
+			<div class="font-semibold">Detection Mode:</div>
+			<div class="flex gap-4">
+				<label class="flex items-center gap-1">
+					<input type="radio" value="single" name="mode" checked>
+					<span>Single Sprite</span>
+				</label>
+				<label class="flex items-center gap-1">
+					<input type="radio" value="multiple" name="mode">
+					<span>Multiple Sprites</span>
+				</label>
+			</div>
+		</div>
+
+		<div>
+			<label for="spriteName" class="font-semibold">Sprite Name</label>
+			<input type="text" name="spriteName" placeholder="Sprite Name" class="input w-full mt-1">
+		</div>
+
+		<div class="grid grid-cols-2 gap-4">
+			<div>
+				<div class="font-semibold mb-1">Min Size (px)</div>
+				<div class="grid grid-cols-2 gap-2">
+					<div>
+						<label for="minSpriteWidth" class="block text-xs">Width</label>
+						<input type="number" name="minSpriteWidth" value="4" min="1" class="input w-full">
+					</div>
+					<div>
+						<label for="minSpriteHeight" class="block text-xs mt-2">Height</label>
+						<input type="number" name="minSpriteHeight" value="4" min="1" class="input w-full">
+					</div>
+				</div>
+			</div>
+			<div>
+				<div class="font-semibold mb-1">Expected Size (px)</div>
+				<div class="grid grid-cols-2 gap-2">
+					<div>
+						<label for="expectedSpriteWidth" class="block text-xs">Width</label>
+						<input type="number" name="expectedSpriteWidth" min="1" value="16" class="input w-full">
+					</div>
+					<div>
+						<label for="expectedSpriteHeight" class="block text-xs mt-2">Height</label>
+						<input type="number" name="expectedSpriteHeight" min="1" value="16" class="input w-full">
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div>
+			<div class="font-semibold">Backround Color</div>
+			<div class="grid grid-cols-4 gap-4">
+				<input type="number" name="r" min="0" max="255" value="0" class="input w-full">
+				<input type="number" name="g" min="0" max="255" value="0" class="input w-full">
+				<input type="number" name="b" min="0" max="255" value="0" class="input w-full">
+				<input type="number" name="a" min="0" max="255" value="0" class="input w-full">
+			</div>
+		</div>
+
+		<div class="grid grid-cols-2 gap-2">
+			<div>
+				<label for="toleranceRGB" class="font-semibold">Tolerance RGB</label>
+				<input type="number" name="toleranceRGB" min="0" max:"255" value="0" class="input w-full mt-1">
+			</div>
+			<div>
+				<label for="toleranceAlpha" class="font-semibold">Tolerance Alpha</label>
+				<input type="number" name="toleranceAlpha" min="0" max:"255" value="0" class="input w-full mt-1">
+			</div>
+		</div>
+
+		<div class="flex justify-center mt-4">
+			<select name="method" class="select select-bordered w-full max-w-xs">
+				<option value="floodFill">Floodfill</option>
+				<option value="improvedFloodFill">Floodfill with Holes</option>
+				<option value="traceContour">Moore-Neighbor</option>
+			</select>
+		</div>
+
+		<div class="flex justify-center mt-4">
+			<div id="detect-sprites" class="btn btn-primary px-6 py-2">Detect</div>
+		</div>
+	</div>
+</form>

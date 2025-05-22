@@ -1,0 +1,31 @@
+<form id="animForm">
+	<div class="grid gap-6 p-6 rounded shadow" style="min-width:320px; max-width:400px;">
+		<div>
+			<label for="name" class="font-semibold">Animation Name</label>
+			<input type="text" name="name" value="anim-0" class="input w-full mt-1">
+		</div>
+		<div>
+			<div class="grid grid-cols-2 gap-2">
+				<div>
+					<label for="length" class="block text-xs">Length</label>
+					<input type="number" name="length" min="1" value="16" class="input w-full">
+				</div>
+				<div>
+					<label for="loop" class="block text-xs mt-2">Loop</label>
+					<input type="number" name="loop" value="" class="input w-full">
+				</div>
+			</div>
+		</div>
+		<div>
+			<label for="name" class="font-semibold">Sprite</label>
+			<input type="text" name="sprite" class="input w-full mt-1">
+		</div>
+		<div>
+			<label for="frames" class="font-semibold">Frames</label>
+			<select name="frames" multiple class="select select-bordered w-full mt-1"></select>
+		</div>
+		<div class="flex justify-center mt-4">
+			<div id="create-anim" class="btn btn-primary px-6 py-2">Create Animation</div>
+		</div>
+	</div>
+</form>

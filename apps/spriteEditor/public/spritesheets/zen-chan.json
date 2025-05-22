@@ -1,0 +1,92 @@
+{
+	"img": "images/zen-chan.png",
+	"sprites": {
+		"zen-chan": {
+			"scale": 2,
+			"tiles": {
+				"pos": [5, 13],
+				"size": [16, 16],
+				"increment": [1, 0],
+				"offset": [2, 0],
+				"count": 4
+			}			
+		},
+		"zen-chan-upset": {
+			"scale": 1,
+			"tiles": {
+				"pos": [78, 13],
+				"size": [16, 16],
+				"increment": [1, 0],
+				"offset": [2, 0],
+				"count": 4
+			}			
+		},
+		"zen-chan-green-bubble": {
+			"scale": 1,
+			"tiles": {
+				"pos": [5, 51],
+				"size": [16, 16],
+				"increment": [1, 0],
+				"offset": [2, 0],
+				"count": 3
+			}			
+		},
+		"zen-chan-blue-bubble": {
+			"scale": 1,
+			"tiles": {
+				"pos": [61, 51],
+				"size": [16, 16],
+				"increment": [1, 0],
+				"offset": [2, 0],
+				"count": 3
+			}			
+		},
+		"zen-chan-orange-bubble": {
+			"scale": 1,
+			"tiles": {
+				"pos": [5, 70],
+				"size": [16, 16],
+				"increment": [1, 0],
+				"offset": [2, 0],
+				"count": 3
+			}			
+		},
+		"zen-chan-red-bubble": {
+			"scale": 1,
+			"tiles": {
+				"pos": [61, 70],
+				"size": [16, 16],
+				"increment": [1, 0],
+				"offset": [2, 0],
+				"count": 3
+			}			
+		}
+
+	},
+	"animations": {	
+		"zen-chan": {
+			"len": 8,
+			"frames": { "name": "zen-chan", "range": [0, 3] }
+		},
+		"zen-chan-upset": {
+			"len": 8,
+			"frames": { "name": "zen-chan-upset", "range": [0, 3] }
+		},
+		"zen-chan-green-bubble": {
+			"len": 8,
+			"frames": { "name": "zen-chan-green-bubble", "range": [0, 2] }
+		},
+		"zen-chan-blue-bubble": {
+			"len": 8,
+			"frames": { "name": "zen-chan-blue-bubble", "range": [0, 2] }
+		},
+		"zen-chan-orange-bubble": {
+			"len": 8,
+			"frames": { "name": "zen-chan-orange-bubble", "range": [0, 2] }
+		},
+		"zen-chan-red-bubble": {
+			"len": 8,
+			"frames": { "name": "zen-chan-red-bubble", "range": [0, 2] }
+		}
+	}
+}

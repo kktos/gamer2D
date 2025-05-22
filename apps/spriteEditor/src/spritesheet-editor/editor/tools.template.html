@@ -1,0 +1,36 @@
+<style>
+	@import url("src/spritesheet-editor/base.css");
+	@import url("src/spritesheet-editor/editor/editor.css");
+	@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css");
+</style>
+
+<div class="action-panel">
+
+	<div class="button-group">
+		<button id="move-cmd" class="action-btn selected" data-command title="Move">
+			<i class="fas fa-arrows-alt"></i>
+		</button>
+		<button id="select-cmd" class="action-btn" data-command title="Select">
+			<i class="fas fa-mouse-pointer"></i>
+		</button>
+	</div>
+
+	<div class="button-group last-group">
+		<button id="open-image" class="action-btn primary" title="Open Image">
+			<i class="fa-solid fa-file-image"></i>
+			<!-- <span>Open Image</span> -->
+		</button>
+		<button id="open-spritesheet" class="action-btn primary" title="Open Spritesheet">
+			<i class="fas fa-th"></i>
+			<!-- <span>Open Spritesheet</span> -->
+		</button>
+		<button id="new-spritesheet" class="action-btn primary" title="New Spritesheet">
+			<i class="fas fa-plus"></i>
+			<!-- <span>New Spritesheet</span> -->
+		</button>
+		<button id="gen-spritesheet" class="action-btn primary" title="Generate Spritesheet">
+			<i class="fas fa-plus"></i>
+			<!-- <span>Generate Spritesheet</span> -->
+		</button>
+	</div>
+</div>

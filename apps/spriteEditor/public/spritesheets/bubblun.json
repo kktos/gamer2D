@@ -1,0 +1,128 @@
+{
+	"img": "images/bubblun.png",
+	"sprites": {
+		"bubblun-walk": {
+			"scale": 2,
+			"tiles": {
+				"pos": [9, 14],
+				"size": [16, 16],
+				"increment": [1, 0],
+				"offset": [1, 0],
+				"count": 7
+			}			
+		},
+		"bubblun-idle": {
+			"scale": 2,
+			"tiles": {
+				"pos": [9, 14],
+				"size": [16, 16],
+				"increment": [2, 0],
+				"offset": [1, 0],
+				"count": 2
+			}			
+		},		
+		"bubblun-up": {
+			"scale": 2,
+			"tiles": {
+				"pos": [196, 54],
+				"size": [16, 16],
+				"increment": [1, 0],
+				"offset": [1, 0],
+				"count": 2
+			}			
+		},		
+		"bubblun-down": {
+			"scale": 2,
+			"tiles": {
+				"pos": [162, 54],
+				"size": [16, 16],
+				"increment": [1, 0],
+				"offset": [1, 0],
+				"count": 2
+			}			
+		},		
+		"bubblun-burp": {
+			"scale": 1,
+			"tiles": {
+				"pos": [9, 34],
+				"size": [16, 16],
+				"increment": [1, 0],
+				"offset": [1, 0],
+				"count": 16
+			}			
+		},
+		"bubblun-death": {
+			"scale": 1,
+			"groups": [
+				{
+					"tiles": {
+						"pos": [9, 74],
+						"size": [16, 16],
+						"increment": [1, 0],
+						"offset": [1, 0],
+						"count": 6
+					}
+				},
+				{
+					"rects": [
+						[111, 74, 18, 16],
+						[130, 74, 21, 16],
+						[152, 74, 22, 16]
+					]
+				},
+				{
+					"tiles": {
+						"pos": [175, 74],
+						"size": [16, 16],
+						"increment": [1, 0],
+						"offset": [1, 0],
+						"count": 7
+					}
+				}				
+			]
+		},
+		"in-bobble": {
+			"rects": [
+				[139, 181, 30, 32],
+				[173, 181, 30, 32]
+			]
+
+		},
+		"life": {
+			"rect":	[210, 10, 12, 12]
+		}
+
+	},
+	"animations": {
+
+		"bubblun-walk": {
+			"len": 6,
+			"frames": { "name": "bubblun-walk", "range": [0, 4] }
+		},
+		"bubblun-idle": {
+			"len": 12,
+			"frames": { "name": "bubblun-idle", "range": [0, 1] }
+		},
+		"bubblun-up": {
+			"len": 12,
+			"frames": { "name": "bubblun-up", "range": [0, 1] }
+		},
+		"bubblun-down": {
+			"len": 12,
+			"frames": { "name": "bubblun-down", "range": [0, 1] }
+		},
+		"bubblun-burp": {
+			"len": 6,
+			"frames": { "name": "bubblun-burp", "range": [0, 15] }
+		},
+		"bubblun-death": {
+			"len": 6,
+			"frames": { "name": "bubblun-death", "range": [0, 15] }
+		},
+		"in-bobble": {
+			"len": 6,
+			"frames": { "name": "in-bobble", "range": [0, 1] }
+		}
+
+	}
+}

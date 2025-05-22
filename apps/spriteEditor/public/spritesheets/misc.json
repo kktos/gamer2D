@@ -1,0 +1,42 @@
+{
+	"img": "images/misc.png",
+	"sprites": {
+
+		"taito": {
+			"scale": 1,
+			"rect": [177,1,72,15]
+		},
+		"logo": {
+			"scale": 1,
+			"tiles": {
+				"pos": [1, 1],
+				"size": [175, 142],
+				"increment": [0, 1],
+				"offset": [0, 1],
+				"count": 6
+			}
+		},
+		"bubble": {
+			"scale": 1,
+			"tiles": {
+				"pos": [177, 17],
+				"size": [14, 16],
+				"increment": [1, 0],
+				"offset": [1, 0],
+				"count": 6
+			}
+		}
+
+	},
+	"animations": {
+		"logo": {
+			"len": 0.1,
+			"frames": { "name": "logo", "range": [0, 5] }
+		},
+		"bubble": {
+			"len": 0.1,
+			"loop": 1,
+			"frames": { "name": "bubble", "range": [0, 5] }
+		}
+	}
+}
