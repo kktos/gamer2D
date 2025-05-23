@@ -1,6 +1,7 @@
 import { OP_TYPES } from "../../../../types/operation.types";
 import type { ArgColor } from "../../../../types/value.types";
 import { tokens } from "../../lexer";
+import type { TStatement } from "./layout/layout.rules";
 import type { TSet } from "./layout/set.rules";
 import type { TEventHandlerDict } from "./on.rules";
 import type { TSoundDefs } from "./sound.rules";
@@ -14,7 +15,7 @@ export type TLayerDisplaySheet = {
 	type: "display";
 	ui?: SceneSheetUI;
 	font?: string;
-	layout?: unknown[];
+	layout: TStatement[];
 	sounds?: TSoundDefs;
 	on?: TEventHandlerDict;
 	settings?: Record<string, unknown>;
@@ -25,7 +26,7 @@ export class DisplayRules {
 	static displayLayerSheet($) {
 		return $.RULE("displayLayerSheet", () => {
 			$.CONSUME(tokens.Display);
-			const sheet = { type: "display" };
+			const sheet: Partial<TLayerDisplaySheet> = { type: "display" };
 
 			$.CONSUME(tokens.OpenCurly);
 
@@ -36,6 +37,9 @@ export class DisplayRules {
 
 			$.CONSUME(tokens.CloseCurly);
 
+			$.ACTION(() => {
+				if (!sheet?.layout) throw new SyntaxError("Missing layout.");
+			});
 			return sheet;
 		});
 	}

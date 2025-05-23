@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { OP_TYPES } from "../../../../../types/operation.types";
 import { ArgColor, ArgExpression, ArgVariable, ValueTrait } from "../../../../../types/value.types";
 import { compile, compileScript, setWannaLogError } from "../../../compiler";
+import type { TLayerDisplaySheet } from "../display.rules";
 
 describe("Set Var Value", () => {
 	beforeAll(() => {
@@ -23,11 +24,11 @@ describe("Set Var Value", () => {
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		const displayLayer = result.layers.find((layer) => layer.type === "display") as TLayerDisplaySheet;
 		expect(displayLayer).toHaveProperty("layout");
 		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		const menuItems = displayLayer.layout.find((op) => op.name === "menuItems");
+		const menuItems = displayLayer.layout?.find((op) => "name" in op && op.name === "menuItems");
 		expect(menuItems).toHaveProperty("type", OP_TYPES.SET);
 		expect(menuItems).toHaveProperty("value", ["play", "intro"]);
 	});
@@ -47,11 +48,11 @@ describe("Set Var Value", () => {
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		const displayLayer = result.layers.find((layer) => layer.type === "display") as TLayerDisplaySheet;
 		expect(displayLayer).toHaveProperty("layout");
 		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		const colors = displayLayer.layout.find((op) => op.name === "colors");
+		const colors = displayLayer.layout?.find((op) => "name" in op && op.name === "colors");
 		expect(colors).toHaveProperty("type", OP_TYPES.SET);
 		expect(colors).toHaveProperty("value", [new ArgColor("#11223344"), new ArgColor("#FF00FF")]);
 	});
@@ -71,11 +72,11 @@ describe("Set Var Value", () => {
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		const displayLayer = result.layers.find((layer) => layer.type === "display") as TLayerDisplaySheet;
 		expect(displayLayer).toHaveProperty("layout");
 		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		const numbers = displayLayer.layout.find((op) => op.name === "numbers");
+		const numbers = displayLayer.layout?.find((op) => "name" in op && op.name === "numbers");
 		expect(numbers).toHaveProperty("type", OP_TYPES.SET);
 		expect(numbers).toHaveProperty("value", [350, 600]);
 	});
@@ -125,12 +126,12 @@ describe("Set Var Value", () => {
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		const displayLayer = result.layers.find((layer) => layer.type === "display") as TLayerDisplaySheet;
 		expect(displayLayer).toBeDefined();
 		expect(displayLayer).toHaveProperty("layout");
 		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		const fadein = displayLayer.layout.find((op) => op.name === "rez");
+		const fadein = displayLayer.layout?.find((op) => "name" in op && op.name === "rez");
 		expect(fadein).toBeDefined();
 		expect(fadein).toHaveProperty("type", OP_TYPES.SET);
 		expect(fadein).toHaveProperty(

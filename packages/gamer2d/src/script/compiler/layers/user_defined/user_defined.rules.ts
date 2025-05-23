@@ -1,6 +1,7 @@
 import { tokens } from "../../lexer";
 
 export type TLayerUserDefinedSheet = {
+	name?: string;
 	type: string;
 	settings?: Record<string, unknown>;
 };

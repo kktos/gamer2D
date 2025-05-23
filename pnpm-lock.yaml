@@ -12,7 +12,23 @@ importers:
         specifier: ^2.5.3
         version: 2.5.3
 
-  apps/test-bed:
+  apps/sandbox:
+    dependencies:
+      gamer2d:
+        specifier: '0.264'
+        version: 0.264.0
+    devDependencies:
+      http-server:
+        specifier: ^14.1.1
+        version: 14.1.1
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
+      vite:
+        specifier: ^6.3.5
+        version: 6.3.5
+
+  apps/spriteEditor:
     dependencies:
       gamer2d:
         specifier: workspace:*
@@ -565,6 +581,9 @@ packages:
 
   function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
+
+  gamer2d@0.264.0:
+    resolution: {integrity: sha512-6Ym32punawIQSyE0miJWRMTnW2GbHZSI9pesI2kclPQjUpV8Elv+oc0xog6Pne4iwCGnTKQ3P3YBzr3rfgV/uw==}
 
   get-intrinsic@1.3.0:
     resolution: {integrity: sha512-9fSjSaos/fRIVIp+xSJlE6lfwhES7LNtKaCBIamHsjr2na1BiABJPo0mOjjz8GJDURarmCPGqaiVg5mfjb98CQ==}
@@ -1354,6 +1373,10 @@ snapshots:
     optional: true
 
   function-bind@1.1.2: {}
+
+  gamer2d@0.264.0:
+    dependencies:
+      chevrotain: 11.0.3
 
   get-intrinsic@1.3.0:
     dependencies:

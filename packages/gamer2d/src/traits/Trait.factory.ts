@@ -1,5 +1,4 @@
-import type { TraitConstructor } from "../game/types/GameOptions";
-import { getClassName } from "../utils/object.util";
+import type { TTraitDefinition, TraitConstructor } from "../game/types/GameOptions";
 import type { Trait } from "./Trait";
 import { FadeTrait } from "./fade.trait";
 import { KillIfOffscreenTrait } from "./killOffscreen.trait";
@@ -11,14 +10,14 @@ import TrapTrait from "./trap.trait";
 import { XDragTrait } from "./xdrag.trait";
 
 const traitClasses = {
-	MouseXTrait,
-	MouseXYTrait,
-	FadeTrait,
-	XDragTrait,
-	OffscreenTrait,
-	KillIfOffscreenTrait,
-	KillableTrait,
-	TrapTrait,
+	MouseXTrait: MouseXTrait,
+	MouseXYTrait: MouseXYTrait,
+	FadeTrait: FadeTrait,
+	XDragTrait: XDragTrait,
+	OffscreenTrait: OffscreenTrait,
+	KillIfOffscreenTrait: KillIfOffscreenTrait,
+	KillableTrait: KillableTrait,
+	TrapTrait: TrapTrait,
 };
 
 const traitNames = {
@@ -32,14 +31,14 @@ const traitNames = {
 	trap: "TrapTrait",
 };
 
-export function setupTraits(traitsDefinitions: TraitConstructor[]) {
-	for (const def of traitsDefinitions) setupTrait(def);
+export function setupTraits(traitsDefinitions: TTraitDefinition[]) {
+	for (const def of traitsDefinitions) setupTrait(def.name, def.classType);
 }
 
-export function setupTrait(def: TraitConstructor) {
-	const className = getClassName(def);
+export function setupTrait(className: string, classType: TraitConstructor) {
+	// const className = getClassName(classType);
 	if (traitClasses[className]) return;
-	traitClasses[className] = def;
+	traitClasses[className] = classType;
 }
 
 export function getTraitClassname(name: string) {
@@ -48,8 +47,8 @@ export function getTraitClassname(name: string) {
 	return className;
 }
 
-export function createTraitByName(name: string, ...args: unknown[]): Trait {
-	const className = getTraitClassname(name);
+export function createTraitByName(className: string, ...args: unknown[]): Trait {
+	// const className = getTraitClassname(name);
 	if (!traitClasses[className]) {
 		throw new TypeError(`Unknown Trait Type ${className}`);
 	}

@@ -7,11 +7,13 @@ import Director from "../scene/Director";
 import { setupTraits } from "../traits/Trait.factory";
 import { createViewport } from "../utils/canvas.utils";
 import { readGamepad } from "../utils/gamepad.util";
+import { Loader } from "../utils/loaders.util";
 import { path } from "../utils/path.util";
 import { parseSettings } from "../utils/settings.utils";
 import { FPSManager } from "./FPSManager";
 import { KeyMap } from "./KeyMap";
-import ResourceManager, { type TResourceGroupsDict } from "./ResourceManager";
+import { ResourceManager, type TResourceGroupsDict } from "./ResourceManager";
+import { SpriteSheet } from "./Spritesheet";
 import { GLOBAL_VARIABLES } from "./globals";
 import type { GameContext } from "./types/GameContext";
 import type { GameEvent, KeyEvent } from "./types/GameEvent";
@@ -39,6 +41,12 @@ export class Game {
 			const logs = settings.get("LOGS").split(/\s*,\s*/);
 			if (logs.includes("Timer")) {
 				Timers.wannaLog = true;
+			}
+			if (logs.includes("Loader")) {
+				Loader.wannaLog = true;
+			}
+			if (logs.includes("SpriteSheet")) {
+				SpriteSheet.wannaLog = true;
 			}
 		}
 

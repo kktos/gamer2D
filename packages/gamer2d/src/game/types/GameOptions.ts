@@ -14,6 +14,7 @@ export type ViewConstructor = Constructor<View>;
 export type TEntityDefinition = { name: string; classType: EntityConstructor };
 export type TLayerDefinition = { name: string; classType: LayerConstructor };
 export type TViewDefinition = { name: string; classType: ViewConstructor };
+export type TTraitDefinition = { name: string; classType: TraitConstructor };
 
 export type GameOptions = {
 	paths: {
@@ -27,6 +28,6 @@ export type GameOptions = {
 	isDebugEnabled?: boolean;
 
 	entities?: TEntityDefinition[];
-	traits?: TraitConstructor[];
+	traits?: TTraitDefinition[];
 	layers?: TLayerDefinition[];
 };

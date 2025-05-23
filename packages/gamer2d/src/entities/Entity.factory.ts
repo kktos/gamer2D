@@ -1,4 +1,4 @@
-import type ResourceManager from "../game/ResourceManager";
+import type { ResourceManager } from "../game/ResourceManager";
 import type { TEntityDefinition } from "../game/types/GameOptions";
 import { getClassName } from "../utils/object.util";
 import type { Entity } from "./Entity";

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { OP_TYPES } from "../../../../../types/operation.types";
 import { compile, compileScript } from "../../../compiler";
+import type { TLayerDisplaySheet } from "../display.rules";
 
 describe("Sprite", () => {
 	it("should create a sprite", () => {
@@ -16,7 +17,7 @@ describe("Sprite", () => {
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		const displayLayer = result.layers.find((layer) => layer.type === "display") as TLayerDisplaySheet;
 		expect(displayLayer).toBeDefined();
 		expect(displayLayer).toHaveProperty("layout");
 		expect(Array.isArray(displayLayer.layout)).toBe(true);
@@ -48,7 +49,7 @@ describe("Sprite", () => {
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		const displayLayer = result.layers.find((layer) => layer.type === "display") as TLayerDisplaySheet;
 		expect(displayLayer).toBeDefined();
 		expect(displayLayer).toHaveProperty("layout");
 		expect(Array.isArray(displayLayer.layout)).toBe(true);

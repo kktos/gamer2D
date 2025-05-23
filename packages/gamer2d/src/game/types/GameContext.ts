@@ -1,6 +1,6 @@
 import type { Scene } from "../../scene/Scene";
 import type { KeyMap } from "../KeyMap";
-import type ResourceManager from "../ResourceManager";
+import type { ResourceManager } from "../ResourceManager";
 import type { GameOptions } from "./GameOptions";
 
 export interface GameContext {

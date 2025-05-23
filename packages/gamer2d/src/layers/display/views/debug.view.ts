@@ -1,5 +1,5 @@
 import type { Font } from "../../../game/Font";
-import type ResourceManager from "../../../game/ResourceManager";
+import type { ResourceManager } from "../../../game/ResourceManager";
 import type { AnimMap, SpriteMap, SpriteSheet } from "../../../game/Spritesheet";
 import type { GameContext } from "../../../game/types/GameContext";
 import { drawPixelated } from "../../../utils/canvas.utils";

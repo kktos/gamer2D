@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { OP_TYPES } from "../../../types/operation.types";
 import { ArgColor, ArgExpression, ArgIdentifier, ArgVariable } from "../../../types/value.types";
 import { compile, compileScript } from "../compiler";
+import type { TLayerDisplaySheet } from "../layers/display/display.rules";
 
 describe("Action", () => {
 	it("should define a simple action", () => {
@@ -18,7 +19,7 @@ describe("Action", () => {
 		const result = compileScript(script);
 		expect(result).toBeDefined();
 
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		const displayLayer = result.layers.find((layer) => layer.type === "display") as TLayerDisplaySheet;
 		expect(displayLayer).toBeDefined();
 		expect(displayLayer.on).toEqual({
 			FAKE: {

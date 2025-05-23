@@ -3,7 +3,7 @@ import { EntityPool } from "../entities/EntityPool";
 import type { Font } from "../game/Font";
 import { GLOBAL_VARIABLES } from "../game/globals";
 import type { GameContext } from "../game/types/GameContext";
-import type { GameEvent } from "../game/types/GameEvent";
+import type { BaseEvent } from "../game/types/GameEvent";
 import { BBox } from "../maths/BBox.class";
 import type { Scene } from "../scene/Scene";
 import type { TLayerDisplaySheet } from "../script/compiler/layers/display/display.rules";
@@ -169,7 +169,7 @@ export class DisplayLayer extends UILayer {
 		this.vars.set(viewDef.id, viewDef.component || 0);
 	}
 
-	handleEvent(gc: GameContext, e: GameEvent) {
+	handleEvent(gc: GameContext, e: BaseEvent) {
 		gc.viewport.canvas.style.cursor = "default";
 
 		switch (e.type) {
@@ -196,13 +196,12 @@ export class DisplayLayer extends UILayer {
 		for (let idx = 0; idx < this.views.length; idx++) {
 			const view = this.views[idx];
 
-			if ("x" in e && !["keyup", "keydown"].includes(e.type)) {
-				if (!view.bbox?.isPointInside(e.x, e.y)) continue;
-				e.x = e.x - view.bbox.left;
-				e.y = e.y - view.bbox.top;
-				e.pageX = e.x;
-				e.pageY = e.y;
-			}
+			if ("x" in e && !["keyup", "keydown"].includes(e.type)) if (!view.bbox?.isPointInside(e.x, e.y)) continue;
+
+			e.x = gc.mouse.x - (view.bbox?.left ?? 0);
+			e.y = gc.mouse.y - (view.bbox?.top ?? 0);
+			e.pageX = e.x;
+			e.pageY = e.y;
 
 			view.component?.handleEvent(gc, e);
 		}

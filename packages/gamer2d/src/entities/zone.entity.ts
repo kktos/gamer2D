@@ -1,4 +1,4 @@
-import type ResourceManager from "../game/ResourceManager";
+import type { ResourceManager } from "../game/ResourceManager";
 import { Entity } from "./Entity";
 
 export class ZoneEntity extends Entity {

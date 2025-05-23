@@ -11,14 +11,14 @@ type ProviderFn = (deltaTime: number, entity: Entity) => Point | null;
 const TAU = 2 * Math.PI;
 const toRad = 180 / Math.PI;
 
-export type PathDefDTO = Required<Pick<TAnimDef, "path" | "speed">>;
+export type TPathDefDTO = Required<Pick<TAnimDef, "path" | "speed">>;
 
 export class PathTrait extends Trait {
 	private isRunning: boolean;
 	private currentProvider: number;
 	private pointProviders: ProviderFn[];
 
-	constructor(pathDef: PathDefDTO, { evalArg }) {
+	constructor(pathDef: TPathDefDTO, { evalArg }) {
 		super();
 
 		// console.log(pathDef);

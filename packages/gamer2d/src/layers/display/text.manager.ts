@@ -4,7 +4,7 @@ import { ALIGN_TYPES } from "../../script/compiler/layers/display/layout/text-sp
 import type { TText } from "../../script/compiler/layers/display/layout/text.rules";
 import type { TFunctionCall } from "../../script/compiler/shared/action.rules";
 import { evalArg, evalNumber, evalValue, isStringInterpolable } from "../../script/engine/eval.script";
-import { type PathDefDTO, PathTrait } from "../../traits/path.trait";
+import { PathTrait, type TPathDefDTO } from "../../traits/path.trait";
 import type { TVars } from "../../utils/vars.utils";
 import type { DisplayLayer } from "../display.layer";
 import { EntitiesLayer } from "../entities.layer";
@@ -50,7 +50,7 @@ function setupAnim(op: TText & { entity?: Entity }, entity: Entity, vars: TVars)
 	if (!anim) {
 		throw new Error(`Animation ${op.anim.name} not found`);
 	}
-	const animDTO: PathDefDTO = {
+	const animDTO: TPathDefDTO = {
 		path: anim.path,
 		speed: anim.speed,
 	};

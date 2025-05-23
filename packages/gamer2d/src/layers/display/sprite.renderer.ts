@@ -58,39 +58,35 @@ export function renderSprite({ resourceManager, deltaTime, tick, viewport: { ctx
 			pos: op.pos,
 			path: null,
 		};
-		if (names.length > 1) {
-			op.state.animation = names[1];
-		} else {
-			op.state.size = ss.spriteSize(sprite);
-		}
+		if (names.length > 1) op.state.animation = names[1];
+		else op.state.size = ss.spriteSize(sprite);
+
 		if ("anim" in op && op.anim) {
 			const anim = layer.vars.get(op.anim.name);
 			op.state.path = animBuilder(anim, op.state);
 		}
 	}
 	const state = op.state;
-
-	if (state.path) {
-		state.pos = state.path.getNextPoint(deltaTime);
-	}
-
+	if (state.path) state.pos = state.path.getNextPoint(deltaTime);
 	const zoom = op.zoom || 1;
+	const [x, y] = state.pos;
+
+	if (state.animation) return state.ss.drawAnim(state.animation, ctx, x, y, tick, { zoom });
+
 	let [countX, countY] = op.range || [1, 1];
 	if (countX <= 0) countX = 1;
 	if (countY <= 0) countY = 1;
 
-	const [x, y] = state.pos;
+	const imgCanvas = document.createElement("canvas");
+	imgCanvas.width = countX * state.size.width * zoom;
+	imgCanvas.height = countY * state.size.height * zoom;
+	const imgCtx = imgCanvas.getContext("2d") as CanvasRenderingContext2D;
 
-	if (state.animation) {
-		state.ss.drawAnim(state.animation, ctx, x, y, tick, { zoom });
-		return;
-	}
+	for (let row = 0; row < countY; row++)
+		for (let col = 0; col < countX; col++)
+			state.ss.draw(state.sprite, imgCtx, col * state.size.width * zoom, row * state.size.height * zoom, { flip: 0, zoom });
 
-	for (let row = 0; row < countY; row++) {
-		for (let col = 0; col < countX; col++) {
-			state.ss.draw(state.sprite, ctx, x + col * (state.size.width * zoom), y + row * (state.size.height * zoom), { flip: 0, zoom });
-		}
-	}
+	ctx.drawImage(imgCanvas, x, y);
 }
 
 export function loadSprite({ resourceManager }, name: string) {

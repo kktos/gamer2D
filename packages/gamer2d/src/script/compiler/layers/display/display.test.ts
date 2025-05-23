@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { compileScript } from "../../compiler";
+import type { TLayerDisplaySheet } from "./display.rules";
 
 describe("Display", () => {
 	it("should have settings", () => {
@@ -18,7 +19,7 @@ describe("Display", () => {
 		expect(result).toBeDefined();
 		expect(result).toHaveProperty("layers");
 
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		const displayLayer = result.layers.find((layer) => layer.type === "display") as TLayerDisplaySheet;
 		expect(displayLayer).toBeDefined();
 
 		expect(displayLayer).toHaveProperty("settings");

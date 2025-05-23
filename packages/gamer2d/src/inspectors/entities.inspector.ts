@@ -169,11 +169,11 @@ export class EntityListPanel extends HTMLElement {
 		if (this._listElement) this._listElement.innerHTML = "";
 	}
 
-	connectedCallback() {
-		console.log("Entity List Panel added to page.");
-	}
+	// connectedCallback() {
+	// 	console.log("Entity List Panel added to page.");
+	// }
 
-	disconnectedCallback() {
-		console.log("Entity List Panel removed from page.");
-	}
+	// disconnectedCallback() {
+	// 	console.log("Entity List Panel removed from page.");
+	// }
 }

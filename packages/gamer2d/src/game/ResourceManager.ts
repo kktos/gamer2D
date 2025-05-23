@@ -10,7 +10,7 @@ type TResourceKind = "sprite" | "audio" | "font";
 type TResourceGroupNames = "spritesheets" | "audiosheets" | "fonts";
 export type TResourceGroupsDict = Partial<Record<TResourceGroupNames, (string | unknown)[]>>;
 
-export default class ResourceManager {
+export class ResourceManager {
 	private cache: Map<string, unknown>;
 
 	constructor(

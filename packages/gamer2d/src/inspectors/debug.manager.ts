@@ -21,7 +21,7 @@ export function displayDebugInspectors(coppola: Director) {
 	let findEntityById: (entityId) => Entity | undefined;
 	let showEntityListInspector: () => void;
 
-	coppola.currentScene.useLayer("EntitiesLayer", (layer: EntitiesLayer) => {
+	coppola.currentScene.useLayer("entities", (layer: EntitiesLayer) => {
 		showEntityListInspector = () => entityListInspector.show(layer.entities);
 		findEntityById = (entityId) => layer.get(entityId);
 		showEntityListInspector();
@@ -75,7 +75,7 @@ function prepareEntityProperties(entity: Entity): Record<string, unknown> {
 function setupHTMLAndEventListeners(coppola: Director) {
 	const trigger = createTrigger();
 	// activate per scene
-	disableDebug();
+	enableDebug(false);
 	createEntityInspector();
 	createEntitiesInspector();
 	trigger.addEventListener("click", () => displayDebugInspectors(coppola));
@@ -101,14 +101,9 @@ function createTrigger() {
 	return trigger;
 }
 
-export function enableDebug() {
+export function enableDebug(state: boolean) {
 	const btn = document.getElementById(TRIGGER_BTN_ID);
-	if (btn) btn.style.visibility = "";
-}
-
-export function disableDebug() {
-	const btn = document.getElementById(TRIGGER_BTN_ID);
-	if (btn) btn.style.visibility = "hidden";
+	if (btn) btn.style.visibility = state ? "" : "hidden";
 }
 
 // :hover -> rgb(85 171 247 / 58%)

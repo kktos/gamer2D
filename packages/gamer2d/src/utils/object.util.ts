@@ -36,9 +36,14 @@ export function clone<T>(original: T, duplicata: Record<string, unknown> = {}): 
 
 export function getClassName(classType: unknown) {
 	let name = "";
-	if (typeof classType === "object") name = String(classType?.constructor);
-	else name = String(classType);
-	const m = name.match(/class ([^\s]+)/);
-	if (!m) throw new TypeError("Unable to retrieve classname from class !?!");
-	return m[1];
+	if (typeof classType === "object") {
+		name = String(classType?.constructor);
+		const m = name.match(/class ([^\s]+)/);
+		if (!m) throw new TypeError("Unable to retrieve classname from class !?!");
+		return m[1];
+	}
+	if (typeof classType === "function") {
+		return classType.name;
+	}
+	throw new TypeError("Unable to retrieve classname from class !?!");
 }

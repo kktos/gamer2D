@@ -10,8 +10,8 @@ export function addEntity(entityName: string, entityClass: EntityConstructor) {
 	setupEntity({ name: entityName, classType: entityClass });
 }
 
-export function addTrait(traitClass: TraitConstructor) {
-	setupTrait(traitClass);
+export function addTrait(name: string, traitClass: TraitConstructor) {
+	setupTrait(name, traitClass);
 }
 
 export function addScene(sceneType: TSceneSheet["type"], sceneClass: SceneConstructor) {

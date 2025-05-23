@@ -57,6 +57,11 @@ describe("Text", () => {
 
 	it("should handle bad text definition", () => {
 		const script = `text id:"test" at:80,428`;
-		expect(() => compile(script, "layoutText")).toThrowError(/SYNTAX ERROR LINE 1 at "id"/);
+		expect(() => compile(script, "layoutText")).toThrowError(
+			expect.objectContaining({
+				line: 1,
+				word: "id",
+			}),
+		);
 	});
 });

@@ -1,6 +1,6 @@
-import type { TSpriteDef, TSpriteSheet, TSpriteSheetGrid } from "gamer2d/script/compiler/ressources/spritesheet.rules";
 import { SpriteSheet } from "../game/Spritesheet";
 import type { TRepeat } from "../script/compiler/layers/display/layout/repeat.rules";
+import type { TSpriteDef, TSpriteSheet, TSpriteSheetGrid } from "../script/compiler/ressources/spritesheet.rules";
 import { evalValue } from "../script/engine/eval.script";
 import { type TVarTypes, TVars } from "./vars.utils";
 

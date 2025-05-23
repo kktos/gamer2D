@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { OP_TYPES } from "../../../../../types/operation.types";
 import { ArgColor, ArgVariable } from "../../../../../types/value.types";
 import { compile, compileScript, setWannaLogError } from "../../../compiler";
+import type { TLayerDisplaySheet } from "../display.rules";
 
 describe("Menu", () => {
 	beforeAll(() => {
@@ -133,12 +134,12 @@ describe("Menu", () => {
 
 		const result = compileScript(script, globals);
 		expect(result).toBeDefined();
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		const displayLayer = result.layers.find((layer) => layer.type === "display") as TLayerDisplaySheet;
 		expect(displayLayer).toBeDefined();
 		expect(displayLayer).toHaveProperty("layout");
 		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		const menu = displayLayer.layout.find((op) => op.type === OP_TYPES.MENU);
+		const menu = displayLayer.layout?.find((op) => op.type === OP_TYPES.MENU);
 
 		expect(menu).toEqual({
 			type: OP_TYPES.MENU,
@@ -203,12 +204,12 @@ describe("Menu", () => {
 		`;
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		const displayLayer = result.layers.find((layer) => layer.type === "display") as TLayerDisplaySheet;
 		expect(displayLayer).toBeDefined();
 		expect(displayLayer).toHaveProperty("layout");
 		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		const menu = displayLayer.layout.find((op) => op.type === OP_TYPES.MENU);
+		const menu = displayLayer.layout?.find((op) => op.type === OP_TYPES.MENU);
 
 		expect(menu).toEqual({
 			type: OP_TYPES.MENU,

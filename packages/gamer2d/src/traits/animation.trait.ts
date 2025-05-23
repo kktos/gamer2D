@@ -3,7 +3,7 @@ import { Anim } from "../game/Anim";
 import type { GameContext } from "../game/types/GameContext";
 import { Trait } from "./Trait";
 
-export default class AnimationTrait extends Trait {
+export class AnimationTrait extends Trait {
 	public anim: Anim | undefined;
 
 	private animCache: Map<string, Anim>;

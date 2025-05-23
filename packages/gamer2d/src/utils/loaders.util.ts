@@ -1,6 +1,12 @@
+export const Loader: {
+	wannaLog: boolean;
+} = {
+	wannaLog: false,
+};
+
 const allowedFileTypes = ["image/png", "image/jpeg", "image/gif"];
 export async function loadImage(name: string): Promise<HTMLImageElement> {
-	console.log(`loadImage path(${name})`);
+	if (Loader.wannaLog) console.log(`loadImage path(${name})`);
 
 	const query = await fetch(name);
 	const imgBlob = await query.blob();
@@ -16,19 +22,19 @@ export async function loadImage(name: string): Promise<HTMLImageElement> {
 }
 
 export async function loadSound(name: string) {
-	console.log(`loadSound(${name})`);
+	if (Loader.wannaLog) console.log(`loadSound(${name})`);
 	const query = await fetch(name);
 	return await query.arrayBuffer();
 }
 
 export async function loadJson(url: string) {
-	console.log(`loadJson(${url})`);
+	if (Loader.wannaLog) console.log(`loadJson(${url})`);
 	const query = await fetch(url);
 	return await query.json();
 }
 
 export async function loadText(url: string) {
-	console.log(`loadText(${url})`);
+	if (Loader.wannaLog) console.log(`loadText(${url})`);
 	const query = await fetch(url);
 	return await query.text();
 }

@@ -38,7 +38,7 @@ export class System {
 
 	entities(name: string) {
 		let entity: Entity | undefined;
-		this.layer.scene.useLayer("EntitiesLayer", (layer: EntitiesLayer) => {
+		this.layer.scene.useLayer("entities", (layer: EntitiesLayer) => {
 			entity = layer.get(name);
 		});
 		return entity;

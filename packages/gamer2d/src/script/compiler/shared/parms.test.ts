@@ -73,7 +73,12 @@ describe("ParmsRules", () => {
 			const script = "traits:[$trait1, 123]";
 			const globals = new Map<string, unknown>([["trait1", []]]);
 			// The error comes from the arrayOfVars rule called by varOrArrayOfVars
-			expect(() => compile(script, "parm_traits", globals)).toThrowError(/SYNTAX ERROR LINE 1 at "123"/);
+			expect(() => compile(script, "parm_traits", globals)).toThrowError(
+				expect.objectContaining({
+					line: 1,
+					word: "123",
+				}),
+			);
 		});
 
 		it("should throw if inline array contains unknown variables", () => {

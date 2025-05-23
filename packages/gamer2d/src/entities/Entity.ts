@@ -1,5 +1,5 @@
 import { EventBuffer } from "../events/EventBuffer";
-import type ResourceManager from "../game/ResourceManager";
+import type { ResourceManager } from "../game/ResourceManager";
 import type { SpriteSheet } from "../game/Spritesheet";
 import type { GameContext } from "../game/types/GameContext";
 import { BBox } from "../maths/BBox.class";

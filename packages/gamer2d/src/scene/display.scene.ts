@@ -7,7 +7,7 @@ export class DisplayScene extends Scene {
 	constructor(gc: GameContext, filename: string, sheet: TSceneSheet) {
 		super(gc, filename, sheet);
 
-		this.useLayer("DisplayLayer", (layer: DisplayLayer) => {
+		this.useLayer("display", (layer: DisplayLayer) => {
 			this.receiver = layer;
 		});
 	}

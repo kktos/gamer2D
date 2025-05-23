@@ -2,7 +2,7 @@ import type { EventCallback } from "../events/EventBuffer";
 import { EventEmitter } from "../events/EventEmitter";
 import { TaskList } from "../game/TaskList";
 import type { GameContext } from "../game/types/GameContext";
-import { disableDebug, enableDebug } from "../inspectors/debug.manager";
+import { enableDebug } from "../inspectors/debug.manager";
 import type { Layer } from "../layers/Layer";
 import { createLayerByName } from "../layers/Layer.factory";
 import type { UILayer } from "../layers/UILayer";
@@ -46,14 +46,7 @@ export class Scene {
 		this.id = generateID();
 		this.name = sheet.name;
 
-		switch (sheet.debug) {
-			case true:
-				enableDebug();
-				break;
-			case false:
-				disableDebug();
-				break;
-		}
+		enableDebug(sheet.debug === true);
 
 		this.screenWidth = gc.viewport.width;
 		this.screenHeight = gc.viewport.height;
@@ -72,7 +65,7 @@ export class Scene {
 		this.tasks = new TaskList();
 		this.setTaskHandlers(gc);
 
-		for (const layerDef of sheet.layers) this.addLayer(createLayerByName(gc, layerDef.type, this, layerDef));
+		for (const layerDef of sheet.layers) this.addLayer(layerDef.type, createLayerByName(gc, layerDef.type, this, layerDef));
 	}
 
 	init(gc: GameContext) {
@@ -89,8 +82,9 @@ export class Scene {
 		return this;
 	}
 
-	public addLayer(layer: Layer) {
-		this.layers.set(getClassName(layer), layer);
+	public addLayer(name: string, layer: Layer) {
+		// this.layers.set(getClassName(layer), layer);
+		this.layers.set(name, layer);
 		return this;
 	}
 

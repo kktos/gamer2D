@@ -1,43 +1,24 @@
-{
-    "name": "gamer2d",
-    "version": "0.252.0",
-    "description": "A 2D Game Engine for Arkanoid, Bobble Bubble and more",
-    "author": "kktos",
-    "license": "ISC",
-    "module": "./game/Game.js",
-    "types": "./game/Game.d.ts",
-    "exports": {
-        "./Game": "./src/game/Game.ts",
-        "./GameContext": "./src/game/types/GameContext.ts",
-        "./GameEvent": "./src/game/types/GameEvent.ts",
-        "./GameOptions": "./src/game/types/GameOptions.ts",
-        "./entities/*": "./entities/*.js",
-        "./game/*": "./game/*.ts",
-        "./layers/*": "./layers/*.js",
-        "./maths/*": "./maths/*.js",
-        "./scene/*": "./scene/*.js",
-        "./script/*": "./script/*.js",
-        "./traits/*": "./traits/*.js",
-        "./types/*": "./types/*.js"
+    "./game/*": {
+      "development": "./src/game/*.ts",
+      "import": "./game/*.js",
+      "require": "./game/*.js"
+    },    "./traits/*": {
+      "import": "./traits/*.js",
+      "require": "./traits/*.js"
     },
-    "scripts": {
-        "build": "pnpm build:clean && pnpm build:make",
-        "build:make": "tsc ",
-        "build:clean": "rimraf ./dist",
-        "postbuild": "node build/postbuild.mjs",
-        "test": "vitest",
-        "lint": "biome ci",
-        "lint:fix": "biome lint --write --unsafe . && biome format --write .",
-        "publishIt": "cd dist && npm publish"
+    "./layers/*": {
+      "import": "./layers/*.js",
+      "require": "./layers/*.js"
     },
-    "packageManager": "pnpm@10.10.0",
-    "devDependencies": {
-        "@biomejs/biome": "^1.9.4",
-        "rimraf": "^6.0.1",
-        "typescript": "^5.8.3",
-        "vitest": "^3.1.1"
+    "./types/*": {
+      "import": "./types/*.js",
+      "require": "./types/*.js"
     },
-    "dependencies": {
-        "chevrotain": "^11.0.3"
+    "./scene/*": {
+      "import": "./scene/*.js",
+      "require": "./scene/*.js"
+    },
+    "./maths/*": {
+      "import": "./maths/*.js",
+      "require": "./maths/*.js"
     }
-}

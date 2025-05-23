@@ -12,7 +12,7 @@ export class PhysicsTrait extends Trait {
 	update(gc: GameContext, entity: Entity, scene: Scene) {
 		if (entity.isFixed) return;
 
-		scene.useLayer("WorldCollisionLayer", (layer: WorldCollisionLayer) => {
+		scene.useLayer("worldcollision", (layer: WorldCollisionLayer) => {
 			entity.bbox.left += entity.vel.x * gc.dt;
 			layer.checkX(entity);
 

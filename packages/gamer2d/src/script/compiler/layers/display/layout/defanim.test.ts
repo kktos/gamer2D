@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { OP_TYPES } from "../../../../../types/operation.types";
 import { ArgColor, ArgIdentifier, ArgVariable } from "../../../../../types/value.types";
 import { compileScript } from "../../../compiler";
+import type { TLayerDisplaySheet } from "../display.rules";
 
 describe("Def Anim", () => {
 	it("should define an anim on path", () => {
@@ -29,11 +30,11 @@ describe("Def Anim", () => {
 		const result = compileScript(script);
 		expect(result).toBeDefined();
 
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		const displayLayer = result.layers.find((layer) => layer.type === "display") as TLayerDisplaySheet;
 		expect(displayLayer).toBeDefined();
 		expect(displayLayer).toHaveProperty("layout");
 
-		const anim = displayLayer.layout.filter((op) => op.type === OP_TYPES.ANIM);
+		const anim = displayLayer.layout?.filter((op) => op.type === OP_TYPES.ANIM);
 
 		expect(anim).toEqual([
 			{

@@ -3,6 +3,7 @@ import { OP_TYPES } from "../../../../../types/operation.types";
 import { ArgVariable } from "../../../../../types/value.types";
 import type { TVarTypes } from "../../../../../utils/vars.utils";
 import { compileScript } from "../../../compiler";
+import type { TLayerDisplaySheet } from "../display.rules";
 
 describe("EntityPool", () => {
 	it("should create a pool", () => {
@@ -19,7 +20,7 @@ describe("EntityPool", () => {
 		const result = compileScript(script, globals);
 		expect(result).toBeDefined();
 
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		const displayLayer = result.layers.find((layer) => layer.type === "display") as TLayerDisplaySheet;
 		expect(displayLayer).toBeDefined();
 		expect(displayLayer).toHaveProperty("layout");
 

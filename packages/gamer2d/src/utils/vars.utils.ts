@@ -1,5 +1,5 @@
 import type { Entity } from "../entities/Entity";
-import type Anim from "../game/Anim";
+import type { Anim } from "../game/Anim";
 import type { System } from "../layers/display/views/System.view";
 import type { View } from "../layers/display/views/View";
 import type { Trait } from "../traits/Trait";

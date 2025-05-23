@@ -1,7 +1,23 @@
+import type { IRecognitionException } from "chevrotain";
 import type { TLayerSheet } from "./layers/layer.rules";
 import { SheetLexer } from "./lexer";
 import { SheetParser } from "./parser";
 import type { TSceneSheet } from "./scenes/scene.rules";
+
+export class CompileSyntaxErr extends SyntaxError {
+	line: number;
+	word: string;
+	text: string;
+	ruleStack: string[];
+
+	constructor(errors: IRecognitionException[], src: string, errMsg?: string) {
+		super(errMsg ?? parser.errors[0].message);
+		this.line = parser.errors[0].token.startLine ?? -1;
+		this.word = parser.errors[0].token.image;
+		this.ruleStack = parser.errors[0].context.ruleStack;
+		this.text = src;
+	}
+}
 
 const parser = new SheetParser();
 
@@ -14,12 +30,16 @@ export function compile<T>(text: string, startRule: string, globals?: Map<string
 	const lexingResult = SheetLexer.tokenize(text);
 	parser.input = lexingResult.tokens;
 	parser.variablesDict = globals ? globals : new Map();
-	const result = parser[startRule](options);
+	let result: SheetParser | undefined;
+	let errMsg: string | undefined = undefined;
+	try {
+		result = parser[startRule](options);
+	} catch (e) {
+		errMsg = (e as Error).message;
+	}
 	if (parser.errors.length > 0) {
 		if (wannaLogError) console.error(parser.errors);
-		const line = parser.errors[0].token.startLine;
-		const word = parser.errors[0].token.image;
-		throw new SyntaxError(`SYNTAX ERROR LINE ${line} at "${word}"`, { cause: parser.errors });
+		throw new CompileSyntaxErr(parser.errors, text, errMsg);
 	}
 	return result as T;
 }

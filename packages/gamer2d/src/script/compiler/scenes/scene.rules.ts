@@ -1,14 +1,15 @@
+import type { TLayerSheet } from "../layers/layer.rules";
 import { tokens } from "../lexer";
 
-export type TLayerDef = {
-	type: string;
-	name?: string;
-};
+// export type TLayerDef = {
+// 	type: string;
+// 	name?: string;
+// };
 
 export type TSceneSheet = {
 	type: "display" | "game" | "level";
 	name: string;
-	layers: TLayerDef[];
+	layers: TLayerSheet[];
 	showCursor?: boolean;
 	debug?: boolean;
 };

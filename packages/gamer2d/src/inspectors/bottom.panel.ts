@@ -309,7 +309,7 @@ export class ResizablePanel extends HTMLElement {
 		if (Object.hasOwn(this, prop)) {
 			const value = this[prop];
 			delete this[prop];
-			this[prop] = value;
+			(this as Record<string, unknown>)[prop] = value;
 		}
 	}
 

@@ -97,6 +97,12 @@ export function createImgCanvas(img: HTMLImageElement) {
 	return canvas;
 }
 
+export function getImgData(img: HTMLImageElement) {
+	const canvas = createImgCanvas(img);
+	const ctx = canvas.getContext("2d");
+	return ctx?.getImageData(0, 0, img.width, img.height) as ImageData;
+}
+
 export function createFromSource(srcCtx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
 	const imgData = srcCtx.getImageData(x, y, w, h);
 	const canvas = document.createElement("canvas");
@@ -130,4 +136,16 @@ export function nameToRgba(name: string) {
 	if (!m) throw new Error(`Error with color ${name} => ${pv}`);
 
 	return [Number(m[1]), Number(m[2]), Number(m[3]), Math.floor(Number(m[4] ?? 1) * 255)];
+}
+export function getPixelColor(imageData: ImageData, x: number, y: number) {
+	if (x < 0 || y < 0 || x >= imageData.width || y >= imageData.height) return null;
+
+	const data = imageData.data;
+	const idx = (y * imageData.width + x) * 4;
+	const r = data[idx];
+	const g = data[idx + 1];
+	const b = data[idx + 2];
+	const a = data[idx + 3];
+
+	return { r, g, b, a };
 }

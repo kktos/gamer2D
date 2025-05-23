@@ -6,7 +6,7 @@ import { createSpriteSheet } from "../utils/createSpriteSheet.util";
 import { loadImage, loadText } from "../utils/loaders.util";
 import { Anim } from "./Anim";
 
-export type SpriteMap = Map<string, HTMLCanvasElement[]>;
+export type SpriteMap = Map<string, Sprite>;
 export type AnimMap = Map<string, Anim>;
 
 type TDefineOptions = {
@@ -14,7 +14,22 @@ type TDefineOptions = {
 	scale?: number;
 };
 
+class Sprite {
+	public imgs: [HTMLCanvasElement, HTMLCanvasElement];
+	public width = 0;
+	public height = 0;
+
+	constructor(
+		public bounds: Rect,
+		public scale = 1,
+	) {
+		this.imgs = [document.createElement("canvas"), document.createElement("canvas")];
+	}
+}
+
 export class SpriteSheet {
+	static wannaLog = false;
+
 	public animations: AnimMap;
 	public sprites: SpriteMap;
 	public name: string;
@@ -29,7 +44,10 @@ export class SpriteSheet {
 	}
 
 	static loadData(sheet: TSpriteSheet) {
-		return loadImage(sheet.image).then((img) => createSpriteSheet(sheet, img));
+		return loadImage(sheet.image).then((img) => {
+			if (SpriteSheet.wannaLog) console.log("createSpriteSheet", sheet.name);
+			return createSpriteSheet(sheet, img);
+		});
 	}
 
 	constructor(name: string, img: HTMLImageElement | HTMLCanvasElement) {
@@ -56,8 +74,10 @@ export class SpriteSheet {
 	define(name: string, r: Rect, { gridSize, scale }: TDefineOptions = {}) {
 		scale = scale ?? 1;
 		gridSize = gridSize ?? [1, 1];
-		const sprites = [false, true].map((flip) => {
-			const canvas = document.createElement("canvas");
+		const sprite = new Sprite(r, scale);
+
+		[false, true].map((flip) => {
+			const canvas = sprite.imgs[flip ? 1 : 0];
 			const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 			ctx.imageSmoothingEnabled = false;
 
@@ -107,12 +127,15 @@ export class SpriteSheet {
 				ctx.scale(Math.abs(scale), Math.abs(scale));
 				ctx.drawImage(this.img, r.x, r.y, r.width, r.height, destX, destY, r.width, r.height);
 			}
-
-			return canvas;
 		});
-		this.sprites.set(name, sprites);
+
+		sprite.width = sprite.imgs[0].width;
+		sprite.height = sprite.imgs[0].height;
+
+		this.sprites.set(name, sprite);
 	}
 
+	// TODO: fix with Sprite
 	defineComplex(name: string, spriteDef) {
 		const canvas = document.createElement("canvas");
 		const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -181,7 +204,7 @@ export class SpriteSheet {
 			} else ctx.drawImage(sprites[0], 0, 0, spriteSize.width, spriteSize.height, dx, dy, spriteSize.width, spriteSize.height);
 		}
 
-		this.sprites.set(name, [canvas]);
+		// this.sprites.set(name, [canvas]);
 	}
 
 	defineAnim(name: string, sheet) {
@@ -197,21 +220,16 @@ export class SpriteSheet {
 	}
 
 	spriteSize(name: string) {
-		const sprites = this.sprites.get(name);
-		if (!sprites) {
-			throw new Error(`Unable to find sprite "${name}"`);
-		}
-		const sprite = sprites[0];
+		const sprite = this.sprites.get(name);
+		if (!sprite) throw new Error(`Unable to find sprite "${name}"`);
 		return { width: sprite.width, height: sprite.height };
 	}
 
 	draw(name: string, ctx: CanvasRenderingContext2D, x: number, y: number, { flip, zoom } = { flip: 0, zoom: 1 }) {
-		const spritePair = this.sprites.get(name);
-		if (!spritePair) throw new Error(`Unable to find sprite "${name}"`);
-		const sprite = spritePair[flip | 0];
-		ctx.drawImage(sprite, x, y, (zoom ?? 1) * sprite.width, zoom * sprite.height);
-		// ctx.strokeStyle="red";
-		// ctx.strokeRect(x,y, zoom*sprite.width, zoom*sprite.height);
+		const sprite = this.sprites.get(name);
+		if (!sprite) throw new Error(`Unable to find sprite "${name}"`);
+		const img = sprite.imgs[flip | 0];
+		ctx.drawImage(img, x, y, (zoom ?? 1) * img.width, zoom * img.height);
 	}
 
 	drawAnim(name: string, ctx: CanvasRenderingContext2D, x: number, y: number, distance: number, { zoom } = { zoom: 1 }) {

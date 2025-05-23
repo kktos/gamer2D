@@ -3,7 +3,7 @@ import { createEntityByName } from "../../entities/Entity.factory";
 import type { TSprite } from "../../script/compiler/layers/display/layout/sprite.rules";
 import type { TFunctionCall } from "../../script/compiler/shared/action.rules";
 import { evalArg, evalNumberValue } from "../../script/engine/eval.script";
-import { type PathDefDTO, PathTrait } from "../../traits/path.trait";
+import { PathTrait, type TPathDefDTO } from "../../traits/path.trait";
 import type { DisplayLayer } from "../display.layer";
 import { EntitiesLayer } from "../entities.layer";
 import { setupVariableProps } from "./prop.manager";
@@ -26,7 +26,7 @@ export function addSprite(layer: DisplayLayer, op: TSprite & { entity?: Entity }
 		if (!anim) {
 			throw new Error(`Animation ${op.anim.name} not found`);
 		}
-		const animDTO: PathDefDTO = {
+		const animDTO: TPathDefDTO = {
 			path: anim.path,
 			speed: anim.speed,
 		};

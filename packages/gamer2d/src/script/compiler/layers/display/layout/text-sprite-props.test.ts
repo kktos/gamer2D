@@ -18,10 +18,12 @@ describe("TextSpriteProps", () => {
 
 		it("should parse dir:right", () => {
 			const script = "dir:0";
-			expect(() => compile(script, "parm_dir")).toThrowError(/SYNTAX ERROR LINE 1 at "0"/);
-
-			// const result = compile(script, "parm_dir");
-			// expect(result).toBe(DIRECTIONS.RIGHT);
+			expect(() => compile(script, "parm_dir")).toThrowError(
+				expect.objectContaining({
+					line: 1,
+					word: "0",
+				}),
+			);
 		});
 	});
 });

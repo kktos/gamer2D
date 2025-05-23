@@ -34,6 +34,10 @@ export class SpriteSheetRules {
 
 			$.CONSUME(tokens.Image);
 			sheet.image = $.CONSUME(tokens.StringLiteral).payload;
+			$.ACTION(() => {
+				sheet.image = sheet.image.trim();
+				if (sheet.image === "") throw new SyntaxError("Missing Image name.");
+			});
 
 			$.AT_LEAST_ONE(() => {
 				$.OR([
@@ -59,7 +63,12 @@ export class SpriteSheetRules {
 	static spriteSheetTypeAndName($) {
 		return $.RULE("spriteSheetTypeAndName", () => {
 			$.CONSUME(tokens.Spritesheet);
-			return $.CONSUME(tokens.StringLiteral).payload;
+			let name = $.CONSUME(tokens.StringLiteral).payload;
+			$.ACTION(() => {
+				name = name.trim();
+				if (name === "") throw new SyntaxError("Missing SpriteSheet name.");
+			});
+			return name;
 		});
 	}
 
@@ -71,6 +80,7 @@ export class SpriteSheetRules {
 			$.CONSUME(tokens.OpenCurly);
 
 			let hasGrid = false;
+			let hasSprite = false;
 			$.AT_LEAST_ONE(() => {
 				sprites.push(
 					$.OR([
@@ -81,7 +91,10 @@ export class SpriteSheetRules {
 							},
 						},
 						{
-							ALT: () => $.SUBRULE($.spriteSheetSprite),
+							ALT: () => {
+								hasSprite = true;
+								return $.SUBRULE($.spriteSheetSprite);
+							},
 						},
 						{
 							ALT: () => $.SUBRULE($.spriteSheetFor),
@@ -91,7 +104,8 @@ export class SpriteSheetRules {
 			});
 
 			$.ACTION(() => {
-				if (!hasGrid) throw new SyntaxError("Missing grid declaration.");
+				if (!hasGrid) throw new SyntaxError("At least one grid is required.");
+				if (!hasSprite) throw new SyntaxError("At least one sprite is required.");
 			});
 			$.CONSUME(tokens.CloseCurly);
 			return sprites;
@@ -116,7 +130,7 @@ export class SpriteSheetRules {
 
 	static spriteSheetSprite($) {
 		return $.RULE("spriteSheetSprite", () => {
-			const name = $.SUBRULE($.spriteSheetSpriteName);
+			const name = $.SUBRULE($.spriteSheetSpriteName, { ARGS: [{ isSprite: true }] });
 
 			const sprite: TSpriteDef = {
 				name,
@@ -149,16 +163,21 @@ export class SpriteSheetRules {
 	}
 
 	static spriteSheetSpriteName($) {
-		return $.RULE("spriteSheetSpriteName", () =>
-			$.OR([
+		return $.RULE("spriteSheetSpriteName", (options) => {
+			let name = $.OR([
 				{
 					ALT: () => $.CONSUME(tokens.StringLiteral).payload,
 				},
 				{
 					ALT: () => $.CONSUME(tokens.Identifier).image,
 				},
-			]),
-		);
+			]);
+			$.ACTION(() => {
+				name = name.trim();
+				if (name === "") throw new SyntaxError(`Missing ${options?.isSprite ? "Sprite" : "Animation"} name.`);
+			});
+			return name;
+		});
 	}
 
 	static spriteSheetSpriteTiles($) {
@@ -205,7 +224,7 @@ export class SpriteSheetRules {
 		return $.RULE("spriteSheetAnim", () => {
 			const anim: TAnimation = { frames: [] };
 
-			const name = $.SUBRULE($.spriteSheetSpriteName);
+			const name = $.SUBRULE($.spriteSheetSpriteName, { ARGS: [{ isSprite: false }] });
 			$.CONSUME(tokens.OpenCurly);
 
 			$.MANY(() => {
@@ -232,14 +251,26 @@ export class SpriteSheetRules {
 					ALT: () => {
 						const names: string[] = [];
 						$.CONSUME(tokens.OpenBracket);
+						$.AT_LEAST_ONE_SEP({
+							SEP: tokens.Dot,
+							DEF: () => {
+								names.push($.SUBRULE3($.spriteSheetSpriteName, { ARGS: [{ isSprite: true }] }));
+							},
+						});
 						$.CONSUME(tokens.CloseBracket);
 						return names;
 					},
 				},
 				{
 					ALT: () => {
+						$.OPTION(() => {
+							const from = $.CONSUME(tokens.Identifier).image;
+							$.ACTION(() => {
+								if (from !== "from") throw new SyntaxError("Expecting 'from' keyword.");
+							});
+						});
 						return {
-							sprite: $.SUBRULE2($.spriteSheetSpriteName),
+							sprite: $.SUBRULE2($.spriteSheetSpriteName, { ARGS: [{ isSprite: false }] }),
 							range: $.SUBRULE($.parm_range),
 						};
 					},

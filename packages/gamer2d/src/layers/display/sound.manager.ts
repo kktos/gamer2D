@@ -1,5 +1,5 @@
 import type Audio from "../../game/Audio";
-import type ResourceManager from "../../game/ResourceManager";
+import type { ResourceManager } from "../../game/ResourceManager";
 import { Scene } from "../../scene/Scene";
 import type { TSoundDefs } from "../../script/compiler/layers/display/sound.rules";
 import type { TVarSounds } from "../../types/engine.types";

@@ -2,7 +2,7 @@ import { GLOBAL_VARIABLES } from "../game/globals";
 import type { GameContext } from "../game/types/GameContext";
 import type { SceneConstructor } from "../game/types/GameOptions";
 import { loadLayer } from "../layers/Layer.factory";
-import { compileScript } from "../script/compiler/compiler";
+import { CompileSyntaxErr, compileScript } from "../script/compiler/compiler";
 import type { TSceneSheet } from "../script/compiler/scenes/scene.rules";
 import LocalDB from "../utils/storage.util";
 import type { Scene } from "./Scene";
@@ -40,7 +40,10 @@ export class SceneFactory {
 				const scriptText = await gc.resourceManager.loadScene(filename);
 				sheet = compileScript(scriptText, GLOBAL_VARIABLES);
 			} catch (e) {
-				console.error((e as Error).message);
+				if (e instanceof CompileSyntaxErr) {
+					console.error(`SYNTAX ERROR\nline ${e.line} at ${e.word} rule: ${e.ruleStack}\n${e.message}`);
+					// throw e;
+				} else console.error((e as Error).message);
 			}
 		}
 

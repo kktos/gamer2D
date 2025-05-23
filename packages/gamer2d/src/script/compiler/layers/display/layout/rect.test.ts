@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { OP_TYPES } from "../../../../../types/operation.types";
 import { ArgColor } from "../../../../../types/value.types";
 import { compileScript } from "../../../compiler";
+import type { TLayerDisplaySheet } from "../display.rules";
 
 describe("Repeat", () => {
 	it("should do a repeat loop", () => {
@@ -21,16 +22,16 @@ describe("Repeat", () => {
 
 		const result = compileScript(script);
 		expect(result).toBeDefined();
-		const displayLayer = result.layers.find((layer) => layer.type === "display");
+		const displayLayer = result.layers.find((layer) => layer.type === "display") as TLayerDisplaySheet;
 		expect(displayLayer).toBeDefined();
 		expect(displayLayer).toHaveProperty("layout");
 		expect(Array.isArray(displayLayer.layout)).toBe(true);
 
-		const rect = displayLayer.layout.filter((op) => op.type === OP_TYPES.RECT);
+		const rect = displayLayer.layout?.filter((op) => op.type === OP_TYPES.RECT);
 		expect(Array.isArray(rect)).toBe(true);
-		expect(rect.length).toBe(4);
+		expect(rect?.length).toBe(4);
 
-		expect(rect[0]).toEqual({
+		expect(rect?.[0]).toEqual({
 			type: OP_TYPES.RECT,
 			color: new ArgColor("red"),
 			pos: [20, 30],
@@ -38,7 +39,7 @@ describe("Repeat", () => {
 			height: 220,
 		});
 
-		expect(rect[1]).toEqual({
+		expect(rect?.[1]).toEqual({
 			type: OP_TYPES.RECT,
 			color: new ArgColor("white"),
 			pos: [10, 20],
@@ -46,7 +47,7 @@ describe("Repeat", () => {
 			height: 200,
 		});
 
-		expect(rect[2]).toEqual({
+		expect(rect?.[2]).toEqual({
 			type: OP_TYPES.RECT,
 			pos: [10, 20],
 			width: 100,
@@ -54,7 +55,7 @@ describe("Repeat", () => {
 			fill: new ArgColor("#445500"),
 		});
 
-		expect(rect[3]).toEqual({
+		expect(rect?.[3]).toEqual({
 			type: OP_TYPES.RECT,
 			pos: [10, 20],
 			width: 100,
