@@ -4,25 +4,35 @@ import type { GameContext } from "gamer2d/game/types/GameContext";
 import { BBox } from "gamer2d/maths/BBox.class";
 import type { Rect } from "gamer2d/maths/math";
 import { ALIGN_TYPES } from "gamer2d/script/compiler/layers/display/layout/text-sprite-props.rules";
+import { confirmDialog } from "../../shared/dialog.class.js";
 import type { Signal } from "../../shared/signal.class.js";
 import { ScrollView } from "./scrollView.component.js";
 
 const GRID_LEFT = 10;
 const GRID_TOP = 20;
 const GRID_XGAP = 10;
+const SCROLLBAR_AREA_HEIGHT = 20;
+const CONTROLS_AREA_HEIGHT = GRID_TOP + SCROLLBAR_AREA_HEIGHT;
 
+type SpriteItem = { width: number; height: number };
 export class SpriteItemList {
-	private items: string[] = [];
+	private items: { name: string; item: SpriteItem }[] = [];
 	private bboxList: BBox[] = [];
 	public getImage: ((name: string, tick: number) => HTMLCanvasElement | undefined) | undefined = undefined;
 
-	public add(name: string, { width, height }: { width: number; height: number }) {
-		this.bboxList.push(new BBox(0, 0, width, height));
-		this.items.push(name);
+	constructor(public name: string) {
+		this.name = name;
 	}
 
-	public forEach(cb: (name: string, bbox: BBox, idx: number) => void) {
-		this.items.forEach((name, idx) => cb(name, this.bboxList[idx], idx));
+	public add(name: string, item: SpriteItem) {
+		this.bboxList.push(new BBox(0, 0, item.width, item.height));
+		this.items.push({ name, item });
+	}
+
+	public forEach(cb: (name: string, item: SpriteItem, bbox: BBox, idx: number) => void) {
+		this.items.forEach((value, idx) => {
+			cb(value.name, value.item, this.bboxList[idx], idx);
+		});
 	}
 
 	public findBboxIndex(x: number, y: number) {
@@ -39,6 +49,8 @@ export class SpriteItemList {
 }
 
 export class SpritesView extends ScrollView {
+	static EVENT_DELETE_ITEMS = Symbol.for("DELETE_ITEMS");
+
 	private gc: GameContext;
 	public selected: Signal<string | undefined>;
 	public selectedList: Signal<Set<string> | undefined>;
@@ -48,6 +60,7 @@ export class SpritesView extends ScrollView {
 	private font: Font;
 	private _list!: SpriteItemList;
 	private title: string;
+	public localBounds: BBox;
 
 	constructor({
 		gc,
@@ -62,17 +75,20 @@ export class SpritesView extends ScrollView {
 		this.selectedList = selectedList;
 		this.title = title;
 		this.font = gc.resourceManager.get("font", gc.resourceManager.mainFontName);
+		this.localBounds = BBox.copy(this.bounds);
+		this.localBounds.top = 0;
+		this.localBounds.left = 0;
 	}
 
 	set list(list: SpriteItemList) {
 		this._list = list;
 
 		let xpos = GRID_LEFT;
-		list.forEach((_, bbox) => {
+		list.forEach((_, __, bbox) => {
 			bbox.left = xpos;
 			bbox.top = GRID_TOP;
-			const height = Math.min(bbox.height, this.bounds.height - 20);
-			bbox.width = bbox.width / (bbox.height / height);
+			const height = Math.min(bbox.height, this.bounds.height - CONTROLS_AREA_HEIGHT);
+			bbox.width = Math.floor(bbox.width / (bbox.height / height));
 			bbox.height = height;
 			bbox.inflate(1);
 			xpos += bbox.width + GRID_XGAP;
@@ -88,12 +104,36 @@ export class SpritesView extends ScrollView {
 		this.selectedList.value = undefined;
 	}
 
-	public handleEvent(gc: GameContext, e): boolean {
+	public handleEvent(gc: GameContext, e) {
 		if (!this._list) return false;
 
 		if (super.handleEvent(gc, e)) return true;
 
 		switch (e.type) {
+			case "keyup": {
+				if (!this.localBounds.isPointInside(e.x, e.y)) return false;
+
+				if (e.key === "a" && gc.keys.isPressed("Control")) {
+					this.selectedNameList.clear();
+					this.selectedIdxList.length = 0;
+					for (let i = 0; i <= this._list.length - 1; i++) {
+						const item = this._list.get(i);
+						this.selectedNameList.add(item.name);
+						this.selectedIdxList.push(i);
+					}
+					this.selectedList.value = this.selectedNameList;
+					return true;
+				}
+				if (e.key === "Delete" && this.selectedNameList.size) {
+					const text =
+						this.selectedNameList.size > 1 ? `Delete those ${this.selectedNameList.size} ${this.title} ?` : `Delete this ${this.title.replace(/s$/, "")} ?`;
+					confirmDialog(text, "Delete", "Cancel").then((wannaDelete) => {
+						if (wannaDelete) this.gc.scene?.emit(SpritesView.EVENT_DELETE_ITEMS, this._list.name, this.selectedNameList);
+					});
+					return true;
+				}
+				break;
+			}
 			case "mousemove": {
 				this.hoveredIdx = this._list.findBboxIndex(e.x - this.scrollOffset, e.y);
 				break;
@@ -109,12 +149,13 @@ export class SpritesView extends ScrollView {
 	}
 
 	private handleSelect(keys: KeyMap, e: MouseEvent) {
-		const name = this._list.get(this.hoveredIdx);
-		this.selected.value = name;
+		const item = this._list.get(this.hoveredIdx);
+		this.selected.value = item.name;
+
 		if (!keys.isPressed("Shift") && !keys.isPressed("Control")) {
 			this.selectedIdxList = [this.hoveredIdx];
 			this.selectedNameList.clear();
-			this.selectedNameList.add(name);
+			this.selectedNameList.add(item.name);
 			this.selectedList.value = this.selectedNameList;
 			return;
 		}
@@ -134,18 +175,18 @@ export class SpritesView extends ScrollView {
 			this.selectedIdxList = [startIdx, endIdx];
 			this.selectedNameList.clear();
 			for (let i = startIdx; i <= endIdx; i++) {
-				const name = this._list.get(i);
-				this.selectedNameList.add(name);
+				const item = this._list.get(i);
+				this.selectedNameList.add(item.name);
 			}
 		}
 
 		if (keys.isPressed("Control")) {
-			const foundIdx = this.selectedNameList.has(name);
+			const foundIdx = this.selectedNameList.has(item.name);
 			if (foundIdx) {
 				this.selectedIdxList = this.selectedIdxList.filter((idx) => idx !== this.hoveredIdx);
-				this.selectedNameList.delete(name);
+				this.selectedNameList.delete(item.name);
 			} else {
-				this.selectedNameList.add(name);
+				this.selectedNameList.add(item.name);
 				this.selectedIdxList.push(this.hoveredIdx);
 			}
 		}
@@ -168,11 +209,11 @@ export class SpritesView extends ScrollView {
 			height: 13,
 		});
 
-		this._list.forEach((name, bbox, idx) => {
+		this._list.forEach((name, item, bbox, idx) => {
 			if (idx === this.hoveredIdx) {
 				this.font.print({
 					ctx,
-					text: `${name} ${bbox.width - 2}x${bbox.height - 2}`,
+					text: `${name} ${item.width}x${item.height}`,
 					x: 100,
 					y: 6.5,
 				});

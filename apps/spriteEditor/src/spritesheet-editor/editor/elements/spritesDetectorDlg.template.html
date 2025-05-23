@@ -20,6 +20,11 @@
 			<input type="text" name="spriteName" placeholder="Sprite Name" class="input w-full mt-1">
 		</div>
 
+		<div>
+			<label for="scale" class="font-semibold">Scale</label>
+			<input type="number" name="scale" min="1" value="1" class="input w-full mt-1">
+		</div>
+
 		<div class="grid grid-cols-2 gap-4">
 			<div>
 				<div class="font-semibold mb-1">Min Size (px)</div>
@@ -35,7 +40,7 @@
 				</div>
 			</div>
 			<div>
-				<div class="font-semibold mb-1">Expected Size (px)</div>
+				<div class="font-semibold mb-1">Grid Size (px)</div>
 				<div class="grid grid-cols-2 gap-2">
 					<div>
 						<label for="expectedSpriteWidth" class="block text-xs">Width</label>
@@ -50,16 +55,25 @@
 		</div>
 
 		<div>
-			<div class="font-semibold">Backround Color</div>
-			<div class="grid grid-cols-4 gap-4">
+			<div class="font-semibold">Background Color</div>
+			<div class="grid grid-cols-5 gap-4">
 				<input type="number" name="r" min="0" max="255" value="0" class="input w-full">
 				<input type="number" name="g" min="0" max="255" value="0" class="input w-full">
 				<input type="number" name="b" min="0" max="255" value="0" class="input w-full">
 				<input type="number" name="a" min="0" max="255" value="0" class="input w-full">
+				<div class="backround-color"></div>
 			</div>
 		</div>
 
-		<div class="grid grid-cols-2 gap-2">
+		<div class="grid grid-cols-3 gap-2">
+			<div>
+				<label for="method" class="font-semibold">Method</label>
+				<select name="method" class="select select-bordered w-full max-w-xs">
+					<option value="floodFill">Floodfill</option>
+					<option value="improvedFloodFill">Floodfill with Holes</option>
+					<option value="traceContour">Moore-Neighbor</option>
+				</select>
+			</div>
 			<div>
 				<label for="toleranceRGB" class="font-semibold">Tolerance RGB</label>
 				<input type="number" name="toleranceRGB" min="0" max:"255" value="0" class="input w-full mt-1">
@@ -68,14 +82,6 @@
 				<label for="toleranceAlpha" class="font-semibold">Tolerance Alpha</label>
 				<input type="number" name="toleranceAlpha" min="0" max:"255" value="0" class="input w-full mt-1">
 			</div>
-		</div>
-
-		<div class="flex justify-center mt-4">
-			<select name="method" class="select select-bordered w-full max-w-xs">
-				<option value="floodFill">Floodfill</option>
-				<option value="improvedFloodFill">Floodfill with Holes</option>
-				<option value="traceContour">Moore-Neighbor</option>
-			</select>
 		</div>
 
 		<div class="flex justify-center mt-4">

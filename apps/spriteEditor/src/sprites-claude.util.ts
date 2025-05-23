@@ -18,7 +18,7 @@ type TMethod = "floodFill" | "improvedFloodFill" | "traceContour";
  * @param {number} options.tolerance - Color tolerance for background detection (0-255)
  * @returns {Array<Object>} - Array of detected sprites with their boundaries
  */
-export function detectSprites(method: TMethod, canvas, options = {}) {
+export function detectSprites(method: TMethod, canvas: HTMLCanvasElement, options = {}) {
 	const defaultOptions = {
 		minWidth: 10,
 		minHeight: 10,
@@ -28,7 +28,7 @@ export function detectSprites(method: TMethod, canvas, options = {}) {
 	};
 	const config = { ...defaultOptions, ...options };
 
-	const ctx = canvas.getContext("2d");
+	const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 	const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 	const data = imageData.data;
 	const visited = new Array(canvas.width * canvas.height).fill(false);

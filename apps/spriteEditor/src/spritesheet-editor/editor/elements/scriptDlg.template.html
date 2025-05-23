@@ -1,0 +1,16 @@
+<style>
+	script-dlg {
+		display: grid;
+		grid-template-rows: 1fr auto;
+	}
+</style>
+<textarea id="script"></textarea>
+<div class="grid">
+	<div id="errors" class="p-4 hidden" style="background-color: red;"></div>
+	<div class="sep-1"></div>
+	<div class="grid grid-col gap-2 p-2">
+		<div id="check-script" class="btn">Check</div>
+		<div id="compile-script" class="btn">Compile</div>
+		<div id="save-script" class="btn">Save</div>
+	</div>
+</div>

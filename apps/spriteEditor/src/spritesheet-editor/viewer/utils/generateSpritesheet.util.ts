@@ -9,34 +9,47 @@ export function buildSpritesheetFile(spritesheet: SpriteSheet, imagePath: string
 
 	script += "\tsprites {\n";
 	let currentSprite: string | undefined = undefined;
-	for (const [name, canvas] of spritesheet.sprites) {
-		const sprite = name.replace(/-\d+$/, "");
-		if (currentSprite !== sprite) {
-			if (currentSprite) script += "\t\t\t}\n";
-			script += `\t\t"${sprite}" {\n`;
+	let gridWidth = 0;
+	let gridHeight = 0;
+	for (const [name, sprite] of spritesheet.sprites) {
+		const spriteName = name.replace(/-\d+$/, "");
+		if (currentSprite !== spriteName) {
+			if (currentSprite) script += "\t\t\t}\n\t\t}\n\n";
+
+			if (gridWidth !== sprite.width || gridHeight !== sprite.height) {
+				gridWidth = sprite.width;
+				gridHeight = sprite.height;
+				script += `\t\tgrid ${gridWidth},${gridHeight} \n`;
+			}
+
+			script += `\t\t"${spriteName}" ${sprite.scale > 1 ? `scale:${sprite.scale}` : ""} {\n`;
 			script += "\t\t\trects {\n";
-			currentSprite = sprite;
+			currentSprite = spriteName;
 		}
-		if (canvas[0]) script += `\t\t\t\t [0,0,${canvas[0].width},${canvas[0].height}]\n`;
+		script += `\t\t\t\t [${sprite.bounds.x},${sprite.bounds.y},${sprite.bounds.width},${sprite.bounds.height}]\n`;
 	}
+	script += "\t\t\t}\n\t\t}\n\n";
 	script += "\t}\n";
 
 	script += "\n";
 
-	script += "\tanimations {\n";
-	for (const [name, anim] of spritesheet.animations) {
-		const sprite = anim.frames[0].replace(/-\d+$/, "");
-		const loop = anim.loop !== Number.POSITIVE_INFINITY ? `loop ${anim.loop}` : "";
-		script += `\t\t"${name}" { length ${anim.len} frames "${sprite}" ${loop} range:0,${anim.frames.length - 1} }\n`;
+	if (spritesheet.animations.size) {
+		script += "\tanimations {\n";
+		for (const [name, anim] of spritesheet.animations) {
+			const sprite = anim.frames[0].replace(/-\d+$/, "");
+			const loop = anim.loop !== Number.POSITIVE_INFINITY ? `loop ${anim.loop}` : "";
+			script += `\t\t"${name}" { length ${anim.len} frames "${sprite}" ${loop} range:0,${anim.frames.length - 1} }\n`;
+		}
+		script += "\t}\n";
 	}
-	script += "\t}\n";
 
 	script += "}\n";
-	const blob = new Blob([script], { type: "text/plain" });
-	const url = URL.createObjectURL(blob);
-	const a = document.createElement("a");
-	a.href = url;
-	a.download = `${spritesheet.name}.txt`;
-	a.click();
-	URL.revokeObjectURL(url);
+	// const blob = new Blob([script], { type: "text/plain" });
+	// const url = URL.createObjectURL(blob);
+	// const a = document.createElement("a");
+	// a.href = url;
+	// a.download = `${spritesheet.name}.txt`;
+	// a.click();
+	// URL.revokeObjectURL(url);
+	return script;
 }

@@ -1,4 +1,7 @@
-/* General panel and dialog styles */
+.hidden {
+	display: none;
+}
+
 .grid {
 	display: grid;
 }
@@ -15,10 +18,12 @@
 	gap: 1.5rem;
 }
 
+.p-2 {
+	padding: 0.5rem;
+}
 .p-4 {
 	padding: 1rem;
 }
-
 .p-6 {
 	padding: 1.5rem;
 }
@@ -147,12 +152,10 @@ input[type="radio"] {
 /* Section separators */
 .sep-1 {
 	border-bottom: 1px solid #e5e7eb;
-	margin: 1rem 0;
 }
 
 .sep-2 {
 	border-bottom: 2px solid #d1d5db;
-	margin: 1.5rem 0;
 }
 
 /* Utility classes */
@@ -167,12 +170,20 @@ input[type="radio"] {
 .justify-self-end {
 	justify-self: end;
 }
-
+.grid-col {
+	grid-auto-flow: column;
+}
 .grid-cols-2 {
 	grid-template-columns: repeat(2, 1fr);
 }
+.grid-cols-3 {
+	grid-template-columns: repeat(3, 1fr);
+}
 .grid-cols-4 {
 	grid-template-columns: repeat(4, 1fr);
+}
+.grid-cols-5 {
+	grid-template-columns: repeat(5, 1fr);
 }
 
 .items-center {

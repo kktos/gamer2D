@@ -24,9 +24,7 @@ export class AnimsDlg extends HTMLElement {
 		if (form) form.addEventListener("submit", (e) => e.preventDefault());
 
 		const createBtn = this.querySelector<HTMLElement>("#create-anim");
-		if (createBtn) {
-			createBtn.addEventListener("click", () => this.handleCreateAnim());
-		}
+		if (createBtn) createBtn.addEventListener("click", () => this.handleCreateAnim());
 	}
 
 	disconnectedCallback() {

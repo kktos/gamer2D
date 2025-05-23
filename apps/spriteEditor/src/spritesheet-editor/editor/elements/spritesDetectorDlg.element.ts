@@ -24,9 +24,7 @@ export class SpritesDetectorDlg extends HTMLElement {
 		if (form) form.addEventListener("submit", (e) => e.preventDefault());
 
 		const createBtn = this.querySelector<HTMLElement>("#detect-sprites");
-		if (createBtn) {
-			createBtn.addEventListener("click", () => this.handleDetectSprites());
-		}
+		if (createBtn) createBtn.addEventListener("click", () => this.handleDetectSprites());
 	}
 
 	disconnectedCallback() {
@@ -47,6 +45,7 @@ export class SpritesDetectorDlg extends HTMLElement {
 		const options = {
 			mode: data.get("mode"),
 			name: data.get("spriteName"),
+			scale: Number(data.get("scale")),
 			minHeight: Number(data.get("minSpriteHeight")),
 			minWidth: Number(data.get("minSpriteWidth")),
 			height: Number(data.get("expectedSpriteHeight")),

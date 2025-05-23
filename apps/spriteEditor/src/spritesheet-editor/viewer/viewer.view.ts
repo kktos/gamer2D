@@ -6,7 +6,7 @@ import type { ViewContext } from "gamer2d/layers/display/views/View.factory";
 import type { BBox } from "gamer2d/maths/BBox.class";
 import type { TAnimation } from "gamer2d/script/compiler/ressources/spritesheet.rules";
 import { addDefsToSpriteSheet } from "gamer2d/utils/createSpriteSheet.util";
-import { selectedAnim } from "../shared/main.store.js";
+import { selectedAnim, spritesheetSourceText } from "../shared/main.store.js";
 import { Signal } from "../shared/signal.class.js";
 import { CanvasHorizontalScrollbar } from "./components/hscrollbar.component.js";
 import { SpriteItemList, SpritesView } from "./components/spritesView.component.js";
@@ -36,6 +36,25 @@ export class SpritesheetViewerView extends View {
 		this.font = rsrcMngr.get("font", rsrcMngr.mainFontName);
 		this.font.size = 1;
 
+		this.createComponents();
+
+		this.layer.scene.on(SpritesView.EVENT_DELETE_ITEMS, (name, spritesToDelete) => {
+			switch (name) {
+				case "sprite":
+					return this.deleteSprites(spritesToDelete as string[]);
+				case "anim":
+					return this.deleteAnims(spritesToDelete as string[]);
+			}
+		});
+
+		CanvasHorizontalScrollbar.trackColor = "rgba(255 255 255 / 20%)";
+		CanvasHorizontalScrollbar.thumbColor = "rgba(255 255 255 / 20%)";
+		CanvasHorizontalScrollbar.thumbHoverColor = "rgba(255 255 255 / 80%)";
+		CanvasHorizontalScrollbar.thumbDragColor = "rgba(200 200 255 / 80%)";
+		CanvasHorizontalScrollbar.thumbBorderColor = "rgba(255 255 255 / 20%)";
+	}
+
+	private createComponents() {
 		const selectedSprite = Signal.create<string>();
 		selectedSprite.subscribe((name) => {
 			this.layer.scene.emit(SpritesheetViewerView.EVENT_SPRITE_SELECTED, name);
@@ -47,7 +66,7 @@ export class SpritesheetViewerView extends View {
 
 		let bounds = { x: 0, y: 0, width: this.canvas.width, height: ANIMS_YPOS_START };
 		const sprites = new SpritesView({
-			gc: ctx.gc,
+			gc: this.gc,
 			title: "Sprites",
 			bounds,
 			selected: selectedSprite,
@@ -56,9 +75,9 @@ export class SpritesheetViewerView extends View {
 
 		this._spritesheet.subscribe((spritesheet) => {
 			if (spritesheet) {
-				const list = new SpriteItemList();
-				list.getImage = (name: string) => spritesheet.sprites.get(name)?.[0] ?? undefined;
-				spritesheet.sprites.forEach((sprite, name) => list.add(name, sprite[0]));
+				const list = new SpriteItemList("sprite");
+				list.getImage = (name: string) => spritesheet.sprites.get(name)?.imgs[0] ?? undefined;
+				spritesheet.sprites.forEach((sprite, name) => list.add(name, sprite));
 				sprites.list = list;
 			}
 		});
@@ -67,7 +86,7 @@ export class SpritesheetViewerView extends View {
 
 		bounds = { x: 0, y: ANIMS_YPOS_START, width: this.canvas.width, height: this.canvas.height - ANIMS_YPOS_START };
 		const anims = new SpritesView({
-			gc: ctx.gc,
+			gc: this.gc,
 			title: "Animations",
 			bounds,
 			selected: Signal.create<string>(),
@@ -82,30 +101,24 @@ export class SpritesheetViewerView extends View {
 
 		this._spritesheet.subscribe((spritesheet) => {
 			if (spritesheet) {
-				const list = new SpriteItemList();
+				const list = new SpriteItemList("anim");
 
 				list.getImage = (name: string, tick: number) => {
 					const sprite = spritesheet.animations.get(name)?.frame(tick);
 					if (!sprite) return undefined;
-					return spritesheet.sprites.get(sprite)?.[0] ?? undefined;
+					return spritesheet.sprites.get(sprite)?.imgs[0] ?? undefined;
 				};
 
 				spritesheet.animations.forEach((anim, name) => {
 					const sprite = spritesheet.sprites.get(anim.frame(0));
 					if (!sprite) return;
-					list.add(name, sprite[0]);
+					list.add(name, sprite);
 				});
 				anims.list = list;
 			}
 		});
 
 		this.components.set("anims", anims);
-
-		CanvasHorizontalScrollbar.trackColor = "rgba(255 255 255 / 20%)";
-		CanvasHorizontalScrollbar.thumbColor = "rgba(255 255 255 / 20%)";
-		CanvasHorizontalScrollbar.thumbHoverColor = "rgba(255 255 255 / 80%)";
-		CanvasHorizontalScrollbar.thumbDragColor = "rgba(200 200 255 / 80%)";
-		CanvasHorizontalScrollbar.thumbBorderColor = "rgba(255 255 255 / 20%)";
 	}
 
 	public destroy() {}
@@ -164,9 +177,24 @@ export class SpritesheetViewerView extends View {
 		this._spritesheet.notify();
 	}
 
+	private deleteSprites(list: string[]) {
+		if (!this._spritesheet.value) return;
+		const sprites = this._spritesheet.value.sprites;
+		for (const name of list) sprites.delete(name);
+		this._spritesheet.notify();
+	}
+
+	private deleteAnims(list: string[]) {
+		if (!this._spritesheet.value) return;
+		const animations = this._spritesheet.value.animations;
+		for (const name of list) animations.delete(name);
+		this._spritesheet.notify();
+	}
+
 	public generateSpritesheet() {
 		if (!this._spritesheet.value) return;
-		buildSpritesheetFile(this._spritesheet.value, this.imagePath);
+		const script = buildSpritesheetFile(this._spritesheet.value, this.imagePath);
+		spritesheetSourceText.value = script;
 	}
 
 	public render(gc: GameContext) {

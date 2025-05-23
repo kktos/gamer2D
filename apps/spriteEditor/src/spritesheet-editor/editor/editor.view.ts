@@ -6,13 +6,14 @@ import type { ViewContext } from "gamer2d/layers/display/views/View.factory";
 import { type Rect, clampPointInRect, ptInRect } from "gamer2d/maths/math";
 import { compile } from "gamer2d/script/compiler/compiler";
 import type { TSpriteSheet } from "gamer2d/script/compiler/ressources/spritesheet.rules";
-import { createSpriteSheet } from "gamer2d/utils/createSpriteSheet.util";
+import { getImgData, getPixelColor } from "gamer2d/utils/canvas.utils";
 import { loadText } from "gamer2d/utils/loaders.util";
 import { detectSprites } from "../../sprites-claude.util.js";
 import { createCanvasFromRect } from "../../sprites.util.js";
-import { selectedAnim } from "../shared/main.store.js";
+import { selectedAnim, sourceImage, spritesheetSourceText } from "../shared/main.store.js";
 import propTemplate from "./editor.template.html?raw";
 import { AnimsDlg } from "./elements/animsDlg.element.js";
+import { ScriptDlg } from "./elements/scriptDlg.element.js";
 import { SpritesDetectorDlg } from "./elements/spritesDetectorDlg.element.js";
 import { TabsContainer } from "./elements/tabs.element.js";
 import toolsTemplate from "./tools.template.html?raw";
@@ -22,6 +23,7 @@ import { newWindow, setupUi } from "./ui.setup.js";
 TabsContainer;
 AnimsDlg;
 SpritesDetectorDlg;
+ScriptDlg;
 
 const INFO_PANEL_WIDTH = 75;
 const INFO_PANEL_HEIGHT = 15;
@@ -40,7 +42,8 @@ export class SpritesheetEditorView extends View {
 	static EVENT_SPRITE_CREATE = Symbol.for("SPRITE_CREATE");
 	static EVENT_GENERATE_SPRITESHEET = Symbol.for("GENERATE_SPRITESHEET");
 
-	private srcImage: HTMLImageElement | HTMLCanvasElement | undefined;
+	// private srcImage: HTMLImageElement | HTMLCanvasElement | undefined;
+	private srcImageData!: ImageData;
 	private sheet: TSpriteSheet | undefined;
 
 	private imageOffsetX: number;
@@ -55,14 +58,13 @@ export class SpritesheetEditorView extends View {
 	private contentElement!: HTMLElement;
 	private filename!: string;
 	private toolsWindow!: FloatingWindowElement;
-	private scriptElement!: HTMLTextAreaElement;
 
 	constructor(ctx: ViewContext) {
 		super(ctx);
 
 		this.buildUI();
 
-		this.srcImage = undefined;
+		// this.srcImage = undefined;
 		this.imageOffsetX = 0;
 		this.imageOffsetY = 0;
 		this.lastMouseX = 0;
@@ -102,17 +104,11 @@ export class SpritesheetEditorView extends View {
 		this.toolsWindow.restoreState();
 		rootElement.appendChild(this.toolsWindow);
 		setupUi(this.toolsWindow.getContentElement(), (id: string, data?: unknown) => this.onClickUIBtn(id, data));
-
-		const scriptText = localStorage.getItem("gamer2d-script") ?? "";
-		this.scriptElement = this.contentElement.querySelector("#script") as HTMLTextAreaElement;
-		this.scriptElement.value = scriptText;
 	}
 
 	onChangeUI(el: HTMLInputElement | HTMLSelectElement) {}
 
 	onClickUIBtn(id: string, data?: unknown) {
-		console.log("onClickUIBtn", id, data);
-
 		switch (id) {
 			case "open-image":
 				this.openImage();
@@ -123,8 +119,8 @@ export class SpritesheetEditorView extends View {
 			case "new-spritesheet":
 				this.newSpriteSheet();
 				break;
-			case "btnCompile":
-				this.compileSpritesheet();
+			case "compile-script":
+				this.compileSpritesheet(data);
 				break;
 			case "move-cmd":
 				this.cmdMove();
@@ -150,7 +146,7 @@ export class SpritesheetEditorView extends View {
 	}
 
 	handleEvent(gc, e) {
-		if (!this.srcImage) return;
+		if (!sourceImage.value) return;
 
 		switch (e.type) {
 			case "keyup":
@@ -216,7 +212,7 @@ export class SpritesheetEditorView extends View {
 
 				switch (this.cmd) {
 					case CMD_MOVE: {
-						if (this.srcImage.width * this.zoom > this.canvas.width || this.srcImage.height * this.zoom > this.canvas.height) {
+						if (sourceImage.value.width * this.zoom > this.canvas.width || sourceImage.value.height * this.zoom > this.canvas.height) {
 							if (e.x >= 0 && e.x <= this.canvas.width && e.y >= 0 && e.y <= this.canvas.height) {
 								this.cmd = CMD_MOVING;
 							}
@@ -241,14 +237,21 @@ export class SpritesheetEditorView extends View {
 					case CMD_MOVING_SELECTION:
 						return this.handleMovingSelection(gc, e);
 					case CMD_MOVE:
-					case CMD_SELECT:
+					case CMD_SELECT: {
 						if (this.capturedArea && ptInRect(e.x / this.zoom - this.imageOffsetX, e.y / this.zoom - this.imageOffsetY, this.capturedArea)) {
 							gc.viewport.canvas.style.cursor = "move";
 							this.lastMouseX = this.capturedArea.x;
 							this.lastMouseY = this.capturedArea.y;
 							return;
 						}
+						const lastMousePos = { x: this.lastMouseX / this.zoom, y: this.lastMouseY / this.zoom };
+						const area = { x: this.imageOffsetX, y: this.imageOffsetY, width: sourceImage.value.width, height: sourceImage.value.height };
+						const mousePos = clampPointInRect(lastMousePos, area);
+
+						const pixelColor = getPixelColor(this.srcImageData, mousePos.x, mousePos.y);
+						if (pixelColor) document.body.style.setProperty("--image-bg-color", `rgb(${pixelColor.r},${pixelColor.g},${pixelColor.b},${pixelColor.a})`);
 						break;
+					}
 				}
 
 				this.lastMouseX = e.x;
@@ -285,7 +288,7 @@ export class SpritesheetEditorView extends View {
 	}
 
 	handleMoving(gc, e) {
-		if (!this.srcImage) return;
+		if (!sourceImage.value) return;
 
 		gc.viewport.canvas.style.cursor = "grabbing";
 
@@ -318,17 +321,17 @@ export class SpritesheetEditorView extends View {
 	}
 
 	offsetImage(deltaX: number, deltaY: number) {
-		if (!this.srcImage) return;
+		if (!sourceImage.value) return;
 
-		if (this.srcImage.width * this.zoom > this.canvas.width) {
+		if (sourceImage.value.width * this.zoom > this.canvas.width) {
 			this.imageOffsetX += deltaX / this.zoom;
-			const minOffsetX = this.canvas.width - this.srcImage.width * this.zoom;
+			const minOffsetX = this.canvas.width - sourceImage.value.width * this.zoom;
 			this.imageOffsetX = Math.max(minOffsetX / this.zoom, Math.min(0, this.imageOffsetX));
 		}
 
-		if (this.srcImage.height * this.zoom > this.canvas.height) {
+		if (sourceImage.value.height * this.zoom > this.canvas.height) {
 			this.imageOffsetY += deltaY / this.zoom;
-			const minOffsetY = this.canvas.height - this.srcImage.height * this.zoom;
+			const minOffsetY = this.canvas.height - sourceImage.value.height * this.zoom;
 			this.imageOffsetY = Math.max(minOffsetY / this.zoom, Math.min(0, this.imageOffsetY));
 		}
 	}
@@ -350,15 +353,11 @@ export class SpritesheetEditorView extends View {
 	}
 
 	public selectSprite(name: string) {
-		console.log(`selectSprite "${name}"`);
-
 		const foundSprite = this.sheet?.sprites.filter((sprite) => {
 			if (!("name" in sprite)) return false;
 			if (sprite.name === name) return true;
 			if (sprite.name === name.replace(/-\d+$/, "")) return true;
 		});
-
-		console.log(foundSprite?.[0]);
 	}
 
 	public selectAnim(animDef: { name: string; anim: Anim }) {
@@ -386,15 +385,18 @@ export class SpritesheetEditorView extends View {
 
 		this.filename = file.name;
 
-		this.scriptElement.value = this.scriptElement.value.replace(/image\s+"([^"]+)"/, `image "images/${this.filename}"`);
+		// this.scriptElement.value = this.scriptElement.value.replace(/image\s+"([^"]+)"/, `image "images/${this.filename}"`);
+		spritesheetSourceText.value = spritesheetSourceText.value?.replace(/image\s+"([^"]+)"/, `image "images/${this.filename}"`);
 
 		const blob = await file.arrayBuffer();
 		return new Promise<string>((resolve) => {
 			const img = new Image();
 			img.src = URL.createObjectURL(new Blob([blob]));
 			img.onload = () => {
-				this.srcImage = img;
+				sourceImage.value = img;
+				this.srcImageData = this.ctx.getImageData(0, 0, sourceImage.value.width, sourceImage.value.height);
 				this.zoom = 1;
+				this.capturedArea = null;
 				resolve(`images/${this.filename}`);
 			};
 		});
@@ -418,28 +420,31 @@ export class SpritesheetEditorView extends View {
 		const [fileHandle] = await window.showOpenFilePicker(pickerOpts);
 		const file = await fileHandle.getFile();
 		const text = await file.text();
-		// console.log(file);
+
 		if (file.type === "application/json") {
 			this.sheet = JSON.parse(text);
 			if (!this.sheet) return;
 			const ss = await SpriteSheet.loadData(this.sheet);
 			if (ss.img) {
-				this.srcImage = ss.img;
+				sourceImage.value = ss.img;
+				this.srcImageData = getImgData(ss.img as HTMLImageElement);
 				this.zoom = 1;
 				this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITESHEET_LOADED, { ss, image: this.sheet.image });
 			}
 		} else {
-			this.scriptElement.value = text;
+			// this.scriptElement.value = text;
+			spritesheetSourceText.value = text;
 
 			const ssSource = await loadText(`spritesheets/${file.name}`);
 			this.sheet = compile<TSpriteSheet>(ssSource, "spriteSheet");
 
-			console.log(this.sheet);
-
 			const ss = await SpriteSheet.loadData(this.sheet);
 			if (ss.img) {
-				this.srcImage = ss.img;
+				sourceImage.value = ss.img;
+				this.srcImageData = getImgData(ss.img as HTMLImageElement);
+				// this.ctx.getImageData(0, 0, sourceImage.value.width, sourceImage.value.height);
 				this.zoom = 1;
+				this.capturedArea = null;
 				this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITESHEET_LOADED, { ss, image: this.sheet.image });
 			}
 		}
@@ -447,29 +452,22 @@ export class SpritesheetEditorView extends View {
 
 	async newSpriteSheet() {
 		let imagePath = "";
-		if (!this.srcImage) imagePath = await this.openImage();
-		if (!this.srcImage) return;
+		if (!sourceImage.value) imagePath = await this.openImage();
+		if (!sourceImage.value) return;
 
-		const ss = new SpriteSheet("????", this.srcImage);
+		const ss = new SpriteSheet("????", sourceImage.value);
 		this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITESHEET_LOADED, { ss, image: imagePath });
 
-		this.scriptElement.value = ['spritesheet "????" {', "", `    image "images/${this.filename}"`, "", "}"].join("\n");
+		const text = ['spritesheet "????" {', "", `    image "images/${this.filename}"`, "", "}"].join("\n");
+		spritesheetSourceText.value = text;
 	}
 
-	private compileSpritesheet() {
-		if (!this.srcImage) return;
-
-		const script = this.scriptElement?.value;
-		if (script) {
-			localStorage.setItem("gamer2d-script", script);
-			const sheet = compile<TSpriteSheet>(script, "spriteSheet");
-			const ss = createSpriteSheet(sheet, this.srcImage);
-			this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITESHEET_LOADED, { ss, image: sheet.image });
-		}
+	private compileSpritesheet(data) {
+		this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITESHEET_LOADED, data);
 	}
 
 	private findSpritesOnCanvas(options) {
-		if (!this.srcImage || !this.capturedArea) return;
+		if (!sourceImage.value || !this.capturedArea) return;
 
 		let name = options.name.trim();
 		if (name.length === 0) name = "sprite";
@@ -478,7 +476,7 @@ export class SpritesheetEditorView extends View {
 		const gridH = options.height;
 
 		const single = (foundRects) => {
-			const output: string[] = [`"${name}" {`, "    rects {"];
+			const output: string[] = [`"${name}" scale:${options.scale}{`, "    rects {"];
 			for (const rect of foundRects) output.push(`        [${rect.x + this.capturedArea?.x},${rect.y + this.capturedArea?.y},${rect.width},${rect.height}]`);
 			output.push("    }");
 			output.push("}");
@@ -489,7 +487,9 @@ export class SpritesheetEditorView extends View {
 			const output: string[] = [];
 			let idx = 0;
 			for (const rect of foundRects) {
-				output.push(`"${name}-${idx}" { rect [${rect.x + this.capturedArea?.x},${rect.y + this.capturedArea?.y},${rect.width},${rect.height}] }`);
+				output.push(
+					`"${name}-${idx}" scale:${options.scale} { rect [${rect.x + this.capturedArea?.x},${rect.y + this.capturedArea?.y},${rect.width},${rect.height}] }`,
+				);
 				idx++;
 			}
 			return output;
@@ -497,7 +497,7 @@ export class SpritesheetEditorView extends View {
 
 		this.capturedArea.x = Math.floor(this.capturedArea.x);
 		this.capturedArea.y = Math.floor(this.capturedArea.y);
-		const capturedArea = createCanvasFromRect(this.srcImage, this.capturedArea);
+		const capturedArea = createCanvasFromRect(sourceImage.value, this.capturedArea);
 		if (capturedArea) {
 			console.log(
 				"%c                                                                                              ",
@@ -507,7 +507,7 @@ export class SpritesheetEditorView extends View {
 			const detectOptions = {
 				minWidth: options.minWidth,
 				minHeight: options.minHeight,
-				backgroundColor: options.bgcolor, //[0, 0, 0, 0],
+				backgroundColor: options.bgcolor,
 				toleranceRGB: options.toleranceRGB,
 				toleranceAlpha: options.toleranceAlpha,
 			};
@@ -562,7 +562,7 @@ export class SpritesheetEditorView extends View {
 	}
 
 	centerIfSmaller(width: number, height: number) {
-		if (!this.srcImage) return [0, 0];
+		if (!sourceImage.value) return [0, 0];
 		// const xPos = width > this.canvas.width ? this.imageOffsetX : (this.canvas.width - width) / 2 / this.zoom;
 		// const yPos = height > this.canvas.height ? this.imageOffsetY : (this.canvas.height - height) / 2 / this.zoom;
 		this.imageOffsetX = width > this.canvas.width ? this.imageOffsetX : (this.canvas.width - width) / 2 / this.zoom;
@@ -574,16 +574,16 @@ export class SpritesheetEditorView extends View {
 		this.ctx.fillStyle = this.backgroundPattern;
 		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-		if (this.srcImage) {
+		if (sourceImage.value) {
 			this.ctx.save();
 			this.ctx.scale(this.zoom, this.zoom);
-			const width = this.srcImage.width * this.zoom;
-			const height = this.srcImage.height * this.zoom;
+			const width = sourceImage.value.width * this.zoom;
+			const height = sourceImage.value.height * this.zoom;
 			const [xPos, yPos] = this.centerIfSmaller(width, height);
 
 			this.ctx.fillStyle = "black";
-			this.ctx.fillRect(xPos, yPos, this.srcImage.width, this.srcImage.height);
-			this.ctx.drawImage(this.srcImage, xPos, yPos);
+			this.ctx.fillRect(xPos, yPos, sourceImage.value.width, sourceImage.value.height);
+			this.ctx.drawImage(sourceImage.value, xPos, yPos);
 			this.ctx.restore();
 
 			const panelWidth = INFO_PANEL_WIDTH + (this.capturedArea ? AREA_PANEL_WIDTH : 0);
