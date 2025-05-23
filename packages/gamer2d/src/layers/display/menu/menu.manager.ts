@@ -134,19 +134,34 @@ export class GameMenu {
 		switch (e.type) {
 			case "click": {
 				const menuIdx = this.findMenuByPoint(e.x, e.y);
-				if (menuIdx >= 0) this.execMenuItemAction(menuIdx);
+				if (menuIdx >= 0) {
+					this.execMenuItemAction(menuIdx);
+					return true;
+				}
 				break;
 			}
 			case "mousemove": {
 				const menuIdx = this.findMenuByPoint(e.x, e.y);
-				if (menuIdx >= 0) this.selectMenuItem(menuIdx);
 				if (this.layer.scene.wannaShowCursor) this.gc.viewport.canvas.style.cursor = menuIdx >= 0 ? "pointer" : "default";
+				if (menuIdx >= 0) {
+					this.selectMenuItem(menuIdx);
+					return true;
+				}
 				break;
 			}
 			case "joybuttondown":
-				if (e.X || e.TRIGGER_RIGHT) return this.execMenuItemAction();
-				if (e.CURSOR_UP) return this.selectPreviousItem();
-				if (e.CURSOR_DOWN) return this.selectNextItem();
+				if (e.X || e.TRIGGER_RIGHT) {
+					this.execMenuItemAction();
+					return true;
+				}
+				if (e.CURSOR_UP) {
+					this.selectPreviousItem();
+					return true;
+				}
+				if (e.CURSOR_DOWN) {
+					this.selectNextItem();
+					return true;
+				}
 				break;
 
 			case "keyup":
@@ -159,14 +174,15 @@ export class GameMenu {
 			case "keydown":
 				if ((e as KeyEvent).key in this.keys) {
 					this.keys[(e as KeyEvent).key]();
-					return;
+					return true;
 				}
 				if ((e as KeyEvent).key === "Control") {
 					this.wannaDisplayHitzones = true;
-					return;
+					return false;
 				}
 				break;
 		}
+		return false;
 	}
 
 	renderMenu(ctx: CanvasRenderingContext2D) {
