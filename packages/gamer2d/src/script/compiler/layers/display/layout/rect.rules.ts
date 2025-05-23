@@ -28,16 +28,23 @@ export class RectRules {
 				// action: undefined,
 			};
 
-			$.OPTION(() => {
-				$.CONSUME(tokens.Fill);
-				$.CONSUME(tokens.Colon);
-				result.fill = $.SUBRULE($.htmlColor);
-			});
-
-			$.OPTION2(() => {
-				$.CONSUME(tokens.Pad);
-				$.CONSUME2(tokens.Colon);
-				result.pad = $.SUBRULE($.tupleExpr);
+			$.MANY(() => {
+				$.OR([
+					{
+						ALT: () => {
+							$.CONSUME(tokens.Fill);
+							$.CONSUME(tokens.Colon);
+							result.fill = $.SUBRULE($.htmlColor);
+						},
+					},
+					{
+						ALT: () => {
+							$.CONSUME(tokens.Pad);
+							$.CONSUME2(tokens.Colon);
+							result.pad = $.SUBRULE($.tupleExpr);
+						},
+					},
+				]);
 			});
 
 			$.ACTION(() => {
