@@ -134,13 +134,17 @@ export class SheetParser extends EmbeddedActionsParser {
 
 	public layoutFor = ForRules.layoutFor(this);
 	public layoutForClause = ForRules.layoutForClause(this);
+
 	public layoutRepeat = RepeatRules.layoutRepeat(this);
 	public layoutRepeatItems = RepeatRules.layoutRepeatItems(this);
+
 	public layoutView = ViewRules.layoutView(this);
 	public layoutRect = RectRules.layoutRect(this);
+
 	public layoutDefAnim = DefAnimRules.layoutDefAnim(this);
 	public layoutDefAnimPath = DefAnimRules.layoutDefAnimPath(this);
 	public layoutDefAnimSpeed = DefAnimRules.layoutDefAnimSpeed(this);
+
 	public displayUI = UIRules.displayUI(this);
 	public displayUIBackground = UIRules.displayUIBackground(this);
 	public displayUIPos = UIRules.displayUIPos(this);

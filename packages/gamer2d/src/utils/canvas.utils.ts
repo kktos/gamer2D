@@ -1,11 +1,11 @@
 export function createViewport(canvas: HTMLCanvasElement, viewport: { width: number; height: number; ratio: number }) {
 	canvas.width = canvas.clientWidth;
 	canvas.height = canvas.width * Number(viewport.ratio);
-	canvas.style.height = `${canvas.height}px`;
+	// canvas.style.height = `${canvas.height}px`;
 
 	return {
-		width: viewport.width, //ENV.VIEWPORT_WIDTH,
-		height: viewport.height, //ENV.VIEWPORT_HEIGHT,
+		width: viewport.width,
+		height: viewport.height,
 		canvas,
 		bbox: canvas.getBoundingClientRect(),
 		ctx: canvas.getContext("2d") as CanvasRenderingContext2D,
