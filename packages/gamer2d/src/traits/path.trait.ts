@@ -48,6 +48,13 @@ export class PathTrait extends Trait {
 					};
 					break;
 				}
+				case "at": {
+					provider = (_, entity) => {
+						entity.bbox.setPosition(evalArg(p.args[0]), evalArg(p.args[1]));
+						return null;
+					};
+					break;
+				}
 				case "prop": {
 					// console.log("prop", evalArg(p.args[0]), evalArg(p.args[1]));
 					const prop = evalArg(p.args[0]);
@@ -103,23 +110,6 @@ export class PathTrait extends Trait {
 	animBuilder(anim, state) {
 		const kind = anim.path[0].name[0];
 		switch (kind) {
-			case "circle": {
-				const speed = Math.abs(anim.speed) ?? 1;
-				const dir = anim.speed < 0 ? -1 : 1;
-				const center = [anim.path[0].args[0], anim.path[0].args[1]];
-				const radius = anim.path[0].args[2];
-				const fullCircle = 2 * Math.PI;
-				let angle = (fullCircle * state.pos[0]) / 100;
-				const getNextPoint = (dt) => {
-					angle = (angle + dt * speed) % fullCircle;
-					return [
-						Math.floor(center[0] + radius * Math.cos(dir * angle)),
-						Math.floor(center[1] + radius * Math.sin(dir * angle)),
-					];
-				};
-				return { getNextPoint };
-			}
-	
 			case "random": {
 				const speed = Math.abs(anim.speed) ?? 1;
 				const args = anim.path[0].args;

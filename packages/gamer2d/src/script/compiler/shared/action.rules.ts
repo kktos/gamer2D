@@ -132,6 +132,7 @@ export class ActionRules {
 				{ ALT: () => $.CONSUME(tokens.Timer).image },
 				{ ALT: () => $.CONSUME(tokens.Sprite).image },
 				{ ALT: () => $.CONSUME(tokens.Dir).image },
+				{ ALT: () => $.CONSUME(tokens.At).image },
 				{ ALT: () => $.CONSUME(tokens.Sound).image },
 				{ ALT: () => $.CONSUME(tokens.Loop).image },
 				{ ALT: () => $.CONSUME(tokens.Play).image },
