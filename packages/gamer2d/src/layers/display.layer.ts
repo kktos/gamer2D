@@ -3,7 +3,7 @@ import { EntityPool } from "../entities/EntityPool";
 import type { Font } from "../game/Font";
 import { GLOBAL_VARIABLES } from "../game/globals";
 import type { GameContext } from "../game/types/GameContext";
-import type { BaseEvent } from "../game/types/GameEvent";
+import type { BaseEvent, KeyEvent } from "../game/types/GameEvent";
 import { BBox } from "../maths/BBox.class";
 import type { Scene } from "../scene/Scene";
 import type { TLayerDisplaySheet } from "../script/compiler/layers/display/display.rules";
@@ -173,9 +173,6 @@ export class DisplayLayer extends UILayer {
 		gc.viewport.canvas.style.cursor = "default";
 
 		switch (e.type) {
-			case "click":
-				break;
-
 			// case "joyaxismove":
 			// 	if(e.timestamp - this.lastJoyTime < 200)
 			// 		return;
@@ -191,7 +188,7 @@ export class DisplayLayer extends UILayer {
 				break;
 		}
 
-		this.menu?.handleEvent(e);
+		if (this.menu?.handleEvent(e)) return;
 
 		for (let idx = 0; idx < this.views.length; idx++) {
 			const view = this.views[idx];
@@ -204,6 +201,14 @@ export class DisplayLayer extends UILayer {
 			e.pageY = e.y;
 
 			view.component?.handleEvent(gc, e);
+		}
+
+		switch (e.type) {
+			case "keydown":
+				break;
+			case "keyup":
+				this.scene.emit(Symbol.for("KEYPRESSED"), (e as KeyEvent).key);
+				break;
 		}
 	}
 
@@ -233,20 +238,9 @@ export class DisplayLayer extends UILayer {
 
 	renderView(gc: GameContext, op) {
 		op.component.render(gc);
-		// gc.viewport.ctx.imageSmoothingEnabled = false;
-		// gc.viewport.ctx.globalAlpha= 1;
-		// gc.viewport.ctx.globalCompositeOperation = "source-over";
 		const left = evalNumberValue({ vars: this.vars }, op.pos[0]);
 		const top = evalNumberValue({ vars: this.vars }, op.pos[1]);
-
-		// gc.viewport.ctx.save();
-		// gc.viewport.ctx.imageSmoothingEnabled = true;
-		// gc.viewport.ctx.imageSmoothingQuality = "high";
 		gc.viewport.ctx.drawImage(op.canvas, left, top);
-		// gc.viewport.ctx.restore();
-
-		// gc.viewport.ctx.strokeStyle = "red";
-		// gc.viewport.ctx.strokeRect(left, top, op.bbox.width, op.bbox.height);
 	}
 
 	update(gc: GameContext, scene: Scene) {
