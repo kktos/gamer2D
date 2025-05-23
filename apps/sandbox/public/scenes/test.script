@@ -4,8 +4,17 @@ display "" {
 		color #000
 	}
 	
+	globals {
+		$level = 0
+	}
+
 	display {
 		font "bubble-bobble"
+
+		on "KEYPRESSED:+" {
+			$level= $level + 1
+			log("$level",$level)
+		}
 
 		layout {
 
@@ -30,7 +39,8 @@ display "" {
 			text "BUBBLE BOBBLE" at:298,104 anim:"fade"
 
 			def anim "toRight" {
-				path { 
+				path {
+					at(55,28)
 					dir(right)
 					line(1,55,28,520,28)
 					dir(left)
@@ -40,7 +50,8 @@ display "" {
 				speed 50
 			}
 			def anim "toLeft" {
-				path { 
+				path {
+					at(520,28)
 					dir(left)
 					line(-1,55,28,520,28)
 					dir(right)
@@ -50,22 +61,26 @@ display "" {
 				speed 60
 			}
 
-			sprite "zen-chan" at:55,28 dir:right anim:"toRight"
-			sprite "zen-chan" at:520,28 dir:left anim:"toLeft"
+			sprite "zen-chan" at:0,0 dir:right anim:"toRight"
+			sprite "zen-chan" at:0,0 dir:left anim:"toLeft"
 
-			image "level-tiles:levels-S-0" at:48,60 range:32,0
-			image "level-tiles:levels-L-0" at:48,60 range:0,13
-			image "level-tiles:levels-L-0" at:528,60 range:0,13
-			image "level-tiles:levels-S-0" at:48,460 range:32,0
+			// $level=1
+			image "level-tiles:levels-S-${level}" at:48,60 range:32,0
+			image "level-tiles:levels-L-${level}" at:48,60 range:0,13
+			image "level-tiles:levels-L-${level}" at:528,60 range:0,13
+			image "level-tiles:levels-S-${level}" at:48,460 range:32,0
 
-			size 1
 			$top = $clientHeight - 110
 			$width = $clientWidth - 50
+
+			$pos= $clientWidth / 2 - $width / 2
+			rect at:$pos,$top width:$width height:20 pad:5,5 fill:#FFFFFF50
+
+			size 1
 			color white
 			align center
 			valign center
-			background #FFFFFF50
-			text "(${mouseX},${mouseY}) ${clientWidth}x${clientHeight}" at:10,$top width:580 height:20			
+			text "(${mouseX},${mouseY}) ${clientWidth}x${clientHeight}" at:10,$top width:$width height:20			
 		}
 	}
 
