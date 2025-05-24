@@ -329,6 +329,10 @@ export class FloatingWindowElement extends HTMLElement {
 		}
 	}
 
+	public setMode(mode: "tool" | "floating") {
+		if (mode === "tool") this.shadow.querySelector(".window-container")?.classList.add("tool");
+	}
+
 	/**
 	 * Sets the content of the floating window.
 	 * This will replace any existing content within the window's content area, including the <slot>.
@@ -397,11 +401,10 @@ function createTemplate() {
       border: 1px solid #555;
       box-shadow: 0 5px 15px rgba(0,0,0,0.3);
       border-radius: 4px;
-      overflow: hidden;
+    //   overflow: hidden;
       font-family: sans-serif;
       user-select: none;
-    }
-
+	  }
     .window-container {
       display: flex;
       flex-direction: column;
@@ -420,6 +423,10 @@ function createTemplate() {
       cursor: move;
       flex-shrink: 0; /* Prevent title bar from shrinking */
     }
+
+	.tool .title-bar {
+      height: 20px;
+	}
 
     .title-bar-text {
       overflow: hidden;
@@ -464,7 +471,10 @@ function createTemplate() {
       overflow: auto;
       background-color: transparent;
 	  position:relative;
-    }
+	  }
+	.tool .content-area {
+		overflow: visible;
+	}
 
     /* Minimized state */
     :host([minimized]) {

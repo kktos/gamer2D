@@ -58,6 +58,7 @@
 	margin-bottom: 0px;
 }
 .action-btn {
+	position: relative;
 	display: flex;
 	align-items: center;
 	width: 100%;

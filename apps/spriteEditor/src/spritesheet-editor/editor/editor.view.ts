@@ -91,6 +91,8 @@ export class SpritesheetEditorView extends View {
 		this.contentElement.className = "layout tools";
 		cmdWindow.setContent(this.contentElement);
 		cmdWindow.restoreState();
+		cmdWindow.setMode("tool");
+
 		rootElement.appendChild(cmdWindow);
 		setupUi(cmdWindow.getContentElement(), (id: string, data?: unknown) => this.onClickUIBtn(id, data));
 
