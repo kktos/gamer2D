@@ -1,5 +1,7 @@
 display "" {
 
+	debug true
+	
 	background {
 		color #000
 	}
