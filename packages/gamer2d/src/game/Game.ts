@@ -118,6 +118,8 @@ export class Game {
 		if (!e.isTrusted) return;
 
 		if ((e.target as HTMLElement).className === "overlay") return;
+		// debug windows
+		if (["PROPERTIES-INSPECTOR", "ITEMS-INSPECTOR"].includes((e.target as HTMLElement)?.tagName)) return;
 
 		const bbox = this.gc.viewport.bbox;
 		const evt: GameEvent = {
