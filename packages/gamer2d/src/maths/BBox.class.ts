@@ -152,4 +152,8 @@ export class BBox {
 			height: this._height,
 		};
 	}
+
+	[Symbol.for("inspect")]() {
+		return `x:${this.left.toFixed()} y:${this.top.toFixed()} w:${this.width.toFixed()} h:${this.height.toFixed()}`;
+	}
 }

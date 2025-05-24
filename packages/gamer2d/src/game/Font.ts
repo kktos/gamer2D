@@ -82,6 +82,10 @@ export class Font {
 		this.hasLowercase = hasLowercase;
 	}
 
+	[Symbol.for("inspect")]() {
+		return `${this.name} ${this.spriteHeight}x${this.spriteWidth}`;
+	}
+
 	get height() {
 		return this.spriteHeight * this.size;
 	}

@@ -71,6 +71,10 @@ export class SpriteSheet {
 		this.animations = new Map();
 	}
 
+	[Symbol.for("inspect")]() {
+		return `${this.name} sprites:${this.sprites.size} animations:${this.animations.size}`;
+	}
+
 	define(name: string, r: Rect, { gridSize, scale }: TDefineOptions = {}) {
 		scale = scale ?? 1;
 		gridSize = gridSize ?? [1, 1];
