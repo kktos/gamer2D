@@ -1,6 +1,6 @@
 import type { GameContext } from "../game/types/GameContext";
-import type { ResizablePanel } from "../inspectors/bottom.panel";
-import { FloatingWindowElement } from "../inspectors/floating-window.element";
+import type { ResizablePanel } from "../inspectors/elements/bottom.panel";
+import { FloatingWindowElement } from "../inspectors/elements/floating-window.element";
 import type { Scene } from "../scene/Scene";
 import type { SceneSheetUI } from "../script/compiler/layers/display/display.rules";
 import { Layer } from "./Layer";
