@@ -76,9 +76,7 @@ export class EntitiesLayer extends Layer {
 			if (idx !== -1) this.entities.splice(idx, 1);
 		});
 
-		tasks.onTask(EntitiesLayer.TASK_ADD_ENTITY, (entity: Entity) => {
-			this.entities.push(entity);
-		});
+		tasks.onTask(EntitiesLayer.TASK_ADD_ENTITY, (entity: Entity) => this.entities.push(entity));
 	}
 
 	// TODO: check Matter-js collisions : https://github.com/liabru/matter-js/blob/master/src/collision/Collision.js
@@ -96,6 +94,8 @@ export class EntitiesLayer extends Layer {
 		this.handleCollisions(gc);
 
 		for (const entity of this.entities) entity.finalize();
+
+		if (this.debugCallback) this.debugCallback();
 	}
 
 	public render(gc: GameContext) {

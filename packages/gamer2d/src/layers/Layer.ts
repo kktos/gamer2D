@@ -4,6 +4,7 @@ import type { Scene } from "../scene/Scene";
 export class Layer {
 	public gc: GameContext;
 	public scene: Scene;
+	public debugCallback: (() => void) | undefined;
 
 	constructor(gc: GameContext, parent: Scene) {
 		this.gc = gc;

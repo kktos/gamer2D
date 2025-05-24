@@ -1,120 +1,137 @@
-import type { Entity } from "../entities/Entity";
-import { Font } from "../game/Font";
-import { SpriteSheet } from "../game/Spritesheet";
 import type { EntitiesLayer } from "../layers/entities.layer";
 import type Director from "../scene/Director";
-import { EntityListPanel } from "./entities.inspector";
-import { EntityInspector } from "./entity.inspector";
+import { EntityList } from "./elements/items.inspector";
+import { PropertiesInspector } from "./elements/properties.inspector";
+import { SidePanel } from "./elements/side-panel.element";
+import { createItemsInspector } from "./utils/createItemsInspector.util";
+import { createPropertiesInspector } from "./utils/createPropertiesInspector.util";
+import { createSidePanel } from "./utils/createSidePanel.utils";
+import { TRIGGER_BTN_ID, createTriggerBtn } from "./utils/createTriggerBtn.util";
+import { pageHistory, setPanelTitle } from "./utils/setPanelTitle.util";
 
-const TRIGGER_BTN_ID = "gamer2d-debug-trigger";
+const GAMER2D_DEBUG = "gamer2d-debug";
 
-export function enableDebugInspectors(coppola: Director) {
-	EntityInspector.bootstrap();
-	EntityListPanel.bootstrap();
-	setupHTMLAndEventListeners(coppola);
-}
+export class DebugManager {
+	private sidePanel!: SidePanel;
+	private entityList!: EntityList;
+	private entityInspector!: PropertiesInspector;
 
-export function displayDebugInspectors(coppola: Director) {
-	const entityListInspector = document.getElementById("entity-list") as EntityListPanel;
-	const entityInspector = document.getElementById("inspector") as EntityInspector;
+	constructor(private coppola: Director) {
+		SidePanel.bootstrap();
+		EntityList.bootstrap();
+		PropertiesInspector.bootstrap();
 
-	let findEntityById: (entityId) => Entity | undefined;
-	let showEntityListInspector: () => void;
+		// activated per scene
+		enableDebug(false);
 
-	coppola.currentScene.useLayer("entities", (layer: EntitiesLayer) => {
-		showEntityListInspector = () => entityListInspector.show(layer.entities);
-		findEntityById = (entityId) => layer.get(entityId);
-		showEntityListInspector();
+		this.setup();
+	}
 
-		entityListInspector.addEventListener("entity-selected", (event) => {
-			const customEvent = event as CustomEvent;
-			const entityId = customEvent.detail?.entityId;
-			if (entityId && entityInspector) {
+	setup() {
+		const root = document.createElement("div");
+		root.id = GAMER2D_DEBUG;
+
+		const triggerBtn = createTriggerBtn(root);
+		root.append(triggerBtn);
+
+		const panel = createSidePanel(root);
+		root.append(panel);
+
+		const entitiesInspector = createItemsInspector(root);
+		panel.appendChild(entitiesInspector);
+
+		const entityInspector = createPropertiesInspector(root);
+		panel.appendChild(entityInspector);
+
+		document.body.append(root);
+
+		triggerBtn.addEventListener("click", () => this.show());
+
+		this.sidePanel = document.querySelector(`#${GAMER2D_DEBUG} side-panel`) as SidePanel;
+		this.entityList = this.sidePanel.querySelector("items-inspector") as EntityList;
+		this.entityInspector = this.sidePanel.querySelector("properties-inspector") as PropertiesInspector;
+	}
+
+	show() {
+		this.sidePanel.show();
+
+		const triggerBtn = document.querySelector(`#${GAMER2D_DEBUG} #${TRIGGER_BTN_ID}`) as HTMLElement;
+		triggerBtn.style.visibility = "hidden";
+
+		this.coppola.currentScene.useLayer("entities", (layer: EntitiesLayer) => {
+			const showEntityListInspector = () => {
+				setPanelTitle(this.sidePanel, "Entities");
+				this.entityList.setEntities(layer.entities);
+				this.entityList.show();
+				layer.debugCallback = () => this.entityList.updateEntities(layer.entities, entityId);
+			};
+			const findEntityById = (entityId) => layer.get(entityId);
+			let entityId = "";
+
+			showEntityListInspector();
+
+			this.entityList.addEventListener("entity-selected", (event) => {
+				const customEvent = event as CustomEvent;
+				entityId = customEvent.detail?.entityId;
+				if (entityId) layer.selectEntity(entityId);
+			});
+
+			this.entityList.addEventListener("inspect-entity", (event) => {
+				const customEvent = event as CustomEvent;
+				const entityId = customEvent.detail?.entityId;
+				if (entityId && this.entityInspector) {
+					const selectedEntity = findEntityById(entityId);
+					if (selectedEntity) {
+						this.entityInspector.show();
+						this.entityList.hide();
+
+						layer.debugCallback = () => {
+							this.entityInspector.update(selectedEntity as unknown as Record<string, unknown>);
+						};
+
+						pageHistory.push(() => {
+							this.entityInspector.hide();
+							showEntityListInspector();
+						});
+
+						setPanelTitle(this.sidePanel, `${selectedEntity.class} ${selectedEntity.id}`);
+
+						layer.selectEntity(entityId);
+					} else {
+						layer.selectEntity(-1);
+					}
+				}
+			});
+
+			this.entityInspector.addEventListener("property-changed", (event) => {
+				const customEvent = event as CustomEvent;
+				const key = customEvent.detail?.key as string;
+				const value = customEvent.detail?.value;
 				const selectedEntity = findEntityById(entityId);
 				if (selectedEntity) {
-					// Prepare properties to show (optional filtering)
-					const propertiesToShow = prepareEntityProperties(selectedEntity);
-					entityInspector.show(propertiesToShow);
-					entityListInspector.hide();
-
-					layer.selectEntity(entityId);
-				} else {
-					entityInspector.hide();
-					layer.selectEntity(-1);
+					selectedEntity[key] = value;
 				}
-			}
+			});
+
+			this.sidePanel.addEventListener("sidepanel-closed", () => {
+				this.entityInspector.hide();
+				showEntityListInspector();
+				pageHistory.length = 0;
+				triggerBtn.style.visibility = "visible";
+				layer.debugCallback = undefined;
+				layer.selectEntity(-1);
+			});
 		});
-
-		entityInspector.addEventListener("entityInspector-closed", () => showEntityListInspector?.());
-	});
-}
-
-// --- Helper function to prepare properties (reuse or adapt from previous example) ---
-function prepareEntityProperties(entity: Entity): Record<string, unknown> {
-	const propertiesToShow: Record<string, unknown> = {};
-	for (const key in entity) {
-		if (typeof entity[key] === "function") continue;
-		if (entity[key] instanceof SpriteSheet) {
-			propertiesToShow[key] = `#${entity[key].sprites.size} sprites`;
-			continue;
-		}
-		if (entity[key] instanceof Font) {
-			propertiesToShow[key] = `${entity[key].name}`;
-			continue;
-		}
-		propertiesToShow[key] = entity[key];
 	}
-	// Add specific properties if needed, e.g., from traits
-	// if (entity.traits) {
-	// 	propertiesToShow["traits"] = Array.from(entity.traits.keys());
-	// }
-	// ... add more specific details as needed ...
-	return propertiesToShow;
 }
 
-function setupHTMLAndEventListeners(coppola: Director) {
-	const trigger = createTrigger();
-	// activate per scene
-	enableDebug(false);
-	createEntityInspector();
-	createEntitiesInspector();
-	trigger.addEventListener("click", () => displayDebugInspectors(coppola));
-}
-
-function createTrigger() {
-	const trigger = document.createElement("div");
-	trigger.id = TRIGGER_BTN_ID;
-	trigger.style.cssText = `
-		position: fixed;
-		bottom: 4px;
-		right: 4px;
-		height: 35px;
-		width: 35px;
-		background-color: rgb(10 118 211 / 58%);
-		cursor: pointer;
-		display: grid;
-		place-items: center;
-		color: white;
-		border-radius: 50%;
-	`;
-	document.body.append(trigger);
-	return trigger;
+export function enableDebugInspectors(coppola: Director) {
+	new DebugManager(coppola);
 }
 
 export function enableDebug(state: boolean) {
-	const btn = document.getElementById(TRIGGER_BTN_ID);
+	const btn = document.getElementById(GAMER2D_DEBUG);
 	if (btn) btn.style.visibility = state ? "" : "hidden";
 }
 
 // :hover -> rgb(85 171 247 / 58%)
-function createEntityInspector() {
-	const inspector = document.createElement("entity-inspector");
-	inspector.id = "inspector";
-	document.body.append(inspector);
-}
-
-function createEntitiesInspector() {
-	const inspector = document.createElement("entity-list-panel");
-	inspector.id = "entity-list";
-	document.body.append(inspector);
-}
