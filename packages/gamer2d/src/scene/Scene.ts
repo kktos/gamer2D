@@ -2,7 +2,7 @@ import type { EventCallback } from "../events/EventBuffer";
 import { EventEmitter } from "../events/EventEmitter";
 import { TaskList } from "../game/TaskList";
 import type { GameContext } from "../game/types/GameContext";
-import { enableDebug } from "../inspectors/debug.manager";
+import { enableDebug } from "../inspectors/debug-manager.class";
 import type { Layer } from "../layers/Layer";
 import { createLayerByName } from "../layers/Layer.factory";
 import type { UILayer } from "../layers/UILayer";

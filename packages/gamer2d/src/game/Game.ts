@@ -1,6 +1,6 @@
 import { GAME_EVENTS } from "../constants/events.const";
 import { setupEntities } from "../entities/Entity.factory";
-import { enableDebugInspectors } from "../inspectors/debug.manager";
+import { enableDebugInspectors } from "../inspectors/debug-manager.class";
 import { setupLayers } from "../layers/Layer.factory";
 import { Timers } from "../layers/display/timers.class";
 import Director from "../scene/Director";
