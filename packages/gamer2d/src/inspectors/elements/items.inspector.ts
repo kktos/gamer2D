@@ -53,7 +53,7 @@ export class EntityList extends HTMLElement {
 			if (row) {
 				row.dataset.entityId && this.selectRow(row.dataset.entityId);
 				this.dispatchEvent(
-					new CustomEvent("entity-selected", {
+					new CustomEvent("item-selected", {
 						detail: { entityId: row.dataset.entityId },
 						bubbles: true,
 						composed: true,
@@ -65,7 +65,7 @@ export class EntityList extends HTMLElement {
 			const row = (event.target as HTMLElement).closest("tr[data-entity-id]") as HTMLTableRowElement;
 			if (row) {
 				this.dispatchEvent(
-					new CustomEvent("inspect-entity", {
+					new CustomEvent("inspect-item", {
 						detail: { entityId: row.dataset.entityId },
 						bubbles: true,
 						composed: true,

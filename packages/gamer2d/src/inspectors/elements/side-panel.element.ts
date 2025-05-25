@@ -8,6 +8,9 @@ export class SidePanel extends HTMLElement {
 		const shadow = this.attachShadow({ mode: "open" });
 		shadow.appendChild(createTemplate());
 		shadow.querySelector(".close-btn")?.addEventListener("click", () => this.hide());
+		shadow.querySelector("SVG")?.addEventListener("click", () => {
+			this.dispatchEvent(new CustomEvent("go-back", { bubbles: true, composed: true }));
+		});
 	}
 
 	static get observedAttributes() {
@@ -40,6 +43,39 @@ export class SidePanel extends HTMLElement {
 			this.dispatchEvent(new CustomEvent("sidepanel-closed", { bubbles: true, composed: true }));
 		};
 		this.addEventListener("transitionend", onTransitionEnd);
+	}
+
+	clearContent() {
+		// biome-ignore lint/complexity/noForEach: <explanation>
+		this.querySelectorAll(':not([slot="header"])').forEach((el) => el.remove());
+	}
+
+	old_setTitle(title: HTMLElement, onBack?: () => void) {
+		// biome-ignore lint/complexity/noForEach: <explanation>
+		this.querySelectorAll('[slot="header"]').forEach((el) => el.remove());
+		title.slot = "header";
+		this.appendChild(title);
+		return this.querySelector('[slot="header"]');
+	}
+	setTitle(title: string | HTMLElement, wantIcon = true) {
+		// Remove old header and icon slot elements
+		// biome-ignore lint/complexity/noForEach: <explanation>
+		Array.from(this.children).forEach((child) => {
+			if ((child as HTMLElement).slot === "header") this.removeChild(child);
+		});
+
+		// Title slot
+		let titleEl: HTMLElement;
+		if (typeof title === "string") {
+			titleEl = document.createElement("span");
+			titleEl.textContent = title;
+		} else titleEl = title;
+
+		titleEl.slot = "header";
+		this.appendChild(titleEl);
+
+		const icon = this.shadowRoot?.querySelector("SVG") as HTMLImageElement;
+		if (icon) icon.style.visibility = wantIcon ? "visible" : "hidden";
 	}
 }
 
@@ -87,9 +123,24 @@ function createTemplate() {
                     padding: 10px;
                     background: var(--panel-header-bg-color);
                     color: var(--panel-header-color);
+                    gap:.5rem;
                 }
-                .header-content {
+                .header-icon {
+                    width: 24px;
+                    height: 24px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-right: 10px;
+                    flex-shrink: 0;
+                }
+                .header-title {
                     flex: 1 1 auto;
+                    font-size: 1.1em;
+                    font-weight: bold;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
                 }
                 .close-btn {
                     background: none;
@@ -105,7 +156,18 @@ function createTemplate() {
                 }
             </style>
             <div class="panel-header">
-                <span class="header-content"><slot name="header"></slot></span>
+                <svg 
+                    style="width: 1em; height: 1em;vertical-align: middle;fill: currentColor;overflow: hidden;" 
+                    version="1.1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 199.404 199.404">
+                <g>
+                    <polygon
+                        points="199.404,81.529 74.742,81.529 127.987,28.285 99.701,0 0,99.702 99.701,199.404 
+                        127.987,171.119 74.742,117.876 199.404,117.876"/>
+                </g>
+                </svg>            
+                <span class="header-title"><slot name="header"></slot></span>
                 <button class="close-btn" title="Close">&times;</button>
             </div>
             <div class="panel-content">
