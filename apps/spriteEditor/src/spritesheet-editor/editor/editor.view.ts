@@ -1,6 +1,6 @@
 import type { Anim } from "gamer2d/game/Anim";
 import { SpriteSheet } from "gamer2d/game/Spritesheet";
-import { FloatingWindowElement } from "gamer2d/inspectors/floating-window.element";
+import { FloatingWindowElement } from "gamer2d/inspectors/elements/floating-window.element";
 import { View } from "gamer2d/layers/display/views/View";
 import type { ViewContext } from "gamer2d/layers/display/views/View.factory";
 import { type Rect, clampPointInRect, ptInRect } from "gamer2d/maths/math";

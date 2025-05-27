@@ -1,32 +1,29 @@
 .tooltip {
-	position: absolute;
-	top: -35px;
-	left: 50%;
-	transform: translateX(-50%);
 	background: #1a1a1a;
 	color: #fff;
 	padding: 4px 8px;
 	border-radius: 4px;
 	font-size: 11px;
 	white-space: nowrap;
-	opacity: 0;
 	pointer-events: none;
 	transition: opacity 0.2s ease;
 	z-index: 1000;
 	border: 1px solid #404040;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+
+	margin: 10px;
+	position: fixed;
+	position-anchor: --tooltip;
+	position-area: right;
+	opacity: 0;
+	display: none;
 }
 
-.tooltip::after {
-	content: "";
-	position: absolute;
-	top: 100%;
-	left: 50%;
-	transform: translateX(-50%);
-	border: 4px solid transparent;
-	border-top-color: #1a1a1a;
+.action-btn:hover {
+	anchor-name: --tooltip;
 }
 
 .action-btn:hover .tooltip {
 	opacity: 1;
+	display: block;
 }
