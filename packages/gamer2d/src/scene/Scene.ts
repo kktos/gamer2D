@@ -11,6 +11,12 @@ import type { TSceneSheet } from "../script/compiler/scenes/scene.rules";
 import { generateID } from "../utils/id.util";
 import { getClassName } from "../utils/object.util";
 
+export class LayerMap extends Map<string, Layer> {
+	[Symbol.for("inspect")]() {
+		return [...this.keys()];
+	}
+}
+
 export class Scene {
 	static SCENE_COMPLETED = Symbol.for("SCENE_COMPLETED");
 	static SCENE_STARTED = Symbol.for("SCENE_STARTED");
@@ -21,10 +27,12 @@ export class Scene {
 	public name: string;
 
 	public receiver: UILayer | null;
+
 	// once created always there (e.g : Game scene vs Level scene)
 	public isPermanent: boolean;
 	public isRunning: boolean;
 	public wannaShowCursor: boolean;
+
 	public bbox: BBox;
 	public tasks: TaskList;
 
@@ -33,9 +41,9 @@ export class Scene {
 	private events: EventEmitter;
 	private screenWidth: number;
 	private screenHeight: number;
-	private layers: Map<string, Layer>;
-	private next: null;
-	private settings?: Record<string, unknown>;
+	private layers: LayerMap;
+	// private next: null;
+	// private settings?: Record<string, unknown>;
 
 	constructor(
 		private gc: GameContext,
@@ -53,11 +61,11 @@ export class Scene {
 		this.bbox = new BBox(0, 0, this.screenWidth, this.screenHeight);
 
 		this.events = new EventEmitter();
-		this.layers = new Map<string, Layer>();
+		this.layers = new LayerMap();
 		this.receiver = null;
 		this.isRunning = false;
 		this.isPermanent = false;
-		this.next = null;
+		// this.next = null;
 		this.wannaShowCursor = sheet.showCursor ?? false;
 
 		this.gravity = gc.gravity ?? 0;
@@ -83,7 +91,6 @@ export class Scene {
 	}
 
 	public addLayer(name: string, layer: Layer) {
-		// this.layers.set(getClassName(layer), layer);
 		this.layers.set(name, layer);
 		return this;
 	}

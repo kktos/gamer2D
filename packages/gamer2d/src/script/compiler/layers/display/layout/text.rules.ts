@@ -6,7 +6,7 @@ import type { ArgColor, ArgExpression, ArgVariable, ValueTrait } from "../../../
 import { tokens } from "../../../lexer";
 import type { TAlignType } from "./text-sprite-props.rules";
 
-export type TText = {
+export class TText {
 	type: TupleToUnion<[typeof OP_TYPES.TEXT]>;
 	text: string;
 	id?: string;
@@ -22,9 +22,18 @@ export type TText = {
 	bgcolor?: ArgColor;
 	traits?: (ArgVariable | ValueTrait)[] | ArgVariable;
 
-	bbox: () => BBox;
+	bbox!: () => BBox;
 	entity?: TextEntity;
-};
+
+	constructor(text: string) {
+		this.type = OP_TYPES.TEXT;
+		this.text = text;
+		this.pos = [0, 0];
+	}
+	[Symbol.for("inspect")]() {
+		return `TEXT "${this.text}" at:${this.pos[0]},${this.pos[1]}`;
+	}
+}
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class TextRules {
@@ -32,11 +41,7 @@ export class TextRules {
 		return $.RULE("layoutText", (options, isMenuItem: boolean) => {
 			$.CONSUME(tokens.Text);
 
-			const result: Partial<TText> = {
-				type: OP_TYPES.TEXT,
-				text: $.SUBRULE($.strOrVar),
-				// pos: $.SUBRULE2($.parm_at),
-			};
+			const result = new TText($.SUBRULE($.strOrVar));
 
 			if (options?.size) result.size = options.size;
 			if (options?.align) result.align = options.align;

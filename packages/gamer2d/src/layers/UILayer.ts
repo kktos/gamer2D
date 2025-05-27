@@ -8,8 +8,8 @@ import { Layer } from "./Layer";
 let uiElement: ResizablePanel | FloatingWindowElement | undefined = undefined;
 
 export class UILayer extends Layer {
-	constructor(gc: GameContext, parent: Scene, layout?: SceneSheetUI) {
-		super(gc, parent);
+	constructor(gc: GameContext, parent: Scene, name: string, layout?: SceneSheetUI) {
+		super(gc, parent, name);
 
 		if (!layout) return;
 

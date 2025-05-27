@@ -1,14 +1,26 @@
 type ExprOperations = "Plus" | "Minus" | "Multiply" | "Divide";
 export class ArgExpression {
 	constructor(public stack: (number | ArgVariable | ArgColor | ExprOperations)[]) {}
+
+	toString() {
+		return `expr(${this.stack.join(",")})`;
+	}
 }
 
 export class ArgVariable {
 	constructor(public value: string) {}
+
+	toString() {
+		return `$${this.value}`;
+	}
 }
 
 export class ArgIdentifier {
 	constructor(public value: string) {}
+
+	toString() {
+		return `ArgIdentifier "${this.value}"`;
+	}
 }
 
 export class ArgColor {

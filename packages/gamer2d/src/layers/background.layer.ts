@@ -7,7 +7,7 @@ export class BackgroundLayer extends Layer {
 	private color: string;
 
 	constructor(gc: GameContext, parent: Scene, sheet: TLayerBackgroundSheet) {
-		super(gc, parent);
+		super(gc, parent, "background");
 		this.color = sheet.color.value;
 	}
 

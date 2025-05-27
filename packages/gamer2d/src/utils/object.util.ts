@@ -1,3 +1,4 @@
+import { TText } from "../script/compiler/layers/display/layout/text.rules";
 import { ArgColor, ArgExpression, ArgIdentifier, ArgVariable, ValueTrait } from "../types/value.types";
 
 // https://gist.github.com/Ely-S/4191458
@@ -22,6 +23,11 @@ export function clone<T>(original: T, duplicata: Record<string, unknown> = {}): 
 			}
 			if (original[i] instanceof ValueTrait) {
 				duplicata[i] = new ValueTrait(original[i].name, [...original[i].args]);
+				continue;
+			}
+			if (original[i] instanceof TText) {
+				// duplicata[i] = new TText(original[i].text);
+				(duplicata as T)[i] = clone(original[i], new TText(original[i].text) as unknown as Record<string, unknown>);
 				continue;
 			}
 			(duplicata as T)[i] = clone(original[i], original[i].constructor());

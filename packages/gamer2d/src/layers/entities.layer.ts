@@ -23,7 +23,7 @@ export class EntitiesLayer extends Layer {
 	public frameColor: string;
 
 	constructor(gc: GameContext, parent: Scene, sheet: TLayerEntitiesSheet, grid?: Grid) {
-		super(gc, parent);
+		super(gc, parent, "entities");
 
 		if (sheet.statements) this.sprites = this.prepareRendering(sheet.statements);
 

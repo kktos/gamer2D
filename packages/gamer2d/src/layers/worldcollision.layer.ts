@@ -52,7 +52,7 @@ export class WorldCollisionLayer extends Layer {
 	public grid: Grid | null = null;
 
 	constructor(gc: GameContext, parent: Scene) {
-		super(gc, parent);
+		super(gc, parent, "worldcollisions");
 		if ("grid" in parent) this.grid = parent.grid as Grid;
 	}
 

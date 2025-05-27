@@ -47,7 +47,7 @@ export class DisplayLayer extends UILayer {
 	private menu: GameMenu | null;
 
 	constructor(gc: GameContext, parent: Scene, sheet: TLayerDisplaySheet) {
-		super(gc, parent, sheet.ui);
+		super(gc, parent, "display", sheet.ui);
 
 		const rezMgr = gc.resourceManager;
 		this.font = rezMgr.get<Font>("font", sheet.font ?? gc.resourceManager.mainFontName);
