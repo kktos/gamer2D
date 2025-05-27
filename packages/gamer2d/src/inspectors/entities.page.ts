@@ -1,20 +1,19 @@
 import type { EntitiesLayer } from "../layers/entities.layer";
 import { DebugPage } from "./debug-page.class";
 import type { EntityList } from "./elements/items.inspector";
-import { PAGES } from "./menu-page.class";
+import type { PageKey } from "./pages-definitions";
 
 export class EntitiesPage extends DebugPage {
-	private menu!: HTMLElement;
+	private element!: EntityList;
 	private layer!: EntitiesLayer;
 
 	render(): HTMLElement {
-		this.menu = document.createElement("div");
-		this.menu.appendChild(createTemplate());
-		return this.menu;
+		this.element = document.createElement("items-inspector") as EntityList;
+		return this.element;
 	}
 
 	open() {
-		const entityList = this.menu.querySelector("items-inspector") as EntityList;
+		const entityList = this.element;
 
 		this.coppola.currentScene.useLayer("entities", (layer: EntitiesLayer) => {
 			let entityId = "";
@@ -40,7 +39,7 @@ export class EntitiesPage extends DebugPage {
 				if (entityId) {
 					entityList.dispatchEvent(
 						new CustomEvent("goto-page", {
-							detail: { pageDef: PAGES["entity-props"], params: { entityId } },
+							detail: { id: "entity-properties" as PageKey, params: { object: layer.get(entityId) } },
 							bubbles: true,
 							composed: true,
 						}),
@@ -54,10 +53,4 @@ export class EntitiesPage extends DebugPage {
 		this.layer.debugCallback = undefined;
 		this.layer.selectEntity(-1);
 	}
-}
-
-function createTemplate() {
-	const template = document.createElement("template");
-	template.innerHTML = "<items-inspector></items-inspector>";
-	return template.content.cloneNode(true) as HTMLElement;
 }

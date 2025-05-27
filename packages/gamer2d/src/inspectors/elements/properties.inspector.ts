@@ -17,10 +17,13 @@ export class PropertiesInspector extends HTMLElement {
 
 	/**
 	 * Displays or updates the properties of the given entity.
-	 * @param entity - The entity object whose properties should be displayed.
+	 * @param obj - The entity object whose properties should be displayed.
 	 */
-	update(entity: Record<string, unknown>) {
+	update(obj) {
 		if (!this._contentElement) return;
+
+		const keys = new Set(obj instanceof Map ? Array.from(obj.keys()) : Object.keys(obj));
+		const entries = obj instanceof Map ? Array.from(obj.entries()) : Object.entries(obj);
 
 		// If table doesn't exist, create it and all rows
 		if (!this._table) {
@@ -31,7 +34,8 @@ export class PropertiesInspector extends HTMLElement {
 			this._contentElement.appendChild(this._table);
 			this._rowMap.clear();
 
-			for (const [key, value] of Object.entries(entity)) {
+			// for (const [key, value] of Object.entries(obj)) {
+			for (const [key, value] of entries) {
 				const row = this._createRow(key, value);
 				tbody.appendChild(row);
 				this._rowMap.set(key, row);
@@ -41,7 +45,7 @@ export class PropertiesInspector extends HTMLElement {
 
 		// Update or add/remove rows as needed
 		const tbody = this._table.tBodies[0];
-		const keys = new Set(Object.keys(entity));
+		// const keys = new Set(Object.keys(obj));
 		// Remove rows for keys no longer present
 		for (const key of Array.from(this._rowMap.keys())) {
 			if (!keys.has(key)) {
@@ -51,7 +55,8 @@ export class PropertiesInspector extends HTMLElement {
 			}
 		}
 		// Update existing rows and add new ones
-		for (const [key, value] of Object.entries(entity)) {
+		// for (const [key, value] of Object.entries(obj)) {
+		for (const [key, value] of entries) {
 			let row = this._rowMap.get(key);
 			if (row) {
 				this._updateRow(row, value);
@@ -115,8 +120,17 @@ export class PropertiesInspector extends HTMLElement {
 					break;
 				}
 				if (Symbol.for("inspect") in value) {
-					displayValue = value[Symbol.for("inspect")]();
-					break;
+					const data = value[Symbol.for("inspect")]();
+					if (data instanceof HTMLElement) {
+						cell.appendChild(data);
+						return;
+					}
+					cell.textContent = data;
+					return;
+				}
+				if (value instanceof HTMLElement) {
+					cell.appendChild(value);
+					return;
 				}
 				try {
 					displayValue = JSON.stringify(value, null, 2);

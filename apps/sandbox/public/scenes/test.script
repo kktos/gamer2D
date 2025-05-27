@@ -10,6 +10,9 @@ display "menu" {
 
 	globals {
 		$level = 0
+		$var1 = 0
+		$var2 = $var1*10
+		$var3 = 0
 	}
 	
 	display {

@@ -85,8 +85,8 @@ function createTemplate() {
             <style>
                 :host {
                     --panel-width: 300px;
-                    --panel-bg-color: rgb(255 255 255 / 50%);
-                    --panel-header-bg-color: rgb(16 122 245 / 70%);
+                    --panel-bg-color: rgb(255 255 255 / 40%);
+                    --panel-header-bg-color: rgb(16 122 245 / 40%);
                     --panel-header-color: white;
                     
                     display: none;
@@ -95,7 +95,9 @@ function createTemplate() {
                     bottom: 0;
                     width: var(--panel-width);
                     z-index: 999;
+                    color: var(--panel-header-color);
                     background: var(--panel-bg-color);
+                    backdrop-filter: blur(10px);
                     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
                     transition: transform 0.25s cubic-bezier(.4,0,.2,1);
                     will-change: transform;

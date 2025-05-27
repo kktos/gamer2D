@@ -6,7 +6,7 @@ export function createSidePanel(root: HTMLElement) {
 	sidePanel.side = "right";
 
 	sidePanel.style.setProperty("--panel-width", "400px");
-	sidePanel.style.setProperty("--panel-bg-color", "rgb(0 0 0 / 80%)");
+	sidePanel.style.setProperty("--panel-bg-color", "rgb(0 0 0 / 40%)");
 	// --panel-header-bg-color: rgb(16 122 245 / 70%);
 	// --panel-header-color: white;
 

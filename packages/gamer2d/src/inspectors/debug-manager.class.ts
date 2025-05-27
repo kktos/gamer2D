@@ -1,9 +1,12 @@
 import type Director from "../scene/Director";
 import type { DebugPage } from "./debug-page.class";
+import { DebugMenuItemElement } from "./elements/debug-menu-item.element";
+import { DebugMenu } from "./elements/debug-menu.element";
 import { EntityList } from "./elements/items.inspector";
 import { PropertiesInspector } from "./elements/properties.inspector";
 import { SidePanel } from "./elements/side-panel.element";
 import { MenuPage } from "./menu-page.class";
+import { PAGES } from "./pages-definitions";
 import { createSidePanel } from "./utils/createSidePanel.utils";
 import { TRIGGER_BTN_ID, createTriggerBtn } from "./utils/createTriggerBtn.util";
 
@@ -17,6 +20,8 @@ export class DebugManager {
 		SidePanel.bootstrap();
 		EntityList.bootstrap();
 		PropertiesInspector.bootstrap();
+		DebugMenuItemElement.bootstrap();
+		DebugMenu.bootstrap();
 
 		// activated per scene
 		enableDebug(false);
@@ -45,9 +50,13 @@ export class DebugManager {
 		});
 		this.sidePanel.addEventListener("go-back", () => this.goBack());
 		this.sidePanel.addEventListener("goto-page", (e) => {
-			const pageDef = (e as CustomEvent).detail.pageDef;
-			const params = (e as CustomEvent).detail.params;
-			this.goto(pageDef, params);
+			const { id, params } = (e as CustomEvent).detail;
+			this.goto(PAGES[id], params);
+		});
+		this.sidePanel.addEventListener("menu-item-selected", (e) => {
+			const { id, data, params } = (e as CustomEvent).detail;
+			if (!PAGES[id] || !PAGES[id].class) this.goto(PAGES.DEFAULT, { ...params, data });
+			else this.goto(PAGES[id], { ...params, data });
 		});
 	}
 
