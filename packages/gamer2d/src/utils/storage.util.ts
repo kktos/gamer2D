@@ -1,7 +1,7 @@
 const HIGHSCORES_COUNT = 10;
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
-export default class LocalDB {
+export class LocalDB {
 	static keys() {
 		const keys: string[] = [];
 		for (let idx = 0; idx < localStorage.length; idx++) {

@@ -1,8 +1,10 @@
 import type { TImage } from "../../script/compiler/layers/display/layout/image.rules";
 import type { TRepeat, TRepeatItem } from "../../script/compiler/layers/display/layout/repeat.rules";
+import type { TSet } from "../../script/compiler/layers/display/layout/set.rules";
 import type { TSprite } from "../../script/compiler/layers/display/layout/sprite.rules";
 import type { TText } from "../../script/compiler/layers/display/layout/text.rules";
 import { evalExpr, evalNumberValue, evalString, evalVar } from "../../script/engine/eval.script";
+import { execSet } from "../../script/engine/exec.script";
 import { OP_TYPES } from "../../types/operation.types";
 import { ArgExpression, ArgVariable, ValueTrait } from "../../types/value.types";
 import { clone } from "../../utils/object.util";
@@ -31,20 +33,15 @@ export function repeat(op: TRepeat, callback: (item: TRepeatItem) => void, vars:
 
 		for (let itemIdx = 0; itemIdx < op.items.length; itemIdx++) {
 			const item = clone<TRepeatItem>(op.items[itemIdx]);
-			if (item.type === OP_TYPES.GROUP) {
-				for (const groupItem of item.items) {
-					processItem(groupItem, idx, vars);
-				}
-			} else {
-				processItem(item, idx, vars);
-			}
+			if (item.type === OP_TYPES.GROUP) for (const groupItem of item.items) processItem(groupItem, idx, vars);
+			else processItem(item, idx, vars);
 
 			callback(item);
 		}
 	}
 }
 
-function processItem(item: TSprite | TText | TImage, idx: number, vars: TVars) {
+function processItem(item: TSprite | TText | TImage | TSet, idx: number, vars: TVars) {
 	switch (item.type) {
 		case OP_TYPES.TEXT:
 			item.text = evalString({ vars }, item.text);
@@ -53,6 +50,9 @@ function processItem(item: TSprite | TText | TImage, idx: number, vars: TVars) {
 		case OP_TYPES.SPRITE:
 			item.name = evalString({ vars }, item.name);
 			break;
+		case OP_TYPES.SET:
+			execSet({ vars }, item);
+			return;
 	}
 
 	item.pos[0] = evalNumberValue({ vars }, item.pos[0]);
@@ -70,9 +70,7 @@ function processItem(item: TSprite | TText | TImage, idx: number, vars: TVars) {
 						trait.args[idx] = evalVar({ vars }, arg.value);
 						continue;
 					}
-					if (arg instanceof ArgExpression) {
-						trait.args[idx] = evalExpr({ vars }, arg);
-					}
+					if (arg instanceof ArgExpression) trait.args[idx] = evalExpr({ vars }, arg);
 				}
 		}
 	}

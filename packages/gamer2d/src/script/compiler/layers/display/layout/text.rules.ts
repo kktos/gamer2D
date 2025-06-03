@@ -21,6 +21,7 @@ export class TText {
 	height?: number | ArgVariable;
 	bgcolor?: ArgColor;
 	traits?: (ArgVariable | ValueTrait)[] | ArgVariable;
+	isDynamic?: boolean;
 
 	bbox!: () => BBox;
 	entity?: TextEntity;
@@ -31,7 +32,7 @@ export class TText {
 		this.pos = [0, 0];
 	}
 	[Symbol.for("inspect")]() {
-		return `TEXT "${this.text}" at:${this.pos[0]},${this.pos[1]}`;
+		return `TEXT "${this.text}" at:${this.pos[0]},${this.pos[1]} ${this.isDynamic ? "D" : ""}`;
 	}
 }
 
@@ -85,6 +86,15 @@ export class TextRules {
 							$.ACTION(() => {
 								if (!isParm) options[name] = value;
 								else result[name] = value;
+							});
+						},
+					},
+					{
+						ALT: () => {
+							const identifier = $.CONSUME(tokens.Identifier).image;
+							$.ACTION(() => {
+								if (identifier === "nocache") result.isDynamic = true;
+								else throw new SyntaxError("unknown parameter");
 							});
 						},
 					},

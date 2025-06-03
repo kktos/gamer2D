@@ -135,6 +135,7 @@ const tokenDefs: TokenDefs = {
 	MultiplicationOp: { pattern: Lexer.NA },
 	Multiply: { pattern: "*", categories: "MultiplicationOp" },
 	Divide: { pattern: "/", categories: "MultiplicationOp" },
+	Modulo: { pattern: "%", categories: "MultiplicationOp" },
 
 	Comma: { pattern: "," },
 	Dot: { pattern: "." },
@@ -283,6 +284,7 @@ export const tokenList = [
 	tokens.Minus,
 	tokens.Multiply,
 	tokens.Divide,
+	tokens.Modulo,
 	tokens.AdditionOp,
 	tokens.MultiplicationOp,
 ];

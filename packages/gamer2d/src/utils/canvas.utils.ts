@@ -1,3 +1,10 @@
+export type RGBAColor = {
+	r: number;
+	g: number;
+	b: number;
+	a: number;
+};
+
 export function createViewport(canvas: HTMLCanvasElement, viewport: { width: number; height: number; ratio: number }) {
 	canvas.width = canvas.clientWidth;
 	canvas.height = canvas.width * Number(viewport.ratio);
@@ -137,7 +144,8 @@ export function nameToRgba(name: string) {
 
 	return [Number(m[1]), Number(m[2]), Number(m[3]), Math.floor(Number(m[4] ?? 1) * 255)];
 }
-export function getPixelColor(imageData: ImageData, x: number, y: number) {
+
+export function getPixelColor(imageData: ImageData, x: number, y: number): RGBAColor | null {
 	if (x < 0 || y < 0 || x >= imageData.width || y >= imageData.height) return null;
 
 	const data = imageData.data;

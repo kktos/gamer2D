@@ -1,4 +1,4 @@
-import type Audio from "../game/Audio";
+import type { Audio } from "../game/Audio";
 
 export type TResultValue = string | number | boolean | TResultValue[];
 

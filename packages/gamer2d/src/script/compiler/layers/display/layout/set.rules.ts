@@ -45,6 +45,12 @@ export class SetRules {
 					},
 				},
 				{ ALT: () => $.SUBRULE($.htmlColor) },
+				{
+					ALT: () => {
+						$.CONSUME(tokens.Action);
+						return { action: [$.SUBRULE($.actionFunctionCallList)] };
+					},
+				},
 			]);
 		});
 	}

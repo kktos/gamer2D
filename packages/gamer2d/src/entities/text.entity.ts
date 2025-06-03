@@ -14,6 +14,7 @@ export type TextDTO = {
 	width?: number;
 	height?: number;
 	bgcolor?: string;
+	isDynamic?: boolean;
 };
 
 export class TextEntity extends Entity {
@@ -25,12 +26,13 @@ export class TextEntity extends Entity {
 	private valign: TAlignType;
 	private fontsize: number;
 	private bgcolor: string | undefined;
+	private isDynamic: boolean;
 
 	constructor(resourceMgr: ResourceManager, textObj: TextDTO) {
 		super(resourceMgr, textObj.pos[0], textObj.pos[1]);
 
 		this.isFixed = false;
-
+		this.isDynamic = !!textObj.isDynamic;
 		this.font = resourceMgr.get("font", resourceMgr.mainFontName);
 		this.text = textObj.text;
 		this.color = textObj.color?.value ?? "white";
@@ -56,6 +58,7 @@ export class TextEntity extends Entity {
 			width: this.bbox.width,
 			height: this.bbox.height,
 			bgcolor: this.bgcolor,
+			isDynamic: this.isDynamic,
 		});
 	}
 }

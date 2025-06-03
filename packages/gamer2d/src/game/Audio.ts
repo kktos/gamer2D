@@ -62,7 +62,7 @@ export async function loadSounds(sheet, settings: TSettings) {
 	).then(() => audio);
 }
 
-export default class Audio {
+export class Audio {
 	private buffers: Map<string, AudioBuffer>;
 	private gainNode: GainNode;
 	public context: AudioContext;

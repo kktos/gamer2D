@@ -245,6 +245,7 @@ export class DisplayLayer extends UILayer {
 
 	update(gc: GameContext, scene: Scene) {
 		this.timers?.update(gc, scene);
+		if (this.debugCallback) this.debugCallback();
 	}
 
 	render(gc: GameContext) {

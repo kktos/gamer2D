@@ -4,7 +4,7 @@ import type { SceneConstructor } from "../game/types/GameOptions";
 import { loadLayer } from "../layers/Layer.factory";
 import { CompileSyntaxErr, compileScript } from "../script/compiler/compiler";
 import type { TSceneSheet } from "../script/compiler/scenes/scene.rules";
-import LocalDB from "../utils/storage.util";
+import { LocalDB } from "../utils/storage.util";
 import type { Scene } from "./Scene";
 import { DisplayScene } from "./display.scene";
 

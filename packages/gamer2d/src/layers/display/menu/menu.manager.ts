@@ -79,9 +79,10 @@ export class GameMenu {
 			menuItems.push(item);
 		}
 
-		computeBBox(this.gc, this.layer, menuItems);
+		// TODO: cleanup this typecast - CAUTION
+		computeBBox(this.gc, this.layer, menuItems as TMenuItemRendered[]);
 
-		this.menu.items = menuItems;
+		this.menu.items = menuItems as TMenuItem[];
 
 		this.menu.selectionSprites = undefined;
 		if (this.menu.selection) {

@@ -4,7 +4,7 @@ import type { TLayerDefinition } from "../game/types/GameOptions";
 import { compileLayerScript } from "../script/compiler/compiler";
 import type { TLayerSheet } from "../script/compiler/layers/layer.rules";
 import { getClassName } from "../utils/object.util";
-import LocalDB from "../utils/storage.util";
+import { LocalDB } from "../utils/storage.util";
 import type { Layer } from "./Layer";
 import { BackgroundLayer } from "./background.layer";
 import { DisplayLayer } from "./display.layer";

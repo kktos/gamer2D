@@ -72,12 +72,12 @@ export function execSet({ vars }: { vars: TVars }, actionSet: TSet) {
 }
 
 export function execAction({ vars }: { vars: TVars }, statementList: TActionStatement[]) {
+	let result = undefined;
 	for (const statement of statementList) {
 		if (Array.isArray(statement)) {
-			let result = undefined;
-			for (const fnCall of statement) {
-				result = execFnCall({ vars }, fnCall, result);
-			}
+			result = undefined;
+			for (const fnCall of statement) result = execFnCall({ vars }, fnCall, result);
 		} else execSet({ vars }, statement);
 	}
+	return result;
 }

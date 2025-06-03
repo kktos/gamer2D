@@ -27,6 +27,7 @@ type TPrintOptionsBase = {
 	y: number;
 	color?: string;
 	bgcolor?: string;
+	isDynamic?: boolean;
 	width: number;
 	height: number;
 };
@@ -35,7 +36,7 @@ export type PrintOptions = RequireAllOrNone<TPrintOptionsBase, "width" | "height
 export function loadFontData(sheetDef: TFontSheet) {
 	return loadImage(sheetDef.img)
 		.then((image) => {
-			const fontSprite = new SpriteSheet(sheetDef.name, image);
+			const spritesheet = new SpriteSheet(sheetDef.name, image);
 			const offsetX = sheetDef.offsetX;
 			const offsetY = sheetDef.offsetY;
 			const charWidth = sheetDef.width + sheetDef.gapX;
@@ -44,9 +45,9 @@ export function loadFontData(sheetDef: TFontSheet) {
 			for (const [index, char] of [...sheetDef.charset].entries()) {
 				const x = offsetX + (index % charsPerLine) * charWidth;
 				const y = offsetY + Math.floor(index / charsPerLine) * charHeight;
-				fontSprite.define(char, { x, y, width: sheetDef.width, height: sheetDef.height });
+				spritesheet.define(char, { x, y, width: sheetDef.width, height: sheetDef.height });
 			}
-			return new Font(sheetDef.name, fontSprite, sheetDef.height, sheetDef.width, sheetDef.hasLowercase);
+			return new Font(sheetDef.name, spritesheet, sheetDef.height, sheetDef.width, sheetDef.hasLowercase);
 		})
 		.catch((err) => console.error("loadImage", sheetDef.img, err));
 }
@@ -83,7 +84,7 @@ export class Font {
 	}
 
 	[Symbol.for("inspect")]() {
-		return `${this.name} ${this.spriteHeight}x${this.spriteWidth}`;
+		return `${this.name} ${this.spriteHeight}x${this.spriteWidth} cached:${this.cache.size}`;
 	}
 
 	get height() {
@@ -109,14 +110,15 @@ export class Font {
 	}
 
 	print(options: PrintOptions): BBox {
-		const { ctx, text, x, y, color, width, height, bgcolor } = options;
+		const { ctx, text, x, y, color, width, height, bgcolor, isDynamic } = options;
 
 		if (text === undefined || text === null || text === "") return new BBox(x, y, 0, 0);
 
 		const textColor = color ?? this.color ?? "white";
 		const key = JSON.stringify([text, x, y, textColor]);
-		if (!this.cache.has(key)) {
-			const canvas = document.createElement("canvas");
+		let canvas: HTMLCanvasElement | undefined;
+		if (isDynamic || !this.cache.has(key)) {
+			canvas = document.createElement("canvas");
 			const str = this.hasLowercase ? String(text) : String(text).toUpperCase();
 
 			canvas.width = str.length * this.width;
@@ -150,10 +152,10 @@ export class Font {
 				ctx.putImageData(imageData, 0, 0);
 			}
 
-			this.cache.set(key, canvas);
+			if (!isDynamic) this.cache.set(key, canvas);
 		}
 
-		const canvas = this.cache.get(key);
+		if (!isDynamic) canvas = this.cache.get(key);
 		if (!canvas) return new BBox(x, y, 0, 0);
 
 		let newX = 0;

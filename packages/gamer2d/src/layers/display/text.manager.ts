@@ -23,6 +23,7 @@ export function addText(layer: DisplayLayer, op: TText & { entity?: Entity }) {
 		color: op.color,
 		bgcolor: op.bgcolor?.value,
 		text: isStringInterpolable(op.text) ? "" : op.text,
+		isDynamic: !!op.isDynamic,
 	};
 	if (op.width) textObj.width = evalNumber({ vars: layer.vars }, op.width);
 	if (op.height) textObj.height = evalNumber({ vars: layer.vars }, op.height);

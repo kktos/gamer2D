@@ -2,8 +2,8 @@ import type { ResourceManager } from "../game/ResourceManager";
 import type { TEntityDefinition } from "../game/types/GameOptions";
 import { getClassName } from "../utils/object.util";
 import type { Entity } from "./Entity";
-import BackgroundEntity from "./background.entity";
-import SpriteEntity from "./sprite.entity";
+import { BackgroundEntity } from "./background.entity";
+import { SpriteEntity } from "./sprite.entity";
 import { TextEntity } from "./text.entity";
 import { ZoneEntity } from "./zone.entity";
 

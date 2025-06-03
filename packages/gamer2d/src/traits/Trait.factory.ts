@@ -6,7 +6,7 @@ import { KillableTrait } from "./killable.trait";
 import { MouseXTrait } from "./mouseX.trait";
 import { MouseXYTrait } from "./mouseXY.trait";
 import { OffscreenTrait } from "./offscreen.trait";
-import TrapTrait from "./trap.trait";
+import { TrapTrait } from "./trap.trait";
 import { XDragTrait } from "./xdrag.trait";
 
 const traitClasses = {

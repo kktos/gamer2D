@@ -2,8 +2,8 @@ import { createTraitByName } from "../../traits/Trait.factory";
 import type { TResultValue } from "../../types/engine.types";
 import { ArgColor, ArgExpression, ArgIdentifier, ArgVariable, ValueTrait } from "../../types/value.types";
 import type { TVarTypes, TVars } from "../../utils/vars.utils";
-import type { TFunctionArg } from "../compiler/shared/action.rules";
-import { execParseArgs } from "./exec.script";
+import type { TActionStatement, TFunctionArg } from "../compiler/shared/action.rules";
+import { execAction, execParseArgs } from "./exec.script";
 
 export function isStringInterpolable(text: string) {
 	if (typeof text !== "string") return false;
@@ -11,10 +11,7 @@ export function isStringInterpolable(text: string) {
 }
 
 export function interpolateString({ vars }: { vars: TVars }, text: string) {
-	if (typeof text !== "string") {
-		throw new TypeError("text must be a string !");
-	}
-	// return text.replaceAll(/\$\{(.+?)\}/g, (m, varname) => String(evalExpr({ vars }, `$${varname}`)));
+	if (typeof text !== "string") throw new TypeError("text must be a string !");
 	return text.replaceAll(/\$\{(.+?)\}/g, (m, varname) => String(evalVar({ vars }, varname)));
 }
 
@@ -38,6 +35,12 @@ export function resoleVar({ vars }: { vars: TVars }, varname: string): TResolved
 	}
 	if (value === undefined) return { value };
 	let prop = parms.at(-1) as string;
+
+	switch (prop) {
+		case "int":
+			return { value: Math.floor(Number(value)), prop: name };
+	}
+
 	if (prop?.match(/^\$/)) prop = String(vars.get(prop.substring(1)));
 	return { value, prop, isObject: true };
 }
@@ -56,7 +59,7 @@ export function evalVar({ vars }: { vars: TVars }, varname: string) {
 	return value;
 }
 
-export type TEvalValue = ArgExpression | ArgVariable | number | boolean | string | ValueTrait | TResultValue[];
+export type TEvalValue = ArgExpression | ArgVariable | number | boolean | string | ValueTrait | TResultValue[] | { action: unknown };
 
 export function evalValue({ vars }: { vars: TVars }, expr: TEvalValue) {
 	if (Array.isArray(expr) || typeof expr === "number" || typeof expr === "boolean") return expr;
@@ -66,7 +69,9 @@ export function evalValue({ vars }: { vars: TVars }, expr: TEvalValue) {
 		const args = execParseArgs({ vars }, expr.args);
 		return createTraitByName(expr.name, ...args);
 	}
-	return evalExpr({ vars }, expr);
+	if (expr instanceof ArgExpression) return evalExpr({ vars }, expr);
+	if (expr.action) return execAction({ vars }, expr.action as TActionStatement[]);
+	throw new TypeError(`Unknown type value ${expr}`);
 }
 
 export function evalNumberValue({ vars }: { vars: TVars }, expr: unknown) {
@@ -101,6 +106,9 @@ export function evalExpr({ vars }: { vars: TVars }, expr: ArgExpression) {
 					break;
 				case "Divide":
 					args.push(op1 / op2);
+					break;
+				case "Modulo":
+					args.push(op1 % op2);
 					break;
 			}
 			continue;

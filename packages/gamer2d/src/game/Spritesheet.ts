@@ -1,5 +1,5 @@
 import type { Rect } from "../maths/math";
-import { compile } from "../script/compiler/compiler";
+import { compileSpriteSheetScript } from "../script/compiler/compiler";
 import type { TSpriteSheet, TSpriteSheetGrid } from "../script/compiler/ressources/spritesheet.rules";
 import { type TImageData, drawZoomedImage } from "../utils/canvas.utils";
 import { createSpriteSheet } from "../utils/createSpriteSheet.util";
@@ -39,7 +39,7 @@ export class SpriteSheet {
 
 	static loadScript(filename: string) {
 		return loadText(filename)
-			.then((script) => compile<TSpriteSheet>(script, "spriteSheet"))
+			.then((script) => compileSpriteSheetScript(filename, script))
 			.then((sheet) => SpriteSheet.loadData(sheet));
 	}
 

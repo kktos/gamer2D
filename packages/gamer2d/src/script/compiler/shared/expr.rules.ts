@@ -6,7 +6,7 @@ import { tokens } from "../lexer";
 export class ExprRules {
 	static expr($) {
 		return $.RULE("expr", (stack = []) => {
-			const result = $.SUBRULE($.exprAddition, { ARGS: [stack] });
+			$.SUBRULE($.exprAddition, { ARGS: [stack] });
 			if (stack?.length === 1) return stack[0];
 			return new ArgExpression(stack);
 		});
@@ -51,6 +51,7 @@ export class ExprRules {
 				const op = $.CONSUME(tokens.MultiplicationOp);
 				$.SUBRULE2($.exprScalar, { ARGS: [stack] });
 				opList.push(tokenName(op.tokenType));
+
 				if (stack?.length > 1) {
 					if (typeof stack.at(-1) === "number" && typeof stack.at(-2) === "number") {
 						const currOp = opList.pop();
@@ -62,6 +63,12 @@ export class ExprRules {
 								const op1 = stack.pop();
 								const op2 = stack.pop();
 								stack.push(op2 / op1);
+								break;
+							}
+							case "Modulo": {
+								const op1 = stack.pop();
+								const op2 = stack.pop();
+								stack.push(op2 % op1);
 								break;
 							}
 						}

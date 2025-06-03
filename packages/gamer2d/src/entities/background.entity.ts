@@ -1,7 +1,7 @@
 import type { ResourceManager } from "../game/ResourceManager";
 import { Entity } from "./Entity";
 
-export default class BackgroundEntity extends Entity {
+export class BackgroundEntity extends Entity {
 	private type: string;
 
 	constructor(resourceMgr: ResourceManager, type: string) {

@@ -3,7 +3,7 @@ import { AnimationTrait } from "../traits/animation.trait";
 import { DIRECTIONS } from "../types/direction.type";
 import { Entity } from "./Entity";
 
-export default class SpriteEntity extends Entity {
+export class SpriteEntity extends Entity {
 	private isAnimSprite: boolean;
 
 	constructor(resourceMgr: ResourceManager, sprite: string, x: number, y: number) {

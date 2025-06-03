@@ -1,7 +1,7 @@
 import type { TSpriteSheet } from "../script/compiler/ressources/spritesheet.rules";
 import { loadJson, loadText } from "../utils/loaders.util";
 import type { TSettings } from "../utils/settings.utils";
-import Audio, { loadSounds } from "./Audio";
+import { Audio, loadSounds } from "./Audio";
 import { Font, type TFontSheet, loadFontData } from "./Font";
 import { SpriteSheet } from "./Spritesheet";
 import type { GameOptions } from "./types/GameOptions";

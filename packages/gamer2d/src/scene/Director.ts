@@ -2,7 +2,7 @@ import type { GameContext } from "../game/types/GameContext";
 import { Scene } from "./Scene";
 import { SceneFactory } from "./Scene.factory";
 
-export default class Director {
+export class Director {
 	constructor(
 		private gc: GameContext,
 		private scenes: Scene[] = [],
@@ -55,7 +55,7 @@ export default class Director {
 			return;
 		}
 
-		SceneFactory.load(this.gc, name).then((scene) => {
+		return SceneFactory.load(this.gc, name).then((scene) => {
 			this.addScene(scene);
 			this.sceneIndex = this.scenes.length - 1;
 			this.currentScene.init(this.gc).run();

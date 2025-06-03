@@ -3,7 +3,7 @@ import type { GameContext } from "../game/types/GameContext";
 import type { Scene } from "../scene/Scene";
 import { Trait } from "./Trait";
 
-export default class TrapTrait extends Trait {
+export class TrapTrait extends Trait {
 	static EVENT_TRAPPED = Symbol.for("TRAPPED");
 
 	private isTriggered: boolean;

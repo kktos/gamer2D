@@ -3,7 +3,7 @@ import { setupEntities } from "../entities/Entity.factory";
 import { enableDebugInspectors } from "../inspectors/debug-manager.class";
 import { setupLayers } from "../layers/Layer.factory";
 import { Timers } from "../layers/display/timers.class";
-import Director from "../scene/Director";
+import { Director } from "../scene/Director";
 import { setupTraits } from "../traits/Trait.factory";
 import { createViewport } from "../utils/canvas.utils";
 import { readGamepad } from "../utils/gamepad.util";
@@ -11,6 +11,7 @@ import { Loader } from "../utils/loaders.util";
 import { path } from "../utils/path.util";
 import { parseSettings } from "../utils/settings.utils";
 import { FPSManager } from "./FPSManager";
+import { addEntity, addLayer, addScene, addTrait } from "./GameHelpers";
 import { KeyMap } from "./KeyMap";
 import { ResourceManager, type TResourceGroupsDict } from "./ResourceManager";
 import { SpriteSheet } from "./Spritesheet";
@@ -144,8 +145,8 @@ export class Game {
 			evt.buttons = (e as MouseEvent).buttons;
 		}
 
-		evt.x = ((x - bbox.x) / this.gc.viewport.ratioWidth) | 0;
-		evt.y = ((y - bbox.y) / this.gc.viewport.ratioHeight) | 0;
+		evt.x = Math.floor(((x - bbox.x) * this.gc.viewport.width) / bbox.width);
+		evt.y = Math.floor(((y - bbox.y) * this.gc.viewport.height) / bbox.height);
 
 		switch (e.type) {
 			case "wheel":
@@ -236,19 +237,15 @@ export class Game {
 				this.gc.gamepad = null;
 				return;
 		}
+
 		this.coppola?.handleEvent(this.gc, evt);
 	}
 
-	async start(startScene: string, resources: string | TResourceGroupsDict) {
-		// console.log("resourceManager.load");
-		// try {
-		await this.gc.resourceManager.load(resources);
-		// } catch (err) {
-		// 	console.error("resourceManager.load", err);
-		// 	throw err;
-		// }
+	async load(resources: string | TResourceGroupsDict) {
+		return this.gc.resourceManager.load(resources);
+	}
 
-		// console.log("new Director");
+	async start(startScene: string) {
 		const coppola = new Director(this.gc);
 		this.coppola = coppola;
 		const onTimerUpdate = (deltaTime: number) => {
@@ -259,7 +256,8 @@ export class Game {
 			coppola.update(this.gc);
 		};
 		this.fpsManager.on(onTimerUpdate);
-		coppola.run(startScene);
+
+		await coppola.run(startScene);
 
 		for (let idx = 0; idx < GAME_EVENTS.length; idx++) window.addEventListener(GAME_EVENTS[idx], this, { passive: false });
 
@@ -274,5 +272,12 @@ export class Game {
 	}
 	getGlobal(name: string) {
 		return this.gc.globals.get(name);
+	}
+
+	uselessMethodToIncludeHelpers() {
+		addEntity;
+		addLayer;
+		addScene;
+		addTrait;
 	}
 }

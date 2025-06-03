@@ -2,7 +2,7 @@ import type { Entity } from "../entities/Entity";
 import { Trait } from "./Trait";
 
 // TODO: should use the Timers class
-export default class TimerTrait extends Trait {
+export class TimerTrait extends Trait {
 	static EVENT_TIMER = Symbol.for("timer");
 
 	private totalTime: number;

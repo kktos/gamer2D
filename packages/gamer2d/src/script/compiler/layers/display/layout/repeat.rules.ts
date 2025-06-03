@@ -4,6 +4,7 @@ import type { ArgExpression, ArgVariable } from "../../../../../types/value.type
 import { tokens } from "../../../lexer";
 import type { TImage } from "./image.rules";
 import type { TMenuItemGroup } from "./menu.rules";
+import type { TSet } from "./set.rules";
 import type { TSprite } from "./sprite.rules";
 import type { TText } from "./text.rules";
 
@@ -16,7 +17,7 @@ import type { TText } from "./text.rules";
 		}
  */
 
-export type TRepeatItem = TSprite | TText | TMenuItemGroup | TImage;
+export type TRepeatItem = TSprite | TText | TMenuItemGroup | TImage | TSet;
 export type TRepeat = {
 	type: TupleToUnion<[typeof OP_TYPES.REPEAT]>;
 	from?: number | ArgVariable | ArgExpression;
@@ -67,6 +68,7 @@ export class RepeatRules {
 					{ ALT: () => $.SUBRULE($.layoutSprite, { ARGS: [options] }) },
 					{ ALT: () => $.SUBRULE($.layoutMenuItemGroup, { ARGS: [options] }) },
 					{ ALT: () => $.SUBRULE($.layoutImage, { ARGS: [options] }) },
+					{ ALT: () => $.SUBRULE($.layoutSet, { ARGS: [options] }) },
 				]);
 				items.push(item);
 			});

@@ -10,7 +10,7 @@ import type { TRepeat } from "./repeat.rules";
 		text "%highscores.$idx.name%" at:580,190
 	}
 	$itemYpos = 180
-	for $menuItem of $menuItems var:$idx {
+	for $menuItem of $menuItems index:$idx {
 		item {text $menuItem at:300,$itemYpos+50*$idx}
 	}		
 */

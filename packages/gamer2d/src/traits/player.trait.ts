@@ -3,7 +3,7 @@ import type { GameContext } from "../game/types/GameContext";
 import { Trait } from "./Trait";
 import { KillableTrait } from "./killable.trait";
 
-export default class PlayerTrait extends Trait {
+export class PlayerTrait extends Trait {
 	static EVENT_PLAYER_DEAD = Symbol.for("PLAYER_DEAD");
 
 	constructor() {

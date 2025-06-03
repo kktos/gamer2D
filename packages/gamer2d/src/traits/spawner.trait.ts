@@ -4,7 +4,7 @@ import { EntitiesLayer } from "../layers/entities.layer";
 import type { Scene } from "../scene/Scene";
 import { Trait } from "./Trait";
 
-export default class SpawnerTrait extends Trait {
+export class SpawnerTrait extends Trait {
 	private entities: Entity[];
 	private wannaSpawn: boolean;
 
