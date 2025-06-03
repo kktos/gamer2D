@@ -1,0 +1,25 @@
+{
+  "name": "gamer2d-script",
+  "displayName": "gamer2d-script",
+  "description": "Syntax highlighting for Gamer2D script files",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "gamer2dscript",
+      "aliases": ["Gamer2dScript", "gamer2dscript"],
+      "extensions": [".script"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "gamer2dscript",
+      "scopeName": "",
+      "path": "./syntaxes/gamer2dscript.tmLanguage.json"
+    }]
+  }
+}
