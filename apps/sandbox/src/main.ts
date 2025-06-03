@@ -2,8 +2,8 @@ import "./index.css";
 import type { TFontSheet } from "gamer2d/game/Font";
 import { Game } from "gamer2d/game/Game";
 import { addEntity } from "gamer2d/game/GameHelpers";
-import type { TResourceGroupsDict } from "gamer2d/game/ResourceManager";
 import type { GameOptions } from "gamer2d/game/types/GameOptions";
+import { CompileSyntaxErr } from "gamer2d/script/compiler/compiler";
 import { ZenChanEntity } from "./entities/zen-chan.entity.js";
 
 const settings = `
@@ -13,7 +13,7 @@ const settings = `
 
 	VIEWPORT.WIDTH = 600
 	VIEWPORT.HEIGHT = 600
-	VIEWPORT.RATIO = 1.23
+	VIEWPORT.RATIO = 1.066666
 	UI.HEIGHT = 200
 	
 	MENU.COLORS.SELECT_RECT = #A5A5A5
@@ -66,10 +66,10 @@ const font: TFontSheet = {
 	gapY: 2,
 	hasLowercase: true,
 };
-const resources: TResourceGroupsDict = {
-	spritesheets: ["bobblun.script", "zen-chan.script", "level-tiles.script"],
-	fonts: [font, fontBB],
-};
+// const resources: TResourceGroupsDict = {
+// 	spritesheets: ["bobblun.script", "zen-chan.script", "level-tiles.script"],
+// 	fonts: [font, fontBB],
+// };
 
 try {
 	const canvas = document.querySelector<HTMLCanvasElement>("CANVAS");
@@ -79,10 +79,16 @@ try {
 
 	const game = new Game(canvas, options);
 
-	game.start("test", resources).catch((e) => {
-		if (e instanceof SyntaxError) console.log("BOOM 3", e.cause);
-		else console.error("BOOM 1", e);
-	});
+	game
+		.load("resources.json")
+		.then(() => {
+			game.start("test");
+		})
+		.catch((e) => {
+			if (e instanceof CompileSyntaxErr) {
+				console.log(`Script syntax in "${e.filename}" at line ${e.line} "${e.word}" rule:${e.ruleStack}`);
+			} else console.error("BOOM 1", e);
+		});
 } catch (err) {
 	if (err instanceof SyntaxError) {
 		console.log("BOOM 2", err.cause);
