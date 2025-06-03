@@ -5,12 +5,6 @@ const keys= [ "name", "version", "type", "author", "description", "license", "mo
 const packageJsonRaw = readFileSync("./package.json", "utf-8");
 const packageJson = JSON.parse(packageJsonRaw);
 
-const parts= packageJson.version.split(".");
-parts[1]= parseInt(parts[1])+1;
-packageJson.version= parts.join(".");
-console.log("VERSION",packageJson.version);
-writeFileSync("./package.json", JSON.stringify(packageJson, null, 4));
-
 const newPackageJson = Object.keys(packageJson)
 					.filter(key => keys.includes(key))
 					.reduce((acc, cur) => {
