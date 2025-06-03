@@ -1,10 +1,11 @@
 {
 	"spritesheets": [
-		"level-tiles.json",
-		"bubblun.json",
-		"bobblun.json",
-		"zen-chan.json",
-		"misc.json"
+		"level-tiles.script",
+		"bubblun.script",
+		"bobblun.script",
+		"zen-chan.script",
+		"misc.script",
+		"items.script"
 	],
 	"audiosheets": [
 		"music.json"

@@ -6,5 +6,7 @@
 	"img": "images/font-bubble-bobble.png",
 	"offsetX": 1,
 	"offsetY": 1,
-	"gapX": 1
+	"gapX": 1,
+	"gapY": 0,
+	"hasLowercase": false
 }

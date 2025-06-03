@@ -70,10 +70,10 @@ display "menu" {
 			text "BOBBLE BUBBLE" at:298,104 anim:"fade" traits:[$fadeout]
 
 			// Borders
-			image "level-tiles:levels-S-${level}" at:48,60 range:32,0
-			image "level-tiles:levels-L-${level}" at:48,60 range:0,13
-			image "level-tiles:levels-L-${level}" at:528,60 range:0,13
-			image "level-tiles:levels-S-${level}" at:48,460 range:32,0
+			image "level-tiles:large-${level}" at:48,60 range:16,0
+			image "level-tiles:large-${level}" at:48,60 range:0,13
+			image "level-tiles:large-${level}" at:528,60 range:0,13
+			image "level-tiles:small-${level}" at:48,460 range:32,0
 
 			//2 ZenChan patroling back and forth
 			def anim "toRight" {
@@ -116,18 +116,18 @@ display "menu" {
 			color white
 			align center
 			valign center
-			text "(${mouseX},${mouseY}) ${clientWidth}x${clientHeight}" at:10,$top width:$width height:20
+			text "(${mouseX},${mouseY}) ${clientWidth}x${clientHeight}" at:10,$top width:$width height:20 nocache
 
 			//main menu
 			$menuItems = [
-				"play",
+				"food",
 				"intro",
 				"game",
 				"highscores",
 				"DEBUG"
 			]
 			$scenes = [
-				"splashscreen",
+				"items",
 				"intro",
 				"game",
 				"input_name",
@@ -154,15 +154,16 @@ display "menu" {
 				}
 			}
 		
-			$itemYpos2 = 10
-			size 1
-			for $idx 0,59 {
-				text "hello" at:22,$itemYpos2+10*$idx
-			}
-
 			size 1
 			align left
 			text "idx:${selectedIdx}" at:300,450 //width:580 height:20			
+
+			// $itemYpos2 = 10
+			// size 1
+			// for $idx 0,59 {
+			// 	text "hello" at:22,$itemYpos2+10*$idx
+			// }
+			
 		}
 
 		on MENU_ITEM_CLICKED {
