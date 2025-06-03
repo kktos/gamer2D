@@ -33,17 +33,17 @@ spritesheet "bobblun" {
 		 "bobblun" {
 			frames "bobblun" range:0,4
 		}
-	// 	"bobblun-burp" {
-	// 		frames "bobblun-burp" range:0,15
-	// 	}
+		"bobblun-burp" {
+			frames "bobblun-burp" range:0,15
+		}
 	
-	// 	"bobblun-death" {
-	// 		frames "bobblun-death" range:0,15
-	// 	}
+		"bobblun-death" {
+			frames "bobblun-death" range:0,15
+		}
 	
-	// 	"in-bobble" {
-	// 		frames "in-bobble" range:0,1
-	// 	}
+		"in-bobble" {
+			frames "in-bobble" range:0,1
+		}
 	}
 
 }

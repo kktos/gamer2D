@@ -15,19 +15,19 @@ display "Spritesheet Editor" {
 		on SPRITESHEET_LOADED $spritesheet { $viewer.spritesheet= $spritesheet }
 		on ANIM_CREATE $options { viewer.createAnim($options); }
 		on SPRITE_CREATE $sheet { viewer.createSprite($sheet); }
+		on SPRITE_RENAME $name { viewer.renameSprite($name); }
 		on GENERATE_SPRITESHEET { viewer.generateSpritesheet(); }
 
-		on SPRITE_SELECTED $sprite { sheetEditor.selectSprite($sprite); }
+		// on SPRITE_SELECTED $sprite { sheetEditor.selectSprite($sprite); }
 
 		layout {
-
-			// text "this is a test !" at:220,10 size:1
-
+		
 			$ypos=($clientHeight/3)*2
 			view SpritesheetEditorView id:"sheetEditor" at:0,0 width:$clientWidth height:$ypos
-
+			
 			$ypos2=$clientHeight/3-20
 			view SpritesheetViewerView id:"viewer" at:0,$ypos+10 width:$clientWidth height:$ypos2
+
 		}
 
 	}
