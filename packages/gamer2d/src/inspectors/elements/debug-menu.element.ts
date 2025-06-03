@@ -1,4 +1,4 @@
-import type { PageKey } from "../pages-definitions";
+import type { PageKey } from "../pages/pages-definitions";
 import type { DebugMenuItemElement } from "./debug-menu-item.element";
 
 export interface MenuItem {

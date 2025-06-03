@@ -1,12 +1,12 @@
-import type Director from "../scene/Director";
-import type { DebugPage } from "./debug-page.class";
+import type { Director } from "../scene/Director";
 import { DebugMenuItemElement } from "./elements/debug-menu-item.element";
 import { DebugMenu } from "./elements/debug-menu.element";
-import { EntityList } from "./elements/items.inspector";
+import { ItemList } from "./elements/items.inspector";
 import { PropertiesInspector } from "./elements/properties.inspector";
 import { SidePanel } from "./elements/side-panel.element";
-import { MenuPage } from "./menu-page.class";
-import { PAGES } from "./pages-definitions";
+import type { DebugPage } from "./pages/debug-page.class";
+import { MenuPage } from "./pages/menu-page.class";
+import { PAGES } from "./pages/pages-definitions";
 import { createSidePanel } from "./utils/createSidePanel.utils";
 import { TRIGGER_BTN_ID, createTriggerBtn } from "./utils/createTriggerBtn.util";
 
@@ -18,7 +18,7 @@ export class DebugManager {
 
 	constructor(private coppola: Director) {
 		SidePanel.bootstrap();
-		EntityList.bootstrap();
+		ItemList.bootstrap();
 		PropertiesInspector.bootstrap();
 		DebugMenuItemElement.bootstrap();
 		DebugMenu.bootstrap();
@@ -50,8 +50,9 @@ export class DebugManager {
 		});
 		this.sidePanel.addEventListener("go-back", () => this.goBack());
 		this.sidePanel.addEventListener("goto-page", (e) => {
-			const { id, params } = (e as CustomEvent).detail;
-			this.goto(PAGES[id], params);
+			const { id, data, params } = (e as CustomEvent).detail;
+			if (!PAGES[id] || !PAGES[id].class) this.goto(PAGES.DEFAULT, { ...params, data });
+			else this.goto(PAGES[id], { ...params, data });
 		});
 		this.sidePanel.addEventListener("menu-item-selected", (e) => {
 			const { id, data, params } = (e as CustomEvent).detail;
@@ -93,7 +94,6 @@ export class DebugManager {
 
 	goto(pageDef: { title: string; class }, params: Record<string, unknown>) {
 		this.pageStack.at(-1)?.close();
-
 		const page = new pageDef.class(this.coppola, pageDef.title, params);
 		this.pageStack.push(page);
 		this.render();

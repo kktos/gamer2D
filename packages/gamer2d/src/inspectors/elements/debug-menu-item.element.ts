@@ -1,4 +1,4 @@
-import type { PageKey } from "../pages-definitions";
+import type { PageKey } from "../pages/pages-definitions";
 
 export class DebugMenuItemElement extends HTMLElement {
 	public data: unknown;

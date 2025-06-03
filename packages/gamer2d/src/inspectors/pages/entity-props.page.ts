@@ -1,7 +1,7 @@
-import type { EntitiesLayer } from "../layers/entities.layer";
-import type Director from "../scene/Director";
+import type { EntitiesLayer } from "../../layers/entities.layer";
+import type { Director } from "../../scene/Director";
+import type { PropertiesInspector } from "../elements/properties.inspector";
 import { DebugPage } from "./debug-page.class";
-import type { PropertiesInspector } from "./elements/properties.inspector";
 
 export class EntityPropsPage extends DebugPage {
 	private element!: PropertiesInspector;
@@ -22,6 +22,16 @@ export class EntityPropsPage extends DebugPage {
 
 	open() {
 		const propsInspector = this.element;
+
+		propsInspector.propertyConfigs = {
+			width: { editor: "number" },
+			height: { editor: "number" },
+			speed: { editor: "number" },
+			fontsize: { editor: "number" },
+			align: { editor: "number" },
+			valign: { editor: "number" },
+		};
+
 		this.coppola.currentScene.useLayer("entities", (layer: EntitiesLayer) => {
 			this.layer = layer;
 			layer.selectEntity(this.params.object.id);

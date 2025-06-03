@@ -1,4 +1,4 @@
-import type Director from "../scene/Director";
+import type { Director } from "../../scene/Director";
 
 export class DebugPage {
 	constructor(

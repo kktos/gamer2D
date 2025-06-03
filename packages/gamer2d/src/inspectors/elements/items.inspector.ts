@@ -1,18 +1,24 @@
-import type { Entity } from "../../entities/Entity";
+export interface TableColumn<T = unknown> {
+	key: keyof T;
+	label: string;
+	width?: number;
+	render?: (item: T) => string; // custom cell renderer (returns HTML string)
+}
 
-export class EntityList extends HTMLElement {
+export class ItemList<T = unknown> extends HTMLElement {
 	private _table: HTMLTableElement;
 	private _tbody: HTMLTableSectionElement;
 	private _colgroup: HTMLTableColElement[];
-	private _entityRowMap = new Map<string, HTMLTableRowElement>();
-	private headers = ["Class", "ID", "Left", "Top"];
-	private _colWidths = [120, 80, 60, 60]; // px, initial widths
+	private _rowMap = new Map<string, HTMLTableRowElement>();
+	private _columns: TableColumn<T>[] = [];
+	private _colWidths: number[] = [];
 	private _resizingCol = -1;
 	private _startX = 0;
 	private _startWidth = 0;
+	private _getRowId!: (item: T) => string;
 
 	static bootstrap() {
-		if (!customElements.get("items-inspector")) customElements.define("items-inspector", EntityList);
+		if (!customElements.get("items-inspector")) customElements.define("items-inspector", ItemList);
 	}
 
 	constructor() {
@@ -22,39 +28,15 @@ export class EntityList extends HTMLElement {
 
 		this._table = shadow.querySelector("table") as HTMLTableElement;
 		this._tbody = shadow.querySelector("tbody") as HTMLTableSectionElement;
-		const colgroup = shadow.querySelector("colgroup");
 		this._colgroup = [];
 
-		// Build colgroup for resizing
-		for (let i = 0; i < this.headers.length; i++) {
-			const col = document.createElement("col");
-			col.style.width = `${this._colWidths[i]}px`;
-			colgroup?.appendChild(col);
-			this._colgroup.push(col);
-		}
-
-		// Build header
-		const headerRow = shadow.querySelector("thead tr");
-		if (headerRow)
-			for (let i = 0; i < this.headers.length; i++) {
-				const th = document.createElement("th");
-				th.textContent = this.headers[i];
-				if (i < this.headers.length - 1) {
-					const grip = document.createElement("div");
-					grip.className = "resize-grip";
-					grip.addEventListener("mousedown", (e) => this._startResize(e, i));
-					th.appendChild(grip);
-				}
-				headerRow.appendChild(th);
-			}
-
 		this._table.addEventListener("click", (event) => {
-			const row = (event.target as HTMLElement).closest("tr[data-entity-id]") as HTMLTableRowElement;
+			const row = (event.target as HTMLElement).closest("tr[data-row-id]") as HTMLTableRowElement;
 			if (row) {
-				row.dataset.entityId && this.selectRow(row.dataset.entityId);
+				row.dataset.rowId && this.selectRow(row.dataset.rowId);
 				this.dispatchEvent(
 					new CustomEvent("item-selected", {
-						detail: { entityId: row.dataset.entityId },
+						detail: { id: row.dataset.rowId },
 						bubbles: true,
 						composed: true,
 					}),
@@ -62,11 +44,11 @@ export class EntityList extends HTMLElement {
 			}
 		});
 		this._table.addEventListener("dblclick", (event) => {
-			const row = (event.target as HTMLElement).closest("tr[data-entity-id]") as HTMLTableRowElement;
+			const row = (event.target as HTMLElement).closest("tr[data-row-id]") as HTMLTableRowElement;
 			if (row) {
 				this.dispatchEvent(
 					new CustomEvent("inspect-item", {
-						detail: { entityId: row.dataset.entityId },
+						detail: { id: row.dataset.rowId },
 						bubbles: true,
 						composed: true,
 					}),
@@ -75,79 +57,116 @@ export class EntityList extends HTMLElement {
 		});
 	}
 
-	/** Call once to build the initial table */
-	setEntities(entities: Entity[] | null, selectedEntityId?: string) {
-		this._tbody.innerHTML = "";
-		this._entityRowMap.clear();
+	/**
+	 * Configure the columns and row id getter.
+	 * Call this before setItems.
+	 */
+	setColumns(columns: TableColumn<T>[], getRowId: (item: T) => string) {
+		this._columns = columns;
+		this._colWidths = columns.map((col) => col.width ?? 100);
+		this._getRowId = getRowId;
 
-		if (!entities || entities.length === 0) {
+		// Build colgroup for resizing
+		const colgroup = this._table.querySelector("colgroup");
+		if (colgroup) {
+			colgroup.innerHTML = "";
+			this._colgroup = [];
+			for (let i = 0; i < this._columns.length; i++) {
+				const col = document.createElement("col");
+				col.style.width = `${this._colWidths[i]}px`;
+				colgroup.appendChild(col);
+				this._colgroup.push(col);
+			}
+		}
+
+		// Build header
+		const headerRow = this._table.querySelector("thead tr");
+		if (headerRow) {
+			headerRow.innerHTML = "";
+			for (let i = 0; i < this._columns.length; i++) {
+				const th = document.createElement("th");
+				th.textContent = this._columns[i].label;
+				if (i < this._columns.length - 1) {
+					const grip = document.createElement("div");
+					grip.className = "resize-grip";
+					grip.addEventListener("mousedown", (e) => this._startResize(e, i));
+					th.appendChild(grip);
+				}
+				headerRow.appendChild(th);
+			}
+		}
+	}
+
+	/** Call once to build the initial table */
+	setItems(items: T[] | null, selectedRowId?: string) {
+		this._tbody.innerHTML = "";
+		this._rowMap.clear();
+
+		if (!items || items.length === 0) {
 			const tr = document.createElement("tr");
 			tr.className = "empty-row";
 			const td = document.createElement("td");
-			td.colSpan = this.headers.length;
-			td.textContent = "No entities in layer.";
+			td.colSpan = this._columns.length;
+			td.textContent = "No items.";
 			tr.appendChild(td);
 			this._tbody.appendChild(tr);
 			return;
 		}
 
-		for (const entity of entities) {
-			const tr = this._createRow(entity, selectedEntityId);
+		for (const item of items) {
+			const tr = this._createRow(item, selectedRowId);
 			this._tbody.appendChild(tr);
-			this._entityRowMap.set(entity.id, tr);
+			this._rowMap.set(this._getRowId(item), tr);
 		}
 	}
 
 	/** Call repeatedly to update only values, not structure */
-	updateEntities(entities: Entity[] | null, selectedEntityId?: string) {
-		const newIds = new Set(entities?.map((e) => e.id));
+	updateItems(items: T[] | null, selectedRowId?: string) {
+		const newIds = new Set(items?.map(this._getRowId));
 
-		// Remove rows for entities that no longer exist
-		for (const [id, row] of this._entityRowMap) {
-			if (!newIds.has(id)) {
-				this._tbody.removeChild(row);
-				this._entityRowMap.delete(id);
-			}
+		// Remove rows for items that no longer exist
+		for (const [id, row] of this._rowMap) {
+			if (newIds.has(id)) continue;
+			this._tbody.removeChild(row);
+			this._rowMap.delete(id);
 		}
 
 		// Update existing rows and add new ones
-		for (const entity of entities ?? []) {
-			let row = this._entityRowMap.get(entity.id);
-			const values = [entity.class, entity.id, entity.bbox.left.toFixed(), entity.bbox.top.toFixed()];
+		for (const item of items ?? []) {
+			const rowId = this._getRowId(item);
+			let row = this._rowMap.get(rowId);
 			if (row) {
 				const cells = row.querySelectorAll("td");
-				for (let i = 0; i < values.length; i++) {
-					if (cells[i] && cells[i].textContent !== values[i]) cells[i].textContent = values[i];
+				for (let i = 0; i < this._columns.length; i++) {
+					const col = this._columns[i];
+					const value = col.render ? col.render(item) : String(item[col.key]);
+					if (cells[i] && cells[i].innerHTML !== value) cells[i].innerHTML = value;
 				}
-				if (selectedEntityId && entity.id === selectedEntityId) row.classList.add("selected");
+				if (selectedRowId && rowId === selectedRowId) row.classList.add("selected");
 				else row.classList.remove("selected");
 			} else {
-				row = this._createRow(entity, selectedEntityId);
+				row = this._createRow(item, selectedRowId);
 				this._tbody.appendChild(row);
-				this._entityRowMap.set(entity.id, row);
+				this._rowMap.set(rowId, row);
 			}
 		}
 	}
 
-	private _createRow(entity: Entity, selectedEntityId?: string): HTMLTableRowElement {
+	private _createRow(item: T, selectedRowId?: string): HTMLTableRowElement {
 		const tr = document.createElement("tr");
-		tr.dataset.entityId = entity.id;
-		const values = [entity.class, entity.id, entity.bbox.left.toFixed(), entity.bbox.top.toFixed()];
-		for (const val of values) {
+		const rowId = this._getRowId(item);
+		tr.dataset.rowId = rowId;
+		for (const col of this._columns) {
 			const td = document.createElement("td");
-			td.textContent = val;
+			td.innerHTML = col.render ? col.render(item) : String(item[col.key]);
 			tr.appendChild(td);
 		}
-
-		if (selectedEntityId && entity.id === selectedEntityId) tr.classList.add("selected");
-
+		if (selectedRowId && rowId === selectedRowId) tr.classList.add("selected");
 		return tr;
 	}
 
-	selectRow(entityId: string) {
-		for (const row of this._entityRowMap.values()) {
-			row.classList.toggle("selected", row.dataset.entityId === entityId);
-		}
+	selectRow(rowId: string) {
+		for (const row of this._rowMap.values()) row.classList.toggle("selected", row.dataset.rowId === rowId);
 	}
 
 	private _startResize(e: MouseEvent, colIdx: number) {
@@ -175,7 +194,7 @@ export class EntityList extends HTMLElement {
 
 	clear() {
 		this._tbody.innerHTML = "";
-		this._entityRowMap.clear();
+		this._rowMap.clear();
 	}
 	show() {
 		this.style.display = "block";

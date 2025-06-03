@@ -1,9 +1,9 @@
-import type Director from "../scene/Director";
-import type { LayerMap } from "../scene/Scene";
+import type { Director } from "../../scene/Director";
+import type { LayerMap } from "../../scene/Scene";
+import type { DebugMenuItemElement } from "../elements/debug-menu-item.element";
+import type { DebugMenu } from "../elements/debug-menu.element";
+import type { PropertiesInspector } from "../elements/properties.inspector";
 import { DebugPage } from "./debug-page.class";
-import type { DebugMenuItemElement } from "./elements/debug-menu-item.element";
-import type { DebugMenu } from "./elements/debug-menu.element";
-import type { PropertiesInspector } from "./elements/properties.inspector";
 
 export class ScenePage extends DebugPage {
 	private element!: HTMLElement;

@@ -1,14 +1,22 @@
-import type { EntitiesLayer } from "../layers/entities.layer";
+import type { Entity } from "../../entities/Entity";
+import type { EntitiesLayer } from "../../layers/entities.layer";
+import type { ItemList, TableColumn } from "../elements/items.inspector";
 import { DebugPage } from "./debug-page.class";
-import type { EntityList } from "./elements/items.inspector";
 import type { PageKey } from "./pages-definitions";
 
+const columns: TableColumn<Entity>[] = [
+	{ key: "class", label: "Class", width: 120 },
+	{ key: "id", label: "ID", width: 80 },
+	{ key: "bbox", label: "Left", width: 60, render: (item) => item.bbox.left.toFixed() },
+	{ key: "bbox", label: "Top", width: 60, render: (item) => item.bbox.top.toFixed() },
+];
+
 export class EntitiesPage extends DebugPage {
-	private element!: EntityList;
+	private element!: ItemList<Entity>;
 	private layer!: EntitiesLayer;
 
 	render(): HTMLElement {
-		this.element = document.createElement("items-inspector") as EntityList;
+		this.element = document.createElement("items-inspector") as ItemList<Entity>;
 		return this.element;
 	}
 
@@ -20,22 +28,23 @@ export class EntitiesPage extends DebugPage {
 			this.layer = layer;
 
 			const showEntityListInspector = () => {
-				entityList.setEntities(layer.entities);
+				entityList.setColumns(columns, (item) => item.id);
+				entityList.setItems(layer.entities);
 				entityList.show();
-				layer.debugCallback = () => entityList.updateEntities(layer.entities, entityId);
+				layer.debugCallback = () => entityList.updateItems(layer.entities, entityId);
 			};
 
 			showEntityListInspector();
 
 			entityList.addEventListener("item-selected", (event) => {
 				const customEvent = event as CustomEvent;
-				entityId = customEvent.detail?.entityId;
+				entityId = customEvent.detail?.id;
 				if (entityId) layer.selectEntity(entityId);
 			});
 
 			entityList.addEventListener("inspect-item", (event) => {
 				const customEvent = event as CustomEvent;
-				const entityId = customEvent.detail?.entityId;
+				const entityId = customEvent.detail?.id;
 				if (entityId) {
 					entityList.dispatchEvent(
 						new CustomEvent("goto-page", {

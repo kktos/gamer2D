@@ -1,11 +1,9 @@
-import type { DisplayLayer } from "../layers/display.layer";
-import type Director from "../scene/Director";
-import { TText } from "../script/compiler/layers/display/layout/text.rules";
-import { OP_TYPES_STR } from "../types/operation.types";
+import type { DisplayLayer } from "../../layers/display.layer";
+import type { Director } from "../../scene/Director";
+import type { PropertiesInspector } from "../elements/properties.inspector";
 import { DebugPage } from "./debug-page.class";
-import type { PropertiesInspector } from "./elements/properties.inspector";
 
-export class LayoutPage extends DebugPage {
+export class VariablesPage extends DebugPage {
 	private element!: HTMLElement;
 	private layer!: DisplayLayer;
 
@@ -25,17 +23,10 @@ export class LayoutPage extends DebugPage {
 
 	open() {
 		const varsInspector = this.element.querySelector("properties-inspector") as PropertiesInspector;
-		const layout = this.params.data;
+		const vars = this.params.data;
 		this.coppola.currentScene.useLayer("entities", (layer: DisplayLayer) => {
 			this.layer = layer;
-
-			const props: unknown[] = [];
-			for (const item of layout) {
-				if (item instanceof TText) props.push(item);
-				else props.push({ type: OP_TYPES_STR[item.type] });
-			}
-
-			layer.debugCallback = () => varsInspector.update(props);
+			layer.debugCallback = () => varsInspector.update(vars);
 		});
 	}
 

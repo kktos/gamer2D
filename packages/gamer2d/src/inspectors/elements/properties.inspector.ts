@@ -1,6 +1,19 @@
+import { ArrayEditor } from "./property.editors/array.editor";
+import { BooleanEditor } from "./property.editors/boolean.editor";
+import type { PropertyConfigMap, PropertyEditor } from "./property.editors/editors.intf";
+import { NumberEditor } from "./property.editors/number.editor";
+import { PointEditor } from "./property.editors/point.editor";
+import { RgbaEditor } from "./property.editors/rgba.editor";
+import { SelectEditor } from "./property.editors/select.editor";
+import { TextEditor } from "./property.editors/text.editor";
+import { VariableEditor } from "./property.editors/variable.editor";
+
 const DEBOUNCE_DELAY = 300;
 
 export class PropertiesInspector extends HTMLElement {
+	static editors: PropertyEditor[] = [];
+	private _editors: PropertyEditor[] = [];
+
 	private _shadowRoot: ShadowRoot;
 	private _contentElement: HTMLElement | null = null;
 	private _filterInputElement: HTMLInputElement | null = null;
@@ -10,6 +23,9 @@ export class PropertiesInspector extends HTMLElement {
 	private _rowMap = new Map<string, HTMLTableRowElement>();
 	private _lastProcessedObject: unknown;
 	private _debounceTimer: ReturnType<typeof setTimeout> | undefined;
+
+	public propertyConfigs: PropertyConfigMap = {};
+	public evalValue!: (name: string) => unknown;
 
 	public filterPredicate?: (key: string, value: unknown, filterText: string) => boolean;
 
@@ -54,6 +70,22 @@ export class PropertiesInspector extends HTMLElement {
 		this._updateClearButtonVisibility();
 	}
 
+	static registerEditors(editors: PropertyEditor[]) {
+		for (const editor of editors) PropertiesInspector.editors.push(editor);
+	}
+
+	setEditors(editors: PropertyEditor[]) {
+		this._editors = editors;
+	}
+	public setPropertyConfigs(configs: PropertyConfigMap) {
+		this.propertyConfigs = configs;
+		if (this._lastProcessedObject !== undefined) {
+			// Debounce this update as well if configs can change frequently
+			// For simplicity, direct update here.
+			this.update(this._lastProcessedObject);
+		}
+	}
+
 	/**
 	 * Displays or updates the properties of the given entity.
 	 * @param obj - The entity object whose properties should be displayed.
@@ -80,25 +112,22 @@ export class PropertiesInspector extends HTMLElement {
 			return;
 		}
 
-		// Ensure keys are strings for filtering and map storage
 		const allEntries: [string, unknown][] = rawEntries.map(([key, value]) => [String(key), value]);
 
 		let filteredEntries = allEntries;
 		if (filterText.length > 0) {
 			filteredEntries = allEntries.filter(([key, value]) => {
 				if (this.filterPredicate) return this.filterPredicate(key, value, filterText);
-				// Default filter logic
 				const comparableValue = this._getComparableValue(value).toLowerCase();
 				return key.toLowerCase().includes(filterText) || comparableValue.includes(filterText);
 			});
 		}
 
-		// Clear previous table content
-		this._contentElement.innerHTML = "";
-		this._rowMap.clear();
-		this._table = null;
-
+		// If no properties, show message
 		if (filteredEntries.length === 0) {
+			this._contentElement.innerHTML = "";
+			this._rowMap.clear();
+			this._table = null;
 			const noResultsMsg = document.createElement("p");
 			noResultsMsg.className = "no-results";
 			noResultsMsg.textContent = filterText
@@ -110,6 +139,20 @@ export class PropertiesInspector extends HTMLElement {
 			return;
 		}
 
+		// If table doesn't exist or keys have changed, rebuild
+		const currentKeys = Array.from(this._rowMap.keys());
+		const newKeys = filteredEntries.map(([key]) => key);
+		const keysChanged = currentKeys.length !== newKeys.length || currentKeys.some((k, i) => k !== newKeys[i]);
+
+		if (!this._table || keysChanged) this._buildTable(filteredEntries);
+		else this._updateValues(filteredEntries);
+	}
+
+	private _buildTable(filteredEntries: [string, unknown][]) {
+		if (!this._contentElement) return;
+
+		this._contentElement.innerHTML = "";
+		this._rowMap.clear();
 		this._table = document.createElement("table");
 		const tbody = document.createElement("tbody");
 		this._table.appendChild(tbody);
@@ -119,6 +162,16 @@ export class PropertiesInspector extends HTMLElement {
 			const row = this._createRow(key, value);
 			tbody.appendChild(row);
 			this._rowMap.set(key, row);
+		}
+	}
+
+	private _updateValues(filteredEntries: [string, unknown][]) {
+		for (const [key, value] of filteredEntries) {
+			const row = this._rowMap.get(key);
+			if (row) {
+				const valueCell = row.cells[1];
+				this._setValueCell(valueCell, value, key);
+			}
 		}
 	}
 
@@ -158,70 +211,81 @@ export class PropertiesInspector extends HTMLElement {
 	}
 
 	private _setValueCell(cell: HTMLTableCellElement, value: unknown, key?: string) {
-		if (typeof value === "number") {
-			let input = cell.firstElementChild as HTMLInputElement;
-			if (!input) {
-				input = document.createElement("input");
-				input.type = "number";
-				input.style.width = "100%";
-				input.addEventListener("change", () => {
-					const newValue = Number(input.value);
-					this.dispatchEvent(
-						new CustomEvent("property-changed", {
-							detail: { key, value: newValue },
-							bubbles: true,
-							composed: true,
-						}),
-					);
-				});
-				cell.appendChild(input);
+		const config = key ? this.propertyConfigs?.[key] : undefined;
+		const editors = this._editors.length ? this._editors : PropertiesInspector.editors;
+
+		if (key && config?.editor) {
+			const editor = editors.find((e) => e.supports(config, value));
+			if (editor) {
+				editor.render(cell, key, value, config, this);
+				return;
 			}
-			if (this._shadowRoot.activeElement !== input && value !== input.valueAsNumber) input.valueAsNumber = value;
+		}
+
+		cell.innerHTML = "";
+
+		// --- Custom renderer support ---
+		if (config?.renderer && key) {
+			const rendered = config.renderer(value, key, config);
+			if (typeof rendered === "string") cell.innerHTML = rendered;
+			else if (rendered instanceof HTMLElement) cell.appendChild(rendered);
 			return;
 		}
 
+		// --- Non-editable display logic (adapted from your original) ---
 		if (Array.isArray(value)) {
-			cell.innerHTML = `<ul><li>${value.join("</li><li>")}</li></ul>`;
+			const ul = document.createElement("ul");
+			for (const item of value) {
+				const li = document.createElement("li");
+				li.textContent = this._formatDisplayValue(item);
+				ul.appendChild(li);
+			}
+			cell.appendChild(ul);
 			return;
 		}
+		if (typeof value === "object" && value !== null) {
+			if (Symbol.for("inspect") in value) {
+				const inspectedData = value[Symbol.for("inspect")];
+				if (inspectedData instanceof HTMLElement) {
+					cell.appendChild(inspectedData);
+					return;
+				}
+				cell.textContent = this._formatDisplayValue(inspectedData);
+				return;
+			}
+			if (value instanceof HTMLElement) {
+				cell.appendChild(value);
+				return;
+			}
+		}
 
-		let displayValue: string;
+		cell.textContent = this._formatDisplayValue(value);
+	}
+
+	private _formatDisplayValue(value: unknown): string {
 		switch (typeof value) {
+			case "undefined":
+				return "";
+			case "string":
+				return `"${value}"`;
+			case "number":
+			case "boolean":
+				return String(value);
 			case "object":
-				if (!value) {
-					displayValue = "null";
-					break;
-				}
+				if (value === null) return "null";
+				if (value instanceof HTMLElement) return value.tagName;
 				if (Symbol.for("inspect") in value) {
-					const data = value[Symbol.for("inspect")]();
-					if (data instanceof HTMLElement) {
-						cell.appendChild(data);
-						return;
-					}
-					cell.textContent = data;
-					return;
-				}
-				if (value instanceof HTMLElement) {
-					cell.appendChild(value);
-					return;
 				}
 				try {
-					displayValue = JSON.stringify(value, null, 2);
+					return JSON.stringify(value, null, 2);
 				} catch (e) {
-					displayValue = "[Circular Structure]";
+					return "[Circular Structure]";
 				}
-				break;
 			case "function":
-				displayValue = "Function";
-				break;
-			case "undefined":
-				displayValue = "";
-				break;
+				return "Function()";
 			default:
-				displayValue = String(value);
-				break;
+				return String(value);
 		}
-		cell.textContent = displayValue;
 	}
 
 	show() {
@@ -333,6 +397,16 @@ function createTemplate() {
                 border-bottom: 1px solid rgb(255 255 255 / 15%);
                 margin-bottom: 3px;
             }
+            /* Basic styling for inputs inside cells */
+            td input, td select {
+                box-sizing: border-box; /* So padding/border don't increase width */
+                /* Add more specific styling as needed */
+            }
+			.variable {
+				display : flex;
+			}
+			.rgba-editor { display: flex; align-items: center; gap: 8px; }
+			.color-preview { width: 24px; height: 24px; border: 1px solid #888; border-radius: 4px; }				
         </style>
         <div class="filter-container">
             <input type="text" id="filterInput" placeholder="Filter properties..." autocomplete="off">
@@ -342,3 +416,5 @@ function createTemplate() {
 `;
 	return template.content.cloneNode(true);
 }
+
+PropertiesInspector.registerEditors([NumberEditor, TextEditor, BooleanEditor, SelectEditor, RgbaEditor, VariableEditor, PointEditor, ArrayEditor]);
