@@ -1,21 +1,23 @@
 import type { Font } from "gamer2d/game/Font";
 import { SpriteSheet } from "gamer2d/game/Spritesheet";
 import type { GameContext } from "gamer2d/game/types/GameContext";
+import type { BaseEvent } from "gamer2d/game/types/GameEvent";
 import { View } from "gamer2d/layers/display/views/View";
 import type { ViewContext } from "gamer2d/layers/display/views/View.factory";
 import type { BBox } from "gamer2d/maths/BBox.class";
 import type { TAnimation } from "gamer2d/script/compiler/ressources/spritesheet.rules";
 import { addDefsToSpriteSheet } from "gamer2d/utils/createSpriteSheet.util";
-import { selectedAnim, spritesheetSourceText } from "../shared/main.store.js";
+import { selectedAnim, selectedSprite, selectedSprites, spritesheetSourceText } from "../shared/main.store.js";
 import { Signal } from "../shared/signal.class.js";
 import { CanvasHorizontalScrollbar } from "./components/hscrollbar.component.js";
-import { SpriteItemList, SpritesView } from "./components/spritesView.component.js";
+import { SpriteItemList } from "./components/spriteitemlist.class.js";
+import { SpritesView } from "./components/spritesView.component.js";
 import { buildSpritesheetFile } from "./utils/generateSpritesheet.util.js";
 
 interface Component {
 	bounds: BBox;
 	render(ctx: CanvasRenderingContext2D): void;
-	handleEvent(gc: GameContext, e: Event): boolean;
+	handleEvent(gc: GameContext, e: BaseEvent): boolean;
 }
 
 const ANIMS_YPOS_START = 85;
@@ -24,7 +26,6 @@ export class SpritesheetViewerView extends View {
 	static EVENT_SPRITE_SELECTED = Symbol.for("SPRITE_SELECTED");
 
 	private _spritesheet = Signal.create<SpriteSheet>();
-	private selectedSprites = Signal.create<Set<string>>();
 	private font: Font;
 	private imagePath = "";
 
@@ -55,7 +56,6 @@ export class SpritesheetViewerView extends View {
 	}
 
 	private createComponents() {
-		const selectedSprite = Signal.create<string>();
 		selectedSprite.subscribe((name) => {
 			this.layer.scene.emit(SpritesheetViewerView.EVENT_SPRITE_SELECTED, name);
 		});
@@ -70,7 +70,7 @@ export class SpritesheetViewerView extends View {
 			title: "Sprites",
 			bounds,
 			selected: selectedSprite,
-			selectedList: this.selectedSprites,
+			selectedList: selectedSprites,
 		});
 
 		this._spritesheet.subscribe((spritesheet) => {
@@ -90,14 +90,9 @@ export class SpritesheetViewerView extends View {
 			title: "Animations",
 			bounds,
 			selected: Signal.create<string>(),
-			selectedList: this.selectedSprites,
+			selectedList: Signal.create<Set<string>>(),
 		});
-		anims.selected.subscribe((name) => {
-			if (!name) return;
-			const anim = this._spritesheet.value?.animations.get(name);
-			if (!anim) return;
-			selectedAnim.value = { name, anim };
-		});
+		anims.selected.subscribe((name) => this.selectAnim(name));
 
 		this._spritesheet.subscribe((spritesheet) => {
 			if (spritesheet) {
@@ -129,44 +124,46 @@ export class SpritesheetViewerView extends View {
 		this.imagePath = image;
 	}
 
-	public handleEvent(gc, e): void {
+	public handleEvent(gc: GameContext, e: BaseEvent): void {
 		for (const [_, comp] of this.components) {
 			const localEvent = { ...e };
 			localEvent.x = e.x - comp.bounds.left;
 			localEvent.y = e.y - comp.bounds.top;
 			if (comp.handleEvent(gc, localEvent)) return;
 		}
+	}
 
-		switch (e.type) {
-			case "keyup":
-				if (e.key === "+") {
-				}
-				break;
-		}
+	private selectAnim(name: string | undefined) {
+		if (!name) return;
+		const anim = this._spritesheet.value?.animations.get(name);
+		if (!anim) return;
+		selectedAnim.value = { name, anim };
+
+		const sprites = this.components.get("sprites") as SpritesView;
+		sprites.selectedNameList = new Set(anim.frames);
+		selectedSprites.value = new Set(anim.frames);
 	}
 
 	public createAnim(options) {
-		if (!this._spritesheet.value || !this.selectedSprites.value || this.selectedSprites.value.size < 2) return;
+		// if (!this._spritesheet.value || !this.selectedSprites.value || this.selectedSprites.value.size < 2) return;
+		if (!this._spritesheet.value || !selectedSprites.value) return;
 
 		let animSheet: TAnimation;
 		const anim = this._spritesheet.value.animations.get(options.name);
 		if (anim) {
-			console.log("exists", anim);
 			animSheet = {
 				frames: anim.frames,
 				length: options.length,
 				loop: options.loop,
 			};
 		} else {
-			console.log("new");
 			animSheet = {
-				frames: Array.from(this.selectedSprites.value),
+				frames: Array.from(selectedSprites.value),
 				length: options.length,
 				loop: options.loop,
 			};
 		}
 
-		console.log("defineAnim", options.name, animSheet);
 		this._spritesheet.value.defineAnim(options.name, animSheet);
 		this._spritesheet.notify();
 	}
@@ -174,6 +171,25 @@ export class SpritesheetViewerView extends View {
 	public createSprite(sheet) {
 		if (!this._spritesheet.value) return;
 		addDefsToSpriteSheet({ sprites: sheet }, this._spritesheet.value);
+		this._spritesheet.notify();
+	}
+
+	public renameSprite(newName: string) {
+		console.log("renameSprite");
+		if (!this._spritesheet.value || !selectedSprites.value) return;
+
+		const sprites = this._spritesheet.value.sprites;
+		let idx = 0;
+		for (const name of selectedSprites.value) {
+			const sprite = sprites.get(name);
+			if (sprite) {
+				sprites.delete(name);
+				const nameIdx = `${newName}-${idx}`;
+				console.log(nameIdx);
+				sprites.set(nameIdx, sprite);
+			}
+			idx++;
+		}
 		this._spritesheet.notify();
 	}
 

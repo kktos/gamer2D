@@ -12,13 +12,15 @@ export function buildSpritesheetFile(spritesheet: SpriteSheet, imagePath: string
 	let gridWidth = 0;
 	let gridHeight = 0;
 	for (const [name, sprite] of spritesheet.sprites) {
+		console.log(name, sprite);
+
 		const spriteName = name.replace(/-\d+$/, "");
 		if (currentSprite !== spriteName) {
 			if (currentSprite) script += "\t\t\t}\n\t\t}\n\n";
 
-			if (gridWidth !== sprite.width || gridHeight !== sprite.height) {
-				gridWidth = sprite.width;
-				gridHeight = sprite.height;
+			if (gridWidth !== sprite.bounds.width || gridHeight !== sprite.bounds.height) {
+				gridWidth = sprite.bounds.width;
+				gridHeight = sprite.bounds.height;
 				script += `\t\tgrid ${gridWidth},${gridHeight} \n`;
 			}
 

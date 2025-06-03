@@ -1,4 +1,4 @@
-import type { FloatingWindowElement } from "gamer2d/inspectors/floating-window.element";
+import type { FloatingWindowElement } from "gamer2d/inspectors/elements/floating-window.element";
 import type { TCommandEvent } from "../shared/types.js";
 
 export function setupUi(root: HTMLElement, onClick: (id: string, data?: unknown) => void) {

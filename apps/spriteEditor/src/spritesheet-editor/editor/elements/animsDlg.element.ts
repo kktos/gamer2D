@@ -6,6 +6,10 @@ import template from "./animsDlg.template.html?raw";
 export class AnimsDlg extends HTMLElement {
 	private unsub?: () => void;
 
+	static bootstrap() {
+		if (!customElements.get("anims-dlg")) customElements.define("anims-dlg", AnimsDlg);
+	}
+
 	connectedCallback() {
 		this.unsub = selectedAnim.subscribe((animDef) => {
 			if (!animDef) return;
@@ -23,8 +27,8 @@ export class AnimsDlg extends HTMLElement {
 		const form = this.querySelector<HTMLFormElement>("#animForm");
 		if (form) form.addEventListener("submit", (e) => e.preventDefault());
 
-		const createBtn = this.querySelector<HTMLElement>("#create-anim");
-		if (createBtn) createBtn.addEventListener("click", () => this.handleCreateAnim());
+		const createBtn = this.querySelector<HTMLElement>("#save-anim");
+		if (createBtn) createBtn.addEventListener("click", () => this.saveAnim());
 	}
 
 	disconnectedCallback() {
@@ -49,7 +53,7 @@ export class AnimsDlg extends HTMLElement {
 		if (spriteInput) spriteInput.value = sprite;
 	}
 
-	private handleCreateAnim() {
+	private saveAnim() {
 		const form = this.querySelector<HTMLFormElement>("#animForm");
 		if (!form) return;
 		const data = new FormData(form);
@@ -58,9 +62,8 @@ export class AnimsDlg extends HTMLElement {
 		this.dispatchEvent(
 			new CustomEvent("command", {
 				bubbles: true,
-				detail: { id: "create-anim", data: { name, length } },
+				detail: { id: "save-anim", data: { name, length } },
 			}),
 		);
 	}
 }
-customElements.define("anims-dlg", AnimsDlg);

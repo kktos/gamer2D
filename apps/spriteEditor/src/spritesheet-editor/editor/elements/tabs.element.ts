@@ -1,4 +1,9 @@
 export class TabsContainer extends HTMLElement {
+	static bootstrap() {
+		if (!customElements.get("tabs-container")) customElements.define("tabs-container", TabsContainer);
+		if (!customElements.get("tab-pane")) customElements.define("tab-pane", TabPane);
+	}
+
 	connectedCallback() {
 		this.renderTabs();
 	}
@@ -52,17 +57,15 @@ export class TabsContainer extends HTMLElement {
 		// Call render function if specified
 		const pane = this.querySelector<HTMLElement>(`tab-pane#${tabId}`);
 		const renderFn = pane?.getAttribute("data-render");
-		if (renderFn) {
+		if (renderFn)
 			this.dispatchEvent(
 				new CustomEvent("tab-render", {
 					bubbles: true,
 					detail: { tabId, renderFn, pane },
 				}),
 			);
-		}
 	}
 }
-customElements.define("tabs-container", TabsContainer);
 
 // Minimal tab-pane definition for styling
 class TabPane extends HTMLElement {
@@ -73,9 +76,6 @@ class TabPane extends HTMLElement {
 		return ["class"];
 	}
 	attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-		if (name === "class") {
-			this.style.display = this.classList.contains("active") ? "" : "none";
-		}
+		if (name === "class") this.style.display = this.classList.contains("active") ? "" : "none";
 	}
 }
-customElements.define("tab-pane", TabPane);

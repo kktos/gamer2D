@@ -1,16 +1,21 @@
-import type { Anim } from "gamer2d/game/Anim";
-import { selectedAnim } from "../../shared/main.store.js";
+import type { RGBAColor } from "gamer2d/utils/canvas.utils";
+import { pickedColor } from "../../shared/main.store.js";
 import template from "./spritesDetectorDlg.template.html?raw";
 
-// Minimal tab-pane definition for styling
 export class SpritesDetectorDlg extends HTMLElement {
-	private unsub?: () => void;
+	private unsubColor?: () => void;
+
+	private rInput: HTMLInputElement | null = null;
+	private gInput: HTMLInputElement | null = null;
+	private bInput: HTMLInputElement | null = null;
+	private aInput: HTMLInputElement | null = null;
+
+	static bootstrap() {
+		if (!customElements.get("sprites-detector-dlg")) customElements.define("sprites-detector-dlg", SpritesDetectorDlg);
+	}
 
 	connectedCallback() {
-		this.unsub = selectedAnim.subscribe((animDef) => {
-			if (!animDef) return;
-			this.onSelectedAnimChanged(animDef);
-		});
+		this.unsubColor = pickedColor.subscribe((color) => this.onPickedColorChanged(color));
 
 		if (this.querySelector("form")) return;
 
@@ -18,6 +23,11 @@ export class SpritesDetectorDlg extends HTMLElement {
 		templateElement.innerHTML = template;
 		const content = templateElement.content.cloneNode(true);
 		this.appendChild(content);
+
+		this.rInput = this.querySelector<HTMLInputElement>('input[name="r"]');
+		this.gInput = this.querySelector<HTMLInputElement>('input[name="g"]');
+		this.bInput = this.querySelector<HTMLInputElement>('input[name="b"]');
+		this.aInput = this.querySelector<HTMLInputElement>('input[name="a"]');
 
 		// Button handling
 		const form = this.querySelector<HTMLFormElement>("FORM");
@@ -28,14 +38,25 @@ export class SpritesDetectorDlg extends HTMLElement {
 	}
 
 	disconnectedCallback() {
-		this.unsub?.();
+		this.unsubColor?.();
 	}
 
-	private onSelectedAnimChanged({ name, anim }: { name: string; anim: Anim }) {
-		const nameInput = this.querySelector<HTMLInputElement>('input[name="name"]');
-		if (nameInput) nameInput.value = name ?? "";
-		const lengthInput = this.querySelector<HTMLInputElement>('input[name="length"]');
-		if (lengthInput) lengthInput.value = String(anim.len ?? 1);
+	private onPickedColorChanged(color?: RGBAColor) {
+		if (color) {
+			document.body.style.setProperty("--image-bg-color", `rgba(${color.r},${color.g},${color.b},${color.a / 255})`);
+			if (this.rInput) this.rInput.value = String(color.r);
+			if (this.gInput) this.gInput.value = String(color.g);
+			if (this.bInput) this.bInput.value = String(color.b);
+			if (this.aInput) this.aInput.value = String(color.a);
+		} else {
+			document.body.style.removeProperty("--image-bg-color");
+			// Reset to default values from the template (or sensible defaults)
+			// Assuming the template has value="0" for r,g,b and value="255" for a
+			if (this.rInput) this.rInput.value = this.rInput.defaultValue ?? "0";
+			if (this.gInput) this.gInput.value = this.gInput.defaultValue ?? "0";
+			if (this.bInput) this.bInput.value = this.bInput.defaultValue ?? "0";
+			if (this.aInput) this.aInput.value = this.aInput.defaultValue ?? "255";
+		}
 	}
 
 	private handleDetectSprites() {
@@ -63,4 +84,3 @@ export class SpritesDetectorDlg extends HTMLElement {
 		);
 	}
 }
-customElements.define("sprites-detector-dlg", SpritesDetectorDlg);

@@ -32,7 +32,7 @@ export class ModernDialog {
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 1000;
+      z-index: 1010;
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
@@ -48,8 +48,10 @@ export class ModernDialog {
 		this.dialogElement.setAttribute("aria-labelledby", this.options.modalId ? `${this.options.modalId}-title` : "dialog-title");
 
 		this.dialogElement.style.cssText = `
-      background-color: #2c2c2c;
+      background-color: rgba(0 0 0 / 42%);
       color: #f0f0f0;
+	  border:1px solid;
+	  backdrop-filter:blur(10px);
       padding: 25px;
       border-radius: 8px;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);

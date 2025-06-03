@@ -7,46 +7,13 @@ import { ALIGN_TYPES } from "gamer2d/script/compiler/layers/display/layout/text-
 import { confirmDialog } from "../../shared/dialog.class.js";
 import type { Signal } from "../../shared/signal.class.js";
 import { ScrollView } from "./scrollView.component.js";
+import type { SpriteItemList } from "./spriteitemlist.class.js";
 
 const GRID_LEFT = 10;
 const GRID_TOP = 20;
 const GRID_XGAP = 10;
 const SCROLLBAR_AREA_HEIGHT = 20;
 const CONTROLS_AREA_HEIGHT = GRID_TOP + SCROLLBAR_AREA_HEIGHT;
-
-type SpriteItem = { width: number; height: number };
-export class SpriteItemList {
-	private items: { name: string; item: SpriteItem }[] = [];
-	private bboxList: BBox[] = [];
-	public getImage: ((name: string, tick: number) => HTMLCanvasElement | undefined) | undefined = undefined;
-
-	constructor(public name: string) {
-		this.name = name;
-	}
-
-	public add(name: string, item: SpriteItem) {
-		this.bboxList.push(new BBox(0, 0, item.width, item.height));
-		this.items.push({ name, item });
-	}
-
-	public forEach(cb: (name: string, item: SpriteItem, bbox: BBox, idx: number) => void) {
-		this.items.forEach((value, idx) => {
-			cb(value.name, value.item, this.bboxList[idx], idx);
-		});
-	}
-
-	public findBboxIndex(x: number, y: number) {
-		return this.bboxList.findIndex((bbox) => bbox.isPointInside(x, y));
-	}
-
-	public get length() {
-		return this.items.length;
-	}
-
-	public get(idx: number) {
-		return this.items[idx];
-	}
-}
 
 export class SpritesView extends ScrollView {
 	static EVENT_DELETE_ITEMS = Symbol.for("DELETE_ITEMS");
@@ -56,7 +23,7 @@ export class SpritesView extends ScrollView {
 	public selectedList: Signal<Set<string> | undefined>;
 	private hoveredIdx = -1;
 	private selectedIdxList: number[] = [];
-	private selectedNameList: Set<string> = new Set();
+	public selectedNameList: Set<string> = new Set();
 	private font: Font;
 	private _list!: SpriteItemList;
 	private title: string;
@@ -78,6 +45,11 @@ export class SpritesView extends ScrollView {
 		this.localBounds = BBox.copy(this.bounds);
 		this.localBounds.top = 0;
 		this.localBounds.left = 0;
+
+		// selectedList.subscribe((list) => {
+		// 	console.log("update list", list);
+		// 	this.selectedNameList = list ?? new Set();
+		// });
 	}
 
 	set list(list: SpriteItemList) {
@@ -122,6 +94,7 @@ export class SpritesView extends ScrollView {
 						this.selectedIdxList.push(i);
 					}
 					this.selectedList.value = this.selectedNameList;
+					this.selectedList.notify();
 					return true;
 				}
 				if (e.key === "Delete" && this.selectedNameList.size) {
@@ -157,6 +130,7 @@ export class SpritesView extends ScrollView {
 			this.selectedNameList.clear();
 			this.selectedNameList.add(item.name);
 			this.selectedList.value = this.selectedNameList;
+			this.selectedList.notify();
 			return;
 		}
 
@@ -192,6 +166,7 @@ export class SpritesView extends ScrollView {
 		}
 
 		this.selectedList.value = this.selectedNameList;
+		this.selectedList.notify();
 	}
 
 	private doRender(ctx: CanvasRenderingContext2D, gc: GameContext) {

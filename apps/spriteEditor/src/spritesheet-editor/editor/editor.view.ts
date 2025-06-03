@@ -6,7 +6,7 @@ import type { ViewContext } from "gamer2d/layers/display/views/View.factory";
 import { type Rect, clampPointInRect, ptInRect } from "gamer2d/maths/math";
 import { compile } from "gamer2d/script/compiler/compiler";
 import type { TSpriteSheet } from "gamer2d/script/compiler/ressources/spritesheet.rules";
-import { getImgData, getPixelColor } from "gamer2d/utils/canvas.utils";
+import { getImgData } from "gamer2d/utils/canvas.utils";
 import { loadText } from "gamer2d/utils/loaders.util";
 import { detectSprites } from "../../sprites-claude.util.js";
 import { createCanvasFromRect } from "../../sprites.util.js";
@@ -14,16 +14,13 @@ import { selectedAnim, sourceImage, spritesheetSourceText } from "../shared/main
 import propTemplate from "./editor.template.html?raw";
 import { AnimsDlg } from "./elements/animsDlg.element.js";
 import { ScriptDlg } from "./elements/scriptDlg.element.js";
+import { SpriteDlg } from "./elements/spriteDlg.element.js";
 import { SpritesDetectorDlg } from "./elements/spritesDetectorDlg.element.js";
 import { TabsContainer } from "./elements/tabs.element.js";
+import { throttledUpdatePixelColor } from "./helpers/pick-color.helper.js";
+import { zoomImage } from "./helpers/zoom.helper.js";
 import toolsTemplate from "./tools.template.html?raw";
 import { newWindow, setupUi } from "./ui.setup.js";
-
-// to avoid VSC from removing the imports
-TabsContainer;
-AnimsDlg;
-SpritesDetectorDlg;
-ScriptDlg;
 
 const INFO_PANEL_WIDTH = 75;
 const INFO_PANEL_HEIGHT = 15;
@@ -34,30 +31,31 @@ const CMD_MOVE = 2;
 const CMD_MOVING = 3;
 const CMD_SELECTING = 4;
 const CMD_MOVING_SELECTION = 5;
-type TCMD = typeof CMD_MOVE | typeof CMD_SELECT | typeof CMD_MOVING | typeof CMD_SELECTING | typeof CMD_MOVING_SELECTION;
+const CMD_PICK_COLOR = 6;
+type TCMD = typeof CMD_MOVE | typeof CMD_SELECT | typeof CMD_MOVING | typeof CMD_SELECTING | typeof CMD_MOVING_SELECTION | typeof CMD_PICK_COLOR;
 
 export class SpritesheetEditorView extends View {
 	static EVENT_SPRITESHEET_LOADED = Symbol.for("SPRITESHEET_LOADED");
 	static EVENT_ANIM_CREATE = Symbol.for("ANIM_CREATE");
 	static EVENT_SPRITE_CREATE = Symbol.for("SPRITE_CREATE");
+	static EVENT_SPRITE_RENAME = Symbol.for("SPRITE_RENAME");
 	static EVENT_GENERATE_SPRITESHEET = Symbol.for("GENERATE_SPRITESHEET");
 
-	// private srcImage: HTMLImageElement | HTMLCanvasElement | undefined;
-	private srcImageData!: ImageData;
+	public srcImageData!: ImageData;
 	private sheet: TSpriteSheet | undefined;
 
-	private imageOffsetX: number;
-	private imageOffsetY: number;
+	public imageOffsetX: number;
+	public imageOffsetY: number;
 	private lastMouseX: number;
 	private lastMouseY: number;
-	private zoom: number;
+	public zoom: number;
 	private backgroundPattern: CanvasPattern;
 	private capturedArea: Rect | null;
 	private cmd: TCMD;
 	private previousCmd: TCMD;
 	private contentElement!: HTMLElement;
 	private filename!: string;
-	private toolsWindow!: FloatingWindowElement;
+	private propsWindow!: FloatingWindowElement;
 
 	constructor(ctx: ViewContext) {
 		super(ctx);
@@ -80,12 +78,17 @@ export class SpritesheetEditorView extends View {
 
 	buildUI() {
 		FloatingWindowElement.bootstrap();
+		TabsContainer.bootstrap();
+		ScriptDlg.bootstrap();
+		SpritesDetectorDlg.bootstrap();
+		AnimsDlg.bootstrap();
+		SpriteDlg.bootstrap();
 
 		const rootElement = document.createElement("div");
 		document.body.appendChild(rootElement);
 		rootElement.className = "root-editor";
 
-		const cmdWindow = newWindow(" ", "commands", 5, 260, 40, 300);
+		const cmdWindow = newWindow(" ", "commands", 5, 260, 40, 274);
 		this.contentElement = document.createElement("div");
 		this.contentElement.innerHTML = toolsTemplate;
 		this.contentElement.className = "layout tools";
@@ -96,16 +99,19 @@ export class SpritesheetEditorView extends View {
 		rootElement.appendChild(cmdWindow);
 		setupUi(cmdWindow.getContentElement(), (id: string, data?: unknown) => this.onClickUIBtn(id, data));
 
-		this.toolsWindow = newWindow("Props", "props", document.body.clientWidth - 450 - 10, document.body.clientHeight - 650 - 10, 450, 650);
+		this.propsWindow = newWindow("Props", "props", document.body.clientWidth - 450 - 10, document.body.clientHeight - 650 - 10, 450, 650);
 		this.contentElement = document.createElement("div");
 		this.contentElement.innerHTML = propTemplate;
 		this.contentElement.className = "layout props";
-		this.toolsWindow.setContent(this.contentElement);
-		this.toolsWindow.minimizable = true;
-		this.toolsWindow.resizable = true;
-		this.toolsWindow.restoreState();
-		rootElement.appendChild(this.toolsWindow);
-		setupUi(this.toolsWindow.getContentElement(), (id: string, data?: unknown) => this.onClickUIBtn(id, data));
+		this.propsWindow.setContent(this.contentElement);
+		this.propsWindow.minimizable = true;
+		this.propsWindow.resizable = true;
+		this.propsWindow.restoreState();
+		rootElement.appendChild(this.propsWindow);
+		setupUi(this.propsWindow.getContentElement(), (id: string, data?: unknown) => this.onClickUIBtn(id, data));
+
+		const tabs = this.propsWindow.getContentElement().querySelector("tabs-container") as TabsContainer;
+		selectedAnim.subscribe(() => tabs.activateTab("anims-tab"));
 	}
 
 	onChangeUI(el: HTMLInputElement | HTMLSelectElement) {}
@@ -130,9 +136,17 @@ export class SpritesheetEditorView extends View {
 			case "select-cmd":
 				this.cmdSelect();
 				break;
-			case "create-anim": {
+			case "pick-color-cmd":
+				this.cmdPickColor();
+				break;
+			case "save-anim": {
 				if (!data) return;
 				this.layer.scene.emit(SpritesheetEditorView.EVENT_ANIM_CREATE, data);
+				break;
+			}
+			case "save-sprite": {
+				if (!data) return;
+				this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITE_RENAME, (data as { name: string }).name);
 				break;
 			}
 			case "detect-sprites": {
@@ -152,51 +166,12 @@ export class SpritesheetEditorView extends View {
 
 		switch (e.type) {
 			case "keyup":
-				switch (e.key) {
-					case "ArrowLeft": {
-						if (!this.capturedArea) return;
-						if (gc.keys.isPressed("Shift")) {
-							this.capturedArea.width -= 1;
-						} else this.capturedArea.x -= 1;
-						break;
-					}
-					case "ArrowRight": {
-						if (!this.capturedArea) return;
-						if (gc.keys.isPressed("Shift")) {
-							this.capturedArea.width += 1;
-						} else this.capturedArea.x += 1;
-						break;
-					}
-					case "ArrowUp": {
-						if (!this.capturedArea) return;
-						if (gc.keys.isPressed("Shift")) {
-							this.capturedArea.height -= 1;
-						} else this.capturedArea.y -= 1;
-
-						break;
-					}
-					case "ArrowDown": {
-						if (!this.capturedArea) return;
-						if (gc.keys.isPressed("Shift")) {
-							this.capturedArea.height += 1;
-						} else this.capturedArea.y += 1;
-						break;
-					}
-					case "Escape":
-						this.capturedArea = null;
-						break;
-				}
+				this.handleKey(gc, e);
 				break;
 
 			case "wheel":
-				if (gc.keys.isPressed("Control")) {
-					this.zoom += -e.deltaY * 0.001;
-					this.zoom = Math.min(this.zoom, 10);
-					this.zoom = Math.max(this.zoom, 1);
-					this.zoom = Math.floor(this.zoom * 10) / 10;
-				} else {
-					this.offsetImage(0, e.deltaY);
-				}
+				if (gc.keys.isPressed("Control")) zoomImage(this, e);
+				else this.offsetImage(0, e.deltaY);
 				break;
 
 			case "mousedown":
@@ -224,20 +199,19 @@ export class SpritesheetEditorView extends View {
 					case CMD_SELECT: {
 						this.cmd = CMD_SELECTING;
 						this.capturedArea = { x: e.x / this.zoom - this.imageOffsetX + 0.5, y: e.y / this.zoom - this.imageOffsetY + 0.5, width: 0, height: 0 };
-						// this.capturedArea = { x: e.x + 0.5, y: e.y + 0.5, width: 0, height: 0 };
 						break;
 					}
 				}
 				break;
 
-			case "mousemove":
+			case "mousemove": {
 				switch (this.cmd) {
 					case CMD_MOVING:
 						return this.handleMoving(gc, e);
 					case CMD_SELECTING:
-						return this.handleSelecting(gc, e);
+						return this.handleSelecting(e);
 					case CMD_MOVING_SELECTION:
-						return this.handleMovingSelection(gc, e);
+						return this.handleMovingSelection(e);
 					case CMD_MOVE:
 					case CMD_SELECT: {
 						if (this.capturedArea && ptInRect(e.x / this.zoom - this.imageOffsetX, e.y / this.zoom - this.imageOffsetY, this.capturedArea)) {
@@ -246,12 +220,10 @@ export class SpritesheetEditorView extends View {
 							this.lastMouseY = this.capturedArea.y;
 							return;
 						}
-						const lastMousePos = { x: this.lastMouseX / this.zoom, y: this.lastMouseY / this.zoom };
-						const area = { x: this.imageOffsetX, y: this.imageOffsetY, width: sourceImage.value.width, height: sourceImage.value.height };
-						const mousePos = clampPointInRect(lastMousePos, area);
-
-						const pixelColor = getPixelColor(this.srcImageData, mousePos.x, mousePos.y);
-						if (pixelColor) document.body.style.setProperty("--image-bg-color", `rgb(${pixelColor.r},${pixelColor.g},${pixelColor.b},${pixelColor.a})`);
+						break;
+					}
+					case CMD_PICK_COLOR: {
+						throttledUpdatePixelColor(this, e);
 						break;
 					}
 				}
@@ -259,13 +231,22 @@ export class SpritesheetEditorView extends View {
 				this.lastMouseX = e.x;
 				this.lastMouseY = e.y;
 
-				gc.viewport.canvas.style.cursor = this.cmd === CMD_MOVE ? "grab" : "crosshair";
+				// gc.viewport.canvas.style.cursor = this.cmd === CMD_MOVE ? "grab" : "crosshair";
+				// Cursor is primarily set by cmd<Action>() methods or specific states like CMD_MOVING.
+				// This ensures the base cursor for the mode is active if not overridden.
+				const currentCanvasCursor = gc.viewport.canvas.style.cursor;
+				if (currentCanvasCursor !== "grabbing" && currentCanvasCursor !== "move") {
+					if (this.cmd === CMD_MOVE) gc.viewport.canvas.style.cursor = "grab";
+					else if (this.cmd === CMD_SELECT) gc.viewport.canvas.style.cursor = "crosshair";
+					else if (this.cmd === CMD_PICK_COLOR) gc.viewport.canvas.style.cursor = "none";
+				}
 				break;
+			}
 
 			case "mouseup":
 				switch (this.cmd) {
 					case CMD_MOVING:
-						gc.viewport.canvas.style.cursor = "default";
+						// gc.viewport.canvas.style.cursor = "default";
 						this.cmd = CMD_MOVE;
 						break;
 					case CMD_SELECTING:
@@ -284,7 +265,44 @@ export class SpritesheetEditorView extends View {
 					case CMD_MOVING_SELECTION:
 						this.cmd = this.previousCmd;
 						break;
+					case CMD_PICK_COLOR:
+						this.cmd = this.previousCmd;
+						break;
 				}
+				break;
+		}
+	}
+
+	handleKey(gc, e) {
+		if (!this.capturedArea) return;
+		switch (e.key) {
+			case "ArrowLeft": {
+				if (gc.keys.isPressed("Shift")) {
+					this.capturedArea.width -= 1;
+				} else this.capturedArea.x -= 1;
+				break;
+			}
+			case "ArrowRight": {
+				if (gc.keys.isPressed("Shift")) {
+					this.capturedArea.width += 1;
+				} else this.capturedArea.x += 1;
+				break;
+			}
+			case "ArrowUp": {
+				if (gc.keys.isPressed("Shift")) {
+					this.capturedArea.height -= 1;
+				} else this.capturedArea.y -= 1;
+
+				break;
+			}
+			case "ArrowDown": {
+				if (gc.keys.isPressed("Shift")) {
+					this.capturedArea.height += 1;
+				} else this.capturedArea.y += 1;
+				break;
+			}
+			case "Escape":
+				this.capturedArea = null;
 				break;
 		}
 	}
@@ -303,7 +321,7 @@ export class SpritesheetEditorView extends View {
 		this.lastMouseY = e.y;
 	}
 
-	handleSelecting(gc, e) {
+	handleSelecting(e) {
 		if (!this.capturedArea) return;
 		if (e.x >= this.canvas.width - 5) this.offsetImage(-5, 0);
 		if (e.y >= this.canvas.height - 5) this.offsetImage(0, -5);
@@ -312,7 +330,7 @@ export class SpritesheetEditorView extends View {
 		this.capturedArea.height = e.y / this.zoom - this.imageOffsetY - this.capturedArea.y + 0.5;
 	}
 
-	handleMovingSelection(gc, e) {
+	handleMovingSelection(e) {
 		if (!this.capturedArea) return;
 		const deltaX = e.x - this.lastMouseX;
 		const deltaY = e.y - this.lastMouseY;
@@ -340,32 +358,27 @@ export class SpritesheetEditorView extends View {
 
 	cmdMove() {
 		this.cmd = CMD_MOVE;
-		const btnMove = this.contentElement.querySelector("#btnMove");
-		btnMove?.classList.add("on");
-		const btnSelect = this.contentElement.querySelector("#btnSelect");
-		btnSelect?.classList.remove("on");
 	}
 
 	cmdSelect() {
 		this.cmd = CMD_SELECT;
-		const btnMove = this.contentElement.querySelector("#btnSelect");
-		btnMove?.classList.add("on");
-		const btnSelect = this.contentElement.querySelector("#btnMove");
-		btnSelect?.classList.remove("on");
+	}
+
+	cmdPickColor() {
+		this.cmd = CMD_PICK_COLOR;
 	}
 
 	public selectSprite(name: string) {
-		const foundSprite = this.sheet?.sprites.filter((sprite) => {
-			if (!("name" in sprite)) return false;
-			if (sprite.name === name) return true;
-			if (sprite.name === name.replace(/-\d+$/, "")) return true;
-		});
+		// const foundSprite = this.sheet?.sprites.filter((sprite) => {
+		// 	if (!("name" in sprite)) return false;
+		// 	if (sprite.name === name) return true;
+		// 	if (sprite.name === name.replace(/-\d+$/, "")) return true;
+		// });
 	}
 
 	public selectAnim(animDef: { name: string; anim: Anim }) {
-		console.log(`selectAnim "${animDef.name}"`, animDef.anim);
-		if (!animDef.anim) return;
-		selectedAnim.value = animDef;
+		// if (!animDef.anim) return;
+		// selectedAnim.value = animDef;
 	}
 
 	async openImage() {
@@ -387,7 +400,6 @@ export class SpritesheetEditorView extends View {
 
 		this.filename = file.name;
 
-		// this.scriptElement.value = this.scriptElement.value.replace(/image\s+"([^"]+)"/, `image "images/${this.filename}"`);
 		spritesheetSourceText.value = spritesheetSourceText.value?.replace(/image\s+"([^"]+)"/, `image "images/${this.filename}"`);
 
 		const blob = await file.arrayBuffer();
@@ -396,7 +408,7 @@ export class SpritesheetEditorView extends View {
 			img.src = URL.createObjectURL(new Blob([blob]));
 			img.onload = () => {
 				sourceImage.value = img;
-				this.srcImageData = this.ctx.getImageData(0, 0, sourceImage.value.width, sourceImage.value.height);
+				this.srcImageData = getImgData(img);
 				this.zoom = 1;
 				this.capturedArea = null;
 				resolve(`images/${this.filename}`);
@@ -444,7 +456,6 @@ export class SpritesheetEditorView extends View {
 			if (ss.img) {
 				sourceImage.value = ss.img;
 				this.srcImageData = getImgData(ss.img as HTMLImageElement);
-				// this.ctx.getImageData(0, 0, sourceImage.value.width, sourceImage.value.height);
 				this.zoom = 1;
 				this.capturedArea = null;
 				this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITESHEET_LOADED, { ss, image: this.sheet.image });
@@ -453,14 +464,14 @@ export class SpritesheetEditorView extends View {
 	}
 
 	async newSpriteSheet() {
-		let imagePath = "";
+		let imagePath = this.filename;
 		if (!sourceImage.value) imagePath = await this.openImage();
 		if (!sourceImage.value) return;
 
 		const ss = new SpriteSheet("????", sourceImage.value);
 		this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITESHEET_LOADED, { ss, image: imagePath });
 
-		const text = ['spritesheet "????" {', "", `    image "images/${this.filename}"`, "", "}"].join("\n");
+		const text = ['spritesheet "????" {', "", `    image "${imagePath}"`, "", "}"].join("\n");
 		spritesheetSourceText.value = text;
 	}
 
@@ -514,7 +525,7 @@ export class SpritesheetEditorView extends View {
 				toleranceAlpha: options.toleranceAlpha,
 			};
 
-			console.log("detectOptions", detectOptions);
+			// console.log("detectOptions", detectOptions);
 
 			const foundRects = detectSprites(options.method, capturedArea, detectOptions);
 
@@ -534,7 +545,7 @@ export class SpritesheetEditorView extends View {
 			}
 			`;
 			const sheet = compile(script, "spriteSheetSprites");
-			console.log(script, sheet);
+			// console.log(script, sheet);
 			this.layer.scene.emit(SpritesheetEditorView.EVENT_SPRITE_CREATE, sheet);
 		}
 	}
@@ -601,12 +612,15 @@ export class SpritesheetEditorView extends View {
 				this.ctx.strokeStyle = "#fff";
 				this.ctx.setLineDash([4, 2]);
 				this.ctx.lineDashOffset = this.ctx.lineDashOffset + gc.dt * 10;
+				const prevCompositeOp = this.ctx.globalCompositeOperation;
+				this.ctx.globalCompositeOperation = "difference";
 				this.ctx.strokeRect(
 					this.capturedArea.x * this.zoom + this.imageOffsetX * this.zoom, // / this.zoom - this.imageOffsetX,
 					this.capturedArea.y * this.zoom + this.imageOffsetY * this.zoom, // / this.zoom - this.imageOffsetY,
 					this.capturedArea.width * this.zoom,
 					this.capturedArea.height * this.zoom,
 				);
+				this.ctx.globalCompositeOperation = prevCompositeOp;
 				this.ctx.setLineDash([]);
 				this.ctx.fillText(
 					`[${Math.floor(this.capturedArea.x)},${Math.floor(this.capturedArea.y)},${Math.floor(this.capturedArea.width)},${Math.floor(this.capturedArea.height)}]`,
@@ -619,6 +633,21 @@ export class SpritesheetEditorView extends View {
 			const area = { x: xPos, y: yPos, width, height };
 			const mousePos = clampPointInRect(lastMousePos, area);
 			this.ctx.fillText(`(${Math.floor(mousePos.x)},${Math.floor(mousePos.y)}) x${this.zoom.toPrecision(2)}`, this.canvas.width - 4, this.canvas.height - 5);
+
+			if (this.cmd === CMD_PICK_COLOR) {
+				const prevCompositeOp = this.ctx.globalCompositeOperation;
+				this.ctx.globalCompositeOperation = "difference";
+				const crossSize = 3;
+				this.ctx.strokeStyle = "white";
+				this.ctx.lineWidth = 1;
+				const x = this.lastMouseX + 0.5;
+				const y = this.lastMouseY + 0.5;
+				this.ctx.strokeRect(x - crossSize - 1, y, crossSize, 1);
+				this.ctx.strokeRect(x + 2, y, crossSize, 1);
+				this.ctx.strokeRect(x, y - crossSize - 1, 1, crossSize);
+				this.ctx.strokeRect(x, y + 2, 1, crossSize);
+				this.ctx.globalCompositeOperation = prevCompositeOp;
+			}
 		}
 	}
 }

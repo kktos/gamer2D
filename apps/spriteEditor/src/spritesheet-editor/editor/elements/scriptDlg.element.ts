@@ -7,6 +7,10 @@ import template from "./scriptDlg.template.html?raw";
 export class ScriptDlg extends HTMLElement {
 	private unsub?: () => void;
 
+	static bootstrap() {
+		if (!customElements.get("script-dlg")) customElements.define("script-dlg", ScriptDlg);
+	}
+
 	connectedCallback() {
 		this.unsub = spritesheetSourceText.subscribe((value) => {
 			if (value) {
@@ -94,4 +98,3 @@ export class ScriptDlg extends HTMLElement {
 		}
 	}
 }
-customElements.define("script-dlg", ScriptDlg);
