@@ -20,6 +20,7 @@ export function addText(layer: DisplayLayer, op: TText & { entity?: Entity }) {
 		align: op.align,
 		valign: op.valign ?? ALIGN_TYPES.TOP,
 		size: op.size,
+		font: layer.font,
 		color: op.color,
 		bgcolor: op.bgcolor?.value,
 		text: isStringInterpolable(op.text) ? "" : op.text,

@@ -10,6 +10,7 @@ export type TextDTO = {
 	color?: ArgColor;
 	align?: TAlignType;
 	valign?: TAlignType;
+	font?: Font;
 	size?: number;
 	width?: number;
 	height?: number;
@@ -33,7 +34,7 @@ export class TextEntity extends Entity {
 
 		this.isFixed = false;
 		this.isDynamic = !!textObj.isDynamic;
-		this.font = resourceMgr.get("font", resourceMgr.mainFontName);
+		this.font = textObj.font ?? resourceMgr.get("font", resourceMgr.mainFontName);
 		this.text = textObj.text;
 		this.color = textObj.color?.value ?? "white";
 		// bgcolor undefined is handled by Font -> transparent
