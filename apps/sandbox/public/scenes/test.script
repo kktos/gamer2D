@@ -17,6 +17,7 @@ display "menu" {
 	
 	display {
 		font "bubble-bobble"
+		// font "wargames"
 
 		on "POOL_SPAWNED:bubbles" $id $count {
 			sprite("bubbleCount").set("text", $count)
@@ -50,7 +51,7 @@ display "menu" {
 			$fadeout = trait FadeTrait("in", #00FFFF, 300)
 
 			$strings = [
-				"BOBBLE BUBBLE",
+				"BUBBLE BOBBLE",
 				"IS COMING",
 				"TO YOU"
 			]
@@ -67,7 +68,7 @@ display "menu" {
 			align center
 			color #FFFFFF
 			size 4
-			text "BOBBLE BUBBLE" at:298,104 anim:"fade" traits:[$fadeout]
+			text "" at:298,104 anim:"fade" traits:[$fadeout]
 
 			// Borders
 			image "level-tiles:large-${level}" at:48,60 range:16,0
@@ -154,7 +155,7 @@ display "menu" {
 				}
 			}
 		
-			size 1
+			size 2
 			align left
 			text "idx:${selectedIdx}" at:300,450 //width:580 height:20			
 

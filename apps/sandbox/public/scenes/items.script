@@ -72,7 +72,20 @@ display "menu" {
 				sprite "items:items-${item}" at:$xpos+25,$ypos
 				text $high_value_points.$idx at:$xpos+25*2,$ypos+5
 			}
+
+			// button {
+			// 	rect at:260,500 width:260 height:440
+			// 	text "back" at:260,500
+			// }
+
+			menu {
+				items {
+					text "back" at:260,500 action:{ goto("test")	}
+				}
+			}
+
 		}
+
 
 	}
 

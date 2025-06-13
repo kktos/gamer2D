@@ -1,0 +1,166 @@
+// Game Scene Example with Named Animations and Buttons
+$screenWidth = 800
+$screenHeight = 600
+$playerStartX = $screenWidth / 4
+$enemyStartX = $screenWidth - 100
+
+// Define reusable animations
+animation floating {
+  bounce amplitude 5 duration 1.5s repeat
+}
+
+animation patrolling {
+  move from $enemyStartX, 350 to ($enemyStartX - 300), 350 duration 4s repeat alternate
+  rotate from 0 to 360 duration 2s repeat
+}
+
+animation powerupPulse {
+  scale from 1.0 to 1.2 duration 0.5s repeat alternate
+  opacity from 1.0 to 0.7 duration 0.5s repeat alternate
+}
+
+animation slideIn {
+  move from -200, 50 to 50, 50 duration 0.8s ease-out
+  opacity from 0 to 1 duration 0.8s
+}
+
+// Define reusable button styles
+button startButton {
+  rect background size 120 x 40 color #4CAF50 stroke #45a049 radius 5
+  text "START" at center font 16px bold color #fff
+  
+  on hover {
+    background color #45a049
+    scale 1.05
+  }
+  
+  on click {
+    trigger "start_game"
+    animate scale from 1.05 to 0.95 duration 0.1s then to 1.0
+  }
+}
+
+button menuButton {
+  rect background size 100 x 35 color #2196F3 stroke #1976D2 radius 3
+  text content at center font 14px color #fff
+  
+  on hover {
+    background color #1976D2
+    animate floating
+  }
+  
+  on click {
+    trigger action
+    animate powerupPulse duration 0.3s once
+  }
+}
+
+canvas $screenWidth x $screenHeight {
+  layer background {
+    rect sky at 0, 0 size $screenWidth x 300 color #87ceeb
+    rect ground at 0, 300 size $screenWidth x ($screenHeight - 300) color #90ee90
+  }
+ 
+  layer entities {
+    sprite player at $playerStartX, 400 size 32 x 32 color #ff6b6b {
+      animate move from $playerStartX, 400 to ($playerStartX + 200), 400 duration 3s repeat
+      animate floating
+    }
+   
+    sprite enemy at $enemyStartX, 350 size 24 x 24 color #ff8e53 {
+      animate patrolling
+    }
+    
+    sprite powerup at 300, 200 size 16 x 16 color #ffff00 {
+      animate powerupPulse
+    }
+  }
+ 
+  layer ui {
+    rect panel at 10, 10 size 200 x 80 color rgba(0,0,0,0.7) stroke #fff {
+      animate slideIn
+    }
+    text "Health: 100%" at 20, 35 font 14px color #00ff00
+    text "Score: 1250" at 20, 55 font 14px color #ffff00
+    
+    // Using predefined button
+    button startButton at 50, 500
+    
+    // Using parameterized button
+    button menuButton at 200, 500 content "PAUSE" action "pause_game"
+    button menuButton at 320, 500 content "QUIT" action "quit_game"
+    
+    // Inline button definition
+    button restartButton at 450, 500 {
+      rect background size 100 x 35 color #f44336 stroke #d32f2f radius 3
+      text "RESTART" at center font 14px color #fff
+      icon refresh at left offset 5 size 16 color #fff
+      
+      on hover {
+        background color #d32f2f
+        animate bounce amplitude 2 duration 0.5s once
+      }
+      
+      on click {
+        trigger "restart_game"
+        animate scale from 1.0 to 0.8 duration 0.1s then to 1.0
+      }
+    }
+  }
+}
+
+// Alternative syntax ideas:
+
+// Option 1: Animation sequences
+sequence enemyAttack {
+  parallel {
+    animate move to player_position duration 0.5s ease-in
+    animate scale from 1.0 to 1.5 duration 0.5s
+  }
+  then {
+    animate shake amplitude 3 duration 0.2s
+    animate scale from 1.5 to 1.0 duration 0.3s
+  }
+}
+
+// Option 2: State-based animations
+state playerState {
+  idle: animate floating
+  running: animate move speed 100px/s + animate bounce amplitude 2
+  jumping: animate move curve arc height 50 duration 0.8s
+}
+
+// Option 3: Conditional animations
+animation adaptiveMove {
+  if $playerX < $screenWidth/2 {
+    move to ($playerX + 100), $playerY duration 2s
+  } else {
+    move to ($playerX - 100), $playerY duration 2s
+  }
+}
+
+// Option 4: Button with complex interactions
+button inventorySlot at x, y {
+  rect slot size 48 x 48 color #333 stroke #666
+  sprite item at center size 32 x 32 texture $itemTexture
+  text count at bottom-right font 10px color #fff if $itemCount > 1
+  
+  on hover {
+    slot stroke #fff
+    animate scale 1.1 duration 0.2s
+    tooltip show $itemName at cursor
+  }
+  
+  on click {
+    if $itemCount > 0 {
+      trigger "use_item" with $itemId
+      animate flash color #fff duration 0.1s
+    } else {
+      animate shake amplitude 2 duration 0.3s
+    }
+  }
+  
+  on right_click {
+    trigger "inspect_item" with $itemId
+  }
+}
