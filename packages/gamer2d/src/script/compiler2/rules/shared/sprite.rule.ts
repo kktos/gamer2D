@@ -1,24 +1,15 @@
-import type { NeatParser } from "../../../parser";
-import { parseAt, parseValueTuple } from "../../shared/common.rule";
-import { parseValueExpression } from "../../shared/value-expr.rule";
+import type { PartialExcept } from "../../../../types";
+import type { NeatParser } from "../../parser";
+import type { TNeatSpriteCommand } from "../../types/commands.type";
+import { parseAt, parseValueTuple } from "./common.rule";
+import { parseValueExpression } from "./value-expr.rule";
 
-export type TNeatSprite = {
-	cmd: "SPRITE";
-	name: string;
-	at: { x: unknown; y: unknown };
-	size?: { width: unknown; height: unknown };
-	id?: string;
-	anim?: string;
-	dir?: string;
-	traits?: unknown;
-};
-
-export function parseSprite(parser: NeatParser): unknown {
+export function parseSprite(parser: NeatParser) {
 	parser.consume("IDENTIFIER", "sprite");
 
 	const name = parser.consume(["STRING", "IDENTIFIER"]).value as string;
 
-	const result: Partial<TNeatSprite> = { cmd: "SPRITE", name };
+	const result: PartialExcept<TNeatSpriteCommand, "cmd" | "name"> = { cmd: "SPRITE", name };
 
 	loop: while (parser.is("IDENTIFIER")) {
 		switch (parser.peekValue()) {
@@ -58,7 +49,7 @@ export function parseSprite(parser: NeatParser): unknown {
 		throw new Error("Missing required 'at' argument in sprite command.");
 	}
 
-	return result;
+	return result as TNeatSpriteCommand;
 }
 
 export function parseDir(parser: NeatParser) {

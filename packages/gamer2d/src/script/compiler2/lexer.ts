@@ -44,6 +44,7 @@ export type TNeatToken<T extends TTokenType = TTokenType> = {
 	type: T;
 	value: TokenValueMap[T];
 	pos: [number, number];
+	rawValue: string;
 };
 
 export class NeatLexer {
@@ -95,7 +96,7 @@ export class NeatLexer {
 				// Invalid chunk check (as before)
 				if (column > lastIndex) NeatLexerError.checkInvalidChunk(line, lineNum + 1, lastIndex, column);
 
-				const token: TNeatToken = { type, value, pos: [lineNum + 1, column + 1] };
+				const token: TNeatToken = { type, value, pos: [lineNum + 1, column + 1], rawValue: value };
 				switch (type) {
 					case "IDENTIFIER":
 						token.value = value.toLowerCase();
@@ -175,7 +176,7 @@ export class NeatLexer {
 		const typeMatch = Array.isArray(expectedType) ? expectedType.includes(token.type) : token.type === expectedType;
 		const valueMatch = expectedValue === undefined ? true : Array.isArray(expectedValue) ? expectedValue.includes(token.value) : token.value === expectedValue;
 
-		if (typeMatch && valueMatch) return;
+		if (typeMatch && valueMatch) return true;
 		// this.lexer.constructor["throwInvalidToken"]?.(this.lexer.lines, token, expectedType, expectedValue);
 		NeatLexerError.throwInvalidToken(this.lines, token, Array.isArray(expectedType) ? expectedType.join(" or ") : expectedType, expectedValue);
 	}

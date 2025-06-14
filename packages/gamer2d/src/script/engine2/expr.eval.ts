@@ -1,10 +1,9 @@
-import type { TFunctions } from "../../utils/functionDict.utils";
-import type { TVars } from "../../utils/vars.utils";
 import type { TNeatInstruction } from "../compiler2/types/value-types";
+import type { ExecutionContext } from "./exec.type";
 
 type EvalValue = number | string | boolean;
 
-export function evalExpression(instructions: TNeatInstruction[], vars: TVars, functions: TFunctions): EvalValue {
+export function evalExpression(instructions: TNeatInstruction[], context: ExecutionContext): EvalValue {
 	const stack: EvalValue[] = [];
 
 	for (const instr of instructions) {
@@ -14,7 +13,7 @@ export function evalExpression(instructions: TNeatInstruction[], vars: TVars, fu
 				break;
 			}
 			case "var": {
-				stack.push(vars.get(instr.name) as EvalValue);
+				stack.push(context.variables.get(instr.name) as EvalValue);
 				break;
 			}
 			case "op": {
@@ -69,8 +68,8 @@ export function evalExpression(instructions: TNeatInstruction[], vars: TVars, fu
 				break;
 			}
 			case "fn": {
-				const args = instr.args.map((arg) => evalExpression([arg], vars, functions));
-				const result = functions.call(instr.name, args);
+				const args = instr.args.map((arg) => evalExpression([arg], context));
+				const result = context.functions.call(instr.name, args);
 				stack.push(result as EvalValue);
 				break;
 			}
@@ -83,19 +82,16 @@ export function evalExpression(instructions: TNeatInstruction[], vars: TVars, fu
 	return stack[0];
 }
 
-/**
- * Evaluates a series of Neat instructions and ensures the result is a string.
- * Throws an error if the result is not a string.
- * @param instructions The array of instructions to evaluate.
- * @param vars The variables context.
- * @param functions The functions context.
- * @returns The string result of the expression.
- * @throws Error if the expression does not evaluate to a string.
- */
-export function evalExpressionToString(instructions: TNeatInstruction[], vars: TVars, functions: TFunctions): string {
-	const result = evalExpression(instructions, vars, functions);
-	if (typeof result !== "string") {
-		throw new Error(`Expression did not evaluate to a string. Got type: ${typeof result}, value: ${result}`);
+export function evalExpressionAs(instructions: TNeatInstruction[], context: ExecutionContext, type: "string"): string;
+export function evalExpressionAs(instructions: TNeatInstruction[], context: ExecutionContext, type: "number"): number;
+export function evalExpressionAs(instructions: TNeatInstruction[], context: ExecutionContext, type: "boolean"): boolean;
+export function evalExpressionAs(instructions: TNeatInstruction[], context: ExecutionContext, type: string): unknown {
+	const result = evalExpression(instructions, context);
+
+	// biome-ignore lint/suspicious/useValidTypeof: this is valid, biome is lost here :)
+	if (typeof result !== type) {
+		throw new Error(`Expression did not evaluate to a ${type}. Got type: ${typeof result}, value: ${result}`);
 	}
+
 	return result;
 }

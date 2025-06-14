@@ -1,18 +1,11 @@
 import type { NeatParser } from "../../../parser";
+import type { TNeatViewCommand } from "../../../types/commands.type";
 import { parseAt, parseValueTuple } from "../../shared/common.rule";
-
-export type TNeatView = {
-	cmd: "VIEW";
-	type: string;
-	at: { x: unknown; y: unknown };
-	size: { width: unknown; height: unknown };
-	id?: string;
-};
 
 export function parseView(parser: NeatParser) {
 	parser.consume("IDENTIFIER", "view");
 
-	const result: Partial<TNeatView> = { cmd: "VIEW", id: parser.consume(["STRING", "IDENTIFIER"]).value as string };
+	const result: Partial<TNeatViewCommand> = { cmd: "VIEW", id: parser.consume(["STRING", "IDENTIFIER"]).value as string };
 
 	loop: while (parser.is("IDENTIFIER")) {
 		switch (parser.peekValue()) {

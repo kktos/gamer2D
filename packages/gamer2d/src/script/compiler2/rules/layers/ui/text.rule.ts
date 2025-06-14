@@ -1,5 +1,6 @@
+import type { PartialExcept } from "../../../../../types";
 import type { NeatParser } from "../../../parser";
-import type { TNeatTextCommand } from "../../../types/value-types";
+import type { TNeatTextCommand } from "../../../types/commands.type";
 import { parseAt, parseValueTuple } from "../../shared/common.rule";
 import { parseAlign, parseFont } from "../../shared/style.rule";
 import { parseValueExpression } from "../../shared/value-expr.rule";
@@ -9,7 +10,7 @@ export function parseText(parser: NeatParser) {
 
 	const value = parseValueExpression(parser);
 
-	const result: Partial<TNeatTextCommand> = { cmd: "TEXT", value };
+	const result: PartialExcept<TNeatTextCommand, "cmd" | "value"> = { cmd: "TEXT", value };
 
 	loop: while (parser.is("IDENTIFIER")) {
 		switch (parser.peekValue()) {
@@ -58,5 +59,5 @@ export function parseText(parser: NeatParser) {
 		throw new Error("Missing required 'at' argument in text command.");
 	}
 
-	return result;
+	return result as TNeatTextCommand;
 }

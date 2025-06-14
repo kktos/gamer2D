@@ -1,5 +1,6 @@
 import type { NeatParser } from "../../parser";
-import type { TNeatAssignCommand, TNeatInstructionConst, TNeatInstructionVar } from "../../types/value-types";
+import type { TNeatAssignCommand } from "../../types/commands.type";
+import type { TNeatInstructionConst, TNeatInstructionVar } from "../../types/value-types";
 import { parseValueExpression } from "./value-expr.rule";
 
 export function parseVariableAssignment(parser: NeatParser): TNeatAssignCommand {

@@ -1,14 +1,22 @@
+import type { PartialExcept } from "../../../../types";
 import type { NeatParser } from "../../parser";
-import { parseSprite } from "../layers/ui/sprite.rule";
+import type { TNeatCommand, TNeatForCommand, TNeatRangeForCommand, TNeatVariableForCommand } from "../../types/commands.type";
 import { parseText } from "../layers/ui/text.rule";
 import { parseValueTuple } from "./common.rule";
 import { parseItemGroup } from "./item-group.rule";
+import { parseSprite } from "./sprite.rule";
 import { parseValueExpression } from "./value-expr.rule";
 
-type TNeatFor = { cmd: "FOR"; var?: string; list?: unknown; index?: string; body: unknown[] };
+type ForCommandBuilder<T extends "variable" | "range"> = T extends "variable"
+	? PartialExcept<TNeatVariableForCommand, "body" | "cmd">
+	: PartialExcept<TNeatRangeForCommand, "body" | "cmd">;
+
+function createForCommand<T extends "variable" | "range">(type: T): ForCommandBuilder<T> {
+	return { cmd: "FOR", body: [] } as ForCommandBuilder<T>;
+}
 
 export function parseFor(parser: NeatParser) {
-	const result: TNeatFor = { cmd: "FOR", body: [] };
+	let result: PartialExcept<TNeatForCommand, "body" | "cmd">;
 
 	// for $x of $list [index $i] { item { ... } }
 	parser.identifier("for");
@@ -16,6 +24,8 @@ export function parseFor(parser: NeatParser) {
 
 	if (parser.isIdentifier("of")) {
 		parser.advance();
+
+		result = createForCommand("variable");
 
 		result.var = varName;
 		result.list = parseValueExpression(parser);
@@ -26,6 +36,8 @@ export function parseFor(parser: NeatParser) {
 		}
 	} else {
 		// for $index from,to { item { ... } }
+		result = createForCommand("range");
+
 		result.list = parseValueTuple(parser);
 		result.index = varName;
 	}
@@ -34,7 +46,7 @@ export function parseFor(parser: NeatParser) {
 	while (parser.is("IDENTIFIER")) {
 		switch (parser.peekValue()) {
 			case "item":
-				result.body.push(parseItemGroup(parser));
+				result.body.push(parseItemGroup(parser) as unknown as TNeatCommand);
 				break;
 			case "text":
 				result.body.push(parseText(parser));
@@ -47,5 +59,5 @@ export function parseFor(parser: NeatParser) {
 	}
 	parser.consume("PUNCT", "}");
 
-	return result;
+	return result as TNeatForCommand;
 }

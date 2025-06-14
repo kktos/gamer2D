@@ -1,5 +1,5 @@
 import type { NeatParser } from "../../../parser";
-import type { TNeatRectCommand } from "../../../types/value-types";
+import type { TNeatRectCommand } from "../../../types/commands.type";
 import { parseAt, parseValueTuple } from "../../shared/common.rule";
 import { parseColor } from "../../shared/style.rule";
 

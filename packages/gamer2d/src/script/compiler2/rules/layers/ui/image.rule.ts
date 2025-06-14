@@ -1,43 +1,31 @@
 import type { NeatParser } from "../../../parser";
+import type { TNeatImageCommand } from "../../../types/commands.type";
 import { parseValueTuple } from "../../shared/common.rule";
 
-export function parseImage(parser: NeatParser): unknown {
+export function parseImage(parser: NeatParser): TNeatImageCommand {
 	parser.consume("IDENTIFIER", "image");
 
-	const source = parser.consume(["STRING", "IDENTIFIER"]).value as string;
+	const result: Partial<TNeatImageCommand> = { cmd: "IMAGE" };
 
-	let at: { x: unknown; y: unknown } | null = null;
-	let repeat: [unknown, unknown] | null = null;
+	result.source = parser.consume(["STRING", "IDENTIFIER"]).value as string;
 
-	while (parser.is("IDENTIFIER")) {
+	while (parser.is("IDENTIFIER", ["at", "repeat"])) {
 		switch (parser.peekValue()) {
 			case "at": {
 				parser.advance();
 				const tuple = parseValueTuple(parser);
-				at = { x: tuple[0], y: tuple[1] };
+				result.at = { x: tuple[0], y: tuple[1] };
 				break;
 			}
 			case "repeat": {
 				parser.advance();
-				repeat = parseValueTuple(parser);
+				result.repeat = parseValueTuple(parser);
 				break;
 			}
-			default:
-				return {
-					type: "IMAGE",
-					source,
-					at,
-					repeat,
-				};
 		}
 	}
 
-	if (!at) throw new Error("Missing required 'at' argument in image command.");
+	if (!result.at) throw new Error("Missing required 'at' argument in image command.");
 
-	return {
-		cmd: "IMAGE",
-		source,
-		at,
-		repeat,
-	};
+	return result as TNeatImageCommand;
 }

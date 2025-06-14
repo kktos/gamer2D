@@ -1,5 +1,5 @@
 import type { NeatParser } from "../../parser";
-import type { TNeatAlignCommand, TNeatColorCommand, TNeatFontCommand } from "../../types/value-types";
+import type { TNeatAlignCommand, TNeatColorCommand, TNeatFontCommand } from "../../types/commands.type";
 
 export function parseColor(parser: NeatParser): TNeatColorCommand {
 	parser.identifier();

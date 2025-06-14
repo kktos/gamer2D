@@ -1,11 +1,11 @@
-import type { TFunctions } from "../../utils/functionDict.utils";
-import type { TVars } from "../../utils/vars.utils";
-import type { TNeatAssignCommand, TNeatInstructionVar } from "../compiler2/types/value-types";
-import { evalExpression, evalExpressionToString } from "./expr.eval";
+import type { TNeatAssignCommand } from "../../compiler2/types/commands.type";
+import type { TNeatInstructionVar } from "../../compiler2/types/value-types";
+import type { ExecutionContext } from "../exec.type";
+import { evalExpressionAs } from "../expr.eval";
 
-export function evalAssignment(command: TNeatAssignCommand, vars: TVars, functions: TFunctions): void {
+export function executeAssignmentCommand(command: TNeatAssignCommand, context: ExecutionContext): void {
 	// Evaluate the expression to get the value to assign
-	const valueToAssign = evalExpression(command.value, vars, functions);
+	const valueToAssign = evalExpressionAs(command.value, context, "string");
 
 	// Handle the assignment path
 	const path = command.name;
@@ -14,24 +14,24 @@ export function evalAssignment(command: TNeatAssignCommand, vars: TVars, functio
 
 	if (path.length === 1) {
 		// Simple assignment: $var = value
-		vars.set(rootVarName, valueToAssign);
+		context.variables.set(rootVarName, valueToAssign);
 		return;
 	}
 
 	// Complex assignment: $obj.prop = value or $obj.$var = value
-	let current = vars.get(rootVarName);
+	let current = context.variables.get(rootVarName);
 
 	// Ensure root exists as an object
 	if (current === undefined || current === null) {
 		current = {};
-		vars.set(rootVarName, current);
+		context.variables.set(rootVarName, current);
 	}
 
 	if (typeof current !== "object" || Array.isArray(current)) throw new Error(`Cannot assign property to non-object variable: ${rootVarName}`);
 
 	// Navigate to the parent of the final property
 	for (let i = 1; i < path.length - 1; i++) {
-		const key = evalExpressionToString([path[i]], vars, functions);
+		const key = evalExpressionAs([path[i]], context, "string");
 
 		if (current[key] === null || current[key] === undefined) current[key] = {};
 
@@ -41,6 +41,6 @@ export function evalAssignment(command: TNeatAssignCommand, vars: TVars, functio
 	}
 
 	// Set the final property
-	const finalKey = evalExpressionToString([path[path.length - 1]], vars, functions);
+	const finalKey = evalExpressionAs([path[path.length - 1]], context, "string");
 	current[finalKey] = valueToAssign;
 }

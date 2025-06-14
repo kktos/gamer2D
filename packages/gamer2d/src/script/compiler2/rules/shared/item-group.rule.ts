@@ -1,10 +1,11 @@
 import type { NeatParser } from "../../parser";
-import { parseSprite } from "../layers/ui/sprite.rule";
+import type { TNeatItemCommand } from "../../types/commands.type";
 import { parseText } from "../layers/ui/text.rule";
 import { parseVariableAssignment } from "./assign.rule";
+import { parseSprite } from "./sprite.rule";
 
-export function parseItemGroup(parser: NeatParser): unknown {
-	const body: unknown[] = [];
+export function parseItemGroup(parser: NeatParser): TNeatItemCommand {
+	const body: TNeatItemCommand["body"] = [];
 
 	parser.identifier("item");
 
@@ -33,5 +34,5 @@ export function parseItemGroup(parser: NeatParser): unknown {
 	}
 	parser.consume("PUNCT", "}");
 
-	return { type: "ITEM", body };
+	return { cmd: "ITEM", body };
 }

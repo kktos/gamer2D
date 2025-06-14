@@ -1,7 +1,7 @@
 import type { NeatParser } from "../../parser";
 import { parseFor } from "../shared/for.rule";
 import { parseSettings } from "../shared/settings.rule";
-import { parseSprite } from "./ui/sprite.rule";
+import { parseSprite } from "../shared/sprite.rule";
 
 type TNeatLayerEntities = {
 	settings?: ReturnType<typeof parseSettings>["data"];
