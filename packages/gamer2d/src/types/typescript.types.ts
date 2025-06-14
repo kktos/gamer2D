@@ -12,3 +12,11 @@ export type RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType = key
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export type Constructor<T> = new (...args: any[]) => T;
+
+// All props optional but ....
+// PartialExcept<TNeatForCommand, "cmd" | "body">;
+export type PartialExcept<T, K extends keyof T> = Partial<T> & Pick<T, K>;
+
+export type Prettify<T> = {
+	[K in keyof T]: T[K];
+} & {};
