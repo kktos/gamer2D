@@ -1,5 +1,6 @@
 import type { ResourceManager } from "../game/ResourceManager";
 import { Entity } from "./Entity";
+import { setupEntity } from "./Entity.factory";
 
 export class BackgroundEntity extends Entity {
 	private type: string;
@@ -19,3 +20,6 @@ export class BackgroundEntity extends Entity {
 		if (this.currSprite) this.spritesheet?.draw(this.currSprite, ctx, col * this.bbox.width, row * this.bbox.height);
 	}
 }
+
+// Register this entity with the factory
+setupEntity({ name: "background", classType: BackgroundEntity });

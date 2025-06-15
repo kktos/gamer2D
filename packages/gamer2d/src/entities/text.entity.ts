@@ -1,8 +1,9 @@
 import type { Font } from "../game/Font";
 import type { ResourceManager } from "../game/ResourceManager";
-import { ALIGN_TYPES, type TAlignType } from "../script/compiler/layers/display/layout/text-sprite-props.rules";
+import { ALIGN_TYPES, type TAlignType } from "../script/compiler2/types/align.type";
 import type { ArgColor } from "../types/value.types";
 import { Entity } from "./Entity";
+import { setupEntity } from "./Entity.factory";
 
 export type TextDTO = {
 	pos: [number, number];
@@ -63,3 +64,6 @@ export class TextEntity extends Entity {
 		});
 	}
 }
+
+// Register this entity with the factory
+setupEntity({ name: "text", classType: TextEntity });
