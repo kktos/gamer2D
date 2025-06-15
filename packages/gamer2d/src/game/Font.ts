@@ -1,5 +1,5 @@
 import { BBox } from "../maths/BBox.class";
-import { ALIGN_TYPES, type TAlignType } from "../script/compiler/layers/display/layout/text-sprite-props.rules";
+import { ALIGN_TYPES, type TAlignType } from "../script/compiler2/types/align.type";
 import type { RequireAllOrNone } from "../types/typescript.types";
 import { nameToRgba } from "../utils/canvas.utils";
 import { loadImage, loadJson } from "../utils/loaders.util";
@@ -66,6 +66,8 @@ export class Font {
 	private spriteWidth: number;
 	private cache: Map<string, HTMLCanvasElement>;
 
+	static fonts: Map<string, Font> = new Map();
+
 	static async load(filename: string) {
 		const sheet = (await loadJson(filename)) as TFontSheet;
 		return loadFontData(sheet);
@@ -81,6 +83,8 @@ export class Font {
 		this.valign = ALIGN_TYPES.TOP;
 		this.cache = new Map();
 		this.hasLowercase = hasLowercase;
+
+		Font.fonts.set(name, this);
 	}
 
 	[Symbol.for("inspect")]() {
