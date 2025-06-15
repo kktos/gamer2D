@@ -1,8 +1,8 @@
 import type { NeatParser } from "../../parser";
-import type { TNeatInstruction } from "../../types/value-types";
+import type { TNeatTerm } from "../../types/expression.type";
 import { parseValueExpression } from "./value-expr.rule";
 
-export function parseValueTuple(parser: NeatParser): [TNeatInstruction[], TNeatInstruction[]] {
+export function parseValueTuple(parser: NeatParser): [TNeatTerm[], TNeatTerm[]] {
 	const x = parseValueExpression(parser);
 	parser.consume("PUNCT", ",");
 	const y = parseValueExpression(parser);

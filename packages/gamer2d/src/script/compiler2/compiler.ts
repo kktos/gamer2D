@@ -9,9 +9,16 @@ import { parseLayerWorldCollision } from "./rules/layers/worldcollision.rule";
 import { parseScene } from "./rules/scene.rule";
 import { parseSceneDisplay } from "./rules/scenes/scene_display.rule";
 import { parseSceneLevel } from "./rules/scenes/scene_level.rule";
+import { parseVariableAssignment } from "./rules/shared/assign.rule";
+import { parseStatementsBlock } from "./rules/shared/statements.rule";
+import { parseValueExpression } from "./rules/shared/value-expr.rule";
 
 export function compile<T>(text: string, startRule: string, globals?: Map<string, unknown>, options?: unknown) {
 	const parser = new NeatParser();
+
+	parser.addRule("expression", parseValueExpression);
+	parser.addRule("assign", parseVariableAssignment);
+	parser.addRule("statements", parseStatementsBlock);
 
 	parser.addRule("scene", parseScene);
 	parser.addRule("layer", parseLayer);
@@ -27,5 +34,5 @@ export function compile<T>(text: string, startRule: string, globals?: Map<string
 	parser.addRule("layer_worldcollision", parseLayerWorldCollision);
 
 	const result = parser.parse(text, startRule);
-	return result;
+	return result as T;
 }

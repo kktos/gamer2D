@@ -1,20 +1,24 @@
+import type { Font } from "../../game";
 import type { TNeatFunctions } from "../../utils/functionDict.utils";
 import type { TVars } from "../../utils/vars.utils";
+import type { TAlignType } from "../compiler2/types/align.type";
 
 // Command execution context - holds rendering state, variables, etc.
 export interface ExecutionContext {
-	// Rendering context (canvas, webgl, etc.)
-	renderer: unknown;
-
+	renderer?: TNeatRenderer;
 	variables: TVars;
 	functions: TNeatFunctions;
 
 	// Current rendering state
-	currentFont?: string;
+	currentFont?: Font;
 	currentFontSize?: number;
 	currentColor?: string;
-	currentAlign?: string;
+	currentAlign?: TAlignType;
+	currentVAlign?: TAlignType;
 
-	// Any other state you need during execution
 	[key: string]: unknown;
+}
+
+interface TNeatRenderer {
+	drawRect(x: number, y: number, width: number, height: number, color: string, fill?: string): void;
 }

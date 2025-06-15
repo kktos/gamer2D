@@ -1,7 +1,7 @@
-import type { TNeatInstruction } from "./value-types";
+import type { TNeatExpression } from "./expression.type";
 
-type TNeatPropertyAt = { x: TNeatInstruction[]; y: TNeatInstruction[] };
-type TNeatPropertySize = { width: TNeatInstruction[]; height: TNeatInstruction[] };
+type TNeatPropertyAt = { x: TNeatExpression; y: TNeatExpression };
+type TNeatPropertySize = { width: TNeatExpression; height: TNeatExpression };
 
 export type TNeatCommand =
 	| TNeatFontCommand
@@ -12,12 +12,23 @@ export type TNeatCommand =
 	| TNeatRectCommand
 	| TNeatViewCommand
 	| TNeatAssignCommand
+	| TNeatItemCommand
+	| TNeatImageCommand
+	| TNeatCallCommand
+	| TNeatMenuCommand
+	// | TNeatPoolCommand
+	| TNeatOnCommand
 	| TNeatForCommand;
 
 export type TNeatAssignCommand = {
 	cmd: "ASSIGN";
-	name: TNeatInstruction[];
-	value: TNeatInstruction[];
+	name: TNeatExpression;
+	value: TNeatExpression;
+};
+
+export type TNeatCallCommand = {
+	cmd: "CALL";
+	value: TNeatExpression;
 };
 
 export type TNeatFontCommand = {
@@ -42,14 +53,14 @@ export type TNeatRectCommand = {
 	at: TNeatPropertyAt;
 	size: TNeatPropertySize;
 	id?: string;
-	pad?: [TNeatInstruction[], TNeatInstruction[]];
-	fill?: unknown;
-	color?: unknown;
+	pad?: [TNeatExpression, TNeatExpression];
+	fill?: string;
+	color?: string;
 };
 
 export type TNeatTextCommand = {
 	cmd: "TEXT";
-	value: TNeatInstruction[];
+	value: TNeatExpression;
 	at: TNeatPropertyAt;
 	font?: { name?: string; size?: number };
 	size?: TNeatPropertySize;
@@ -75,7 +86,7 @@ export type TNeatImageCommand = {
 	cmd: "IMAGE";
 	source: string;
 	at: TNeatPropertyAt;
-	repeat?: [TNeatInstruction[], TNeatInstruction[]];
+	repeat?: [TNeatExpression, TNeatExpression];
 };
 
 export type TNeatViewCommand = {
@@ -91,17 +102,56 @@ export type TNeatItemCommand = {
 	body: TNeatCommand[];
 };
 
+// FOR
+
 export type TNeatVariableForCommand = {
 	cmd: "FOR";
 	var: string;
-	list: TNeatInstruction[];
+	list: TNeatExpression;
 	index?: string;
 	body: TNeatCommand[];
 };
 export type TNeatRangeForCommand = {
 	cmd: "FOR";
-	list: [TNeatInstruction[], TNeatInstruction[]];
+	list: [TNeatExpression, TNeatExpression];
 	index: string;
 	body: TNeatCommand[];
 };
 export type TNeatForCommand = TNeatVariableForCommand | TNeatRangeForCommand;
+
+// MENU
+
+type TNeatMenuSelection = {
+	// color
+	color?: string;
+	// bgcolor
+	background?: string;
+	// left sprite
+	left?: string;
+	// right sprite
+	right?: string;
+	// var holding the selection
+	var?: string;
+};
+
+type TNeatMenuKeys = {
+	previous?: TNeatExpression;
+	next?: TNeatExpression;
+	select?: TNeatExpression;
+};
+
+export type TNeatMenuCommand = {
+	cmd: "MENU";
+	selection: TNeatMenuSelection;
+	keys: TNeatMenuKeys;
+	items: TNeatCommand[];
+};
+
+// ON
+
+export type TNeatOnCommand = {
+	cmd: "ON";
+	event: string;
+	params: string[];
+	statements: TNeatCommand[];
+};

@@ -1,5 +1,5 @@
 import type { NeatParser } from "../../parser";
-import type { TNeatLayer } from "./types";
+import type { TNeatLayer } from "../../types/layers.type";
 
 // scene layers
 export function parseLayers(parser: NeatParser) {

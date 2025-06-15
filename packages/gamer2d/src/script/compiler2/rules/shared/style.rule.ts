@@ -20,10 +20,10 @@ export function parseAlign(parser: NeatParser) {
 export function parseFont(parser: NeatParser) {
 	parser.identifier("font");
 	const parts: unknown[] = [];
-	parts.push(parser.advance().value);
+	parts.push(parser.consume(["STRING", "NUMBER"]).value);
 	if (parser.is("PUNCT", ",")) {
-		parser.advance();
-		parts.push(parser.advance().value);
+		parser.consume("PUNCT", ",");
+		parts.push(parser.consume("NUMBER").value);
 	}
 
 	const fontSpec: TNeatFontCommand = { cmd: "FONT" };

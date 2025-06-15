@@ -1,6 +1,6 @@
 import type { NeatParser } from "../../parser";
+import type { TNeatLayer } from "../../types/layers.type";
 import { parseLayers } from "../layers/layers.rules";
-import type { TNeatLayer } from "../layers/types";
 import { parseSettings } from "../shared/settings.rule";
 
 export function parseSceneLevel(parser: NeatParser) {

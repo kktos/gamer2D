@@ -1,42 +1,42 @@
 import type { NeatParser } from "../../parser";
-import type { TNeatInstruction, TNeatOperations } from "../../types/value-types";
+import type { TNeatExpression, TNeatOperator } from "../../types/expression.type";
 import { parseFunctionCall, parseMethodCall } from "./statements.rule";
 
-export function parseValueExpression(parser: NeatParser): TNeatInstruction[] {
+export function parseValueExpression(parser: NeatParser): TNeatExpression {
 	if (parser.is("PUNCT", "[")) return parseArrayLiteral(parser);
 	if (parser.is("PUNCT", "{")) return parseObjectLiteral(parser);
-	return parseExpression(parser);
+	return parseAdditiveExpression(parser);
 }
 
-function parseArrayLiteral(parser: NeatParser): TNeatInstruction[] {
-	const arr: TNeatInstruction[] = [];
+function parseArrayLiteral(parser: NeatParser): TNeatExpression {
+	const arr: TNeatExpression[] = [];
 	parser.consume("PUNCT", "[");
 	while (!parser.is("PUNCT", "]")) {
-		arr.push(...parseValueExpression(parser));
-		if (parser.is("PUNCT", ",")) parser.advance();
+		arr.push(parseValueExpression(parser));
+		if (parser.is("PUNCT", ",")) parser.consume("PUNCT", ",");
 	}
 	parser.consume("PUNCT", "]");
-	return arr;
+	return [{ type: "array", value: arr }];
 }
 
-function parseObjectLiteral(parser: NeatParser): TNeatInstruction[] {
-	const instructions: TNeatInstruction[] = [];
+function parseObjectLiteral(parser: NeatParser): TNeatExpression {
+	const obj: Record<string, TNeatExpression> = {};
 	parser.consume("PUNCT", "{");
 	while (parser.isIdentifier()) {
 		const key = parser.identifier();
 		parser.consume("PUNCT", ":");
-		instructions.push(...parseValueExpression(parser));
-		if (parser.is("PUNCT", ",")) parser.advance();
+		obj[key] = parseValueExpression(parser);
+		if (parser.is("PUNCT", ",")) parser.consume("PUNCT", ",");
 	}
 	parser.consume("PUNCT", "}");
-	return instructions;
+	return [{ type: "object", value: obj }];
 }
 
-function parseExpression(parser: NeatParser): TNeatInstruction[] {
-	let result = parseUnary(parser);
-	while (parser.is("PUNCT", ["*", "+", "-", "/", "%"])) {
-		const op = parser.advance().value as TNeatOperations;
-		const right = parseUnary(parser);
+function parseAdditiveExpression(parser: NeatParser): TNeatExpression {
+	let result = parseMultiplicativeExpression(parser);
+	while (parser.is("PUNCT", ["+", "-"])) {
+		const op = parser.advance().value as TNeatOperator;
+		const right = parseMultiplicativeExpression(parser);
 		result = [
 			...result,
 			...right,
@@ -49,10 +49,27 @@ function parseExpression(parser: NeatParser): TNeatInstruction[] {
 	return result;
 }
 
-function parseUnary(parser: NeatParser): TNeatInstruction[] {
+function parseMultiplicativeExpression(parser: NeatParser): TNeatExpression {
+	let result = parseUnaryExpression(parser);
+	while (parser.is("PUNCT", ["*", "/", "%"])) {
+		const op = parser.advance().value as TNeatOperator;
+		const right = parseUnaryExpression(parser);
+		result = [
+			...result,
+			...right,
+			{
+				type: "op",
+				op,
+			},
+		];
+	}
+	return result;
+}
+
+function parseUnaryExpression(parser: NeatParser): TNeatExpression {
 	if (parser.is("PUNCT", ["-", "+", "!"])) {
-		const op = parser.advance().value as TNeatOperations;
-		const operand = parseUnary(parser);
+		const op = parser.advance().value as TNeatOperator;
+		const operand = parseUnaryExpression(parser);
 
 		if (op === "-" && operand.length === 1 && operand[0].type === "const" && typeof operand[0].value === "number") {
 			return [{ type: "const", value: -operand[0].value }];
@@ -66,11 +83,11 @@ function parseUnary(parser: NeatParser): TNeatInstruction[] {
 			},
 		];
 	}
-	return parsePrimary(parser);
+	return parsePrimaryExpression(parser);
 }
 
-function parsePrimary(parser: NeatParser) {
-	let baseExpr: TNeatInstruction[];
+function parsePrimaryExpression(parser: NeatParser) {
+	let baseExpr: TNeatExpression;
 	const token = parser.peek();
 	switch (token.type) {
 		case "NUMBER":
@@ -87,7 +104,7 @@ function parsePrimary(parser: NeatParser) {
 			break;
 		case "PUNCT": {
 			parser.consume("PUNCT", "(");
-			baseExpr = parseExpression(parser);
+			baseExpr = parseAdditiveExpression(parser);
 			parser.consume("PUNCT", ")");
 			break;
 		}

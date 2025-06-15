@@ -1,9 +1,13 @@
-import type { TNeatInstruction } from "../compiler2/types/value-types";
+import type { TNeatExpression, TNeatTerm } from "../compiler2/types/expression.type";
 import type { ExecutionContext } from "./exec.type";
 
-type EvalValue = number | string | boolean;
+interface EvalArray extends Array<EvalValue> {}
+interface EvalObject {
+	[key: string]: EvalValue;
+}
+type EvalValue = number | string | boolean | EvalArray | EvalObject;
 
-export function evalExpression(instructions: TNeatInstruction[], context: ExecutionContext): EvalValue {
+export function evalExpression(instructions: TNeatExpression, context: ExecutionContext): EvalValue {
 	const stack: EvalValue[] = [];
 
 	for (const instr of instructions) {
@@ -68,9 +72,40 @@ export function evalExpression(instructions: TNeatInstruction[], context: Execut
 				break;
 			}
 			case "fn": {
-				const args = instr.args.map((arg) => evalExpression([arg], context));
+				const args = instr.args.map((arg) => evalExpression(arg, context));
 				const result = context.functions.call(instr.name, args);
 				stack.push(result as EvalValue);
+				break;
+			}
+			case "array": {
+				const arrayOfExpr = instr.value;
+				const evaluatedArray = arrayOfExpr.map((expressionArray) => evalExpression(expressionArray, context));
+				stack.push(evaluatedArray);
+				break;
+			}
+			case "object": {
+				const objectOfExpr: EvalObject = {};
+				for (const [key, value] of Object.entries(instr.value)) {
+					objectOfExpr[key] = evalExpression(value, context);
+				}
+				stack.push(objectOfExpr);
+				break;
+			}
+			case "prop": {
+				// Property access: object.property
+				const property = stack.pop();
+				const obj = stack.pop();
+
+				if (typeof property !== "string" && typeof property !== "number") throw new Error("Property name must be a string or a number");
+
+				if (obj === null || obj === undefined) throw new Error("Cannot access property of null or undefined");
+
+				if (typeof obj !== "object" && !Array.isArray(obj)) throw new Error("Cannot access property of non-object value");
+
+				const result = Array.isArray(obj) ? (obj as EvalArray)[property] : (obj as EvalObject)[property];
+				if (result === undefined) throw new Error(`Property '${property}' does not exist on object`);
+
+				stack.push(result);
 				break;
 			}
 			default:
@@ -82,16 +117,18 @@ export function evalExpression(instructions: TNeatInstruction[], context: Execut
 	return stack[0];
 }
 
-export function evalExpressionAs(instructions: TNeatInstruction[], context: ExecutionContext, type: "string"): string;
-export function evalExpressionAs(instructions: TNeatInstruction[], context: ExecutionContext, type: "number"): number;
-export function evalExpressionAs(instructions: TNeatInstruction[], context: ExecutionContext, type: "boolean"): boolean;
-export function evalExpressionAs(instructions: TNeatInstruction[], context: ExecutionContext, type: string): unknown {
+export function evalExpressionAs(instructions: TNeatTerm[], context: ExecutionContext, type: "string"): string;
+export function evalExpressionAs(instructions: TNeatTerm[], context: ExecutionContext, type: "number"): number;
+export function evalExpressionAs(instructions: TNeatTerm[], context: ExecutionContext, type: "boolean"): boolean;
+export function evalExpressionAs(instructions: TNeatTerm[], context: ExecutionContext, type: "array"): EvalArray;
+export function evalExpressionAs(instructions: TNeatTerm[], context: ExecutionContext, type: string): unknown {
 	const result = evalExpression(instructions, context);
 
-	// biome-ignore lint/suspicious/useValidTypeof: this is valid, biome is lost here :)
-	if (typeof result !== type) {
-		throw new Error(`Expression did not evaluate to a ${type}. Got type: ${typeof result}, value: ${result}`);
+	if (type === "array") {
+		if (!Array.isArray(result)) throw new Error(`Expression did not evaluate to an array. Got type: ${typeof result}, value: ${result}`);
 	}
+	// biome-ignore lint/suspicious/useValidTypeof: this is valid, biome is lost here :)
+	else if (typeof result !== type) throw new Error(`Expression did not evaluate to a ${type}. Got type: ${typeof result}, value: ${result}`);
 
 	return result;
 }

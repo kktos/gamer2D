@@ -1,16 +1,16 @@
 import type { NeatParser } from "../../parser";
 import type { TNeatAssignCommand } from "../../types/commands.type";
-import type { TNeatInstructionConst, TNeatInstructionVar } from "../../types/value-types";
+import type { TNeatConstTerm, TNeatVarTerm } from "../../types/expression.type";
 import { parseValueExpression } from "./value-expr.rule";
 
 export function parseVariableAssignment(parser: NeatParser): TNeatAssignCommand {
-	const path: (TNeatInstructionConst | TNeatInstructionVar)[] = [{ type: "var", name: parser.variable() }];
+	const path: (TNeatConstTerm | TNeatVarTerm)[] = [{ type: "var", name: parser.variable() }];
 
 	while (parser.is("PUNCT", ".")) {
 		parser.advance();
 
 		const memberToken = parser.peek();
-		let memberName: TNeatInstructionConst | TNeatInstructionVar;
+		let memberName: TNeatConstTerm | TNeatVarTerm;
 
 		switch (memberToken.type) {
 			case "IDENTIFIER":

@@ -1,19 +1,20 @@
 import type { NeatParser } from "../../parser";
-import type { TNeatInstruction } from "../../types/value-types";
+import type { TNeatAssignCommand, TNeatCallCommand } from "../../types/commands.type";
+import type { TNeatExpression, TNeatTerm } from "../../types/expression.type";
 import { parseVariableAssignment } from "./assign.rule";
 import { parseValueExpression } from "./value-expr.rule";
 
 export function parseStatementsBlock(parser: NeatParser) {
 	parser.consume("PUNCT", "{");
 
-	const statements: unknown[] = [];
+	const statements: (TNeatAssignCommand | TNeatCallCommand)[] = [];
 	while (parser.is(["VARIABLE", "IDENTIFIER"])) {
 		switch (parser.peek().type) {
 			case "VARIABLE":
 				statements.push(parseVariableAssignment(parser));
 				break;
 			case "IDENTIFIER":
-				statements.push(parseMethodCall(parser, [parseFunctionCall(parser)]));
+				statements.push({ cmd: "CALL", value: parseMethodCall(parser, [parseFunctionCall(parser)]) });
 				break;
 		}
 	}
@@ -23,8 +24,8 @@ export function parseStatementsBlock(parser: NeatParser) {
 	return statements;
 }
 
-export function parseMethodCall(parser: NeatParser, startExpr: TNeatInstruction[]): TNeatInstruction[] {
-	let object = startExpr;
+export function parseMethodCall(parser: NeatParser, startExpr: TNeatExpression): TNeatExpression {
+	const object = startExpr;
 	while (parser.is("PUNCT", ".")) {
 		parser.advance();
 		const nextToken = parser.peek();
@@ -32,16 +33,16 @@ export function parseMethodCall(parser: NeatParser, startExpr: TNeatInstruction[
 			case "IDENTIFIER": {
 				const name = parser.identifier();
 				if (parser.is("PUNCT", "(")) {
-					const args = parseCallArguments(parser);
-					object = [...object, ...args, { type: "fn", name, args }];
+					object.push({ type: "fn", name, args: parseCallArguments(parser) });
 				} else {
-					object = [...object, { type: "const", value: name }];
+					object.push({ type: "const", value: name });
+					object.push({ type: "prop" });
 				}
 				break;
 			}
 			case "VARIABLE": {
-				const name = parser.variable();
-				object = [...object, { type: "var", name }];
+				object.push({ type: "var", name: parser.variable() });
+				object.push({ type: "prop" });
 				break;
 			}
 			default:
@@ -52,17 +53,17 @@ export function parseMethodCall(parser: NeatParser, startExpr: TNeatInstruction[
 }
 
 // Parses a function call: foo(...)
-export function parseFunctionCall(parser: NeatParser): TNeatInstruction {
+export function parseFunctionCall(parser: NeatParser): TNeatTerm {
 	const funcName = parser.identifier();
 	const args = parseCallArguments(parser);
 	return { type: "fn", name: funcName, args };
 }
 
-export function parseCallArguments(parser: NeatParser) {
-	const args: TNeatInstruction[] = [];
+function parseCallArguments(parser: NeatParser) {
+	const args: TNeatExpression[] = [];
 	parser.consume("PUNCT", "(");
 	while (!parser.is("PUNCT", ")")) {
-		args.push(...parseValueExpression(parser));
+		args.push(parseValueExpression(parser));
 		if (parser.is("PUNCT", ",")) parser.advance();
 	}
 	parser.consume("PUNCT", ")");

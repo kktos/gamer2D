@@ -1,16 +1,16 @@
 import type { TNeatAssignCommand } from "../../compiler2/types/commands.type";
-import type { TNeatInstructionVar } from "../../compiler2/types/value-types";
+import type { TNeatVarTerm } from "../../compiler2/types/expression.type";
 import type { ExecutionContext } from "../exec.type";
-import { evalExpressionAs } from "../expr.eval";
+import { evalExpression, evalExpressionAs } from "../expr.eval";
 
 export function executeAssignmentCommand(command: TNeatAssignCommand, context: ExecutionContext): void {
 	// Evaluate the expression to get the value to assign
-	const valueToAssign = evalExpressionAs(command.value, context, "string");
+	const valueToAssign = evalExpression(command.value, context);
 
 	// Handle the assignment path
 	const path = command.name;
 
-	const rootVarName = (path[0] as TNeatInstructionVar).name;
+	const rootVarName = (path[0] as TNeatVarTerm).name;
 
 	if (path.length === 1) {
 		// Simple assignment: $var = value

@@ -1,11 +1,11 @@
 import type { NeatParser } from "../../parser";
+import type { TNeatScene } from "../../types/scenes.type";
 import { parseLayers } from "../layers/layers.rules";
-import type { TNeatLayer } from "../layers/types";
 
 export function parseSceneDisplay(parser: NeatParser) {
 	parser.consume("PUNCT", "{");
 
-	const result: { [key: string]: unknown; layers: TNeatLayer[] } = { layers: [] };
+	const result: TNeatScene = { layers: [] };
 
 	// scene properties
 	properties: while (parser.is("IDENTIFIER")) {

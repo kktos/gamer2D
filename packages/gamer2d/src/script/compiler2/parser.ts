@@ -17,10 +17,10 @@ export class NeatParser {
 		this.rules.set(name, handler);
 	}
 
-	public invokeRule(name: string): unknown {
+	public invokeRule<T>(name: string): T {
 		const handler = this.rules.get(name);
 		if (!handler) throw new Error(`Parser rule "${name}" not found.`);
-		return handler(this);
+		return handler(this) as T;
 	}
 
 	public parse(text: string, startRule: string) {

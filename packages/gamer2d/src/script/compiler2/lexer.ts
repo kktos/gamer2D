@@ -134,16 +134,38 @@ export class NeatLexer {
 		return undefined;
 	}
 
-	peek(offset = 0) {
-		if (this.current + offset >= this.tokens.length) return { type: "EOF", value: null } as TNeatToken;
-		if (this.current + offset < 0) return { type: "EOF", value: null } as TNeatToken;
-		return this.tokens[this.current + offset];
+	private createEofToken(): TNeatToken<"EOF"> {
+		let eofLine = 1;
+		let eofCol = 1;
+		if (this.tokens.length > 0) {
+			const lastToken = this.tokens[this.tokens.length - 1];
+			eofLine = lastToken.pos[0];
+			// Column after the last character of the last token
+			eofCol = lastToken.pos[1] + lastToken.rawValue.length;
+		} else if (this.lines && this.lines.length > 0) {
+			// Handles cases like empty input or input with only comments
+			eofLine = this.lines.length;
+			eofCol = this.lines[this.lines.length - 1].length + 1;
+			if (this.lines.length === 1 && this.lines[0] === "") {
+				// Specifically for an empty input string
+				eofLine = 1;
+				eofCol = 1;
+			}
+		}
+		return { type: "EOF", value: null, pos: [eofLine, eofCol], rawValue: "" };
+	}
+
+	peek(offset = 0): TNeatToken {
+		const targetIndex = this.current + offset;
+		if (targetIndex >= this.tokens.length || targetIndex < 0) return this.createEofToken();
+		return this.tokens[targetIndex];
 	}
 
 	advance() {
+		if (this.current >= this.tokens.length) return this.createEofToken();
+		const tokenToReturn = this.tokens[this.current];
 		this.current++;
-		if (this.current >= this.tokens.length) return { type: "EOF", value: null } as TNeatToken;
-		return this.peek(-1);
+		return tokenToReturn;
 	}
 
 	public is(expectedType: TTokenType | TTokenType[], expectedValue?: unknown | unknown[], offset = 0) {

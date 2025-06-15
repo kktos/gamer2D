@@ -1,12 +1,15 @@
-import type { TNeatSpriteCommand } from "../../compiler2/types/commands.type";
+import type { TNeatCommand, TNeatMenuCommand } from "../../compiler2/types/commands.type";
+import { runPreparationPhase } from "../exec";
 import type { ExecutionContext } from "../exec.type";
-import { evalExpression } from "../expr.eval";
 
-export function executeMenuCommand(command: TNeatSpriteCommand, context: ExecutionContext) {
-	const x = evalExpression(command.at.x, context);
-	const y = evalExpression(command.at.y, context);
-	const width = command.size ? evalExpression(command.size.width, context) : undefined;
-	const height = command.size ? evalExpression(command.size.height, context) : undefined;
+export function executeMenuCommand(command: TNeatMenuCommand, context: ExecutionContext) {
+	if (command.selection) {
+		if (command.selection.var) {
+			context.variables.set(command.selection.var, -1);
+		}
+	}
 
-	// context.renderer.drawRect(x, y, width, height, padding);
+	const result: TNeatCommand[] = [];
+	result.push(...runPreparationPhase(command.items, context));
+	return result;
 }
