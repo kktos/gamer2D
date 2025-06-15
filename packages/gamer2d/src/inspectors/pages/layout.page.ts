@@ -1,4 +1,4 @@
-import type { DisplayLayer } from "../../layers/display.layer";
+import type { UiLayer } from "../../layers/ui.layer";
 import type { Director } from "../../scene/Director";
 import type { TStatement } from "../../script/compiler/layers/display/layout/layout.rules";
 import { OP_TYPES, OP_TYPES_STR } from "../../types/operation.types";
@@ -45,7 +45,7 @@ function renderParam1(item: TStatement) {
 
 export class LayoutPage extends DebugPage {
 	private element!: ItemList<TStatement>;
-	private layer!: DisplayLayer;
+	private layer!: UiLayer;
 
 	constructor(
 		public coppola: Director,
@@ -63,7 +63,7 @@ export class LayoutPage extends DebugPage {
 	open() {
 		const varsInspector = this.element;
 		const layout: TStatement[] = this.params.data;
-		this.coppola.currentScene.useLayer("display", (layer: DisplayLayer) => {
+		this.coppola.currentScene.useLayer("display", (layer: UiLayer) => {
 			this.layer = layer;
 
 			varsInspector.setColumns(columns, (item) => String(layout.findIndex((i) => i === item)));

@@ -2,11 +2,11 @@ import type { GameContext } from "../../../game/types/GameContext";
 import { BBox } from "../../../maths/BBox.class";
 import type { TMenuItemRendered } from "../../../script/compiler/layers/display/layout/menu.rules";
 import { OP_TYPES } from "../../../types/operation.types";
-import type { DisplayLayer } from "../../display.layer";
+import type { UiLayer } from "../../ui.layer";
 import { loadSprite } from "../sprite.renderer";
 import { addText } from "../text.manager";
 
-export function computeBBox(gc: GameContext, layer: DisplayLayer, items: TMenuItemRendered[]) {
+export function computeBBox(gc: GameContext, layer: UiLayer, items: TMenuItemRendered[]) {
 	const bbox: BBox | null = null;
 	for (let idx = 0; idx < items.length; idx++) {
 		const item = items[idx];

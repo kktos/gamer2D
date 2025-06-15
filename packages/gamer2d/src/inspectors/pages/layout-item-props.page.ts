@@ -1,5 +1,5 @@
 import type { Entity } from "../../entities/Entity";
-import type { DisplayLayer } from "../../layers/display.layer";
+import type { UiLayer } from "../../layers/ui.layer";
 import type { Director } from "../../scene/Director";
 import { evalVar } from "../../script/engine/eval.script";
 import type { PropertiesInspector } from "../elements/properties.inspector";
@@ -24,7 +24,7 @@ export class LayoutItemPropsPage extends DebugPage {
 	}
 
 	open() {
-		this.coppola.currentScene.useLayer("display", (layer: DisplayLayer) => {
+		this.coppola.currentScene.useLayer("display", (layer: UiLayer) => {
 			this.element.setPropertyConfigs({
 				width: { editor: "number" },
 				height: { editor: "number" },

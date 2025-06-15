@@ -2,7 +2,7 @@ import type { GameContext } from "../../../game/types/GameContext";
 import type { TViewDefinition } from "../../../game/types/GameOptions";
 import { getClassName } from "../../../utils/object.util";
 import type { TVars } from "../../../utils/vars.utils";
-import type { UILayer } from "../../UILayer";
+import type { HTMLLayer } from "../../HTMLLayer";
 import { System } from "./System.view";
 import { DebugView } from "./debug.view";
 
@@ -17,7 +17,7 @@ export type ViewContext = {
 	canvas: HTMLCanvasElement;
 	gc: GameContext;
 	vars: TVars;
-	layer: UILayer;
+	layer: HTMLLayer;
 };
 
 export function initViews(ctx: ViewContext) {

@@ -1,17 +1,17 @@
 import type { Entity } from "../../entities/Entity";
 import { type TextDTO, TextEntity } from "../../entities/text.entity";
-import { ALIGN_TYPES } from "../../script/compiler/layers/display/layout/text-sprite-props.rules";
 import type { TText } from "../../script/compiler/layers/display/layout/text.rules";
 import type { TFunctionCall } from "../../script/compiler/shared/action.rules";
+import { ALIGN_TYPES } from "../../script/compiler2/types/align.type";
 import { evalArg, evalNumber, evalValue, isStringInterpolable } from "../../script/engine/eval.script";
 import { PathTrait, type TPathDefDTO } from "../../traits/path.trait";
 import type { TVars } from "../../utils/vars.utils";
-import type { DisplayLayer } from "../display.layer";
 import { EntitiesLayer } from "../entities.layer";
+import type { UiLayer } from "../ui.layer";
 import { setupVariableProps } from "./prop.manager";
 import { addTraits } from "./trait.manager";
 
-export function addText(layer: DisplayLayer, op: TText & { entity?: Entity }) {
+export function addText(layer: UiLayer, op: TText & { entity?: Entity }) {
 	const posX = evalValue({ vars: layer.vars }, op.pos[0]) as number;
 	const posY = evalValue({ vars: layer.vars }, op.pos[1]) as number;
 

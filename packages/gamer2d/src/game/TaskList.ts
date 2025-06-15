@@ -24,15 +24,20 @@ export class TaskList {
 
 	processTasks() {
 		if (!this.tasks.length) return;
+
+		const remainingTasks: { name: symbol; args: unknown[] }[] = [];
+
 		// biome-ignore lint/complexity/noForEach: <explanation>
 		this.tasks.forEach(({ name, args }) => {
 			const handler = this.taskHandlers.get(name);
 			if (handler) handler(...args);
 			else {
+				remainingTasks.push({ name, args });
 				console.log("----- TASK: no handler for", name.toString());
 				console.log("taskHandlers", this.taskHandlers);
 			}
 		});
-		this.tasks.length = 0;
+		// this.tasks.length = 0;
+		this.tasks = remainingTasks;
 	}
 }

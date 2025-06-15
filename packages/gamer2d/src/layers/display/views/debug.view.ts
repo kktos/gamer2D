@@ -3,7 +3,7 @@ import type { ResourceManager } from "../../../game/ResourceManager";
 import type { AnimMap, SpriteMap, SpriteSheet } from "../../../game/Spritesheet";
 import type { GameContext } from "../../../game/types/GameContext";
 import { drawPixelated } from "../../../utils/canvas.utils";
-import type { UILayer } from "../../UILayer";
+import type { HTMLLayer } from "../../HTMLLayer";
 import { View } from "./View";
 import type { ViewContext } from "./View.factory";
 
@@ -54,7 +54,7 @@ export class DebugView extends View {
 
 	destroy() {}
 
-	buildUI(layer: UILayer, list: string[]) {
+	buildUI(layer: HTMLLayer, list: string[]) {
 		// const options = list.map((item, idx) => `<option value="${idx}">${item.replace(/^[^:]+:/, "")}</option>`);
 		const options = list.map((item, idx) => `<option value="${idx}">${item}</option>`);
 		const html = `

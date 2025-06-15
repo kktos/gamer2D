@@ -1,6 +1,6 @@
 import type { GameContext } from "../../../game/types/GameContext";
 import type { TVars } from "../../../utils/vars.utils";
-import type { UILayer } from "../../UILayer";
+import type { HTMLLayer } from "../../HTMLLayer";
 import type { ViewContext } from "./View.factory";
 
 export class View {
@@ -8,7 +8,7 @@ export class View {
 	public ctx: CanvasRenderingContext2D;
 	public gc: GameContext;
 	public vars: TVars;
-	public layer: UILayer;
+	public layer: HTMLLayer;
 
 	constructor(ctx: ViewContext) {
 		this.canvas = ctx.canvas;

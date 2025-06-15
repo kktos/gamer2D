@@ -1,0 +1,106 @@
+{
+  "$schema": "node_modules/barrelize/schema.json",
+  "singleQuote": false,
+  "barrels": [
+    {
+      "root": "src/game",
+      "name": "index.ts",
+      "include": [
+        "**/*.ts"
+      ],
+      "exclude": [
+        "**/*.test.ts"
+      ]
+    },
+    {
+      "root": "src/traits",
+      "name": "index.ts",
+      "include": [
+        "**/*.ts"
+      ],
+      "exclude": [
+        "**/*.test.ts"
+      ]
+    },
+    {
+      "root": "src/types",
+      "name": "index.ts",
+      "include": [
+        "**/*.ts"
+      ],
+      "exclude": [
+        "**/*.test.ts"
+      ]
+    },
+    {
+      "root": "src/scene",
+      "name": "index.ts",
+      "include": [
+        "**/*.ts"
+      ],
+      "exclude": [
+        "**/*.test.ts"
+      ]
+    },
+    {
+      "root": "src/maths",
+      "name": "index.ts",
+      "include": [
+        "**/*.ts"
+      ],
+      "exclude": [
+        "**/*.test.ts"
+      ]
+    },
+    {
+      "root": "src/layers",
+      "name": "index.ts",
+      "include": [
+        "**/*.ts"
+      ],
+      "exclude": [
+        "**/*.test.ts"
+      ]
+    },
+    {
+      "root": "src/events",
+      "name": "index.ts",
+      "include": [
+        "**/*.ts"
+      ],
+      "exclude": [
+        "**/*.test.ts"
+      ]
+    },
+    {
+      "root": "src/entities",
+      "name": "index.ts",
+      "include": [
+        "**/*.ts"
+      ],
+      "exclude": [
+        "**/*.test.ts"
+      ]
+    },
+    {
+      "root": "src/constants",
+      "name": "index.ts",
+      "include": [
+        "**/*.ts"
+      ],
+      "exclude": [
+        "**/*.test.ts"
+      ]
+    },
+    {
+      "root": "src/script",
+      "name": "index.ts",
+      "include": [
+        "**/*.ts"
+      ],
+      "exclude": [
+        "**/*.test.ts"
+      ]
+    }
+  ]
+}

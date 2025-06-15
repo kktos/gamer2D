@@ -3,7 +3,7 @@ import { getRandom } from "../../maths/math";
 import type { TImage } from "../../script/compiler/layers/display/layout/image.rules";
 import type { TSprite } from "../../script/compiler/layers/display/layout/sprite.rules";
 import { evalValue } from "../../script/engine/eval.script";
-import type { DisplayLayer } from "../display.layer";
+import type { UiLayer } from "../ui.layer";
 
 type TState = {
 	ss: SpriteSheet;
@@ -48,7 +48,7 @@ function animBuilder(anim, state) {
 	return null;
 }
 
-export function renderSprite({ resourceManager, deltaTime, tick, viewport: { ctx } }, layer: DisplayLayer, op: (TSprite | TImage) & { state?: TState }) {
+export function renderSprite({ resourceManager, deltaTime, tick, viewport: { ctx } }, layer: UiLayer, op: (TSprite | TImage) & { state?: TState }) {
 	const spriteName = evalValue(layer, op.name);
 	if (!op.state || op.state.sprite !== spriteName) {
 		const { ss, sprite } = loadSprite({ resourceManager }, spriteName);

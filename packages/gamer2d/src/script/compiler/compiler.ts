@@ -28,7 +28,7 @@ export function setWannaLogError(value: boolean) {
 	wannaLogError = value;
 }
 
-export function compile<T>(text: string, startRule: string, globals?: Map<string, unknown>, options?: unknown) {
+export function oldCompile<T>(text: string, startRule: string, globals?: Map<string, unknown>, options?: unknown) {
 	const lexingResult = SheetLexer.tokenize(text);
 	parser.input = lexingResult.tokens;
 	parser.variablesDict = globals ? globals : new Map();
@@ -46,13 +46,13 @@ export function compile<T>(text: string, startRule: string, globals?: Map<string
 	return result as T;
 }
 
-export const compileScript = (text: string, globals?: Map<string, unknown>, options?: unknown) => compile<TSceneSheet>(text, "sceneSheet", globals, options);
+export const compileScript = (text: string, globals?: Map<string, unknown>, options?: unknown) => oldCompile<TSceneSheet>(text, "sceneSheet", globals, options);
 export const compileLayerScript = (text: string, globals?: Map<string, unknown>, options?: unknown) =>
-	compile<TLayerSheet>(text, "layerSheet", globals, options);
+	oldCompile<TLayerSheet>(text, "layerSheet", globals, options);
 
 export const compileSpriteSheetScript = (filename: string, text: string, globals?: Map<string, unknown>, options?: unknown) => {
 	try {
-		return compile<TSpriteSheet>(text, "spriteSheet", globals, options);
+		return oldCompile<TSpriteSheet>(text, "spriteSheet", globals, options);
 	} catch (e) {
 		if (e instanceof CompileSyntaxErr) {
 			e.filename = filename;

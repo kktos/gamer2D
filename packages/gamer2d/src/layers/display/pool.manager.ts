@@ -2,11 +2,11 @@ import type { Entity } from "../../entities/Entity";
 import { EntityPool } from "../../entities/EntityPool";
 import type { TPool } from "../../script/compiler/layers/display/layout/pool.rules";
 import { evalValue } from "../../script/engine/eval.script";
-import type { DisplayLayer } from "../display.layer";
 import { EntitiesLayer } from "../entities.layer";
+import type { UiLayer } from "../ui.layer";
 import { addTraits } from "./trait.manager";
 
-export function addPool(layer: DisplayLayer, op: TPool & { entity?: Entity }) {
+export function addPool(layer: UiLayer, op: TPool & { entity?: Entity }) {
 	const posX = evalValue({ vars: layer.vars }, op.pos[0]) as number;
 	const posY = evalValue({ vars: layer.vars }, op.pos[1]) as number;
 	const count = evalValue({ vars: layer.vars }, op.count) as number;

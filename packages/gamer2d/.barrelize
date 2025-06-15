@@ -3,17 +3,7 @@
   "singleQuote": false,
   "barrels": [
     {
-      "root": "src/game",
-      "name": "index.ts",
-      "include": [
-        "**/*.ts"
-      ],
-      "exclude": [
-        "**/*.test.ts"
-      ]
-    },
-    {
-      "root": "src/traits",
+      "root": "src",
       "name": "index.ts",
       "include": [
         "**/*.ts"

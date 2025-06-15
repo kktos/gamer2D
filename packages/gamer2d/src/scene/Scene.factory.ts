@@ -1,9 +1,9 @@
-import { GLOBAL_VARIABLES } from "../game/globals";
 import type { GameContext } from "../game/types/GameContext";
 import type { SceneConstructor } from "../game/types/GameOptions";
 import { loadLayer } from "../layers/Layer.factory";
-import { CompileSyntaxErr, compileScript } from "../script/compiler/compiler";
+import { CompileSyntaxErr } from "../script/compiler/compiler";
 import type { TSceneSheet } from "../script/compiler/scenes/scene.rules";
+import { compile } from "../script/compiler2/compiler";
 import { LocalDB } from "../utils/storage.util";
 import type { Scene } from "./Scene";
 import { DisplayScene } from "./display.scene";
@@ -38,7 +38,8 @@ export class SceneFactory {
 		if (!sheet) {
 			try {
 				const scriptText = await gc.resourceManager.loadScene(filename);
-				sheet = compileScript(scriptText, GLOBAL_VARIABLES);
+				// sheet = compileScript(scriptText, GLOBAL_VARIABLES);
+				sheet = compile<TSceneSheet>(scriptText, "scene");
 			} catch (e) {
 				if (e instanceof CompileSyntaxErr) {
 					console.error(`SYNTAX ERROR\nline ${e.line} at ${e.word} rule: ${e.ruleStack}\n${e.message}`);
@@ -58,16 +59,9 @@ export class SceneFactory {
 			sheet.layers[idx] = await loadLayer(gc, String(layerDef.name));
 		}
 
-		let scene: Scene;
-		switch (sheet.type) {
-			case "display":
-			case "level":
-			case "game":
-				scene = createScene(gc, sheet.type, filename, sheet);
-				break;
-			default:
-				throw new Error("Unknown Scene type");
-		}
+		if (!["display", "level", "game"].includes(sheet.type)) throw new Error(`Unknown Scene type: ${sheet.type}`);
+
+		const scene = createScene(gc, sheet.type, filename, sheet);
 
 		// scene.killOnExit= sheet.killOnExit ? true : false;
 		if ("showCursor" in sheet) gc.viewport.canvas.style.cursor = sheet.showCursor ? "default" : "none";

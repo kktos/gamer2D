@@ -12,6 +12,7 @@
 	],
 	"fonts": [
 		"bubble-bobble.json",
-		"level-numbers.json"
+		"level-numbers.json",
+		"wargames.json"
 	]
 }

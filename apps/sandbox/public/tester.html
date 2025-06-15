@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Script Parser Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; display: flex; flex-direction: column; gap: 15px; }
+        textarea { 
+            width: 95%; 
+            height: 450px; 
+            font-family: monospace; 
+            font-size: 14px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        button { 
+            padding: 10px 20px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            background-color: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 4px;
+            align-self: flex-start;
+        }
+        button:hover { background-color: #0056b3; }
+        pre { 
+            background-color: #f4f4f4; 
+            padding: 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+            white-space: pre-wrap; 
+            word-wrap: break-word; 
+            font-size: 13px;
+        }
+        label, h2 { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Script Editor & Parser</h1>
+    
+    <div>
+        <label for="scriptInput">Edit Script:</label>
+        <textarea id="scriptInput">
+        </textarea>
+    </div>
+    
+    <button id="parseButton">Parse Script</button>
+    
+    <div>
+        <h2>Tokens:</h2>
+        <pre id="outputTokens">Click the button to see the tokenized output.</pre>
+    </div>
+
+
+</body>
+</html>

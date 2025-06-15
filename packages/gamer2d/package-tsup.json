@@ -1,0 +1,63 @@
+{
+  "name": "gamer2d",
+  "version": "0.268.0",
+  "description": "A 2D Game Engine for Arkanoid, Bobble Bubble and more",
+  "author": "kktos",
+  "license": "ISC",
+  "type": "module",
+  "exports": {
+    ".": "./game/index.js",
+    "./traits": "./traits/index.js",
+    "./types": "./types/index.js",
+    "./scene": "./scene/index.js",
+    "./maths": "./maths/index.js",
+    "./layers": "./layers/index.js",
+    "./events": "./events/index.js",
+    "./entities": "./entities/index.js",
+    "./constants": "./constants/index.js",
+    "./script": "./script/index.js"
+  },
+  "scripts": {
+    "build": "pnpm build:tsup",
+    "postbuild": "node build/postbuild.mjs",
+    "prebuild": "barrelize",
+    "test": "vitest",
+    "lint": "biome ci",
+    "lint:fix": "biome lint --write --unsafe . && biome format --write .",
+    "publishIt": "cd dist && npm publish",
+    "build:tsup": "tsup"
+  },
+  "packageManager": "pnpm@10.10.0",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "barrelize": "^1.6.0",
+    "tsdown": "^0.12.7",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
+  },
+  "dependencies": {
+    "chevrotain": "^11.0.3"
+  },
+  "tsup": {
+    "entry": [
+      "./src/game/index.ts",
+      "./src/traits/index.ts",
+      "./src/types/index.ts",
+      "./src/scene/index.ts",
+      "./src/maths/index.ts",
+      "./src/layers/index.ts",
+      "./src/events/index.ts",
+      "./src/entities/index.ts",
+      "./src/constants/index.ts",
+      "./src/script/index.ts"
+    ],
+    "format": "esm",
+    "dts": true,
+    "sourcemap": true,
+    "clean": true,
+    "platform": "browser",
+    "target": "es2022",
+    "treeshake": false
+  }
+}

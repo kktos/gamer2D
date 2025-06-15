@@ -1,0 +1,12 @@
+{
+	"name": "wargames",
+	"height": 29,
+	"width": 22,
+	"charset": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`~!@#$%^&*()_+-=[]{};':\",./<>?\\| ",
+	"img": "fonts/wargames.png",
+	"offsetX": 6,
+	"offsetY": 35,
+	"gapX": 2,
+	"gapY": 1,
+	"hasLowercase": true
+}

@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Canvas Layout DSL</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+       
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+       
+        h1 {
+            color: #4a5568;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+       
+        .editor-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+       
+        .editor-panel {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+        }
+       
+        h3 {
+            color: #2d3748;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+       
+        textarea {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            background: white;
+            transition: border-color 0.3s ease;
+        }
+       
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+       
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+       
+        button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+       
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+       
+        button:active {
+            transform: translateY(0);
+        }
+       
+        .play-btn {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+        }
+       
+        .pause-btn {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+        }
+       
+        .canvas-container {
+            text-align: center;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+        }
+       
+        canvas {
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+       
+        .error {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #e53e3e;
+        }
+       
+        .success {
+            background: #c6f6d5;
+            color: #22543d;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #38a169;
+        }
+       
+        .syntax-guide {
+            background: #edf2f7;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border: 2px solid #e2e8f0;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+       
+        .syntax-guide h4 {
+            color: #2d3748;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+       
+        .syntax-guide code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #4a5568;
+        }
+       
+        .example {
+            background: #f7fafc;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+        }
+       
+        .feature-new {
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            color: #2d3436;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+       
+        @media (max-width: 768px) {
+            .editor-section {
+                grid-template-columns: 1fr;
+            }
+           
+            .controls {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Advanced Canvas Layout DSL</h1>
+       
+        <div class="editor-section">
+            <div class="editor-panel">
+                <h3>DSL Code</h3>
+                <textarea id="dslInput" placeholder="Enter your advanced canvas layout description here...">canvas 800x600 {
+  layer background {
+    rect sky at 0,0 size 800x300 color #87ceeb
+    rect ground at 0,300 size 800x300 color #90ee90
+  }
+ 
+  layer objects {
+    sprite player at center-100,400 size 32x32 color #ff6b6b
+      animate move from 100,400 to 300,400 duration 3s repeat
+      animate fade from 1 to 0.5 duration 2s alternate
+   
+    sprite enemy at right-50,350 size 24x24 color #ff8e53
+      animate rotate from 0 to 360 duration 2s repeat
+   
+    text "Dynamic Scene!" at center,50 font 32px color #2d3436
+      animate bounce amplitude 10 duration 1s repeat
+  }
+ 
+  layer ui {
+    rect panel at 10,10 size 200x80 color rgba(0,0,0,0.7) stroke #fff
+    text "Health: 100%" at 20,35 font 14px color #00ff00
+    text "Score: 1250" at 20,55 font 14px color #ffff00
+  }
+}</textarea>
+            </div>
+           
+            <div class="editor-panel">
+                <h3>Parsed Structure</h3>
+                <textarea id="parsedOutput" readonly placeholder="Parsed structure will appear here..."></textarea>
+            </div>
+        </div>
+       
+        <div class="controls">
+            <button onclick="parseAndRender()">Parse & Render</button>
+            <button id="playBtn" onclick="toggleAnimation()" class="play-btn">▶ Play Animation</button>
+            <button onclick="loadExample(1)">Game Scene</button>
+            <button onclick="loadExample(2)">UI Layout</button>
+            <button onclick="loadExample(3)">Complex Animation</button>
+            <button onclick="clearCanvas()">Clear</button>
+        </div>
+       
+        <div id="messages"></div>
+       
+        <div class="canvas-container">
+            <h3>Rendered Canvas</h3>
+            <canvas id="canvas" width="800" height="600"></canvas>
+        </div>
+       
+        <div class="syntax-guide">
+            <h3>Advanced DSL Syntax Guide</h3>
+           
+            <h4>Canvas & Layers <span class="feature-new">NEW</span></h4>
+            <div class="example">
+                <code>canvas WIDTHxHEIGHT { ... }</code><br>
+                <code>layer NAME { ... }</code> - Group elements into layers for better organization
+            </div>
+           
+            <h4>Advanced Positioning <span class="feature-new">NEW</span></h4>
+            <div class="example">
+                <code>at X,Y</code> - Absolute positioning<br>
+                <code>at center</code> - Center of canvas<br>
+                <code>at center-OFFSET,Y</code> - Center minus offset<br>
+                <code>at right-OFFSET,Y</code> - Right edge minus offset<br>
+                <code>at bottom-OFFSET,X</code> - Bottom edge minus offset<br>
+                <code>at left+OFFSET,Y</code> - Left edge plus offset<br>
+                <code>at top+OFFSET,X</code> - Top edge plus offset
+            </div>
+           
+            <h4>Animations <span class="feature-new">NEW</span></h4>
+            <div class="example">
+                <code>animate move from X1,Y1 to X2,Y2 duration Ns [repeat] [alternate]</code><br>
+                <code>animate fade from ALPHA1 to ALPHA2 duration Ns [repeat] [alternate]</code><br>
+                <code>animate rotate from DEG1 to DEG2 duration Ns [repeat] [alternate]</code><br>
+                <code>animate scale from SCALE1 to SCALE2 duration Ns [repeat] [alternate]</code><br>
+                <code>animate bounce amplitude PIXELS duration Ns [repeat]</code><br>
+                <code>animate pulse from SIZE1 to SIZE2 duration Ns [repeat] [alternate]</code>
+            </div>
+           
+            <h4>Enhanced Colors <span class="feature-new">NEW</span></h4>
+            <div class="example">
+                <code>color #rgb</code> or <code>#rrggbb</code> - Hex colors<br>
+                <code>color rgba(r,g,b,a)</code> - RGBA with transparency<br>
+                <code>color colorname</code> - Named colors (red, blue, etc.)
+            </div>
+           
+            <h4>Sprite</h4>
+            <div class="example">
+                <code>sprite NAME at POSITION size WxH color COLOR [animations...]</code>
+            </div>
+           
+            <h4>Text</h4>
+            <div class="example">
+                <code>text "STRING" at POSITION font SIZEpx color COLOR [animations...]</code>
+            </div>
+           
+            <h4>Rectangle</h4>
+            <div class="example">
+                <code>rect NAME at POSITION size WxH color COLOR [stroke STROKE_COLOR] [animations...]</code>
+            </div>
+           
+            <h4>Image</h4>
+            <div class="example">
+                <code>image NAME at POSITION size WxH src "URL" [animations...]</code>
+            </div>
+           
+            <h4>Animation Modifiers</h4>
+            <div class="example">
+                <code>repeat</code> - Loop animation infinitely<br>
+                <code>alternate</code> - Reverse animation direction on each cycle<br>
+                <code>duration Ns</code> - Animation duration in seconds
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced DSL Parser with animations and advanced positioning
+        class AdvancedCanvasLayoutParser {
+            constructor() {
+                this.tokens = [];
+                this.current = 0;
+                this.canvasWidth = 800;
+                this.canvasHeight = 600;
+            }
+           
+    tokenize(input) {
+        // Regex for C-style line comments: \/\/[^\n\r]*
+        // Regex for generic function calls, now handles strings with parentheses inside:
+        // [a-zA-Z_][a-zA-Z0-9_]*\((?:[^)"']|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')*\)
+        // Regex for double-quoted strings, now handles escaped quotes: "(?:\\.|[^"\\])*"
+        const tokenRegex = /\/\/[^\n\r]*|[a-zA-Z_][a-zA-Z0-9_]*\((?:[^)"']|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')*\)|\d+x\d+|\d+px|\d+s|\d+\.\d+|\d+|#[a-fA-F0-9]{3,6}|"(?:\\.|[^"\\])*"|[a-zA-Z_][a-zA-Z0-9_]*|[{}(),+\-]|\S/g;
+        const allMatches = input.match(tokenRegex) || [];
+        
+        // Filter out the comment tokens
+        this.tokens = allMatches.filter(token => !token.startsWith('//'));
+        
+        this.current = 0;
+        return this.tokens;
+    }
+           
+            peek() {
+                return this.tokens[this.current];
+            }
+           
+            consume() {
+                return this.tokens[this.current++];
+            }
+           
+            expect(token) {
+                const current = this.consume();
+                if (current !== token) {
+					console.error(this.tokens.slice(this.current-2));
+                    throw new Error(`Expected '${token}', got '${current}'`);
+                }
+                return current;
+            }
+           
+            parseCanvas(input) {
+                this.tokenize(input.trim());
+               
+                this.expect('canvas');
+                const dimensions = this.consume();
+                const [width, height] = dimensions.split('x').map(Number);
+                this.canvasWidth = width;
+                this.canvasHeight = height;
+               
+                this.expect('{');
+               
+                const layers = [];
+                const elements = [];
+               
+                while (this.peek() && this.peek() !== '}') {
+                    if (this.peek() === 'layer') {
+                        layers.push(this.parseLayer());
+                    } else {
+                        elements.push(this.parseElement());
+                    }
+                }
+               
+                this.expect('}');
+               
+                return {
+                    type: 'canvas',
+                    width,
+                    height,
+                    layers,
+                    elements
+                };
+            }
+           
+            parseLayer() {
+                this.expect('layer');
+                const name = this.consume();
+                this.expect('{');
+               
+                const elements = [];
+                while (this.peek() && this.peek() !== '}') {
+                    elements.push(this.parseElement());
+                }
+               
+                this.expect('}');
+               
+                return {
+                    type: 'layer',
+                    name,
+                    elements
+                };
+            }
+           
+            parseElement() {
+                const type = this.consume();
+               
+                switch (type) {
+                    case 'sprite':
+                        return this.parseSprite();
+                    case 'text':
+                        return this.parseText();
+                    case 'rect':
+                        return this.parseRect();
+                    case 'image':
+                        return this.parseImage();
+                    default:
+						console.error(this.tokens.slice(this.current-2));
+                        throw new Error(`Unknown element type: ${type}`);
+                }
+            }
+           
+            parseSprite() {
+                const name = this.consume();
+                this.expect('at');
+                const position = this.parsePosition();
+                this.expect('size');
+                const size = this.parseSize();
+                this.expect('color');
+                const color = this.consume();
+               
+                const sprite = {
+                    type: 'sprite',
+                    name,
+                    x: position.x,
+                    y: position.y,
+                    width: size.width,
+                    height: size.height,
+                    color,
+                    animations: []
+                };
+               
+                // Parse animations
+                while (this.peek() === 'animate') {
+                    sprite.animations.push(this.parseAnimation());
+                }
+               
+                return sprite;
+            }
+           
+            parseText() {
+                const text = this.consume().replace(/"/g, '');
+                this.expect('at');
+                const position = this.parsePosition();
+                this.expect('font');
+                const fontStr = this.consume();
+                const fontSize = parseInt(fontStr.replace('px', ''));
+                this.expect('color');
+                const color = this.consume();
+               
+                const textElement = {
+                    type: 'text',
+                    text,
+                    x: position.x,
+                    y: position.y,
+                    fontSize,
+                    color,
+                    animations: []
+                };
+               
+                // Parse animations
+                while (this.peek() === 'animate') {
+                    textElement.animations.push(this.parseAnimation());
+                }
+               
+                return textElement;
+            }
+           
+            parseRect() {
+                const name = this.consume();
+                this.expect('at');
+                const position = this.parsePosition();
+                this.expect('size');
+                const size = this.parseSize();
+                this.expect('color');
+                const color = this.consume();
+               
+                const element = {
+                    type: 'rect',
+                    name,
+                    x: position.x,
+                    y: position.y,
+                    width: size.width,
+                    height: size.height,
+                    color,
+                    animations: []
+                };
+               
+                // Optional stroke
+                if (this.peek() === 'stroke') {
+                    this.consume();
+                    element.stroke = this.consume();
+                }
+               
+                // Parse animations
+                while (this.peek() === 'animate') {
+                    element.animations.push(this.parseAnimation());
+                }
+               
+                return element;
+            }
+           
+            parseImage() {
+                const name = this.consume();
+                this.expect('at');
+                const position = this.parsePosition();
+                this.expect('size');
+                const size = this.parseSize();
+                this.expect('src');
+                const src = this.consume().replace(/"/g, '');
+               
+                const element = {
+                    type: 'image',
+                    name,
+                    x: position.x,
+                    y: position.y,
+                    width: size.width,
+                    height: size.height,
+                    src,
+                    animations: []
+                };
+               
+                // Parse animations
+                while (this.peek() === 'animate') {
+                    element.animations.push(this.parseAnimation());
+                }
+               
+                return element;
+            }
+           
+            parsePosition() {
+                let posStr = this.consume();
+               let x=0;
+               let y=0;            
+
+			   if(isNaN(posStr)) {
+				   switch(posStr) {
+					case 'center':
+						x = this.canvasWidth / 2;
+						break;
+					case 'right':
+						x = this.canvasWidth;
+						break;
+					case 'left':
+						x = 0;
+						break;
+				   }
+			   } else {
+				x = parseInt(posStr);
+			   }
+
+			   posStr = this.consume();
+			   if(posStr!==",") {
+				   posStr = this.consume();
+					const value= parseInt(posStr);
+					x=x-value;
+					posStr = this.consume();
+			   }
+
+			   posStr = this.consume();
+			   if(isNaN(posStr)) {
+				   switch(posStr) {
+					case 'center':
+						y = this.canvasHeight / 2;
+						break;
+					case 'bottom':
+						y = this.canvasHeight;
+						break;
+					case 'top':
+						y = 0;
+						break;
+				   }
+			   } else {
+				y = parseInt(posStr);
+			   }			   
+
+			   if(this.peek()==="-") {
+				   posStr = this.consume();
+				   posStr = this.consume();
+					const value= parseInt(posStr);
+					y=y-value;				   
+			   } else if(this.peek()==="+") {
+				   posStr = this.consume();
+				   posStr = this.consume();
+					const value= parseInt(posStr);
+					y=y+value;				   
+			   }
+               
+
+                // // Handle relative positioning like center-100, right-50, etc.
+                // if (posStr.includes('center') || posStr.includes('right') || posStr.includes('left') || posStr.includes('top') || posStr.includes('bottom')) {
+                //     const nextToken = this.consume(); // Should be the Y coordinate or second part
+                //     return this.parseRelativePosition(posStr, nextToken);
+                // }
+                // // Handle special positioning
+                // if (posStr === 'center') {
+                //     return { x: this.canvasWidth / 2, y: this.canvasHeight / 2 };
+                // }
+                              
+                // Standard x,y positioning
+                //const [x, y] = posStr.split(',').map(Number);
+                return { x, y };
+            }
+           
+            parseRelativePosition(xPart, yPart) {
+                let x = 0, y = 0;
+               
+                // Parse X coordinate
+                if (xPart === 'center') {
+                    x = this.canvasWidth / 2;
+                } else if (xPart.startsWith('center-')) {
+                    x = this.canvasWidth / 2 - parseInt(xPart.split('-')[1]);
+                } else if (xPart.startsWith('center+')) {
+                    x = this.canvasWidth / 2 + parseInt(xPart.split('+')[1]);
+                } else if (xPart.startsWith('right-')) {
+                    x = this.canvasWidth - parseInt(xPart.split('-')[1]);
+                } else if (xPart.startsWith('left+')) {
+                    x = parseInt(xPart.split('+')[1]);
+                } else if (xPart === 'left') {
+                    x = 0;
+                } else if (xPart === 'right') {
+                    x = this.canvasWidth;
+                }
+               
+                // Parse Y coordinate
+                if (typeof yPart === 'string') {
+                    if (yPart === 'center') {
+                        y = this.canvasHeight / 2;
+                    } else if (yPart.startsWith('center-')) {
+                        y = this.canvasHeight / 2 - parseInt(yPart.split('-')[1]);
+                    } else if (yPart.startsWith('center+')) {
+                        y = this.canvasHeight / 2 + parseInt(yPart.split('+')[1]);
+                    } else if (yPart.startsWith('bottom-')) {
+                        y = this.canvasHeight - parseInt(yPart.split('-')[1]);
+                    } else if (yPart.startsWith('top+')) {
+                        y = parseInt(yPart.split('+')[1]);
+                    } else if (yPart === 'top') {
+                        y = 0;
+                    } else if (yPart === 'bottom') {
+                        y = this.canvasHeight;
+                    } else {
+                        y = parseInt(yPart);
+                    }
+                } else {
+                    y = yPart;
+                }
+               
+                return { x, y };
+            }
+           
+            parseSize() {
+                const sizeStr = this.consume();
+                const [width, height] = sizeStr.split('x').map(Number);
+                return { width, height };
+            }
+           
+            parseAnimation() {
+                this.expect('animate');
+                const type = this.consume();
+               
+                const animation = { type };
+               
+                switch (type) {
+                    case 'move':
+                        this.expect('from');
+                        animation.from = this.parsePosition();
+                        this.expect('to');
+                        animation.to = this.parsePosition();
+                        break;
+                    case 'fade':
+                    case 'rotate':
+                    case 'scale':
+                        this.expect('from');
+                        animation.from = parseFloat(this.consume());
+                        this.expect('to');
+                        animation.to = parseFloat(this.consume());
+                        break;
+                    case 'bounce':
+                        this.expect('amplitude');
+                        animation.amplitude = parseInt(this.consume());
+                        break;
+                    case 'pulse':
+                        this.expect('from');
+                        animation.from = parseFloat(this.consume());
+                        this.expect('to');
+                        animation.to = parseFloat(this.consume());
+                        break;
+                }
+               
+                this.expect('duration');
+                const durationStr = this.consume();
+				const unitStr = this.consume();
+                animation.duration = parseFloat(durationStr) * 1000; // Convert to ms
+               
+                // Optional modifiers
+                while (this.peek() === 'repeat' || this.peek() === 'alternate') {
+                    const modifier = this.consume();
+                    animation[modifier] = true;
+                }
+               
+                return animation;
+            }
+        }
+       
+        // Enhanced Canvas Renderer with animation support
+        class AdvancedCanvasRenderer {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.animationFrame = null;
+                this.startTime = 0;
+                this.isAnimating = false;
+                this.layout = null;
+            }
+           
+            render(layout) {
+                this.layout = layout;
+                this.canvas.width = layout.width;
+                this.canvas.height = layout.height;
+               
+                if (this.isAnimating) {
+                    this.renderFrame();
+                } else {
+                    this.renderStatic();
+                }
+            }
+           
+            renderStatic() {
+                this.ctx.clearRect(0, 0, this.layout.width, this.layout.height);
+               
+                // Render layers first
+                this.layout.layers.forEach(layer => {
+                    layer.elements.forEach(element => {
+                        this.renderElement(element, 0);
+                    });
+                });
+               
+                // Then render standalone elements
+                this.layout.elements.forEach(element => {
+                    this.renderElement(element, 0);
+                });
+            }
+           
+            startAnimation() {
+                if (!this.layout) return;
+               
+                this.isAnimating = true;
+                this.startTime = performance.now();
+                this.renderFrame();
+            }
+           
+            stopAnimation() {
+                this.isAnimating = false;
+                if (this.animationFrame) {
+                    cancelAnimationFrame(this.animationFrame);
+                }
+                this.renderStatic();
+            }
+           
+            renderFrame() {
+                if (!this.isAnimating) return;
+               
+                const currentTime = performance.now();
+                const elapsed = currentTime - this.startTime;
+               
+                this.ctx.clearRect(0, 0, this.layout.width, this.layout.height);
+               
+                // Render layers
+                this.layout.layers.forEach(layer => {
+                    layer.elements.forEach(element => {
+                        this.renderElement(element, elapsed);
+                    });
+                });
+               
+                // Render standalone elements
+                this.layout.elements.forEach(element => {
+                    this.renderElement(element, elapsed);
+                });
+               
+                this.animationFrame = requestAnimationFrame(() => this.renderFrame());
+            }
+           
+            renderElement(element, elapsed) {
+                const animatedProps = this.calculateAnimatedProperties(element, elapsed);
+               
+                this.ctx.save();
+               
+                // Apply transformations
+                if (animatedProps.alpha !== undefined) {
+                    this.ctx.globalAlpha = animatedProps.alpha;
+                }
+               
+                if (animatedProps.rotation !== undefined) {
+                    const centerX = animatedProps.x + element.width / 2;
+                    const centerY = animatedProps.y + element.height / 2;
+                    this.ctx.translate(centerX, centerY);
+                    this.ctx.rotate((animatedProps.rotation * Math.PI) / 180);
+                    this.ctx.translate(-centerX, -centerY);
+                }
+               
+                if (animatedProps.scale !== undefined) {
+                    const centerX = animatedProps.x + element.width / 2;
+                    const centerY = animatedProps.y + element.height / 2;
+                    this.ctx.translate(centerX, centerY);
+                    this.ctx.scale(animatedProps.scale, animatedProps.scale);
+                    this.ctx.translate(-centerX, -centerY);
+                }
+               
+                // Create modified element for rendering
+                const renderElement = { ...element, ...animatedProps };
+               
+                switch (element.type) {
+                    case 'sprite':
+                        this.renderSprite(renderElement);
+                        break;
+                    case 'text':
+                        this.renderText(renderElement);
+                        break;
+                    case 'rect':
+                        this.renderRect(renderElement);
+                        break;
+                    case 'image':
+                        this.renderImage(renderElement);
+                        break;
+                }
+               
+                this.ctx.restore();
+            }
+           
+            calculateAnimatedProperties(element, elapsed) {
+                const props = {
+                    x: element.x,
+                    y: element.y,
+                    alpha: 1,
+                    rotation: 0,
+                    scale: 1
+                };
+               
+                if (!element.animations) return props;
+               
+                element.animations.forEach(animation => {
+                    const progress = this.getAnimationProgress(animation, elapsed);
+                   
+                    switch (animation.type) {
+                        case 'move':
+                            props.x = this.lerp(animation.from.x, animation.to.x, progress);
+                            props.y = this.lerp(animation.from.y, animation.to.y, progress);
+                            break;
+                        case 'fade':
+                            props.alpha = this.lerp(animation.from, animation.to, progress);
+                            break;
+                        case 'rotate':
+                            props.rotation = this.lerp(animation.from, animation.to, progress);
+                            break;
+                        case 'scale':
+                            props.scale = this.lerp(animation.from, animation.to, progress);
+                            break;
+                        case 'bounce':
+                            const bounceOffset = Math.sin(progress * Math.PI * 2) * animation.amplitude;
+                            props.y = element.y + bounceOffset;
+                            break;
+                        case 'pulse':
+                            const pulseScale = this.lerp(animation.from, animation.to, progress);
+                            props.scale = pulseScale;
+                            break;
+                    }
+                });
+               
+                return props;
+            }
+           
+            getAnimationProgress(animation, elapsed) {
+                const cycle = elapsed % animation.duration;
+                let progress = cycle / animation.duration;
+               
+                if (animation.alternate) {
+                    const fullCycle = (elapsed / animation.duration) % 2;
+                    if (fullCycle >= 1) {
+                        progress = 1 - progress;
+                    }
+                }
+               
+                if (!animation.repeat && elapsed > animation.duration) {
+                    progress = animation.alternate ? 0 : 1;
+                }
+               
+                return Math.max(0, Math.min(1, progress));
+            }
+           
+            lerp(start, end, progress) {
+                return start + (end - start) * progress;
+            }
+           
+            renderSprite(sprite) {
+                this.ctx.fillStyle = sprite.color;
+                this.ctx.fillRect(sprite.x, sprite.y, sprite.width, sprite.height);
+               
+                this.ctx.strokeStyle = '#333';
+                this.ctx.lineWidth = 1;
+                this.ctx.strokeRect(sprite.x, sprite.y, sprite.width, sprite.height);
+            }
+           
+            renderText(text) {
+                this.ctx.fillStyle = text.color;
+                this.ctx.font = `${text.fontSize}px Arial`;
+                this.ctx.fillText(text.text, text.x, text.y);
+            }
+           
+            renderRect(rect) {
+                this.ctx.fillStyle = rect.color;
+                this.ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+               
+                if (rect.stroke) {
+                    this.ctx.strokeStyle = rect.stroke;
+                    this.ctx.lineWidth = 2;
+                    this.ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+                }
+            }
+           
+            renderImage(image) {
+                this.ctx.fillStyle = '#f0f0f0';
+                this.ctx.fillRect(image.x, image.y, image.width, image.height);
+               
+                this.ctx.setLineDash([5, 5]);
+                this.ctx.strokeStyle = '#999';
+                this.ctx.lineWidth = 2;
+                this.ctx.strokeRect(image.x, image.y, image.width, image.height);
+                this.ctx.setLineDash([]);
+               
+                this.ctx.fillStyle = '#666';
+                this.ctx.font = '12px Arial';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('IMG', image.x + image.width/2, image.y + image.height/2 + 4);
+                this.ctx.textAlign = 'left';
+            }
+        }
+       
+        // Initialize
+        const parser = new AdvancedCanvasLayoutParser();
+        const canvas = document.getElementById('canvas');
+        const renderer = new AdvancedCanvasRenderer(canvas);
+        const dslInput = document.getElementById('dslInput');
+        const parsedOutput = document.getElementById('parsedOutput');
+        const messages = document.getElementById('messages');
+        const playBtn = document.getElementById('playBtn');
+       
+        let isPlaying = false;
+       
+        function showMessage(text, type = 'info') {
+            messages.innerHTML = `<div class="${type}">${text}</div>`;
+            setTimeout(() => {
+                messages.innerHTML = '';
+            }, 3000);
+        }
+       
+        function parseAndRender() {
+            try {
+                const input = dslInput.value.trim();
+                if (!input) {
+                    showMessage('Please enter some DSL code.', 'error');
+                    return;
+                }
+               
+                const layout = parser.parseCanvas(input);
+                parsedOutput.value = JSON.stringify(layout, null, 2);
+                renderer.render(layout);
+                showMessage('Successfully parsed and rendered!', 'success');
+            } catch (error) {
+                showMessage(`Parse Error: ${error.message}`, 'error');
+                parsedOutput.value = `Error: ${error.message}`;
+            }
+        }
+       
+        function toggleAnimation() {
+            if (isPlaying) {
+                renderer.stopAnimation();
+                playBtn.innerHTML = '▶ Play Animation';
+                playBtn.className = 'play-btn';
+                isPlaying = false;
+            } else {
+                renderer.startAnimation();
+                playBtn.innerHTML = '⏸ Pause Animation';
+                playBtn.className = 'pause-btn';
+                isPlaying = true;
+            }
+        }
+       
+        function loadExample(num) {
+            const examples = {
+                1: `canvas 800x600 {
+  layer background {
+    // blue sky
+    rect sky at 0,0 size 800x300 color #87ceeb
+    // green ground
+    rect ground at 0,300 size 800x300 color #90ee90
+  }
+ 
+  layer objects {
+    sprite player at center-100,400 size 32x32 color #ff6b6b
+      animate move from center-100,400 to center+100,400 duration 3s repeat alternate
+      animate fade from 1 to 0.7 duration 2s repeat alternate
+   
+    sprite enemy at right-80,350 size 24x24 color #ff8e53
+      animate rotate from 0 to 360 duration 2s repeat
+   
+    text "Adventure Game!" at center,50 font 32px color #2d3436
+      animate bounce amplitude 10 duration 1.5s repeat
+  }
+ 
+  layer ui {
+    rect panel at 10,10 size 200x80 color rgba(0,0,0,0.7) stroke #fff
+    text "Health: 100%" at 20,35 font 14px color #00ff00
+    text "Score: 1250" at 20,55 font 14px color #ffff00
+  }
+}`,
+                2: `canvas 1000x700 {
+  layer background {
+    rect main_bg at 0,0 size 1000x700 color #f8f9fa
+  }
+ 
+  layer ui_elements {
+    rect header at 0,0 size 1000x80 color #343a40 stroke #6c757d
+    text "Dashboard" at 50,45 font 28px color #fff
+   
+    rect sidebar at 0,80 size 200x620 color #495057
+    text "Menu" at 20,120 font 18px color #fff
+    text "Settings" at 20,150 font 16px color #adb5bd
+    text "Profile" at 20,180 font 16px color #adb5bd
+   
+    rect content at 220,100 size 760x580 color #fff stroke #dee2e6
+    text "Main Content Area" at 250,140 font 20px color #495057
+   
+    sprite notification at right-50,20 size 30x30 color #dc3545
+      animate pulse from 1 to 1.2 duration 1s repeat alternate
+   
+    rect progress_bar at 250,200 size 400x20 color #e9ecef stroke #ced4da
+    rect progress_fill at 250,200 size 240x20 color #28a745
+      animate scale from 0.6 to 1 duration 2s repeat alternate
+  }
+}`,
+                3: `canvas 900x600 {
+  layer particles {
+    sprite particle1 at 100,100 size 8x8 color #ff6b6b
+      animate move from 100,100 to 200,150 duration 2s repeat
+      animate fade from 1 to 0 duration 2s repeat
+   
+    sprite particle2 at 150,120 size 6x6 color #4ecdc4
+      animate move from 150,120 to 300,200 duration 2.5s repeat
+      animate rotate from 0 to 180 duration 1s repeat
+   
+    sprite particle3 at 120,80 size 10x10 color #45b7d1
+      animate move from 120,80 to 250,300 duration 3s repeat
+      animate scale from 0.5 to 1.5 duration 1.5s repeat alternate
+  }
+ 
+  layer main {
+    sprite sun at center,center size 60x60 color #ffd700
+      animate pulse from 1 to 1.3 duration 2s repeat alternate
+      animate rotate from 0 to 360 duration 10s repeat
+   
+    sprite orbit1 at center-100,center size 20x20 color #ff8e53
+      animate move from center-100,center to center+100,center duration 4s repeat
+      animate rotate from 0 to 720 duration 4s repeat
+   
+    sprite orbit2 at center,center-80 size 15x15 color #a8e6cf
+      animate move from center,center-80 to center,center+80 duration 3s repeat alternate
+      animate fade from 0.5 to 1 duration 1.5s repeat alternate
+  }
+ 
+  layer ui {
+    text "Complex Animation Demo" at 20,30 font 24px color #2d3436
+      animate bounce amplitude 5 duration 2s repeat
+   
+    rect info_panel at 20,bottom-100 size 300x80 color rgba(0,0,0,0.8) stroke #fff
+    text "Multiple layers with" at 30,bottom-75 font 14px color #fff
+    text "synchronized animations" at 30,bottom-55 font 14px color #fff
+  }
+}`
+            };
+           
+            dslInput.value = examples[num];
+            parseAndRender();
+        }
+       
+        function clearCanvas() {
+            dslInput.value = '';
+            parsedOutput.value = '';
+            renderer.stopAnimation();
+            renderer.ctx.clearRect(0, 0, canvas.width, canvas.height);
+            isPlaying = false;
+            playBtn.innerHTML = '▶ Play Animation';
+            playBtn.className = 'play-btn';
+            showMessage('Canvas cleared.', 'success');
+        }
+       
+        // Auto-parse on input (with debouncing)
+        let parseTimeout;
+        dslInput.addEventListener('input', () => {
+            clearTimeout(parseTimeout);
+            parseTimeout = setTimeout(() => {
+                parseAndRender();
+                if (isPlaying) {
+                    renderer.startAnimation();
+                }
+            }, 1000);
+        });
+       
+        // Initial render
+        parseAndRender();
+    </script>
+</body>
+</html>

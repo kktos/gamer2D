@@ -7,9 +7,9 @@ import { getClassName } from "../utils/object.util";
 import { LocalDB } from "../utils/storage.util";
 import type { Layer } from "./Layer";
 import { BackgroundLayer } from "./background.layer";
-import { DisplayLayer } from "./display.layer";
 import { EntitiesLayer } from "./entities.layer";
 import { GlobalsLayer } from "./globals.layer";
+import { UiLayer } from "./ui.layer";
 import { WorldCollisionLayer } from "./worldcollision.layer";
 
 const layerClasses = {};
@@ -18,7 +18,7 @@ const layerNames = {};
 setupLayers([
 	{ name: "background", classType: BackgroundLayer },
 	{ name: "worldcollision", classType: WorldCollisionLayer },
-	{ name: "display", classType: DisplayLayer },
+	{ name: "ui", classType: UiLayer },
 	{ name: "entities", classType: EntitiesLayer },
 	{ name: "globals", classType: GlobalsLayer },
 ]);

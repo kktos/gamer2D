@@ -1,31 +1,24 @@
 import type { Entity } from "../entities/Entity";
-import { EntityPool } from "../entities/EntityPool";
 import type { Font } from "../game/Font";
 import { GLOBAL_VARIABLES } from "../game/globals";
 import type { GameContext } from "../game/types/GameContext";
 import type { BaseEvent, KeyEvent } from "../game/types/GameEvent";
 import { BBox } from "../maths/BBox.class";
 import type { Scene } from "../scene/Scene";
-import type { TLayerDisplaySheet } from "../script/compiler/layers/display/display.rules";
-import type { TStatement } from "../script/compiler/layers/display/layout/layout.rules";
-import type { TRect } from "../script/compiler/layers/display/layout/rect.rules";
 import type { TView } from "../script/compiler/layers/display/layout/view.rules";
 import type { TEventHandlerDict } from "../script/compiler/layers/display/on.rules";
-import { evalNumber, evalNumberValue } from "../script/engine/eval.script";
-import { execAction, execSet } from "../script/engine/exec.script";
-import { OP_TYPES } from "../types/operation.types";
+import type { TNeatCommand } from "../script/compiler2/types/commands.type";
+import { evalNumberValue } from "../script/engine/eval.script";
+import { execAction } from "../script/engine/exec.script";
+import { runPreparationPhase, runRenderingPhase } from "../script/engine2/exec";
+import type { ExecutionContext } from "../script/engine2/exec.type";
+import type { TNeatFunctions } from "../utils/functionDict.utils";
 import { type TVarTypes, TVars } from "../utils/vars.utils";
-import { UILayer } from "./UILayer";
-import { GameMenu } from "./display/menu/menu.manager";
-import { addPool } from "./display/pool.manager";
-import { repeat } from "./display/repeat.manager";
-import { initSounds } from "./display/sound.manager";
-import { addSprite } from "./display/sprite.manager";
-import { renderSprite } from "./display/sprite.renderer";
-import { addText } from "./display/text.manager";
-import { Timers } from "./display/timers.class";
+import { HTMLLayer } from "./HTMLLayer";
+import type { GameMenu } from "./display/menu/menu.manager";
+import type { Timers } from "./display/timers.class";
 import type { View } from "./display/views/View";
-import { initViews, viewClasses } from "./display/views/View.factory";
+import { viewClasses } from "./display/views/View.factory";
 
 type TViewDef = TView & {
 	component?: View;
@@ -33,12 +26,13 @@ type TViewDef = TView & {
 	bbox?: BBox;
 };
 
-export class DisplayLayer extends UILayer {
+export class UiLayer extends HTMLLayer {
 	public timers: Timers | null;
 	public font: Font;
 	public vars: TVars;
 
-	private layout: TStatement[];
+	private layout: TNeatCommand[];
+
 	private time: number;
 	private blinkFlag: boolean;
 	// private lastJoyTime: number;
@@ -46,40 +40,45 @@ export class DisplayLayer extends UILayer {
 
 	private menu: GameMenu | null;
 
-	constructor(gc: GameContext, parent: Scene, sheet: TLayerDisplaySheet) {
-		super(gc, parent, "display", sheet.ui);
+	constructor(gc: GameContext, parent: Scene, sheet) {
+		super(gc, parent, "ui", sheet.ui);
 
 		const rezMgr = gc.resourceManager;
 		this.font = rezMgr.get<Font>("font", sheet.font ?? gc.resourceManager.mainFontName);
 
-		this.layout = sheet.layout as TStatement[];
+		this.layout = sheet.data;
 		this.time = 0;
 		this.blinkFlag = false;
 		// this.lastJoyTime = 0;
 
 		this.vars = new TVars(GLOBAL_VARIABLES);
 		this.initVars();
-		EntityPool.clear();
+		// EntityPool.clear();
 
-		this.views = this.layout.filter((op) => op.type === OP_TYPES.VIEW) as unknown as TViewDef[];
-		initViews({ canvas: gc.viewport.canvas, gc, vars: this.vars, layer: this });
+		// this.views = this.layout.filter((op) => op.type === OP_TYPES.VIEW) as unknown as TViewDef[];
+		// initViews({ canvas: gc.viewport.canvas, gc, vars: this.vars, layer: this });
+		this.views = [];
 
-		const menus = this.layout.filter((op) => op.type === OP_TYPES.MENU);
-		this.menu = GameMenu.create(gc, this, menus);
+		// const menus = this.layout.filter((op) => op.type === OP_TYPES.MENU);
+		// this.menu = GameMenu.create(gc, this, menus);
+		this.menu = null;
 
 		this.prepareRendering(gc);
-		this.menu?.prepareMenu();
 
-		this.timers = Timers.createTimers(sheet);
-		if (sheet.on) this.initEventHandlers(sheet.on, parent);
-		if (sheet.sounds) this.vars.set("sounds", initSounds({ soundDefs: sheet.sounds, parent, resourceManager: rezMgr }));
+		// this.menu?.prepareMenu();
+
+		// this.timers = Timers.createTimers(sheet);
+		this.timers = null;
+		// if (sheet.on) this.initEventHandlers(sheet.on, parent);
+		// if (sheet.sounds) this.vars.set("sounds", initSounds({ soundDefs: sheet.sounds, parent, resourceManager: rezMgr }));
 	}
 
 	destroy() {
-		for (let idx = 0; idx < this.views.length; idx++) {
-			const view = this.views[idx];
-			view.component?.destroy();
-		}
+		if (this.views)
+			for (let idx = 0; idx < this.views.length; idx++) {
+				const view = this.views[idx];
+				view.component?.destroy();
+			}
 	}
 
 	initVars() {
@@ -111,42 +110,50 @@ export class DisplayLayer extends UILayer {
 	}
 
 	prepareRendering(gc: GameContext) {
-		const views = this.layout.filter((op) => op.type === OP_TYPES.VIEW);
-		for (const view of views) this.vars.set(view.id, 0);
+		const context: ExecutionContext = {
+			variables: this.vars,
+			functions: null as unknown as TNeatFunctions,
+			gc,
+		};
 
-		// console.log(">>> LAYOUT", this.layout);
+		this.layout = runPreparationPhase(this.layout, context);
 
-		for (let idx = 0; idx < this.layout.length; idx++) {
-			const op = this.layout[idx];
-			switch (op.type) {
-				case OP_TYPES.TEXT: {
-					op.entity = addText(this, op);
-					break;
-				}
-				case OP_TYPES.SPRITE: {
-					op.entity = addSprite(this, op);
-					break;
-				}
-				case OP_TYPES.POOL: {
-					op.entity = addPool(this, op);
-					break;
-				}
-				case OP_TYPES.ANIM: {
-					this.vars.set(op.name, op);
-					break;
-				}
-				case OP_TYPES.SET: {
-					execSet({ vars: this.vars }, op);
-					break;
-				}
-				case OP_TYPES.REPEAT:
-					repeat(op, (item) => this.layout.push(item), this.vars);
-					break;
-				case OP_TYPES.VIEW:
-					this.prepareView(gc, op);
-					break;
-			}
-		}
+		console.log("prepareRendering", this.layout);
+
+		// const views = this.layout.filter((op) => op.type === OP_TYPES.VIEW);
+		// for (const view of views) this.vars.set(view.id, 0);
+
+		// for (let idx = 0; idx < this.layout.length; idx++) {
+		// 	const op = this.layout[idx];
+		// 	switch (op.type) {
+		// 		case OP_TYPES.TEXT: {
+		// 			op.entity = addText(this, op);
+		// 			break;
+		// 		}
+		// 		case OP_TYPES.SPRITE: {
+		// 			op.entity = addSprite(this, op);
+		// 			break;
+		// 		}
+		// 		case OP_TYPES.POOL: {
+		// 			op.entity = addPool(this, op);
+		// 			break;
+		// 		}
+		// 		case OP_TYPES.ANIM: {
+		// 			this.vars.set(op.name, op);
+		// 			break;
+		// 		}
+		// 		case OP_TYPES.SET: {
+		// 			execSet({ vars: this.vars }, op);
+		// 			break;
+		// 		}
+		// 		case OP_TYPES.REPEAT:
+		// 			repeat(op, (item) => this.layout.push(item), this.vars);
+		// 			break;
+		// 		case OP_TYPES.VIEW:
+		// 			this.prepareView(gc, op);
+		// 			break;
+		// 	}
+		// }
 	}
 
 	prepareView(gc: GameContext, viewDef: TViewDef) {
@@ -212,29 +219,29 @@ export class DisplayLayer extends UILayer {
 		}
 	}
 
-	renderRect({ viewport: { ctx } }, op: TRect) {
-		let x = evalNumber({ vars: this.vars }, op.pos[0]);
-		let y = evalNumber({ vars: this.vars }, op.pos[1]);
-		let w = evalNumber({ vars: this.vars }, op.width);
-		let h = evalNumber({ vars: this.vars }, op.height);
+	// renderRect({ viewport: { ctx } }, op: TRect) {
+	// 	let x = evalNumber({ vars: this.vars }, op.pos[0]);
+	// 	let y = evalNumber({ vars: this.vars }, op.pos[1]);
+	// 	let w = evalNumber({ vars: this.vars }, op.width);
+	// 	let h = evalNumber({ vars: this.vars }, op.height);
 
-		if (op.pad) {
-			const padX = evalNumber({ vars: this.vars }, op.pad[0]);
-			const padY = evalNumber({ vars: this.vars }, op.pad[1]);
-			x = x - padX;
-			y = y - padY;
-			w = w + padX * 2;
-			h = h + padY * 2;
-		}
+	// 	if (op.pad) {
+	// 		const padX = evalNumber({ vars: this.vars }, op.pad[0]);
+	// 		const padY = evalNumber({ vars: this.vars }, op.pad[1]);
+	// 		x = x - padX;
+	// 		y = y - padY;
+	// 		w = w + padX * 2;
+	// 		h = h + padY * 2;
+	// 	}
 
-		if (op.fill) {
-			ctx.fillStyle = op.fill.value;
-			ctx.fillRect(x, y, w, h);
-		} else {
-			ctx.strokeStyle = op.color?.value;
-			ctx.strokeRect(x, y, w, h);
-		}
-	}
+	// 	if (op.fill) {
+	// 		ctx.fillStyle = op.fill.value;
+	// 		ctx.fillRect(x, y, w, h);
+	// 	} else {
+	// 		ctx.strokeStyle = op.color?.value;
+	// 		ctx.strokeRect(x, y, w, h);
+	// 	}
+	// }
 
 	renderView(gc: GameContext, op) {
 		op.component.render(gc);
@@ -254,22 +261,40 @@ export class DisplayLayer extends UILayer {
 		this.time += (gc.dt * 1000) | 0;
 		if (!((this.time % 500) | 0)) this.blinkFlag = !this.blinkFlag;
 
-		for (let idx = 0; idx < this.layout.length; idx++) {
-			const op = this.layout[idx];
-			switch (op.type) {
-				case OP_TYPES.IMAGE:
-					renderSprite(gc, this, op);
-					break;
-				case OP_TYPES.MENU:
-					this.menu?.renderMenu(ctx);
-					break;
-				case OP_TYPES.RECT:
-					this.renderRect(gc, op);
-					break;
-				case OP_TYPES.VIEW:
-					this.renderView(gc, op);
-					break;
-			}
-		}
+		const context: ExecutionContext = {
+			renderer: {
+				drawRect: (x, y, width, height, color, fill) => {
+					if (fill) {
+						ctx.fillStyle = fill;
+						ctx.fillRect(x, y, width, height);
+					}
+					ctx.strokeStyle = color;
+					ctx.strokeRect(x, y, width, height);
+				},
+			},
+
+			variables: this.vars,
+			functions: null as unknown as TNeatFunctions,
+		};
+
+		runRenderingPhase(this.layout, context);
+
+		// for (let idx = 0; idx < this.layout.length; idx++) {
+		// 	const op = this.layout[idx];
+		// 	switch (op.type) {
+		// 		case OP_TYPES.IMAGE:
+		// 			renderSprite(gc, this, op);
+		// 			break;
+		// 		case OP_TYPES.MENU:
+		// 			this.menu?.renderMenu(ctx);
+		// 			break;
+		// 		case OP_TYPES.RECT:
+		// 			this.renderRect(gc, op);
+		// 			break;
+		// 		case OP_TYPES.VIEW:
+		// 			this.renderView(gc, op);
+		// 			break;
+		// 	}
+		// }
 	}
 }

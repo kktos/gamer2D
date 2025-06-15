@@ -1,5 +1,5 @@
-import type { TupleToUnion } from "../../../../../types/typescript.types";
 import type { ArgVariable } from "../../../../../types/value.types";
+import { ALIGN_TYPES } from "../../../../compiler2/types/align.type";
 import { tokens } from "../../../lexer";
 
 const NUMBER = 1;
@@ -8,16 +8,6 @@ const VALIGN = 3;
 const COLOR = 4;
 const ANIM = 5;
 const TRAITS = 6;
-
-export const ALIGN_TYPES = {
-	LEFT: 1,
-	RIGHT: 2,
-	TOP: 3,
-	BOTTOM: 4,
-	CENTER: 5,
-} as const;
-
-export type TAlignType = TupleToUnion<[(typeof ALIGN_TYPES)[keyof typeof ALIGN_TYPES]]>;
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class TextSpritePropsRules {

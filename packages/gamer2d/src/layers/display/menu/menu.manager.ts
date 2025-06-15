@@ -9,7 +9,7 @@ import type { TRepeatItem } from "../../../script/compiler/layers/display/layout
 import type { TActionStatement } from "../../../script/compiler/shared/action.rules";
 import { execAction } from "../../../script/engine/exec.script";
 import { OP_TYPES, OP_TYPES_STR } from "../../../types/operation.types";
-import type { DisplayLayer } from "../../display.layer";
+import type { UiLayer } from "../../ui.layer";
 import { repeat } from "../repeat.manager";
 import { loadSprite, renderSprite } from "../sprite.renderer";
 import { computeBBox } from "./menu.utils";
@@ -23,7 +23,7 @@ export class GameMenu {
 	private DefaultColorSelectedText: string;
 	private DefaultColorSelectedRect: string;
 
-	static create(gc: GameContext, layer: DisplayLayer, menus: TMenu[] | null): GameMenu | null {
+	static create(gc: GameContext, layer: UiLayer, menus: TMenu[] | null): GameMenu | null {
 		if (!menus || menus.length === 0) return null;
 		if (menus.length > 1) console.error("Only one menu is allowed per viewport. Using the first one.");
 		return new GameMenu(gc, layer, menus[0]);
@@ -31,7 +31,7 @@ export class GameMenu {
 
 	constructor(
 		private gc: GameContext,
-		private layer: DisplayLayer,
+		private layer: UiLayer,
 		private menu: TMenu & SelectionSprites,
 	) {
 		this.itemSelected = 0;
@@ -39,17 +39,17 @@ export class GameMenu {
 		this.DefaultColorSelectedText = gc.resourceManager.settings.get("MENU.COLORS.SELECTED_TEXT") as string;
 		this.DefaultColorSelectedRect = gc.resourceManager.settings.get("MENU.COLORS.SELECT_RECT") as string;
 
+		const defaultKeys = {
+			previous: ["ArrowUp", "ArrowLeft"],
+			next: ["ArrowDown", "ArrowRight"],
+			select: ["Enter"],
+		};
+		const keys = {
+			previous: menu.keys?.previous ?? defaultKeys.previous,
+			next: menu.keys?.next ?? defaultKeys.next,
+			select: menu.keys?.select ?? defaultKeys.select,
+		};
 		this.keys = {};
-		const keys = menu.keys ?? {};
-		if (!keys.previous) {
-			keys.previous = ["ArrowUp", "ArrowLeft"];
-		}
-		if (!keys.next) {
-			keys.next = ["ArrowDown", "ArrowRight"];
-		}
-		if (!keys.select) {
-			keys.select = ["Enter"];
-		}
 		for (const key of keys.previous) this.keys[key] = () => this.selectPreviousItem();
 		for (const key of keys.next) this.keys[key] = () => this.selectNextItem();
 		for (const key of keys.select) this.keys[key] = () => this.execMenuItemAction();

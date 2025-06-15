@@ -2,19 +2,13 @@
 
 BODY {
 	background-color: rgb(83, 82, 82);
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	margin: 0;
 	font: 1em "PressStart2P", monospace;
 }
 #game {
-	position: fixed;
+	/* position: fixed;
 	margin: auto;
 	inset: 0;
-	width: 90%;
+	width: 90%; */
 	border: 1px solid white;
 }
 INPUT {

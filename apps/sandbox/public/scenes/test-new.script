@@ -1,3 +1,4 @@
+// test-new.script
 display "menu" {
 
 	showCursor
@@ -110,7 +111,7 @@ display "menu" {
 			dir(left)
 			line(-1, 55,28, 520,28)
 		}
-		sprite "zen-chan" at 0,0 anim patrolRight
+		// sprite "zen-chan" at 0,0 anim patrolRight
 		
 		// ZenChan moving left to right
 		animation patrolLeft speed 60 repeat {
@@ -120,7 +121,7 @@ display "menu" {
 			dir(right)
 			line(1, 55,28, 520,28)
 		}
-		sprite "zen-chan" at 0,0 anim patrolLeft
+		// sprite "zen-chan" at 0,0 anim patrolLeft
 	}
 	
 	// === BUBBLE POOL SYSTEM ===

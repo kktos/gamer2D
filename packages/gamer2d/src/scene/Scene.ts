@@ -3,9 +3,9 @@ import { EventEmitter } from "../events/EventEmitter";
 import { TaskList } from "../game/TaskList";
 import type { GameContext } from "../game/types/GameContext";
 import { enableDebug } from "../inspectors/debug-manager.class";
+import type { HTMLLayer } from "../layers/HTMLLayer";
 import type { Layer } from "../layers/Layer";
 import { createLayerByName } from "../layers/Layer.factory";
-import type { UILayer } from "../layers/UILayer";
 import { BBox } from "../maths/BBox.class";
 import type { TSceneSheet } from "../script/compiler/scenes/scene.rules";
 import { generateID } from "../utils/id.util";
@@ -26,7 +26,7 @@ export class Scene {
 	public id: string;
 	public name: string;
 
-	public receiver: UILayer | null;
+	public receiver: HTMLLayer | null;
 
 	// once created always there (e.g : Game scene vs Level scene)
 	public isPermanent: boolean;
@@ -73,6 +73,9 @@ export class Scene {
 		this.tasks = new TaskList();
 		this.setTaskHandlers(gc);
 
+		// for the layers
+		this.gc.scene = this;
+
 		for (const layerDef of sheet.layers) this.addLayer(layerDef.type, createLayerByName(gc, layerDef.type, this, layerDef));
 	}
 
@@ -106,7 +109,7 @@ export class Scene {
 	}
 	run() {
 		this.isRunning = true;
-		this.gc.scene = this;
+		// this.gc.scene = this;
 		this.events.emit(Scene.SCENE_STARTED, this.filename);
 		return this;
 	}

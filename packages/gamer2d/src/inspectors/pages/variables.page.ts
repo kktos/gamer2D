@@ -1,11 +1,11 @@
-import type { DisplayLayer } from "../../layers/display.layer";
+import type { UiLayer } from "../../layers/ui.layer";
 import type { Director } from "../../scene/Director";
 import type { PropertiesInspector } from "../elements/properties.inspector";
 import { DebugPage } from "./debug-page.class";
 
 export class VariablesPage extends DebugPage {
 	private element!: HTMLElement;
-	private layer!: DisplayLayer;
+	private layer!: UiLayer;
 
 	constructor(
 		public coppola: Director,
@@ -24,7 +24,7 @@ export class VariablesPage extends DebugPage {
 	open() {
 		const varsInspector = this.element.querySelector("properties-inspector") as PropertiesInspector;
 		const vars = this.params.data;
-		this.coppola.currentScene.useLayer("entities", (layer: DisplayLayer) => {
+		this.coppola.currentScene.useLayer("entities", (layer: UiLayer) => {
 			this.layer = layer;
 			layer.debugCallback = () => varsInspector.update(vars);
 		});

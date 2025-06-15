@@ -6,13 +6,13 @@ import type { TText } from "../../../script/compiler/layers/display/layout/text.
 import type { TVarSounds } from "../../../types/engine.types";
 import { LocalDB } from "../../../utils/storage.util";
 import type { TVars } from "../../../utils/vars.utils";
-import type { DisplayLayer } from "../../display.layer";
 import { EntitiesLayer } from "../../entities.layer";
+import type { UiLayer } from "../../ui.layer";
 
 export class System {
 	private gc: GameContext;
 	private vars: TVars;
-	private layer: DisplayLayer;
+	private layer: UiLayer;
 
 	constructor({ gc, vars, layer }) {
 		this.gc = gc;

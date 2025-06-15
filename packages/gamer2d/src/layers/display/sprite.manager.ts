@@ -4,13 +4,13 @@ import type { TSprite } from "../../script/compiler/layers/display/layout/sprite
 import type { TFunctionCall } from "../../script/compiler/shared/action.rules";
 import { evalArg, evalNumberValue } from "../../script/engine/eval.script";
 import { PathTrait, type TPathDefDTO } from "../../traits/path.trait";
-import type { DisplayLayer } from "../display.layer";
 import { EntitiesLayer } from "../entities.layer";
+import type { UiLayer } from "../ui.layer";
 import { setupVariableProps } from "./prop.manager";
 import { addTraits } from "./trait.manager";
 
 // addSprite(op:TSprite & { entity: Entity }) {
-export function addSprite(layer: DisplayLayer, op: TSprite & { entity?: Entity }) {
+export function addSprite(layer: UiLayer, op: TSprite & { entity?: Entity }) {
 	const posX = evalNumberValue({ vars: layer.vars }, op.pos[0]);
 	const posY = evalNumberValue({ vars: layer.vars }, op.pos[1]);
 	const dir = op.dir ? evalNumberValue({ vars: layer.vars }, op.dir) : op.dir;

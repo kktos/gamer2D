@@ -233,7 +233,7 @@ export class SpriteSheet {
 		const sprite = this.sprites.get(name);
 		if (!sprite) throw new Error(`Unable to find sprite "${name}"`);
 		const img = sprite.imgs[flip | 0];
-		ctx.drawImage(img, x, y, (zoom ?? 1) * img.width, zoom * img.height);
+		ctx.drawImage(img, x, y, zoom * img.width, zoom * img.height);
 	}
 
 	drawAnim(name: string, ctx: CanvasRenderingContext2D, x: number, y: number, distance: number, { zoom } = { zoom: 1 }) {

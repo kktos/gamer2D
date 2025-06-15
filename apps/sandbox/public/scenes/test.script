@@ -1,182 +1,92 @@
+// test.script
 display "menu" {
 
-	showCursor
-
-	debug true
-	
-	background {
+	layer background {
 		color #000
 	}
 
-	globals {
-		$level = 0
-		$var1 = 0
-		$var2 = $var1*10
-		$var3 = 0
+	layer globals {
+		$borderOffset = 48
+		$debugBarHeight = 20
+		$debugBarPadding = 50
+		$debugBarOffsetY = 110
+
+		// === UI LAYOUT CONSTANTS ===
+		$titlePos = {x: 298, y: 104}
+		$menuStart = {x: 300, y: 180}
+		$menuSpacing = 50
+		
+		// === MENU CONFIGURATION ===
+		$menuItems = ["food", "intro", "game", "highscores", "DEBUG"]
 	}
 	
-	display {
+	// === MAIN MENU ===
+	layer ui "menu" {
 		font "bubble-bobble"
-		// font "wargames"
+		
+		font 4
+		color white
+		align center
 
-		on "POOL_SPAWNED:bubbles" $id $count {
-			sprite("bubbleCount").set("text", $count)
-		}
-
-		on "POOL_RELEASED:bubbles" $id $count {
-			sprite("bubbleCount").set("text", $count)
-		}
-
-		on MENU_ITEM_SELECTED {
-			EntityPool("bubbles").use().reset($mouseX, $mouseY)
-		}
-
-		on FADED {
-			sprite("Bubblun").set("mass", 1)
-		}
-
-		on SCENE_STARTED {
-			sprite("Bubblun").set("mass", 0)
-		}
-
-		layout {
-
-			// Bubble Entity Pool
-			// $offscreenTrait = trait OffscreenTrait()
-			// $poolTrait = trait PoolTrait("bubbles")
-			// pool "BubbleEntity" id:"bubbles" at:300,300 count:500 traits:[$offscreenTrait, $poolTrait]
-			// text "0" id:"bubbleCount" at:$clientWidth-50,10 size:1
-
-			// Animated Title
-			$fadeout = trait FadeTrait("in", #00FFFF, 300)
-
-			$strings = [
-				"BUBBLE BOBBLE",
-				"IS COMING",
-				"TO YOU"
-			]
-
-			def anim "fade" {
-				path { 
-					prop("text", $strings)
-					// prop("color", #00100010)
-					loop()
-				}
-				speed 5
+		menu $selectedIdx {		
+			selection {
+				background #faee005e
 			}
-
-			align center
-			color #FFFFFF
-			size 4
-			text "" at:298,104 anim:"fade" traits:[$fadeout]
-
-			// Borders
-			image "level-tiles:large-${level}" at:48,60 range:16,0
-			image "level-tiles:large-${level}" at:48,60 range:0,13
-			image "level-tiles:large-${level}" at:528,60 range:0,13
-			image "level-tiles:small-${level}" at:48,460 range:32,0
-
-			//2 ZenChan patroling back and forth
-			def anim "toRight" {
-				path {
-					at(55,28)
-					dir(right)
-					line(1,55,28,520,28)
-					dir(left)
-					line(-1,55,28,520,28)
-					loop()
-				}
-				speed 50
+			keys {
+				previous ["A", "a"]
+				next ["W", "w"]
+				select [" "]
 			}
-			sprite "zen-chan" at:0,0 dir:right anim:"toRight"
-
-			def anim "toLeft" {
-				path {
-					at(520,28)
-					dir(left)
-					line(-1,55,28,520,28)
-					dir(right)
-					line(1,55,28,520,28)
-					loop()
-				}
-				speed 60
-			}
-			sprite "zen-chan" at:0,0 dir:left anim:"toLeft"
-
-			// main character
-			// sprite "BubblunEntity" id:"Bubblun" at:90,428 dir:right
-
-			// centered bottomed mousePos and ViewPort Size
-			$top = $clientHeight - 110
-			$width = $clientWidth - 50
-
-			$pos= $clientWidth / 2 - $width / 2
-			rect at:$pos,$top width:$width height:20 pad:5,5 fill:#FFFFFF50
-
-			size 1
-			color white
-			align center
-			valign center
-			text "(${mouseX},${mouseY}) ${clientWidth}x${clientHeight}" at:10,$top width:$width height:20 nocache
-
-			//main menu
-			$menuItems = [
-				"food",
-				"intro",
-				"game",
-				"highscores",
-				"DEBUG"
-			]
-			$scenes = [
-				"items",
-				"intro",
-				"game",
-				"input_name",
-				"debug"
-			]
-
-			$itemYpos = 180
-			size 4
-			menu {
-				selection {
-					// color yellow
-					var $selectedIdx
-					background #faee005e
-				}
-				keys {
-					previous: ["A", "a"]
-					next: ["W", "w"]
-					select: [" "]
-				}
-				items {
-					for $menuItem of $menuItems index:$idx {
-						item {text $menuItem at:300,$itemYpos+50*$idx}
+			items {
+				for $menuItem of $menuItems as $idx {
+					item {
+						text $menuItem at $menuStart.x, $menuStart.y + $menuSpacing * $idx
 					}
 				}
 			}
+		}
 		
-			size 2
-			align left
-			text "idx:${selectedIdx}" at:300,450 //width:580 height:20			
-
-			// $itemYpos2 = 10
-			// size 1
-			// for $idx 0,59 {
-			// 	text "hello" at:22,$itemYpos2+10*$idx
-			// }
-			
-		}
-
+		// Menu selection debug info
+		font 2
+		align left
+		text "idx:${selectedIdx}" at 300,450
+		
+		// === MENU EVENT HANDLERS ===
 		on MENU_ITEM_CLICKED {
-			goto($scenes.$selectedIdx)
+			goto($sceneTargets.$selectedIdx)
 		}
-
+		
+		on MENU_ITEM_SELECTED {
+			EntityPool("bubbles").use().reset($mouseX, $mouseY)
+		}
 	}
 
-	entities {
+	// === DEBUG INFORMATION ===
+	layer ui "debug" {
+		font "bubble-bobble"
+		
+		// Calculate debug bar dimensions
+		$debugBarTop = $clientHeight - $debugBarOffsetY
+		$debugBarWidth = $clientWidth - $debugBarPadding
+		$debugBarX = $debugBarPadding / 2
+		
+		// Debug info background
+		rect at $debugBarX,$debugBarTop size $debugBarWidth,$debugBarHeight pad 5,5 fill #FFFFFF50
+		
+		// Debug text
+		font 1
+		color white
+		align center, center
+		text "(${mouseX},${mouseY}) ${clientWidth}x${clientHeight}" 
+			at 10,$debugBarTop 
+			size $debugBarWidth,$debugBarHeight 
+			nocache
+	}
+
+	layer entities {
 		settings {
 			show_entities_count = true
 		}
 	}
-	
+
 }
