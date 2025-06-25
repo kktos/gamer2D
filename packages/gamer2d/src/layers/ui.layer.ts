@@ -10,15 +10,15 @@ import type { TEventHandlerDict } from "../script/compiler/layers/display/on.rul
 import type { TNeatCommand } from "../script/compiler2/types/commands.type";
 import { evalNumberValue } from "../script/engine/eval.script";
 import { execAction } from "../script/engine/exec.script";
-import { runPreparationPhase, runRenderingPhase } from "../script/engine2/exec";
+import { runCommands } from "../script/engine2/exec";
 import type { ExecutionContext } from "../script/engine2/exec.type";
 import type { TNeatFunctions } from "../utils/functionDict.utils";
-import { type TVarTypes, TVars } from "../utils/vars.utils";
-import { HTMLLayer } from "./HTMLLayer";
+import { TVars, type TVarTypes } from "../utils/vars.utils";
 import type { GameMenu } from "./display/menu/menu.manager";
 import type { Timers } from "./display/timers.class";
 import type { View } from "./display/views/View";
 import { viewClasses } from "./display/views/View.factory";
+import { HTMLLayer } from "./HTMLLayer";
 
 type TViewDef = TView & {
 	component?: View;
@@ -44,7 +44,10 @@ export class UiLayer extends HTMLLayer {
 		super(gc, parent, "ui", sheet.ui);
 
 		const rezMgr = gc.resourceManager;
-		this.font = rezMgr.get<Font>("font", sheet.font ?? gc.resourceManager.mainFontName);
+		this.font = rezMgr.get<Font>(
+			"font",
+			sheet.font ?? gc.resourceManager.mainFontName,
+		);
 
 		this.layout = sheet.data;
 		this.time = 0;
@@ -91,7 +94,14 @@ export class UiLayer extends HTMLLayer {
 		this.vars.set("clientWidth", this.gc.viewport.width);
 		this.vars.set("centerX", Math.floor(this.gc.viewport.width / 2));
 		this.vars.set("centerY", Math.floor(this.gc.viewport.height / 2));
-		this.vars.set("centerUIY", Math.floor((this.gc.viewport.bbox.height - this.gc.ui.height) / 2 / this.gc.viewport.ratioHeight));
+		this.vars.set(
+			"centerUIY",
+			Math.floor(
+				(this.gc.viewport.bbox.height - this.gc.ui.height) /
+					2 /
+					this.gc.viewport.ratioHeight,
+			),
+		);
 	}
 
 	initEventHandlers(EventHandlers: TEventHandlerDict, parent: Scene) {
@@ -100,10 +110,12 @@ export class UiLayer extends HTMLLayer {
 			const params = value.args;
 			parent.on(Symbol.for(eventName), (...args) => {
 				if (id) {
-					// biome-ignore lint/suspicious/noDoubleEquals: <explanation>
+					// biome-ignore lint/suspicious/noDoubleEquals: id is either a string or a number
 					if (args.shift() != id) return;
 				}
-				if (params) for (let idx = 0; idx < params.length; idx++) this.vars.set(params[idx], args[idx] as TVarTypes);
+				if (params)
+					for (let idx = 0; idx < params.length; idx++)
+						this.vars.set(params[idx], args[idx] as TVarTypes);
 				execAction({ vars: this.vars }, value.action);
 			});
 		}
@@ -116,7 +128,7 @@ export class UiLayer extends HTMLLayer {
 			gc,
 		};
 
-		this.layout = runPreparationPhase(this.layout, context);
+		this.layout = runCommands(this.layout, context);
 
 		console.log("prepareRendering", this.layout);
 
@@ -157,7 +169,8 @@ export class UiLayer extends HTMLLayer {
 	}
 
 	prepareView(gc: GameContext, viewDef: TViewDef) {
-		if (!viewClasses[viewDef.view]) throw new TypeError(`Unknown View Type ${viewDef.view}`);
+		if (!viewClasses[viewDef.view])
+			throw new TypeError(`Unknown View Type ${viewDef.view}`);
 
 		const width = evalNumberValue({ vars: this.vars }, viewDef.width);
 		const height = evalNumberValue({ vars: this.vars }, viewDef.height);
@@ -200,7 +213,8 @@ export class UiLayer extends HTMLLayer {
 		for (let idx = 0; idx < this.views.length; idx++) {
 			const view = this.views[idx];
 
-			if ("x" in e && !["keyup", "keydown"].includes(e.type)) if (!view.bbox?.isPointInside(e.x, e.y)) continue;
+			if ("x" in e && !["keyup", "keydown"].includes(e.type))
+				if (!view.bbox?.isPointInside(e.x, e.y)) continue;
 
 			e.x = gc.mouse.x - (view.bbox?.left ?? 0);
 			e.y = gc.mouse.y - (view.bbox?.top ?? 0);
@@ -256,28 +270,27 @@ export class UiLayer extends HTMLLayer {
 	}
 
 	render(gc: GameContext) {
-		const ctx = gc.viewport.ctx;
+		// const ctx = gc.viewport.ctx;
 
 		this.time += (gc.dt * 1000) | 0;
 		if (!((this.time % 500) | 0)) this.blinkFlag = !this.blinkFlag;
 
-		const context: ExecutionContext = {
-			renderer: {
-				drawRect: (x, y, width, height, color, fill) => {
-					if (fill) {
-						ctx.fillStyle = fill;
-						ctx.fillRect(x, y, width, height);
-					}
-					ctx.strokeStyle = color;
-					ctx.strokeRect(x, y, width, height);
-				},
-			},
+		// const context: ExecutionContext = {
+		// 	renderer: {
+		// 		drawRect: (x, y, width, height, color, fill) => {
+		// 			if (fill) {
+		// 				ctx.fillStyle = fill;
+		// 				ctx.fillRect(x, y, width, height);
+		// 			}
+		// 			ctx.strokeStyle = color;
+		// 			ctx.strokeRect(x, y, width, height);
+		// 		},
+		// 	},
 
-			variables: this.vars,
-			functions: null as unknown as TNeatFunctions,
-		};
-
-		runRenderingPhase(this.layout, context);
+		// 	variables: this.vars,
+		// 	functions: null as unknown as TNeatFunctions,
+		// };
+		// runRenderingPhase(this.layout, context);
 
 		// for (let idx = 0; idx < this.layout.length; idx++) {
 		// 	const op = this.layout[idx];

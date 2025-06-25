@@ -3,7 +3,7 @@ import "./index.css";
 import { Game } from "gamer2d";
 import { evalExpression } from "gamer2d/script/engine2/expr.eval";
 import { compile } from "../../../packages/gamer2d/src/script/compiler2/compiler";
-import { runPreparationPhase } from "../../../packages/gamer2d/src/script/engine2/exec";
+import { runCommands } from "../../../packages/gamer2d/src/script/engine2/exec";
 
 const settings = `
 	FPS = 60
@@ -96,7 +96,9 @@ async function loadText(url: string) {
 
 document.addEventListener("DOMContentLoaded", async () => {
 	// Script Editor elements
-	const scriptInput = document.getElementById("scriptInput") as HTMLTextAreaElement;
+	const scriptInput = document.getElementById(
+		"scriptInput",
+	) as HTMLTextAreaElement;
 	const parseSceneButton = document.getElementById("parseSceneButton");
 	const parseLayerButton = document.getElementById("parseLayerButton");
 	const loadButton = document.getElementById("loadButton");
@@ -106,12 +108,28 @@ document.addEventListener("DOMContentLoaded", async () => {
 	const jsonInput = document.getElementById("jsonInput") as HTMLTextAreaElement;
 	const evalButton = document.getElementById("evalButton") as HTMLButtonElement;
 	const evalOutput = document.getElementById("evalOutput") as HTMLPreElement;
-	const resultOutput = document.getElementById("resultOutput") as HTMLPreElement;
-	const expressionInput = document.getElementById("expressionInput") as HTMLInputElement;
+	const resultOutput = document.getElementById(
+		"resultOutput",
+	) as HTMLPreElement;
+	const expressionInput = document.getElementById(
+		"expressionInput",
+	) as HTMLInputElement;
 
-	const startGameButton = document.getElementById("startGameButton") as HTMLButtonElement;
+	const startGameButton = document.getElementById(
+		"startGameButton",
+	) as HTMLButtonElement;
 	// Check if all required elements exist
-	if (!startGameButton || !scriptInput || !parseSceneButton || !parseLayerButton || !loadButton || !outputTokens || !jsonInput || !evalButton || !evalOutput) {
+	if (
+		!startGameButton ||
+		!scriptInput ||
+		!parseSceneButton ||
+		!parseLayerButton ||
+		!loadButton ||
+		!outputTokens ||
+		!jsonInput ||
+		!evalButton ||
+		!evalOutput
+	) {
 		console.error("One or more required HTML elements are missing.");
 		return;
 	}
@@ -179,7 +197,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 				variables: new Map(),
 				//functions:
 			};
-			runPreparationPhase(astVars, context);
+			runCommands(astVars, context);
 			resultOutput.textContent = `Result: ${evalExpression(astExpr, context)}`;
 		} catch (error) {
 			resultOutput.innerHTML = `<span style="color: red">Error evaluating: ${(error as Error).message}</span>`;
@@ -193,6 +211,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 		scriptInput.value = await loadText("scenes/test.script");
 	} catch (error) {
 		console.warn("Could not load default script file:", error);
-		scriptInput.value = "// Default script file not found\n// Enter your script here...";
+		scriptInput.value =
+			"// Default script file not found\n// Enter your script here...";
 	}
 });
