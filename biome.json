@@ -1,21 +1,31 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.6.2/schema.json",
-	"organizeImports": {
-		"enabled": true
-	},
+	"$schema": "https://biomejs.dev/schemas/2.0.5/schema.json",
+	"assist": { "actions": { "source": { "organizeImports": "on" } } },
 	"files": {
-		"include": ["src/**/*"]
+		"includes": ["**/src/**/*"]
 	},
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true
+			"recommended": true,
+			"style": {
+				"noParameterAssign": "error",
+				"useAsConstAssertion": "error",
+				"useDefaultParameterLast": "error",
+				"useEnumInitializers": "error",
+				"useSelfClosingElements": "error",
+				"useSingleVarDeclarator": "error",
+				"noUnusedTemplateLiteral": "error",
+				"useNumberNamespace": "error",
+				"noInferrableTypes": "error",
+				"noUselessElse": "error"
+			}
 		},
-		"include": ["src", "./rollup.config.mjs"]
+		"includes": ["**/src/**", "rollup.config.mjs"]
 	},
 	"formatter": {
 		"lineWidth": 160,
-		"include": ["src", "./rollup.config.mjs"]
+		"includes": ["**/src/**", "rollup.config.mjs"]
 	},
 	"javascript": {
 		"parser": {
