@@ -9,15 +9,22 @@ import { interpolateString } from "../string.eval";
 import { evalAlign } from "./align.cmd";
 import { evalFont } from "./font.cmd";
 
-export function executeTextCommand(command: TNeatTextCommand, context: ExecutionContext) {
-	const text = interpolateString(evalExpressionAs(command.value, context, "string"), context);
+export function executeTextCommand(
+	command: TNeatTextCommand,
+	context: ExecutionContext,
+) {
+	const text = interpolateString(
+		evalExpressionAs(command.value, context, "string"),
+		context,
+	);
 
 	const x = evalExpressionAs(command.at.x, context, "number");
 	const y = evalExpressionAs(command.at.y, context, "number");
-	let align: ReturnType<typeof evalAlign> | undefined = undefined;
+	let align: ReturnType<typeof evalAlign> | undefined;
 
 	if (command.align) align = evalAlign(command.align);
-	else if (context.currentAlign) align = { h: context.currentAlign, v: context.currentVAlign };
+	else if (context.currentAlign)
+		align = { h: context.currentAlign, v: context.currentVAlign };
 
 	const gc = context.gc as GameContext;
 	const textObj: TextDTO = {
@@ -44,8 +51,6 @@ export function executeTextCommand(command: TNeatTextCommand, context: Execution
 		textObj.align = align.h;
 		if (align.v) textObj.valign = align.v;
 	}
-
-	console.log("TEXT", textObj);
 
 	const entity = new TextEntity(gc.resourceManager, textObj);
 	if (command.id) entity.id = command.id;

@@ -1,6 +1,6 @@
 import type { SidePanel } from "../elements/side-panel.element";
 
-export function createSidePanel(root: HTMLElement) {
+export function createSidePanel(_root: HTMLElement) {
 	const sidePanel = document.createElement("side-panel") as SidePanel;
 	sidePanel.id = "inspector";
 	sidePanel.side = "right";

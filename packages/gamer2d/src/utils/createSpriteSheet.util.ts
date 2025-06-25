@@ -2,7 +2,7 @@ import { SpriteSheet } from "../game/Spritesheet";
 import type { TRepeat } from "../script/compiler/layers/display/layout/repeat.rules";
 import type { TSpriteDef, TSpriteSheet, TSpriteSheetGrid } from "../script/compiler/ressources/spritesheet.rules";
 import { evalValue } from "../script/engine/eval.script";
-import { type TVarTypes, TVars } from "./vars.utils";
+import { TVars, type TVarTypes } from "./vars.utils";
 
 export function createSpriteSheet(sheet: TSpriteSheet, img: HTMLImageElement | HTMLCanvasElement) {
 	const s = new SpriteSheet(sheet.name, img);

@@ -1,6 +1,6 @@
 import type { Director } from "../scene/Director";
-import { DebugMenuItemElement } from "./elements/debug-menu-item.element";
 import { DebugMenu } from "./elements/debug-menu.element";
+import { DebugMenuItemElement } from "./elements/debug-menu-item.element";
 import { ItemList } from "./elements/items.inspector";
 import { PropertiesInspector } from "./elements/properties.inspector";
 import { SidePanel } from "./elements/side-panel.element";
@@ -8,7 +8,7 @@ import type { DebugPage } from "./pages/debug-page.class";
 import { MenuPage } from "./pages/menu-page.class";
 import { PAGES } from "./pages/pages-definitions";
 import { createSidePanel } from "./utils/createSidePanel.utils";
-import { TRIGGER_BTN_ID, createTriggerBtn } from "./utils/createTriggerBtn.util";
+import { createTriggerBtn, TRIGGER_BTN_ID } from "./utils/createTriggerBtn.util";
 
 const GAMER2D_DEBUG = "gamer2d-debug";
 

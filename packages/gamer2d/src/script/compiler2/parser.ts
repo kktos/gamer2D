@@ -1,4 +1,4 @@
-import { NeatLexer, type TNeatToken, type TTokenType, type TokenValueMap } from "./lexer";
+import { NeatLexer, type TNeatToken, type TokenValueMap, type TTokenType } from "./lexer";
 import { NeatLexerError } from "./lexerError";
 
 export type NeatParserRuleHandler = (parser: NeatParser) => unknown;

@@ -14,7 +14,7 @@ export class BounceTrait extends Trait {
 		this.repulsiveFactor = -Math.abs(repulsiveFactor);
 	}
 
-	collides(gc: GameContext, entity: Entity, target: Entity) {
+	collides(_gc: GameContext, entity: Entity, target: Entity) {
 		if (!this.isBouncing || !target.isSolid) return;
 
 		// if(contains(target, entity)) {

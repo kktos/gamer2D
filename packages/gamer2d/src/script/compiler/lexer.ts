@@ -1,4 +1,4 @@
-import { type ITokenConfig, Lexer, type TokenType, createToken } from "chevrotain";
+import { createToken, type ITokenConfig, Lexer, type TokenType } from "chevrotain";
 
 type RegExpExecArrayWithPayload = RegExpExecArray & { payload: string };
 

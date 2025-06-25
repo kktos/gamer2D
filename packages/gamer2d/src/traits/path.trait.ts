@@ -83,7 +83,7 @@ export class PathTrait extends Trait {
 					break;
 				}
 				case "loop": {
-					provider = (_, entity) => {
+					provider = (_, _entity) => {
 						this.currentProvider = -1;
 						return null;
 					};
@@ -128,7 +128,7 @@ export class PathTrait extends Trait {
 	}
 */
 
-	update({ deltaTime }, entity: Entity, scene: Scene) {
+	update({ deltaTime }, entity: Entity, _scene: Scene) {
 		if (!this.isRunning || entity.isFixed) return;
 
 		entity.mass = 0;

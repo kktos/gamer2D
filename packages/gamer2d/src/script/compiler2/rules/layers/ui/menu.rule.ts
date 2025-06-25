@@ -9,7 +9,7 @@ import { parseValueExpression } from "../../shared/value-expr.rule";
 export function parseMenu(parser: NeatParser) {
 	parser.consume("IDENTIFIER", "menu");
 
-	let selectionVar: string | undefined = undefined;
+	let selectionVar: string | undefined;
 	if (parser.is("VARIABLE")) selectionVar = parser.variable();
 
 	parser.consume("PUNCT", "{");

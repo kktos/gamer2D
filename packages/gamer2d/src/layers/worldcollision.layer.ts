@@ -156,7 +156,7 @@ export class WorldCollisionLayer extends Layer {
 		}
 	}
 */
-	update(gc: GameContext, scene: Scene) {}
+	update(_gc: GameContext, _scene: Scene) {}
 
 	render(gc: GameContext) {
 		const ctx = gc.viewport.ctx;

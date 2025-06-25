@@ -5,6 +5,7 @@ import { KillableTrait } from "gamer2d/traits/killable.trait";
 import { PhysicsTrait } from "gamer2d/traits/physics.trait";
 import { SolidTrait } from "gamer2d/traits/solid.trait";
 import { DIRECTIONS } from "gamer2d/types/direction.type";
+
 // import EnemyTrait from "../traits/enemy.trait";
 
 const NORMAL_SPEED = 250;

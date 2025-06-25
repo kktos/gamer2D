@@ -13,7 +13,7 @@ import { parseVariableAssignment } from "./rules/shared/assign.rule";
 import { parseStatementsBlock } from "./rules/shared/statements.rule";
 import { parseValueExpression } from "./rules/shared/value-expr.rule";
 
-export function compile<T>(text: string, startRule: string, globals?: Map<string, unknown>, options?: unknown) {
+export function compile<T>(text: string, startRule: string, _globals?: Map<string, unknown>, _options?: unknown) {
 	const parser = new NeatParser();
 
 	parser.addRule("expression", parseValueExpression);

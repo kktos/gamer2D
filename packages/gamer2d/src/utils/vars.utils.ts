@@ -7,7 +7,17 @@ import type { Trait } from "../traits/Trait";
 import type { TResultValue, TVarSounds } from "../types/engine.types";
 import type { ArgVariable } from "../types/value.types";
 
-export type TVarTypes = TResultValue | TVarSounds | Map<string, Entity> | Record<string, unknown> | TText | View | System | Trait | Anim | ArgVariable[];
+export type TVarTypes =
+	| TResultValue
+	| TVarSounds
+	| Map<string, Entity>
+	| Record<string, unknown>
+	| TText
+	| View
+	| System
+	| Trait
+	| Anim
+	| ArgVariable[];
 // export type TVarDict = Map<string, unknown>;
 
 export class TVars {
@@ -41,8 +51,9 @@ export class TVarDict extends Map<string, unknown> {
 		let html = "";
 		for (const [name, varValue] of this.entries()) {
 			const value = varValue as Record<string | symbol, unknown>;
-			// biome-ignore lint/complexity/noBannedTypes: <explanation>
-			const displayValue = value[Symbol.for("inspect")] ? (value[Symbol.for("inspect")] as Function)() : value;
+			const displayValue = value[Symbol.for("inspect")]
+				? (value[Symbol.for("inspect")] as Function)()
+				: value;
 			html += `<li>${name}: ${displayValue}</li>`;
 		}
 		result.innerHTML = html;

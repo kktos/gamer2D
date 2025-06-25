@@ -5,7 +5,7 @@ import type { Scene } from "../scene/Scene";
 import type { SceneSheetUI } from "../script/compiler/layers/display/display.rules";
 import { Layer } from "./Layer";
 
-let uiElement: ResizablePanel | FloatingWindowElement | undefined = undefined;
+let uiElement: ResizablePanel | FloatingWindowElement | undefined;
 
 export class HTMLLayer extends Layer {
 	constructor(gc: GameContext, parent: Scene, name: string, layout?: SceneSheetUI) {
@@ -71,9 +71,9 @@ export class HTMLLayer extends Layer {
 		}
 	}
 
-	handleEvent(gc, e) {}
+	handleEvent(_gc, _e) {}
 	destroy() {}
-	render(dt) {}
+	render(_dt) {}
 }
 
 function createUI() {

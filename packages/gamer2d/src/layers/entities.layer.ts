@@ -8,8 +8,8 @@ import { OP_TYPES } from "../types/operation.types";
 import { ArgColor } from "../types/value.types";
 import { createLevelEntities } from "../utils/createLevelEntities.utils";
 import { TVars } from "../utils/vars.utils";
-import { Layer } from "./Layer";
 import { repeat } from "./display/repeat.manager";
+import { Layer } from "./Layer";
 
 export class EntitiesLayer extends Layer {
 	static TASK_REMOVE_ENTITY = Symbol.for("removeEntity");

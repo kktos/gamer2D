@@ -3,8 +3,8 @@ import type { TViewDefinition } from "../../../game/types/GameOptions";
 import { getClassName } from "../../../utils/object.util";
 import type { TVars } from "../../../utils/vars.utils";
 import type { HTMLLayer } from "../../HTMLLayer";
-import { System } from "./System.view";
 import { DebugView } from "./debug.view";
+import { System } from "./System.view";
 
 export const SYSTEM = Symbol.for("System");
 

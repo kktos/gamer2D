@@ -10,9 +10,9 @@ export class Layer {
 		public name: string,
 	) {}
 
-	init(gc: GameContext, scene: Scene) {}
-	update(gc: GameContext, scene: Scene) {}
-	render(gc: GameContext) {}
+	init(_gc: GameContext, _scene: Scene) {}
+	update(_gc: GameContext, _scene: Scene) {}
+	render(_gc: GameContext) {}
 
 	[Symbol.for("inspect")]() {
 		return this.name;

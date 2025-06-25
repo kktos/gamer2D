@@ -19,7 +19,7 @@ class MockTrait1 extends Trait {}
 class MockTrait2 extends Trait {}
 
 vi.mock("../../script/engine/eval.script", () => ({
-	evalValue: ({ vars }, val) => {
+	evalValue: ({}, val) => {
 		// console.log("mock", val);
 		if (!(val instanceof ValueTrait)) return undefined;
 		switch (val.name) {
@@ -106,7 +106,10 @@ describe("addTraits", () => {
 	});
 
 	it("should add traits to a single entity from an array of trait declarations", () => {
-		const trait1 = new ValueTrait("MockFadeTrait", ["in", new ArgColor("#00000000")]);
+		const trait1 = new ValueTrait("MockFadeTrait", [
+			"in",
+			new ArgColor("#00000000"),
+		]);
 		const trait2 = new ValueTrait("MockMouseXTrait", []);
 		const traitDeclarations = [trait1, trait2];
 

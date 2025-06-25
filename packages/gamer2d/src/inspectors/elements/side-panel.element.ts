@@ -50,7 +50,7 @@ export class SidePanel extends HTMLElement {
 		this.querySelectorAll(':not([slot="header"])').forEach((el) => el.remove());
 	}
 
-	old_setTitle(title: HTMLElement, onBack?: () => void) {
+	old_setTitle(title: HTMLElement, _onBack?: () => void) {
 		// biome-ignore lint/complexity/noForEach: <explanation>
 		this.querySelectorAll('[slot="header"]').forEach((el) => el.remove());
 		title.slot = "header";

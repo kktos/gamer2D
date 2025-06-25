@@ -1,7 +1,7 @@
 import type { Entity } from "../entities/Entity";
 import type { GameContext } from "../game/types/GameContext";
-import { Trait } from "./Trait";
 import { KillableTrait } from "./killable.trait";
+import { Trait } from "./Trait";
 
 export class PlayerTrait extends Trait {
 	static EVENT_PLAYER_DEAD = Symbol.for("PLAYER_DEAD");
@@ -9,7 +9,7 @@ export class PlayerTrait extends Trait {
 	constructor() {
 		super();
 
-		this.on(KillableTrait.EVENT_KILLED, (entity) => {});
+		this.on(KillableTrait.EVENT_KILLED, (_entity) => {});
 
 		// this.on(KillableTrait.EVENT_KILLED, (entity) => {
 		// 	if (entity instanceof BallEntity) {
@@ -34,5 +34,5 @@ export class PlayerTrait extends Trait {
 		// });
 	}
 
-	collides(gc: GameContext, entity: Entity, target: Entity): void {}
+	collides(_gc: GameContext, _entity: Entity, _target: Entity): void {}
 }

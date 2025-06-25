@@ -2,7 +2,7 @@ import type { PropertiesInspector } from "../properties.inspector";
 import type { PropertyConfig, PropertyEditor, PropertyEditorOption } from "./editors.intf";
 
 export const SelectEditor: PropertyEditor = {
-	supports: (config: PropertyConfig, value: unknown): boolean => config.editor === "select" && Array.isArray(config.options),
+	supports: (config: PropertyConfig, _value: unknown): boolean => config.editor === "select" && Array.isArray(config.options),
 	render: (cell: HTMLTableCellElement, key: string, value: unknown, config: PropertyConfig, inspector: PropertiesInspector): void => {
 		let select = cell.querySelector("select") as HTMLSelectElement | null;
 		const options = config.options as (string | PropertyEditorOption[]) | undefined;

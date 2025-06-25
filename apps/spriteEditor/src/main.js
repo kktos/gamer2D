@@ -1,7 +1,8 @@
 import Game from "../../../packages/gamer2d/dist/game/Game";
+
 const canvas = document.getElementById("game");
 if (!canvas || !(canvas instanceof HTMLCanvasElement)) {
-    throw new Error("No Canvas game element found !?!");
+	throw new Error("No Canvas game element found !?!");
 }
 const settings = `
 	FPS = 60
@@ -26,13 +27,13 @@ const settings = `
 	LOGS = 
 `;
 const options = {
-    paths: {
-        audiosheets: "sounds",
-        fonts: "fonts",
-        spritesheets: "spritesheets",
-        scenes: "scenes",
-        levels: "levels",
-    },
-    settings,
+	paths: {
+		audiosheets: "sounds",
+		fonts: "fonts",
+		spritesheets: "spritesheets",
+		scenes: "scenes",
+		levels: "levels",
+	},
+	settings,
 };
 const game = new Game(canvas, options);

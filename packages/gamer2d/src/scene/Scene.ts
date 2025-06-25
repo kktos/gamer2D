@@ -123,7 +123,7 @@ export class Scene {
 		return this;
 	}
 
-	setTaskHandlers(gc: GameContext) {
+	setTaskHandlers(_gc: GameContext) {
 		// this.tasks.onTask(Scene.TASK_RESET, () => {
 		// 	this.reset(gc);
 		// });

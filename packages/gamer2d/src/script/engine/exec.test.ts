@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Trait } from "../../traits/Trait";
 import * as TraitFactory from "../../traits/Trait.factory"; // To mock createTrait
 import { ArgColor, ArgExpression, ArgIdentifier, ArgVariable, ValueTrait } from "../../types/value.types";
-import { type TVarTypes, TVars } from "../../utils/vars.utils";
+import { TVars, type TVarTypes } from "../../utils/vars.utils";
 import { execFnCall, execParseArgs } from "./exec.script";
 
 describe("exec*", () => {
@@ -198,7 +198,7 @@ describe("exec*", () => {
 				constructor() {
 					this.id = "id_player";
 				}
-				action(a: number, b: number) {
+				action(_a: number, _b: number) {
 					return this.id;
 				}
 			}

@@ -95,7 +95,7 @@ export class MenuRules {
 	}
 
 	static layoutMenuItemGroup($) {
-		return $.RULE("layoutMenuItemGroup", (options, isMenuItem) => {
+		return $.RULE("layoutMenuItemGroup", (options, _isMenuItem) => {
 			$.CONSUME(tokens.Item);
 
 			// const result: Partial<TMenuItemGroup> = {

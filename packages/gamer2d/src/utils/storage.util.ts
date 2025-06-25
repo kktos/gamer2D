@@ -1,6 +1,5 @@
 const HIGHSCORES_COUNT = 10;
 
-// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class LocalDB {
 	static keys() {
 		const keys: string[] = [];
@@ -71,7 +70,11 @@ export class LocalDB {
 	static isPlayerScoreGoodEnough() {
 		const lastGame = LocalDB.currentPlayer();
 		const highscores = LocalDB.highscores();
-		return !highscores.length || highscores.length < HIGHSCORES_COUNT || highscores.some((i) => i.score < lastGame.score);
+		return (
+			!highscores.length ||
+			highscores.length < HIGHSCORES_COUNT ||
+			highscores.some((i) => i.score < lastGame.score)
+		);
 	}
 
 	static updateHighscores() {
@@ -84,7 +87,10 @@ export class LocalDB {
 		});
 		highscores.sort((a, b) => (a.score < b.score ? 1 : -1));
 		highscores = highscores.slice(0, HIGHSCORES_COUNT);
-		localStorage.setItem("player:highscore", highscores[highscores.length - 1].score);
+		localStorage.setItem(
+			"player:highscore",
+			highscores[highscores.length - 1].score,
+		);
 		localStorage.setItem("player:highscores", JSON.stringify(highscores));
 	}
 }

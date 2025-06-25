@@ -77,7 +77,7 @@ export class FloatingWindowElement extends HTMLElement {
 		else this.removeAttribute("minimizable");
 	}
 
-	attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+	attributeChangedCallback(name: string, _oldValue: string, newValue: string) {
 		switch (name) {
 			case "title":
 				this._updateTitle();

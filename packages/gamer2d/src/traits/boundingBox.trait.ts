@@ -4,8 +4,8 @@ import type { Scene } from "../scene/Scene";
 import { Trait } from "./Trait";
 
 export class BoundingBoxTrait extends Trait {
-	update(gc: GameContext, entity: Entity, scene: Scene) {
-		const bbox = scene.bbox;
+	update(_gc: GameContext, _entity: Entity, scene: Scene) {
+		const _bbox = scene.bbox;
 
 		// if (entity.bottom > ENV.PADDLE_Y + 10) {
 		// 	if (entity.traits.has(KillableTrait)) entity.traits.get(KillableTrait).kill();

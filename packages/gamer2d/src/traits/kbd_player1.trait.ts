@@ -5,7 +5,7 @@ import { DIRECTIONS } from "../types/direction.type";
 import { Trait } from "./Trait";
 
 export class KeyboardPlayerOneTrait extends Trait {
-	update(gc: GameContext, entity: Entity, scene: Scene) {
+	update(gc: GameContext, entity: Entity, _scene: Scene) {
 		if (entity.isFixed) return;
 
 		if (gc.keys.get("ArrowLeft")) {

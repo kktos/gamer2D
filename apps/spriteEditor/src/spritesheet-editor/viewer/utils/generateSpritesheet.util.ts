@@ -8,7 +8,7 @@ export function buildSpritesheetFile(spritesheet: SpriteSheet, imagePath: string
 	script += "\n";
 
 	script += "\tsprites {\n";
-	let currentSprite: string | undefined = undefined;
+	let currentSprite: string | undefined;
 	let gridWidth = 0;
 	let gridHeight = 0;
 	for (const [name, sprite] of spritesheet.sprites) {

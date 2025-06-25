@@ -1,6 +1,6 @@
 import { setupEntity } from "../entities/Entity.factory";
-import { setupLayer } from "../layers/Layer.factory";
 import { setupView } from "../layers/display/views/View.factory";
+import { setupLayer } from "../layers/Layer.factory";
 import { setupScene } from "../scene/Scene.factory";
 import type { TSceneSheet } from "../script/compiler/scenes/scene.rules";
 import { setupTrait } from "../traits/Trait.factory";

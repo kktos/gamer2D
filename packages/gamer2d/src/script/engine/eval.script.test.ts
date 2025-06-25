@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ArgExpression, ArgVariable } from "../../types/value.types";
-import { type TVarTypes, TVars } from "../../utils/vars.utils";
+import { TVars, type TVarTypes } from "../../utils/vars.utils";
 import { evalExpr, evalNumber, evalValue, evalVar, interpolateString } from "../engine/eval.script";
 
 describe.skip("Script Engine Tests", () => {

@@ -6,7 +6,7 @@ import { Trait } from "./Trait";
 export class OffscreenTrait extends Trait {
 	static EVENT_OFF_SCREEN = Symbol.for("OFF_SCREEN");
 
-	update(gc: GameContext, entity: Entity, scene: Scene) {
+	update(_gc: GameContext, entity: Entity, scene: Scene) {
 		if (scene.bbox.contains(entity.bbox)) return;
 		entity.queue(OffscreenTrait.EVENT_OFF_SCREEN, entity);
 	}

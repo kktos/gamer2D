@@ -18,6 +18,6 @@ export class View {
 		this.vars = ctx.vars;
 		this.layer = ctx.layer;
 	}
-	handleEvent(gc: GameContext, e) {}
+	handleEvent(_gc: GameContext, _e) {}
 	destroy() {}
 }

@@ -59,7 +59,7 @@ export class EntitiesLayerRules {
 	}
 
 	static entitiesLayerSprite($) {
-		return $.RULE("entitiesLayerSprite", (options) => {
+		return $.RULE("entitiesLayerSprite", (_options) => {
 			$.CONSUME(tokens.Sprite);
 
 			const result: Partial<TLayerEntitiesSprite> = {

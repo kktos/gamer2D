@@ -78,7 +78,7 @@ export class SceneSheetRules {
 	}
 
 	static sceneDebug($) {
-		return $.RULE("sceneDebug", (sheet) => {
+		return $.RULE("sceneDebug", (_sheet) => {
 			$.CONSUME(tokens.Debug);
 			return $.OR([
 				{

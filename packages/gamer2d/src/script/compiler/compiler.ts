@@ -12,7 +12,7 @@ export class CompileSyntaxErr extends SyntaxError {
 	filename?: string;
 	ruleStack: string[];
 
-	constructor(errors: IRecognitionException[], src: string, errMsg?: string) {
+	constructor(_errors: IRecognitionException[], src: string, errMsg?: string) {
 		super(errMsg ?? parser.errors[0].message);
 		this.line = parser.errors[0].token.startLine ?? -1;
 		this.word = parser.errors[0].token.image;
@@ -33,7 +33,7 @@ export function oldCompile<T>(text: string, startRule: string, globals?: Map<str
 	parser.input = lexingResult.tokens;
 	parser.variablesDict = globals ? globals : new Map();
 	let result: SheetParser | undefined;
-	let errMsg: string | undefined = undefined;
+	let errMsg: string | undefined;
 	try {
 		result = parser[startRule](options);
 	} catch (e) {

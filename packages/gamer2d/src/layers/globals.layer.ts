@@ -2,13 +2,13 @@ import { GLOBAL_VARIABLES } from "../game";
 import type { GameContext } from "../game/types/GameContext";
 import type { Scene } from "../scene/Scene";
 import type { TSet } from "../script/compiler/layers/display/layout/set.rules";
-import { runPreparationPhase } from "../script/engine2/exec";
+import { runCommands } from "../script/engine2/exec";
 import type { ExecutionContext } from "../script/engine2/exec.type";
 import type { TNeatFunctions } from "../utils/functionDict.utils";
 import { TVars } from "../utils/vars.utils";
 import { Layer } from "./Layer";
 
-const EMPTY_OBJECT: Record<string, unknown> = {};
+const _EMPTY_OBJECT: Record<string, unknown> = {};
 
 class VarSetDict extends Map<string, TSet> {
 	[Symbol.for("inspect")]() {
@@ -16,7 +16,9 @@ class VarSetDict extends Map<string, TSet> {
 		let html = "";
 		for (const [name, varValue] of this.entries()) {
 			const value = varValue.value;
-			const displayValue = value[Symbol.for("inspect")] ? value[Symbol.for("inspect")]() : value;
+			const displayValue = value[Symbol.for("inspect")]
+				? value[Symbol.for("inspect")]()
+				: value;
 			html += `<li>${name}: ${displayValue}</li>`;
 		}
 		result.innerHTML = html;
@@ -36,7 +38,7 @@ export class GlobalsLayer extends Layer {
 			functions: null as unknown as TNeatFunctions,
 		};
 
-		runPreparationPhase(sheet.data, context);
+		runCommands(sheet.data, context);
 
 		// const vars = new TVars(GLOBAL_VARIABLES, GLOBAL_VARIABLES);
 		// for (const variable of sheet.variables) {

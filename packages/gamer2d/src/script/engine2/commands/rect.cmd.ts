@@ -1,8 +1,14 @@
+import { type RectDTO, RectEntity } from "../../../entities/rect.entity";
+import type { GameContext } from "../../../game";
+import { EntitiesLayer } from "../../../layers";
 import type { TNeatRectCommand } from "../../compiler2/types/commands.type";
 import type { ExecutionContext } from "../exec.type";
 import { evalExpressionAs } from "../expr.eval";
 
-export function executeRectCommand(command: TNeatRectCommand, context: ExecutionContext): boolean {
+export function executeRectCommand(
+	command: TNeatRectCommand,
+	context: ExecutionContext,
+): boolean {
 	let x = evalExpressionAs(command.at.x, context, "number");
 	let y = evalExpressionAs(command.at.y, context, "number");
 	let width = evalExpressionAs(command.size.width, context, "number");
@@ -10,7 +16,11 @@ export function executeRectCommand(command: TNeatRectCommand, context: Execution
 
 	// Handle padding if present
 	let padding = [0, 0];
-	if (command.pad) padding = [evalExpressionAs(command.pad[0], context, "number"), evalExpressionAs(command.pad[1], context, "number")];
+	if (command.pad)
+		padding = [
+			evalExpressionAs(command.pad[0], context, "number"),
+			evalExpressionAs(command.pad[1], context, "number"),
+		];
 
 	x = x - padding[0];
 	y = y - padding[1];
@@ -19,10 +29,22 @@ export function executeRectCommand(command: TNeatRectCommand, context: Execution
 
 	const color = command.color ?? context.currentColor ?? "white";
 
-	let fill: string | undefined = undefined;
+	let fill: string | undefined;
 	if (command.fill) fill = command.fill;
 
-	context.renderer?.drawRect(x, y, width, height, color, fill);
+	const gc = context.gc as GameContext;
+	const rectObj: RectDTO = {
+		x,
+		y,
+		width,
+		height,
+		strokecolor: color,
+		fillcolor: fill,
+	};
+	const entity = new RectEntity(gc.resourceManager, rectObj);
+	if (command.id) entity.id = command.id;
 
-	return true;
+	gc.scene?.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
+
+	return false;
 }

@@ -20,7 +20,7 @@ export class SpawnerTrait extends Trait {
 		this.wannaSpawn = true;
 	}
 
-	update(gc: GameContext, entity: Entity, scene: Scene) {
+	update(_gc: GameContext, _entity: Entity, scene: Scene) {
 		if (!this.wannaSpawn || !this.entities.length) return;
 		this.wannaSpawn = false;
 		for (let idx = 0; idx < this.entities.length; idx++) {

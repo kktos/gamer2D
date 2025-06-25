@@ -1,7 +1,7 @@
 import type { Rect } from "../maths/math";
 import { compileSpriteSheetScript } from "../script/compiler/compiler";
 import type { TSpriteSheet, TSpriteSheetGrid } from "../script/compiler/ressources/spritesheet.rules";
-import { type TImageData, drawZoomedImage } from "../utils/canvas.utils";
+import { drawZoomedImage, type TImageData } from "../utils/canvas.utils";
 import { createSpriteSheet } from "../utils/createSpriteSheet.util";
 import { loadImage, loadText } from "../utils/loaders.util";
 import { Anim } from "./Anim";
@@ -140,7 +140,7 @@ export class SpriteSheet {
 	}
 
 	// TODO: fix with Sprite
-	defineComplex(name: string, spriteDef) {
+	defineComplex(_name: string, spriteDef) {
 		const canvas = document.createElement("canvas");
 		const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 		ctx.imageSmoothingEnabled = false;

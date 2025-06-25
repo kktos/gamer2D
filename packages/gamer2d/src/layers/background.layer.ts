@@ -1,7 +1,7 @@
 import type { GameContext } from "../game/types/GameContext";
 import type { Scene } from "../scene/Scene";
 import type { TNeatCommand } from "../script/compiler2/types/commands.type";
-import { runPreparationPhase } from "../script/engine2/exec";
+import { runCommands } from "../script/engine2/exec";
 import type { ExecutionContext } from "../script/engine2/exec.type";
 import type { TNeatFunctions } from "../utils/functionDict.utils";
 import { TVarDict, TVars } from "../utils/vars.utils";
@@ -20,7 +20,7 @@ export class BackgroundLayer extends Layer {
 			functions: null as unknown as TNeatFunctions,
 		};
 
-		runPreparationPhase(sheet.data, context);
+		runCommands(sheet.data, context);
 
 		this.color = context.currentColor ?? "white";
 	}

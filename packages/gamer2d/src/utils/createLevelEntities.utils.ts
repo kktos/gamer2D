@@ -1,7 +1,7 @@
 import type { Entity } from "../entities/Entity";
 import { createEntityByName } from "../entities/Entity.factory";
-import type { ResourceManager } from "../game/ResourceManager";
 import { GLOBAL_VARIABLES } from "../game/globals";
+import type { ResourceManager } from "../game/ResourceManager";
 import { addTraits } from "../layers/display/trait.manager";
 import type { Grid } from "../maths/grid.math";
 import type { TLayerEntitiesSprite } from "../script/compiler/layers/entities/entities.rules";

@@ -7,7 +7,7 @@ const ALIGN = 2;
 const VALIGN = 3;
 const COLOR = 4;
 const ANIM = 5;
-const TRAITS = 6;
+const _TRAITS = 6;
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class TextSpritePropsRules {

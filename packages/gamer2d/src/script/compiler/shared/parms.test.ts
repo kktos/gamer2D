@@ -26,7 +26,7 @@ describe("ParmsRules", () => {
 		it("should throw if variable array elements are not trait variables", () => {
 			// Test case 1: Variable holding an array with a non-trait variable inside
 			const script1 = "traits:$traitList";
-			const globals1 = new Map<string, unknown>([
+			const _globals1 = new Map<string, unknown>([
 				["trait1", new ArgVariable("trait1")],
 				["notATraitVar", 0],
 				["traitList", [new ArgVariable("trait1"), new ArgVariable("notATraitVar")]], // Array holds refs

@@ -1,9 +1,15 @@
-import type { TNeatCommand, TNeatForCommand } from "../../compiler2/types/commands.type";
-import { runPreparationPhase } from "../exec";
+import type {
+	TNeatCommand,
+	TNeatForCommand,
+} from "../../compiler2/types/commands.type";
+import { runCommands } from "../exec";
 import type { ExecutionContext } from "../exec.type";
 import { evalExpressionAs } from "../expr.eval";
 
-export function executeForCommand(command: TNeatForCommand, context: ExecutionContext) {
+export function executeForCommand(
+	command: TNeatForCommand,
+	context: ExecutionContext,
+) {
 	const result: TNeatCommand[] = [];
 
 	if ("var" in command) {
@@ -13,9 +19,10 @@ export function executeForCommand(command: TNeatForCommand, context: ExecutionCo
 			console.log(item);
 
 			context.variables.set(command.var, item);
-			if (command.index) context.variables.set(command.index, list.indexOf(item));
+			if (command.index)
+				context.variables.set(command.index, list.indexOf(item));
 			// Execute body commands
-			result.push(...runPreparationPhase(command.body, context));
+			result.push(...runCommands(command.body, context));
 		}
 	} else {
 		// for $index from,to { item { ... } }
@@ -30,7 +37,7 @@ export function executeForCommand(command: TNeatForCommand, context: ExecutionCo
 			context.variables.set(indexVar, i);
 
 			// Execute body commands
-			result.push(...runPreparationPhase(command.body, context));
+			result.push(...runCommands(command.body, context));
 		}
 	}
 	return result;

@@ -20,7 +20,7 @@ function rgbaToHex(color: string): string {
 
 export const RgbaEditor: PropertyEditor = {
 	supports: (config: PropertyConfig, value: unknown): boolean => config.editor === "rgba" && (typeof value === "string" || value instanceof ArgColor),
-	render: (cell: HTMLTableCellElement, key: string, value: string | ArgColor, config: PropertyConfig, inspector: PropertiesInspector): void => {
+	render: (cell: HTMLTableCellElement, key: string, value: string | ArgColor, _config: PropertyConfig, inspector: PropertiesInspector): void => {
 		let wrapper = cell.querySelector(".rgba-editor") as HTMLDivElement | null;
 		const colorValue = typeof value === "string" ? value : value?.value;
 		if (!wrapper) {

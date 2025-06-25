@@ -3,10 +3,10 @@ import { OP_TYPES } from "../../../../types/operation.types";
 import { compileLayerScript } from "../../compiler";
 
 describe("User Defined Layers", () => {
-	let globals: Map<string, unknown>;
+	let _globals: Map<string, unknown>;
 
 	beforeEach(() => {
-		globals = new Map();
+		_globals = new Map();
 	});
 
 	it("should raises an error when the layer is empty", () => {

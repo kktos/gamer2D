@@ -2,7 +2,9 @@
 
 BODY {
 	background-color: rgb(83, 82, 82);
-	font: 1em "PressStart2P", monospace;
+	font:
+		1em "PressStart2P",
+		monospace;
 }
 #game {
 	/* position: fixed;
@@ -117,7 +119,9 @@ DIV.btn {
 	box-shadow: 1px 1px 1px white, 0px 0px 2px white;				
 } */
 .black-shadow {
-	box-shadow: 1px 1px 1px black, 0px 0px 2px black;
+	box-shadow:
+		1px 1px 1px black,
+		0px 0px 2px black;
 }
 .hright {
 	justify-self: right;

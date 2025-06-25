@@ -3,9 +3,9 @@ import type { ExecutionContext } from "../exec.type";
 import { evalExpressionAs } from "../expr.eval";
 
 export function executeImageCommand(command: TNeatImageCommand, context: ExecutionContext) {
-	const x = evalExpressionAs(command.at.x, context, "number");
-	const y = evalExpressionAs(command.at.y, context, "number");
-	const source = command.source;
+	const _x = evalExpressionAs(command.at.x, context, "number");
+	const _y = evalExpressionAs(command.at.y, context, "number");
+	const _source = command.source;
 	const repeat = [1, 1];
 	if (command.repeat) {
 		repeat[0] = evalExpressionAs(command.repeat[0], context, "number");

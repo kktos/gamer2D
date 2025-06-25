@@ -278,7 +278,7 @@ export class PropertiesInspector extends HTMLElement {
 				}
 				try {
 					return JSON.stringify(value, null, 2);
-				} catch (e) {
+				} catch (_e) {
 					return "[Circular Structure]";
 				}
 			case "function":

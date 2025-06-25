@@ -1,6 +1,6 @@
 import type { Entity } from "../../entities/Entity";
-import type { Layer } from "../../layers/Layer";
 import type { View } from "../../layers/display/views/View";
+import type { Layer } from "../../layers/Layer";
 import type { Scene } from "../../scene/Scene";
 import type { Trait } from "../../traits/Trait";
 import type { Constructor } from "../../types/typescript.types";

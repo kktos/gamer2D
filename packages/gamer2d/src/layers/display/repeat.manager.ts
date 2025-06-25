@@ -8,7 +8,7 @@ import { execSet } from "../../script/engine/exec.script";
 import { OP_TYPES } from "../../types/operation.types";
 import { ArgExpression, ArgVariable, ValueTrait } from "../../types/value.types";
 import { clone } from "../../utils/object.util";
-import type { TVarTypes, TVars } from "../../utils/vars.utils";
+import type { TVars, TVarTypes } from "../../utils/vars.utils";
 
 export function repeat(op: TRepeat, callback: (item: TRepeatItem) => void, vars: TVars) {
 	let count = 0;
@@ -41,7 +41,7 @@ export function repeat(op: TRepeat, callback: (item: TRepeatItem) => void, vars:
 	}
 }
 
-function processItem(item: TSprite | TText | TImage | TSet, idx: number, vars: TVars) {
+function processItem(item: TSprite | TText | TImage | TSet, _idx: number, vars: TVars) {
 	switch (item.type) {
 		case OP_TYPES.TEXT:
 			item.text = evalString({ vars }, item.text);

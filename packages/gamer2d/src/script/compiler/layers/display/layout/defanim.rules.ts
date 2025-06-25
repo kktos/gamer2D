@@ -13,7 +13,7 @@ export type TAnimDef = {
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class DefAnimRules {
 	static layoutDefAnim($) {
-		return $.RULE("layoutDefAnim", (options) => {
+		return $.RULE("layoutDefAnim", (_options) => {
 			$.CONSUME(tokens.Def);
 			$.CONSUME(tokens.Anim);
 

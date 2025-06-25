@@ -11,7 +11,7 @@ type ForCommandBuilder<T extends "variable" | "range"> = T extends "variable"
 	? PartialExcept<TNeatVariableForCommand, "body" | "cmd">
 	: PartialExcept<TNeatRangeForCommand, "body" | "cmd">;
 
-function createForCommand<T extends "variable" | "range">(type: T): ForCommandBuilder<T> {
+function createForCommand<T extends "variable" | "range">(_type: T): ForCommandBuilder<T> {
 	return { cmd: "FOR", body: [] } as ForCommandBuilder<T>;
 }
 

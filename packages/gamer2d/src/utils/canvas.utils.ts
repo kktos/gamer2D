@@ -122,7 +122,7 @@ export function createFromSource(srcCtx: CanvasRenderingContext2D, x: number, y:
 
 export function hexToRgb(hex: string) {
 	const res = hex
-		.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (m, r, g, b) => `#${r}${r}${g}${g}${b}${b}`)
+		.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (_m, r, g, b) => `#${r}${r}${g}${g}${b}${b}`)
 		.substring(1)
 		.match(/.{2}/g);
 	return res?.map((x) => Number.parseInt(x, 16));

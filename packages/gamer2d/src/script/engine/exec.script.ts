@@ -2,7 +2,7 @@ import { ArgColor, ArgIdentifier, ArgVariable } from "../../types/value.types";
 import type { TVars } from "../../utils/vars.utils";
 import type { TSet } from "../compiler/layers/display/layout/set.rules";
 import type { TActionStatement } from "../compiler/shared/action.rules";
-import { type TEvalValue, evalValue, evalVar, interpolateString, isStringInterpolable, resoleVar } from "./eval.script";
+import { evalValue, evalVar, interpolateString, isStringInterpolable, resoleVar, type TEvalValue } from "./eval.script";
 
 export function execParseArgs({ vars }: { vars: TVars }, fnArgs: unknown[]) {
 	const args: unknown[] = [];
@@ -72,7 +72,7 @@ export function execSet({ vars }: { vars: TVars }, actionSet: TSet) {
 }
 
 export function execAction({ vars }: { vars: TVars }, statementList: TActionStatement[]) {
-	let result = undefined;
+	let result;
 	for (const statement of statementList) {
 		if (Array.isArray(statement)) {
 			result = undefined;

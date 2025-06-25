@@ -1,6 +1,6 @@
 export const TRIGGER_BTN_ID = "debug-trigger";
 
-export function createTriggerBtn(root: HTMLElement) {
+export function createTriggerBtn(_root: HTMLElement) {
 	const trigger = document.createElement("div");
 	trigger.id = TRIGGER_BTN_ID;
 	trigger.style.cssText = `

@@ -158,7 +158,7 @@ export class DebugView extends View {
 		}
 	}
 
-	handleEvent(gc: GameContext, e) {
+	handleEvent(_gc: GameContext, e) {
 		switch (e.type) {
 			case "keydown":
 				switch (e.key) {

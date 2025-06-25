@@ -5,7 +5,7 @@ export function interpolateString(template: string, context: ExecutionContext): 
 	// ${variable} - simple variable substitution
 	// ${expression} - more complex expressions (if needed later)
 
-	return template.replace(/\$\{([^}]+)\}/g, (match, expression) => {
+	return template.replace(/\$\{([^}]+)\}/g, (_match, expression) => {
 		const trimmed = expression.trim();
 
 		// Simple variable lookup

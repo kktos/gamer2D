@@ -1,8 +1,8 @@
 import { DisplayPage } from "./display.page";
 import { EntitiesPage } from "./entities.page";
 import { EntityPropsPage } from "./entity-props.page";
-import { LayoutItemPropsPage } from "./layout-item-props.page";
 import { LayoutPage } from "./layout.page";
+import { LayoutItemPropsPage } from "./layout-item-props.page";
 import { PropertiesPage } from "./properties.page";
 import { ScenePage } from "./scene.page";
 import { VariablesPage } from "./variables.page";

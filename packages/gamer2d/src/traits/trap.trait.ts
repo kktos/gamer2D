@@ -15,7 +15,7 @@ export class TrapTrait extends Trait {
 		this.target = null;
 	}
 
-	collides(gc: GameContext, entity: Entity, target: Entity): void {
+	collides(_gc: GameContext, _entity: Entity, target: Entity): void {
 		if (this.isArmed) {
 			this.isArmed = false;
 			this.isTriggered = true;
@@ -23,7 +23,7 @@ export class TrapTrait extends Trait {
 		}
 	}
 
-	update(gc: GameContext, entity: Entity, scene: Scene) {
+	update(_gc: GameContext, entity: Entity, scene: Scene) {
 		if (this.isTriggered) {
 			scene.emit(TrapTrait.EVENT_TRAPPED, entity.id, this.target);
 			this.isTriggered = false;

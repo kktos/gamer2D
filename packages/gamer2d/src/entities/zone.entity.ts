@@ -10,7 +10,7 @@ export class ZoneEntity extends Entity {
 	}
 
 	render(gc) {
-		const ctx = gc.viewport.ctx;
+		const _ctx = gc.viewport.ctx;
 	}
 }
 

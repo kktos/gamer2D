@@ -17,7 +17,7 @@ export type TRect = {
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 export class RectRules {
 	static layoutRect($) {
-		return $.RULE("layoutRect", (options, isMenuItem) => {
+		return $.RULE("layoutRect", (options, _isMenuItem) => {
 			$.CONSUME(tokens.Rect);
 
 			const result: TRect = {
