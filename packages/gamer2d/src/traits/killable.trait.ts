@@ -1,6 +1,6 @@
 import type { Entity } from "../entities/Entity";
 import { EntitiesLayer } from "../layers/entities.layer";
-import type { Scene } from "../scene/Scene";
+import type { Scene } from "../scenes/Scene";
 import { Trait } from "./Trait";
 import { setupTrait } from "./Trait.factory";
 

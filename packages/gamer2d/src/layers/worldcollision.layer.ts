@@ -3,7 +3,7 @@ import type { GameContext } from "../game/types/GameContext";
 import type { BBox } from "../maths/BBox.class";
 import { type Grid, GridCell } from "../maths/grid.math";
 import { COLLISION_SIDES } from "../maths/math";
-import type { Scene } from "../scene/Scene";
+import type { Scene } from "../scenes/Scene";
 import { Layer } from "./Layer.class";
 
 type TCellRect = BBox & {

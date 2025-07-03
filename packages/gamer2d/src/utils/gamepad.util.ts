@@ -1,7 +1,7 @@
 import { GP_BUTTONS, GP_STICKS_AXES } from "../constants/gamepad.const";
 import type { GameContext } from "../game/types/GameContext";
 import type { GameEvent } from "../game/types/GameEvent";
-import type { Director } from "../scene/Director";
+import type { Director } from "../scenes/Director";
 
 export function readGamepad(gc: GameContext, coppola: Director) {
 	if (!gc.gamepad) return;

@@ -1,5 +1,5 @@
 import type { UiLayer } from "../../layers/ui.layer";
-import type { Director } from "../../scene/Director";
+import type { Director } from "../../scenes/Director";
 import type { TStatement } from "../../script/compiler/layers/display/layout/layout.rules";
 import { OP_TYPES, OP_TYPES_STR } from "../../types/operation.types";
 import type { ItemList, TableColumn } from "../elements/items.inspector";

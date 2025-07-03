@@ -1,7 +1,7 @@
 import { Events } from "../events";
 import type { GameContext } from "../game";
 import type { ResourceManager } from "../game/ResourceManager";
-import type { Scene } from "../scene";
+import type { Scene } from "../scenes";
 import type { TNeatMenuKeys, TNeatMenuSelection } from "../script/compiler2/types/commands.type";
 import { Entity } from "./Entity";
 import { setupEntity } from "./Entity.factory";

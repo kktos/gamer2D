@@ -1,4 +1,4 @@
-import type { Scene } from "../../scene/Scene";
+import type { Scene } from "../../scenes/Scene";
 import type { KeyMap } from "../KeyMap";
 import type { ResourceManager } from "../ResourceManager";
 import type { GameOptions } from "./GameOptions";

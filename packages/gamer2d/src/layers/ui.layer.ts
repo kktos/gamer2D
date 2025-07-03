@@ -3,7 +3,7 @@ import type { Font } from "../game/Font";
 import type { GameContext } from "../game/types/GameContext";
 import type { BaseEvent, KeyEvent } from "../game/types/GameEvent";
 import type { BBox } from "../maths/BBox.class";
-import type { Scene } from "../scene/Scene";
+import type { Scene } from "../scenes/Scene";
 import type { TView } from "../script/compiler/layers/display/layout/view.rules";
 import type { TNeatCommand } from "../script/compiler2/types/commands.type";
 import { runCommands } from "../script/engine2/exec";

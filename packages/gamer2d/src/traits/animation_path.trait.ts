@@ -1,6 +1,6 @@
 import type { Entity } from "../entities/Entity";
 import type { Point } from "../maths/math";
-import type { Scene } from "../scene/Scene";
+import type { Scene } from "../scenes/Scene";
 import type { TNeatCommand } from "../script/compiler2/types/commands.type";
 import type { TNeatFunctionTerm } from "../script/compiler2/types/expression.type";
 import type { ExecutionContext } from "../script/engine2/exec.type";

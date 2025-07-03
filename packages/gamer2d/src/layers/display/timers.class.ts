@@ -1,5 +1,5 @@
 import type { GameContext } from "../../game/types/GameContext";
-import type { Scene } from "../../scene/Scene";
+import type { Scene } from "../../scenes/Scene";
 import type { TTimers } from "../../types/engine.types";
 
 class Timer {

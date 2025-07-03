@@ -1,5 +1,5 @@
 import type { GameContext } from "../game/types/GameContext";
-import type { Scene } from "../scene/Scene";
+import type { Scene } from "../scenes/Scene";
 import type { TSet } from "../script/compiler/layers/display/layout/set.rules";
 import { runCommands } from "../script/engine2/exec";
 import type { ExecutionContext } from "../script/engine2/exec.type";

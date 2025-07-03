@@ -1,7 +1,7 @@
 import type { Entity } from "../entities/Entity";
 import type { GameContext } from "../game/types/GameContext";
 import type { WorldCollisionLayer } from "../layers/worldcollision.layer";
-import type { Scene } from "../scene/Scene";
+import type { Scene } from "../scenes/Scene";
 import { Trait } from "./Trait";
 /**
  * Handles Velocity, Gravity, Mass and World collisions

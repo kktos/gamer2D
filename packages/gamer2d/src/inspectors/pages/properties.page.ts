@@ -1,4 +1,4 @@
-import type { Director } from "../../scene/Director";
+import type { Director } from "../../scenes/Director";
 import type { PropertiesInspector } from "../elements/properties.inspector";
 import { DebugPage } from "./debug-page.class";
 

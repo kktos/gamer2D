@@ -1,5 +1,5 @@
 import type { GameContext } from "../game/types/GameContext";
-import type { Scene } from "../scene/Scene";
+import type { Scene } from "../scenes/Scene";
 import type { TNeatCommand } from "../script/compiler2/types/commands.type";
 import { runCommands } from "../script/engine2/exec";
 import type { ExecutionContext } from "../script/engine2/exec.type";

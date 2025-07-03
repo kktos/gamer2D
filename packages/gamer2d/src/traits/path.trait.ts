@@ -1,6 +1,6 @@
 import type { Entity } from "../entities/Entity";
 import type { Point } from "../maths/math";
-import type { Scene } from "../scene/Scene";
+import type { Scene } from "../scenes/Scene";
 import type { TAnimDef } from "../script/compiler/layers/display/layout/defanim.rules";
 import { typeOfArg } from "../script/engine/eval.script";
 import { DIRECTIONS } from "../types/direction.type";

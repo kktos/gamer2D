@@ -1,6 +1,6 @@
 import type { Entity } from "../../entities/Entity";
 import type { UiLayer } from "../../layers/ui.layer";
-import type { Director } from "../../scene/Director";
+import type { Director } from "../../scenes/Director";
 import { evalVar } from "../../script/engine/eval.script";
 import type { PropertiesInspector } from "../elements/properties.inspector";
 import { DebugPage } from "./debug-page.class";

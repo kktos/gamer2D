@@ -1,5 +1,5 @@
 import type { Font } from "../../game";
-import type { Scene } from "../../scene";
+import type { Scene } from "../../scenes";
 import type { NeatVariableStore } from "../../utils/vars.store";
 import type { TAlignType } from "../compiler2/types/align.type";
 import type { NeatFunctions } from "./functions/functionDict.utils";

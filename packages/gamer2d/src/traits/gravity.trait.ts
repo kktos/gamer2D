@@ -1,5 +1,5 @@
 import type { Entity } from "../entities/Entity";
-import type { Scene } from "../scene/Scene";
+import type { Scene } from "../scenes/Scene";
 import { Trait } from "./Trait";
 export class GravityTrait extends Trait {
 	update({ dt }, entity: Entity, scene: Scene) {

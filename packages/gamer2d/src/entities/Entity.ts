@@ -5,7 +5,7 @@ import type { GameContext } from "../game/types/GameContext";
 import { BBox } from "../maths/BBox.class";
 import type { GridCell } from "../maths/grid.math";
 import type { Point, TCollisionSide } from "../maths/math";
-import type { Scene } from "../scene/Scene";
+import type { Scene } from "../scenes/Scene";
 import { type ITraitCollides, type ITraitObstructedOn, type ITraitUpdate, type Trait, TraitDict } from "../traits/Trait";
 import { getTraitClassname } from "../traits/Trait.factory";
 import { DIRECTIONS } from "../types/direction.type";
