@@ -9,6 +9,11 @@ type BatchState =
 	| { active: true; queue: Effect[] };
 type Cleanup = () => void;
 
+export type Signal<T> = {
+	get value(): T;
+	set value(val: T);
+};
+
 const reactiveStack: Effect[] = [];
 let tracking = true;
 let batchState: BatchState = {
@@ -18,19 +23,36 @@ const getCurrentObserver = () => tracking && reactiveStack.at(-1);
 
 export function signal<T>(_value: T) {
 	let value = _value;
-
 	const subscribers = new Set<Effect>();
-	const getter = () => {
-		const subscriber = getCurrentObserver();
-		if (subscriber) subscribers.add(subscriber);
-		return value;
+	const signalObj = {
+		__signal__: true,
+		get value() {
+			const subscriber = getCurrentObserver();
+			if (subscriber) subscribers.add(subscriber);
+			return value;
+		},
+		set value(val: T) {
+			if (val === value) return;
+			value = val;
+			for (const s of subscribers) s.execute();
+		},
 	};
-	const setter = (val: T) => {
-		if (val === value) return;
-		value = val;
-		for (const s of subscribers) s.execute();
+	return signalObj as Signal<T>;
+}
+
+export function staticSignal<T>(_value: T) {
+	let value = _value;
+	const signalObj = {
+		__signal__: true,
+		get value() {
+			return value;
+		},
+		set value(val: T) {
+			if (val === value) return;
+			value = val;
+		},
 	};
-	return Object.assign(getter, { set: setter });
+	return signalObj as Signal<T>;
 }
 
 export function onCleanup(callback: () => void): void {
@@ -59,14 +81,15 @@ export function effect(callback: () => void): void {
 	execute();
 }
 
-export function memo<T>(fn: () => T): () => T {
-	let _signal: ReturnType<typeof signal<T>>;
+export function memo<T>(fn: () => T): Signal<T> {
+	let _signal: Signal<T>;
 	effect(() => {
 		const value = fn();
-		if (_signal) _signal.set(value);
+		if (_signal) _signal.value = value;
 		else _signal = signal(value);
 	});
-	return () => _signal();
+	// biome-ignore lint/style/noNonNullAssertion: no choice
+	return _signal!;
 }
 
 export const untrack = <T>(fn: () => T): T => {
@@ -81,9 +104,9 @@ export const untrack = <T>(fn: () => T): T => {
 	return value;
 };
 
-export const on = <T>(signal: () => T, fn: (v: T) => void) => {
+export const on = <T>(signal: Signal<T>, fn: (v: T) => void) => {
 	return () => {
-		const value = signal();
+		const value = signal.value;
 		untrack(() => fn(value));
 	};
 };

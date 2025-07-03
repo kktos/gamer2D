@@ -18,37 +18,37 @@ describe("Signals System", () => {
 			get lastValue() {
 				return lastValue;
 			},
-			runner, // Expose runner if needed, though effect doesn't return anything
+			runner,
 		};
 	};
 
 	describe("signal", () => {
 		it("should create a signal with an initial value", () => {
 			const count = signal(0);
-			expect(count()).toBe(0);
+			expect(count.value).toBe(0);
 		});
 
 		it("should set and get the signal value", () => {
 			const count = signal(0);
-			count.set(5);
-			expect(count()).toBe(5);
+			count.value = 5;
+			expect(count.value).toBe(5);
 		});
 
 		it("should trigger effects when the value changes", () => {
 			const count = signal(0);
 			let dummy: number | undefined;
 			const tracker = createEffectTracker(() => {
-				dummy = count();
+				dummy = count.value;
 			});
 
 			expect(tracker.executions).toBe(1);
 			expect(dummy).toBe(0);
 
-			count.set(10);
+			count.value = 10;
 			expect(tracker.executions).toBe(2);
 			expect(dummy).toBe(10);
 
-			count.set(10);
+			count.value = 10;
 			expect(tracker.executions).toBe(2);
 			expect(dummy).toBe(10);
 		});
@@ -65,12 +65,12 @@ describe("Signals System", () => {
 
 		it("should re-run when a dependency signal changes", () => {
 			const sig = signal("a");
-			const tracker = createEffectTracker(() => sig());
+			const tracker = createEffectTracker(() => sig.value);
 
 			expect(tracker.executions).toBe(1);
 			expect(tracker.lastValue).toBe("a");
 
-			sig.set("b");
+			sig.value = "b";
 			expect(tracker.executions).toBe(2);
 			expect(tracker.lastValue).toBe("b");
 		});
@@ -82,34 +82,34 @@ describe("Signals System", () => {
 
 			let value: string | undefined;
 			const tracker = createEffectTracker(() => {
-				value = condition() ? sigA() : sigB();
+				value = condition.value ? sigA.value : sigB.value;
 			});
 
 			expect(tracker.executions).toBe(1);
 			expect(value).toBe("A");
 
 			// Change sigB - should not trigger effect yet
-			sigB.set("B2");
+			sigB.value = "B2";
 			expect(tracker.executions).toBe(1);
 			expect(value).toBe("A");
 
 			// Change sigA - should trigger effect
-			sigA.set("A2");
+			sigA.value = "A2";
 			expect(tracker.executions).toBe(2);
 			expect(value).toBe("A2");
 
 			// Change condition - should trigger effect and change dependency
-			condition.set(false);
+			condition.value = false;
 			expect(tracker.executions).toBe(3);
 			expect(value).toBe("B2"); // Now reads from sigB
 
 			// Change sigA - should not trigger effect now
-			sigA.set("A3");
+			sigA.value = "A3";
 			expect(tracker.executions).toBe(3);
 			expect(value).toBe("B2");
 
 			// Change sigB - should trigger effect now
-			sigB.set("B3");
+			sigB.value = "B3";
 			expect(tracker.executions).toBe(4);
 			expect(value).toBe("B3");
 		});
@@ -123,33 +123,33 @@ describe("Signals System", () => {
 
 			const sum = memo(() => {
 				computations++;
-				return sigA() + sigB();
+				return sigA.value + sigB.value;
 			});
 
 			expect(computations).toBe(1); // Initial computation due to effect in memo
-			expect(sum()).toBe(3);
+			expect(sum.value).toBe(3);
 			expect(computations).toBe(1); // Should not recompute on read
 
-			sigA.set(5);
+			sigA.value = 5;
 			expect(computations).toBe(2); // Recomputes when dependency changes
-			expect(sum()).toBe(7);
+			expect(sum.value).toBe(7);
 			expect(computations).toBe(2); // Cached again
 
-			sigB.set(10);
+			sigB.value = 10;
 			expect(computations).toBe(3);
-			expect(sum()).toBe(15);
+			expect(sum.value).toBe(15);
 			expect(computations).toBe(3);
 		});
 
 		it("should trigger effects when its value changes", () => {
 			const sig = signal(1);
-			const double = memo(() => sig() * 2);
-			const tracker = createEffectTracker(() => double());
+			const double = memo(() => sig.value * 2);
+			const tracker = createEffectTracker(() => double.value);
 
 			expect(tracker.executions).toBe(1);
 			expect(tracker.lastValue).toBe(2);
 
-			sig.set(5);
+			sig.value = 5;
 			expect(tracker.executions).toBe(2);
 			expect(tracker.lastValue).toBe(10);
 		});
@@ -160,19 +160,19 @@ describe("Signals System", () => {
 			const sigA = signal("A");
 			const sigB = signal("B");
 			const tracker = createEffectTracker(() => {
-				untrack(() => sigA()); // Read sigA without tracking
-				return sigB(); // Track sigB
+				untrack(() => sigA.value); // Read sigA without tracking
+				return sigB.value; // Track sigB
 			});
 
 			expect(tracker.executions).toBe(1);
 			expect(tracker.lastValue).toBe("B");
 
 			// Change sigA - should NOT trigger effect
-			sigA.set("A2");
+			sigA.value = "A2";
 			expect(tracker.executions).toBe(1);
 
 			// Change sigB - should trigger effect
-			sigB.set("B2");
+			sigB.value = "B2";
 			expect(tracker.executions).toBe(2);
 			expect(tracker.lastValue).toBe("B2");
 		});
@@ -184,7 +184,7 @@ describe("Signals System", () => {
 			let cleanupCount = 0;
 
 			const tracker = createEffectTracker(() => {
-				sig(); // Depend on signal
+				sig.value; // Depend on signal
 				onCleanup(() => {
 					cleanupCount++;
 				});
@@ -193,11 +193,11 @@ describe("Signals System", () => {
 			expect(tracker.executions).toBe(1);
 			expect(cleanupCount).toBe(0);
 
-			sig.set(1);
+			sig.value = 1;
 			expect(cleanupCount).toBe(1); // Cleanup ran before second execution
 			expect(tracker.executions).toBe(2);
 
-			sig.set(2);
+			sig.value = 2;
 			expect(cleanupCount).toBe(2); // Cleanup ran before third execution
 			expect(tracker.executions).toBe(3);
 		});
@@ -207,13 +207,13 @@ describe("Signals System", () => {
 		it("should run effects only once after multiple updates within the batch", () => {
 			const sigA = signal(1);
 			const sigB = signal(2);
-			const tracker = createEffectTracker(() => sigA() + sigB());
+			const tracker = createEffectTracker(() => sigA.value + sigB.value);
 
 			expect(tracker.executions).toBe(1);
 
 			batch(() => {
-				sigA.set(5);
-				sigB.set(10);
+				sigA.value = 5;
+				sigB.value = 10;
 				expect(tracker.executions).toBe(1); // Effect shouldn't run yet
 			});
 
@@ -229,8 +229,4 @@ describe("Signals System", () => {
 			}).toThrow("No support yet");
 		});
 	});
-
-	// Note: createRoot and on tests might need adjustments based on how you intend to use them,
-	// especially regarding disposal and explicit triggers. The current implementation of `on`
-	// returns a function that needs to be called within an effect or similar context to be useful.
 });
