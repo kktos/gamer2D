@@ -5,8 +5,8 @@ import { CompileSyntaxErr } from "../script/compiler/compiler";
 import type { TSceneSheet } from "../script/compiler/scenes/scene.rules";
 import { compile } from "../script/compiler2/compiler";
 import { LocalDB } from "../utils/storage.util";
-import { DisplayScene } from "./display.scene";
 import type { Scene } from "./Scene";
+import { DisplayScene } from "./display.scene";
 
 const sceneClasses: Record<TSceneSheet["type"], SceneConstructor | null> = {
 	display: DisplayScene,
@@ -14,24 +14,18 @@ const sceneClasses: Record<TSceneSheet["type"], SceneConstructor | null> = {
 	game: null,
 };
 
-export function setupScene(
-	sceneType: TSceneSheet["type"],
-	sceneClass: SceneConstructor,
-) {
+export function setupScene(sceneType: TSceneSheet["type"], sceneClass: SceneConstructor) {
 	if (!sceneClasses[sceneType]) sceneClasses[sceneType] = sceneClass;
 }
 
-export function createScene(
-	gc: GameContext,
-	className: string,
-	...args: unknown[]
-): Scene {
+export function createScene(gc: GameContext, className: string, ...args: unknown[]): Scene {
 	if (!sceneClasses[className]) {
 		throw new TypeError(`Unknown Scene Type ${className}`);
 	}
 	return new sceneClasses[className](gc, ...args);
 }
 
+// biome-ignore lint/complexity/noStaticOnlyClass: I want this
 export class SceneFactory {
 	static async load(gc: GameContext, filename: string) {
 		let sheet: TSceneSheet | null = null;
@@ -44,13 +38,10 @@ export class SceneFactory {
 		if (!sheet) {
 			try {
 				const scriptText = await gc.resourceManager.loadScene(filename);
-				// sheet = compileScript(scriptText, GLOBAL_VARIABLES);
 				sheet = compile<TSceneSheet>(scriptText, "scene");
 			} catch (e) {
 				if (e instanceof CompileSyntaxErr) {
-					console.error(
-						`SYNTAX ERROR\nline ${e.line} at ${e.word} rule: ${e.ruleStack}\n${e.message}`,
-					);
+					console.error(`SYNTAX ERROR\nline ${e.line} at ${e.word} rule: ${e.ruleStack}\n${e.message}`);
 					// throw e;
 				} else console.error((e as Error).message);
 			}
@@ -67,14 +58,12 @@ export class SceneFactory {
 			sheet.layers[idx] = await loadLayer(gc, String(layerDef.name));
 		}
 
-		if (!["display", "level", "game"].includes(sheet.type))
-			throw new Error(`Unknown Scene type: ${sheet.type}`);
+		if (!["display", "level", "game"].includes(sheet.type)) throw new Error(`Unknown Scene type: ${sheet.type}`);
 
 		const scene = createScene(gc, sheet.type, filename, sheet);
 
 		// scene.killOnExit= sheet.killOnExit ? true : false;
-		if ("showCursor" in sheet)
-			gc.viewport.canvas.style.cursor = sheet.showCursor ? "default" : "none";
+		if ("showCursor" in sheet) gc.viewport.canvas.style.cursor = sheet.showCursor ? "default" : "none";
 
 		return scene;
 	}

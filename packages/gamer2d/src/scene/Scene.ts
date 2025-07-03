@@ -7,7 +7,8 @@ import type { HTMLLayer } from "../layers/HTMLLayer";
 import type { Layer } from "../layers/Layer";
 import { createLayerByName } from "../layers/Layer.factory";
 import { BBox } from "../maths/BBox.class";
-import type { TSceneSheet } from "../script/compiler/scenes/scene.rules";
+import type { TNeatLayer } from "../script/compiler2/types/layers.type";
+import type { TNeatScene } from "../script/compiler2/types/scenes.type";
 import { generateID } from "../utils/id.util";
 import { getClassName } from "../utils/object.util";
 
@@ -48,7 +49,7 @@ export class Scene {
 	constructor(
 		private gc: GameContext,
 		public filename: string,
-		sheet: TSceneSheet,
+		sheet: TNeatScene,
 	) {
 		this.class = getClassName(this.constructor);
 		this.id = generateID();
@@ -66,7 +67,7 @@ export class Scene {
 		this.isRunning = false;
 		this.isPermanent = false;
 		// this.next = null;
-		this.wannaShowCursor = sheet.showCursor ?? false;
+		this.wannaShowCursor = (sheet.showCursor as boolean) ?? false;
 
 		this.gravity = gc.gravity ?? 0;
 
@@ -76,7 +77,14 @@ export class Scene {
 		// for the layers
 		this.gc.scene = this;
 
-		for (const layerDef of sheet.layers) this.addLayer(layerDef.type, createLayerByName(gc, layerDef.type, this, layerDef));
+		const mergeLayers: TNeatLayer[] = [];
+		for (const layerDef of sheet.layers) {
+			const layer = mergeLayers.filter((l) => l.type === layerDef.type)[0];
+			if (!layer) mergeLayers.push(layerDef);
+			else if (layer.data && layerDef.data) layer.data = [...layer.data, ...layerDef.data];
+		}
+
+		for (const layer of mergeLayers) this.addLayer(layer.type, createLayerByName(gc, layer.type, this, layer));
 	}
 
 	init(gc: GameContext) {
