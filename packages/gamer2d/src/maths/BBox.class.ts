@@ -144,6 +144,19 @@ export class BBox {
 		if (bbox.bottom < this.bottom) this.height = bbox.bottom - this._top;
 	}
 
+	unionWith(bbox: BBox): void {
+		this.save();
+		const newLeft = Math.min(this._left, bbox.left);
+		const newTop = Math.min(this._top, bbox.top);
+		const newRight = Math.max(this.right, bbox.right);
+		const newBottom = Math.max(this.bottom, bbox.bottom);
+
+		this._left = newLeft;
+		this._top = newTop;
+		this._width = newRight - newLeft;
+		this._height = newBottom - newTop;
+	}
+
 	private save() {
 		this._previous = {
 			left: this._left,
