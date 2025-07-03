@@ -113,7 +113,7 @@ export class Font {
 		return [newX, y, newX + width, y + this.height];
 	}
 
-	print(options: PrintOptions): BBox {
+	print_old(options: PrintOptions): BBox {
 		const { ctx, text, x, y, color, width, height, bgcolor, isDynamic } = options;
 
 		if (text === undefined || text === null || text === "") return new BBox(x, y, 0, 0);
@@ -181,7 +181,7 @@ export class Font {
 				break;
 		}
 
-		if (width) {
+		if (width && height) {
 			switch (this.align) {
 				case ALIGN_TYPES.CENTER:
 					newX += width / 2;
@@ -204,5 +204,141 @@ export class Font {
 
 		ctx.drawImage(canvas, x + newX, y + newY);
 		return new BBox(x + newX, y + newY, canvas.width, canvas.height);
+	}
+
+	print(options: PrintOptions): BBox {
+		const { ctx, text, x, y, color, width, height, bgcolor, isDynamic } = options;
+
+		// Early return for empty text
+		if (!text) return new BBox(x, y, 0, 0);
+
+		const textColor = color ?? this.color ?? "white";
+
+		// More efficient cache key - avoid JSON.stringify
+		const cacheKey = `${text}|${textColor}`;
+		let canvas: HTMLCanvasElement | undefined;
+
+		if (isDynamic || !this.cache.has(cacheKey)) {
+			canvas = this.createTextCanvas(String(text), textColor);
+			if (!isDynamic) this.cache.set(cacheKey, canvas);
+		} else {
+			canvas = this.cache.get(cacheKey);
+		}
+
+		if (!canvas) return new BBox(x, y, 0, 0);
+
+		// Calculate alignment offsets
+		const alignOffset = this.calculateAlignmentOffset(canvas, width, height);
+		const finalX = x + alignOffset.x;
+		const finalY = y + alignOffset.y;
+
+		// Draw background if specified
+		if (width && height && bgcolor) {
+			ctx.fillStyle = bgcolor;
+			ctx.fillRect(x, y, width, height);
+		}
+
+		// Draw the text canvas
+		ctx.drawImage(canvas, finalX, finalY);
+		return new BBox(finalX, finalY, canvas.width, canvas.height);
+	}
+
+	private createTextCanvas(text: string, textColor: string): HTMLCanvasElement {
+		const canvas = document.createElement("canvas");
+		const str = this.hasLowercase ? text : text.toUpperCase();
+
+		canvas.width = str.length * this.width;
+		canvas.height = this.height;
+
+		const canvasCtx = canvas.getContext("2d") as CanvasRenderingContext2D;
+		canvasCtx.imageSmoothingEnabled = false;
+
+		// Draw sprites
+		[...str].forEach((char, pos) => {
+			this.spritesheet.draw(char, canvasCtx, pos * this.width, 0, {
+				flip: 0,
+				zoom: this.size,
+			});
+		});
+
+		// Apply color transformation if needed
+		if (textColor !== "white") this.applyColorTransformFast(canvasCtx, canvas, textColor);
+
+		return canvas;
+	}
+
+	private applyColorTransform(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, color: string): void {
+		const [r, g, b, a = 255] = nameToRgba(color);
+		const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+		const data = imageData.data;
+		for (let i = 0; i < data.length; i += 4) {
+			if (data[i] === 255 && data[i + 1] === 255 && data[i + 2] === 255) {
+				data[i] = r;
+				data[i + 1] = g;
+				data[i + 2] = b;
+				data[i + 3] = a;
+			} else {
+				data[i + 3] = 0;
+			}
+		}
+		ctx.putImageData(imageData, 0, 0);
+	}
+
+	private calculateAlignmentOffset(canvas: HTMLCanvasElement, boxWidth?: number, boxHeight?: number): { x: number; y: number } {
+		let offsetX = 0;
+		let offsetY = 0;
+
+		// Text alignment relative to its own dimensions
+		switch (this.align) {
+			case ALIGN_TYPES.CENTER:
+				offsetX -= canvas.width / 2;
+				break;
+			case ALIGN_TYPES.RIGHT:
+				offsetX -= canvas.width;
+				break;
+			// LEFT is default (no offset needed)
+		}
+
+		switch (this.valign) {
+			case ALIGN_TYPES.CENTER:
+				offsetY -= canvas.height / 2;
+				break;
+			case ALIGN_TYPES.BOTTOM:
+				offsetY -= canvas.height;
+				break;
+			// TOP is default (no offset needed)
+		}
+
+		// Box alignment adjustments
+		if (boxWidth && boxHeight) {
+			switch (this.align) {
+				case ALIGN_TYPES.CENTER:
+					offsetX += boxWidth / 2;
+					break;
+				case ALIGN_TYPES.RIGHT:
+					offsetX += boxWidth;
+					break;
+			}
+
+			switch (this.valign) {
+				case ALIGN_TYPES.CENTER:
+					offsetY += boxHeight / 2;
+					break;
+				case ALIGN_TYPES.BOTTOM:
+					offsetY += boxHeight;
+					break;
+			}
+		}
+
+		return { x: offsetX, y: offsetY };
+	}
+
+	// Alternative more efficient color transformation using globalCompositeOperation
+	private applyColorTransformFast(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, color: string): void {
+		// This approach is faster but less flexible
+		ctx.globalCompositeOperation = "source-in";
+		ctx.fillStyle = color;
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		ctx.globalCompositeOperation = "source-over"; // Reset to default
 	}
 }
