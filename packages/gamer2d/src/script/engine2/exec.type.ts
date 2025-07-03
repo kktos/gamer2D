@@ -1,24 +1,24 @@
 import type { Font } from "../../game";
-import type { TNeatFunctions } from "../../utils/functionDict.utils";
-import type { TVars } from "../../utils/vars.utils";
+import type { Scene } from "../../scene";
+import type { NeatVariableStore } from "../../utils/vars.store";
 import type { TAlignType } from "../compiler2/types/align.type";
+import type { NeatFunctions } from "./functions/functionDict.utils";
 
 // Command execution context - holds rendering state, variables, etc.
 export interface ExecutionContext {
-	renderer?: TNeatRenderer;
-	variables: TVars;
-	functions: TNeatFunctions;
+	variables: NeatVariableStore;
+	functions: NeatFunctions;
 
 	// Current rendering state
 	currentFont?: Font;
 	currentFontSize?: number;
 	currentColor?: string;
+	currentBgColor?: string;
 	currentAlign?: TAlignType;
 	currentVAlign?: TAlignType;
+	currentZoom?: number;
+
+	currentScene?: Scene;
 
 	[key: string]: unknown;
-}
-
-interface TNeatRenderer {
-	drawRect(x: number, y: number, width: number, height: number, color: string, fill?: string): void;
 }

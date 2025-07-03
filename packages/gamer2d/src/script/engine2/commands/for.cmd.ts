@@ -1,29 +1,24 @@
-import type {
-	TNeatCommand,
-	TNeatForCommand,
-} from "../../compiler2/types/commands.type";
+import type { TNeatForCommand } from "../../compiler2/types/commands.type";
 import { runCommands } from "../exec";
 import type { ExecutionContext } from "../exec.type";
 import { evalExpressionAs } from "../expr.eval";
 
-export function executeForCommand(
-	command: TNeatForCommand,
-	context: ExecutionContext,
-) {
-	const result: TNeatCommand[] = [];
+export function executeForCommand(command: TNeatForCommand, context: ExecutionContext) {
+	const result: unknown[] = [];
 
 	if ("var" in command) {
-		// for $x of $list [index $i] { item { ... } }
+		// for $x of $list [as $i] { item { ... } }
 		const list = evalExpressionAs(command.list, context, "array");
 		for (const item of list) {
-			console.log(item);
+			// console.log(item);
 
-			context.variables.set(command.var, item);
-			if (command.index)
-				context.variables.set(command.index, list.indexOf(item));
+			context.variables.setStaticLocal(command.var, item);
+			if (command.index) context.variables.setStaticLocal(command.index, list.indexOf(item));
 			// Execute body commands
 			result.push(...runCommands(command.body, context));
 		}
+		context.variables.deleteLocal(command.var);
+		if (command.index) context.variables.deleteLocal(command.index);
 	} else {
 		// for $index from,to { item { ... } }
 		// Evaluate the range/list
@@ -34,11 +29,12 @@ export function executeForCommand(
 		// Execute loop
 		for (let i = startRange; i <= endRange; i++) {
 			// Set loop variable
-			context.variables.set(indexVar, i);
+			context.variables.setStaticLocal(indexVar, i);
 
 			// Execute body commands
 			result.push(...runCommands(command.body, context));
 		}
+		context.variables.deleteLocal(indexVar);
 	}
 	return result;
 }

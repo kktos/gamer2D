@@ -4,11 +4,10 @@ import { EntitiesLayer } from "../../../layers";
 import type { TNeatRectCommand } from "../../compiler2/types/commands.type";
 import type { ExecutionContext } from "../exec.type";
 import { evalExpressionAs } from "../expr.eval";
+import { addAnims } from "./shared/add.anims";
+import { addTraits } from "./shared/add.traits";
 
-export function executeRectCommand(
-	command: TNeatRectCommand,
-	context: ExecutionContext,
-): boolean {
+export function executeRectCommand(command: TNeatRectCommand, context: ExecutionContext) {
 	let x = evalExpressionAs(command.at.x, context, "number");
 	let y = evalExpressionAs(command.at.y, context, "number");
 	let width = evalExpressionAs(command.size.width, context, "number");
@@ -16,11 +15,7 @@ export function executeRectCommand(
 
 	// Handle padding if present
 	let padding = [0, 0];
-	if (command.pad)
-		padding = [
-			evalExpressionAs(command.pad[0], context, "number"),
-			evalExpressionAs(command.pad[1], context, "number"),
-		];
+	if (command.pad) padding = [evalExpressionAs(command.pad[0], context, "number"), evalExpressionAs(command.pad[1], context, "number")];
 
 	x = x - padding[0];
 	y = y - padding[1];
@@ -44,7 +39,10 @@ export function executeRectCommand(
 	const entity = new RectEntity(gc.resourceManager, rectObj);
 	if (command.id) entity.id = command.id;
 
+	if (command.anims) addAnims(command.anims, entity, context);
+	if (command.traits) addTraits(command.traits, entity, context);
+
 	gc.scene?.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
 
-	return false;
+	return entity;
 }

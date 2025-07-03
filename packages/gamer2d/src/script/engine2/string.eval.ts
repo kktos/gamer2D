@@ -1,23 +1,15 @@
+import { compile } from "../compiler2/compiler";
+import type { TNeatExpression } from "../compiler2/types/expression.type";
 import type { ExecutionContext } from "./exec.type";
+import { evalExpression } from "./expr.eval";
 
-export function interpolateString(template: string, context: ExecutionContext): string {
-	// Handle different interpolation patterns
-	// ${variable} - simple variable substitution
-	// ${expression} - more complex expressions (if needed later)
-
+export function interpolateString(template: string, context: ExecutionContext, varsUsed?: Set<string>): string {
 	return template.replace(/\$\{([^}]+)\}/g, (_match, expression) => {
-		const trimmed = expression.trim();
-
-		// Simple variable lookup
-		if (context.variables.has(trimmed)) {
-			const value = context.variables.get(trimmed);
-			return String(value);
-		}
-
-		// If you want to support more complex expressions later,
-		// you could parse and evaluate them here using your instruction system
-
-		// For now, throw error for unknown variables
-		throw new Error(`Unknown variable in string interpolation: ${trimmed}`);
+		const exprStack = compile<TNeatExpression>(`${expression}`, "expression");
+		return String(evalExpression(exprStack, context, varsUsed));
 	});
+}
+
+export function isInterpolatedString(template: string) {
+	return !!template.match(/\$\{([^}]+)\}/g);
 }

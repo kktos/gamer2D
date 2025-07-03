@@ -8,7 +8,7 @@ export function executeAssignmentCommand(command: TNeatAssignCommand, context: E
 	const valueToAssign = evalExpression(command.value, context);
 
 	// Handle the assignment path
-	const path = command.name;
+	const path = command.name.filter((part) => part.type !== "prop");
 
 	const rootVarName = (path[0] as TNeatVarTerm).name;
 
@@ -19,7 +19,7 @@ export function executeAssignmentCommand(command: TNeatAssignCommand, context: E
 	}
 
 	// Complex assignment: $obj.prop = value or $obj.$var = value
-	let current = context.variables.get(rootVarName);
+	let current = context.variables.get(rootVarName) as Record<string, unknown>;
 
 	// Ensure root exists as an object
 	if (current === undefined || current === null) {
@@ -37,7 +37,7 @@ export function executeAssignmentCommand(command: TNeatAssignCommand, context: E
 
 		if (typeof current[key] !== "object" || Array.isArray(current[key])) throw new Error(`Cannot access property '${key}' on non-object value`);
 
-		current = current[key];
+		current = current[key] as Record<string, unknown>;
 	}
 
 	// Set the final property

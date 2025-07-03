@@ -1,0 +1,6 @@
+import type { TNeatBgColorCommand } from "../../compiler2/types/commands.type";
+import type { ExecutionContext } from "../exec.type";
+
+export function executeBgColorCommand(command: TNeatBgColorCommand, context: ExecutionContext) {
+	context.currentBgColor = command.color;
+}

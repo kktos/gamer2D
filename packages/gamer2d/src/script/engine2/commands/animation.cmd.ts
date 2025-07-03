@@ -1,12 +1,15 @@
-import type { TNeatSpriteCommand } from "../../compiler2/types/commands.type";
+import type { TAnimationPathPathDTO } from "../../../traits/animation_path.trait";
+import type { TNeatAnimationCommand } from "../../compiler2/types/commands.type";
 import type { ExecutionContext } from "../exec.type";
-import { evalExpression } from "../expr.eval";
+import { evalExpressionAs } from "../expr.eval";
 
-export function executeAnimationCommand(command: TNeatSpriteCommand, context: ExecutionContext) {
-	const _x = evalExpression(command.at.x, context);
-	const _y = evalExpression(command.at.y, context);
-	const _width = command.size ? evalExpression(command.size.width, context) : undefined;
-	const _height = command.size ? evalExpression(command.size.height, context) : undefined;
-
-	// context.renderer.drawRect(x, y, width, height, padding);
+export function executeAnimationCommand(command: TNeatAnimationCommand, context: ExecutionContext) {
+	const repeat = command.repeat ? evalExpressionAs(command.repeat, context, "number") : 1;
+	const animDef: TAnimationPathPathDTO = {
+		name: command.name,
+		repeat,
+		hasAutostart: !command.isPaused,
+		statements: command.statements,
+	};
+	context.variables.setStaticLocal(command.name, animDef);
 }
