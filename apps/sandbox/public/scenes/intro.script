@@ -12,17 +12,17 @@ display "intro" {
 		timer "spawner" every 30ms
 		on TIMER from spawner {
 			log("TIME_OUT:spawner")
-			EntityPool("bubbles").use()
+			entity("bubbles").use()
 		}
 
 		timer "end" after 5000ms
 		on TIMER from end {
-			timer("spawner").stop()
+			timer("spawner").pause()
 		}
 
 		on SCENE_STARTED {
-			// timer("spawner").start()
-			// timer("end").start()
+			timer("spawner").resume()
+			timer("end").resume()
 		}
 
 		pool "BubbleEntity" id "bubbles" at 300,300 count 500 traits [OffscreenTrait()]

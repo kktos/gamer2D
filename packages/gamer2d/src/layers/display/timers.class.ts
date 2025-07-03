@@ -1,6 +1,4 @@
 import type { GameContext } from "../../game/types/GameContext";
-import type { Scene } from "../../scenes/Scene";
-import type { TTimers } from "../../types/engine.types";
 
 class Timer {
 	public countdown: number;
@@ -26,10 +24,10 @@ class Timer {
 	reset() {
 		this.countdown = this.duration;
 		this.counter = this.repeatCount;
-		this.start();
+		this.resume();
 	}
 
-	stop() {
+	pause() {
 		this.parent.stop(this.name);
 
 		if (Timers.wannaLog) {
@@ -37,7 +35,7 @@ class Timer {
 		}
 	}
 
-	start() {
+	resume() {
 		this.parent.start(this.name);
 
 		if (Timers.wannaLog) {
@@ -47,27 +45,27 @@ class Timer {
 }
 
 export class Timers {
-	static EVENT_TIME_OUT = Symbol.for("TIME_OUT");
-
-	stoppedTimers: Map<string, Timer>;
-	timers: Map<string, Timer>;
-
 	static wannaLog = false;
 
-	static createTimers(sheet) {
-		if (typeof sheet?.timers !== "object") return null;
+	private stoppedTimers: Map<string, Timer>;
+	private timers: Map<string, Timer>;
+	private onTimer: (name: string, count: number) => void;
 
-		const obj = new Timers();
-		for (const [name, value] of Object.entries(sheet.timers as TTimers)) {
-			const repeatCount = value.repeat ?? 0;
-			obj.stoppedTimers.set(name, new Timer(obj, name, value.time, repeatCount));
-		}
-		return obj;
-	}
+	// static createTimers(sheet) {
+	// 	if (typeof sheet?.timers !== "object") return null;
 
-	constructor() {
+	// 	const obj = new Timers();
+	// 	for (const [name, value] of Object.entries(sheet.timers as TTimers)) {
+	// 		const repeatCount = value.repeat ?? 0;
+	// 		obj.stoppedTimers.set(name, new Timer(obj, name, value.time, repeatCount));
+	// 	}
+	// 	return obj;
+	// }
+
+	constructor(onTimer: (name: string, count: number) => void) {
 		this.timers = new Map();
 		this.stoppedTimers = new Map();
+		this.onTimer = onTimer;
 	}
 
 	add(name: string, duration: number, repeatCount: number) {
@@ -104,14 +102,16 @@ export class Timers {
 		return null;
 	}
 
-	update(gc: GameContext, scene: Scene) {
+	update(gc: GameContext) {
 		for (const [name, t] of this.timers) {
 			t.countdown -= gc.deltaTime;
 			if (t.countdown <= 0) {
 				if (Timers.wannaLog) {
-					console.log("Timer.EVENT_TIME_OUT", name);
+					console.log("Timer.ON_TIMER", name);
 				}
-				scene.emit(Timers.EVENT_TIME_OUT, name);
+
+				this.onTimer(name, t.counter);
+
 				t.countdown = t.duration;
 				t.counter--;
 				if (t.counter <= 0) this.stop(name);

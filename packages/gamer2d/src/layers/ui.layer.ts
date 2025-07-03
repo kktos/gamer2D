@@ -11,7 +11,6 @@ import { functions } from "../script/engine2/functions/functionDict.utils";
 import type { BBox } from "../utils/maths/BBox.class";
 import { type NeatVariableStore, createVariableStore } from "../utils/vars.store";
 import { HTMLLayer } from "./HTMLLayer";
-import type { Timers } from "./display/timers.class";
 import type { View } from "./display/views/View";
 
 type TViewDef = TView & {
@@ -21,7 +20,7 @@ type TViewDef = TView & {
 };
 
 export class UiLayer extends HTMLLayer {
-	public timers: Timers | null;
+	// public timers: Timers | null;
 	public font: Font;
 	public variables: NeatVariableStore;
 
@@ -58,7 +57,7 @@ export class UiLayer extends HTMLLayer {
 		// this.menu?.prepareMenu();
 
 		// this.timers = Timers.createTimers(sheet);
-		this.timers = null;
+		// this.timers = null;
 		// if (sheet.sounds) this.vars.set("sounds", initSounds({ soundDefs: sheet.sounds, parent, resourceManager: rezMgr }));
 	}
 
@@ -173,7 +172,7 @@ export class UiLayer extends HTMLLayer {
 	}
 
 	update(gc: GameContext, scene: Scene) {
-		this.timers?.update(gc, scene);
+		// this.timers?.update(gc, scene);
 		if (this.debugCallback) this.debugCallback();
 	}
 

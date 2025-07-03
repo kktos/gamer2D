@@ -27,3 +27,11 @@ addFunction("log", fnLog);
 addFunction("entity", fnEntity);
 addFunction(["random", "rand", "rnd"], fnRandom);
 addFunction("int", fnInt);
+addFunction("timer", fnTimer);
+
+function fnTimer(context: ExecutionContext, ...args: unknown[]) {
+	const id = args[0] as string;
+	const scene = context.currentScene;
+	// if (!scene) throw new Error("No scene");
+	return scene?.timers?.get(id);
+}

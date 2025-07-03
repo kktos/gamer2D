@@ -3,6 +3,7 @@ import { EventEmitter } from "../events/EventEmitter";
 import { TaskList } from "../game/TaskList";
 import type { GameContext } from "../game/types/GameContext";
 import { enableDebug } from "../inspectors/debug-manager.class";
+import type { Timers } from "../layers";
 import type { HTMLLayer } from "../layers/HTMLLayer";
 import type { Layer } from "../layers/Layer.class";
 import { createLayerByName } from "../layers/Layer.factory";
@@ -43,6 +44,8 @@ export class Scene {
 	private screenWidth: number;
 	private screenHeight: number;
 	private layers: LayerMap;
+
+	public timers?: Timers;
 	// private next: null;
 	// private settings?: Record<string, unknown>;
 
@@ -144,6 +147,7 @@ export class Scene {
 
 	update(gc: GameContext) {
 		this.tasks.processTasks();
+		this.timers?.update(gc);
 		for (const layer of this.layers.values()) layer.update(gc, this);
 		return this;
 	}
