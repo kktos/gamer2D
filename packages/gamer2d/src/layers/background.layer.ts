@@ -4,9 +4,9 @@ import type { TNeatCommand } from "../script/compiler2/types/commands.type";
 import { runCommands } from "../script/engine2/exec";
 import type { ExecutionContext } from "../script/engine2/exec.type";
 import { functions } from "../script/engine2/functions/functionDict.utils";
+import { loadSprite } from "../utils/loaders.util";
 import { createVariableStore } from "../utils/vars.store";
-import { Layer } from "./Layer";
-import { loadSprite } from "./display/sprite.renderer";
+import { Layer } from "./Layer.class";
 
 export class BackgroundLayer extends Layer {
 	private color: string;

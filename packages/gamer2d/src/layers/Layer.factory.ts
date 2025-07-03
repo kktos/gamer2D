@@ -5,10 +5,10 @@ import { compileLayerScript } from "../script/compiler/compiler";
 import type { TLayerSheet } from "../script/compiler/layers/layer.rules";
 import { getClassName } from "../utils/object.util";
 import { LocalDB } from "../utils/storage.util";
+import type { Layer } from "./Layer.class";
 import { BackgroundLayer } from "./background.layer";
 import { EntitiesLayer } from "./entities.layer";
 import { GlobalsLayer } from "./globals.layer";
-import type { Layer } from "./Layer";
 import { UiLayer } from "./ui.layer";
 import { WorldCollisionLayer } from "./worldcollision.layer";
 

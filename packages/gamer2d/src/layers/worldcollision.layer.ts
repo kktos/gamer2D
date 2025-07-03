@@ -4,7 +4,7 @@ import type { BBox } from "../maths/BBox.class";
 import { type Grid, GridCell } from "../maths/grid.math";
 import { COLLISION_SIDES } from "../maths/math";
 import type { Scene } from "../scene/Scene";
-import { Layer } from "./Layer";
+import { Layer } from "./Layer.class";
 
 type TCellRect = BBox & {
 	width: number;

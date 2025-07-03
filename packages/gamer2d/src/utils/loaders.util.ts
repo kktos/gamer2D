@@ -1,3 +1,5 @@
+import type { SpriteSheet } from "../game";
+
 export const Loader: {
 	wannaLog: boolean;
 } = {
@@ -45,4 +47,10 @@ export function saveFileAs(filename: string, data: unknown) {
 	link.download = filename;
 	link.href = window.URL.createObjectURL(blob);
 	link.click();
+}
+
+export function loadSprite({ resourceManager }, name: string) {
+	const [sheet, sprite] = name.split(":");
+	const ss = resourceManager.get("sprite", sheet) as SpriteSheet;
+	return { ss, sprite };
 }

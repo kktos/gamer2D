@@ -10,7 +10,7 @@ import { functions } from "../script/engine2/functions/functionDict.utils";
 import { ArgColor } from "../types/value.types";
 import { createLevelEntities } from "../utils/createLevelEntities.utils";
 import { createVariableStore } from "../utils/vars.store";
-import { Layer } from "./Layer";
+import { Layer } from "./Layer.class";
 
 export class EntitiesLayer extends Layer {
 	static TASK_REMOVE_ENTITY = Symbol.for("removeEntity");

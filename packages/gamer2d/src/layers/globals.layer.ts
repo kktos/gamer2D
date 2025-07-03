@@ -5,7 +5,7 @@ import { runCommands } from "../script/engine2/exec";
 import type { ExecutionContext } from "../script/engine2/exec.type";
 import type { NeatFunctions } from "../script/engine2/functions/functionDict.utils";
 import { createVariableStore } from "../utils/vars.store";
-import { Layer } from "./Layer";
+import { Layer } from "./Layer.class";
 
 class VarSetDict extends Map<string, TSet> {
 	[Symbol.for("inspect")]() {

@@ -1,6 +1,5 @@
 export * from "./background.layer";
 export * from "./display/sound.manager";
-export * from "./display/sprite.renderer";
 export * from "./display/timers.class";
 export * from "./display/views/debug.view";
 export * from "./display/views/System.view";
@@ -9,7 +8,7 @@ export * from "./display/views/View.factory";
 export * from "./entities.layer";
 export * from "./globals.layer";
 export * from "./HTMLLayer";
-export * from "./Layer";
+export * from "./Layer.class";
 export * from "./Layer.factory";
 export * from "./ui.layer";
 export * from "./worldcollision.layer";

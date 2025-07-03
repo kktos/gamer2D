@@ -4,7 +4,7 @@ import { TaskList } from "../game/TaskList";
 import type { GameContext } from "../game/types/GameContext";
 import { enableDebug } from "../inspectors/debug-manager.class";
 import type { HTMLLayer } from "../layers/HTMLLayer";
-import type { Layer } from "../layers/Layer";
+import type { Layer } from "../layers/Layer.class";
 import { createLayerByName } from "../layers/Layer.factory";
 import { BBox } from "../maths/BBox.class";
 import type { TNeatLayer } from "../script/compiler2/types/layers.type";

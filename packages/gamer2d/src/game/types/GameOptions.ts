@@ -1,5 +1,5 @@
 import type { Entity } from "../../entities/Entity";
-import type { Layer } from "../../layers/Layer";
+import type { Layer } from "../../layers/Layer.class";
 import type { View } from "../../layers/display/views/View";
 import type { Scene } from "../../scene/Scene";
 import type { Trait } from "../../traits/Trait";
