@@ -5,8 +5,6 @@ import { Entity } from "./Entity";
 import { setupEntity } from "./Entity.factory";
 
 export class SpriteEntity extends Entity {
-	private isAnimSprite: boolean;
-
 	constructor(resourceMgr: ResourceManager, sprite: string, x: number, y: number) {
 		const [sheet, spriteName] = sprite.split(":");
 
@@ -16,8 +14,8 @@ export class SpriteEntity extends Entity {
 
 		this.isFixed = false;
 
-		this.isAnimSprite = !!spriteName.match(/^@/);
-		if (this.isAnimSprite) {
+		const isAnimatedSprite = !!spriteName.match(/^@/);
+		if (isAnimatedSprite) {
 			const animTrait = new AnimationTrait();
 			this.addTrait(animTrait);
 			animTrait.setAnim(this, spriteName.substring(1));
@@ -26,9 +24,16 @@ export class SpriteEntity extends Entity {
 		}
 	}
 
+	public setSprite(name: string): void {
+		const parts = name.split(":");
+		const spriteName = parts.length > 1 ? parts[1] : name;
+		super.setSprite(spriteName);
+	}
+
 	render(gc) {
 		const ctx = gc.viewport.ctx;
-		if (this.currSprite) this.spritesheet?.draw(this.currSprite, ctx, this.bbox.left, this.bbox.top, { flip: this.dir === DIRECTIONS.RIGHT ? 1 : 0, zoom: 1 });
+		if (this.currSprite)
+			this.spritesheet?.draw(this.currSprite, ctx, this.bbox.left, this.bbox.top, { flip: this.dir === DIRECTIONS.RIGHT ? 1 : 0, zoom: this.zoom });
 	}
 }
 

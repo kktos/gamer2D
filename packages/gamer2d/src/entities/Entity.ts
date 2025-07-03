@@ -22,6 +22,9 @@ export class Entity {
 	public dir: number;
 	public points: number;
 
+	// some can handle zoom
+	public zoom: number;
+
 	public isSolid: boolean;
 	public isFixed: boolean;
 	// a ghost won't interact with the player
@@ -51,6 +54,7 @@ export class Entity {
 		this.vel = { x: 0, y: 0 };
 		this.speed = 0;
 		this.mass = 1;
+		this.zoom = 1;
 		this.isFixed = true;
 		this.isSolid = true;
 		this.dir = DIRECTIONS.LEFT;
@@ -111,8 +115,19 @@ export class Entity {
 			const propname: string = args[idx] as string;
 
 			if (!(propname in this)) throw new TypeError(`Not a valid propname ${idx}:${args[idx]}`);
-			const propvalue = args[idx + 1];
-			this[propname] = propvalue;
+
+			let propvalue = args[idx + 1];
+
+			const signalvalue = propvalue as { value: unknown; __signal__: boolean };
+			if (signalvalue && typeof signalvalue === "object" && signalvalue.__signal__) {
+				propvalue = signalvalue.value;
+			}
+
+			if (typeof this[propname] === "object" && this[propname].__signal__) {
+				this[propname].value = propvalue;
+			} else {
+				this[propname] = propvalue;
+			}
 		}
 		return this;
 	}
@@ -143,6 +158,10 @@ export class Entity {
 	public trait<T extends Trait>(name: string) {
 		return this.traits.get(getTraitClassname(name)) as T;
 	}
+
+	// public trait<K extends keyof TraitNameMap>(name: K): TraitNameMap[K] | undefined {
+	// 	return this.traits.get(getTraitClassname(name)) as TraitNameMap[K] | undefined;
+	// }
 
 	public queue(name: symbol, ...args: unknown[]) {
 		this.events.queue(name, ...args);

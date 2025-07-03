@@ -1,14 +1,15 @@
 import type { Font } from "../game/Font";
 import type { ResourceManager } from "../game/ResourceManager";
 import { ALIGN_TYPES, type TAlignType } from "../script/compiler2/types/align.type";
-import type { ArgColor } from "../types/value.types";
+import type { Signal } from "../utils/signals.util";
 import { Entity } from "./Entity";
 import { setupEntity } from "./Entity.factory";
 
 export type TextDTO = {
-	pos: [number, number];
-	text: string;
-	color?: ArgColor;
+	x: Signal<number>;
+	y: Signal<number>;
+	text: Signal<string>;
+	color?: Signal<string>;
 	align?: TAlignType;
 	valign?: TAlignType;
 	font?: Font;
@@ -21,7 +22,10 @@ export type TextDTO = {
 
 export class TextEntity extends Entity {
 	public color: string;
-	public text: string;
+	public text: Signal<string>;
+
+	public x: Signal<number>;
+	public y: Signal<number>;
 
 	private font: Font;
 	private align: TAlignType;
@@ -29,21 +33,25 @@ export class TextEntity extends Entity {
 	private fontsize: number;
 	private bgcolor: string | undefined;
 	private isDynamic: boolean;
+	public alignWidth: number;
+	public alignHeight: number;
 
 	constructor(resourceMgr: ResourceManager, textObj: TextDTO) {
-		super(resourceMgr, textObj.pos[0], textObj.pos[1]);
+		super(resourceMgr, textObj.x.value, textObj.y.value);
 
+		this.x = textObj.x;
+		this.y = textObj.y;
 		this.isFixed = false;
 		this.isDynamic = !!textObj.isDynamic;
 		this.font = textObj.font ?? resourceMgr.get("font", resourceMgr.mainFontName);
 		this.text = textObj.text;
 		this.color = textObj.color?.value ?? "white";
-		// bgcolor undefined is handled by Font -> transparent
 		this.bgcolor = textObj.bgcolor;
 		this.align = textObj.align ?? ALIGN_TYPES.LEFT;
 		this.valign = textObj.valign ?? ALIGN_TYPES.TOP;
 		this.fontsize = textObj.size ?? 8;
-		this.bbox.setSize(textObj.width ?? 0, textObj.height ?? 0);
+		this.alignWidth = textObj.width ?? 0;
+		this.alignHeight = textObj.height ?? 0;
 	}
 
 	render(gc) {
@@ -53,12 +61,12 @@ export class TextEntity extends Entity {
 		this.font.valign = this.valign;
 		this.bbox = this.font.print({
 			ctx: ctx,
-			text: this.text,
-			x: this.bbox.left,
-			y: this.bbox.top,
+			text: this.text.value,
+			x: this.x.value,
+			y: this.y.value,
 			color: this.color,
-			width: this.bbox.width,
-			height: this.bbox.height,
+			width: this.alignWidth,
+			height: this.alignHeight,
 			bgcolor: this.bgcolor,
 			isDynamic: this.isDynamic,
 		});

@@ -13,13 +13,15 @@ export type RectDTO = {
 
 export class RectEntity extends Entity {
 	public strokecolor: string | undefined;
-	private fillcolor: string | undefined;
+	public fillcolor: string | undefined;
 
 	constructor(resourceMgr: ResourceManager, rectObj: RectDTO) {
 		super(resourceMgr, rectObj.x, rectObj.y);
 		this.strokecolor = rectObj.strokecolor;
 		this.fillcolor = rectObj.fillcolor;
-		this.bbox.setSize(rectObj.width ?? 0, rectObj.height ?? 0);
+		this.bbox.setSize(rectObj.width, rectObj.height);
+		// to allow animations
+		this.isFixed = false;
 	}
 
 	render(gc) {
@@ -27,20 +29,12 @@ export class RectEntity extends Entity {
 
 		if (this.fillcolor) {
 			ctx.fillStyle = this.fillcolor;
-			ctx.fillRect(
-				this.bbox.left,
-				this.bbox.top,
-				this.bbox.width,
-				this.bbox.height,
-			);
+			ctx.fillRect(this.bbox.left, this.bbox.top, this.bbox.width, this.bbox.height);
 		}
-		ctx.strokeStyle = this.strokecolor ?? "white";
-		ctx.strokeRect(
-			this.bbox.left,
-			this.bbox.top,
-			this.bbox.width,
-			this.bbox.height,
-		);
+		if (this.strokecolor) {
+			ctx.strokeStyle = this.strokecolor;
+			ctx.strokeRect(this.bbox.left, this.bbox.top, this.bbox.width, this.bbox.height);
+		}
 	}
 }
 

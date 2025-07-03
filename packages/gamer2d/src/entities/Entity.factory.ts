@@ -24,9 +24,7 @@ export function setupEntity(def: TEntityDefinition) {
 	entityClassesRegistry[actualClassName] = classType;
 
 	// If a friendly name is provided, map it to the actual class name
-	if (friendlyName) {
-		friendlyNamesToClassNameRegistry[friendlyName.toLowerCase()] = actualClassName;
-	}
+	if (friendlyName) friendlyNamesToClassNameRegistry[friendlyName.toLowerCase()] = actualClassName;
 }
 
 export function createEntityByName(resourceManager: ResourceManager, nameOrAlias: string, ...args: unknown[]): Entity {

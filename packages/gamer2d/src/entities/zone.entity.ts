@@ -15,5 +15,4 @@ export class ZoneEntity extends Entity {
 }
 
 // Register this entity with the factory
-// The original factory had "*" mapped to "ZoneEntity".
 setupEntity({ name: "*", classType: ZoneEntity });

@@ -7,30 +7,25 @@ export class EntityPool extends Entity {
 	static POOL_SPAWNED = Symbol.for("POOL_SPAWNED");
 	static POOL_RELEASED = Symbol.for("POOL_RELEASED");
 
-	static pools: Record<string, EntityPool> = {};
-
-	readonly pool: Entity[];
-	private usedList: boolean[];
-	private usedCount: number;
+	private pool: Entity[] = [];
+	private usedList: boolean[] = [];
+	private usedCount = 0;
 
 	static create(rm: ResourceManager, id: string | undefined, name: string, size: number, ...args) {
 		const poolID = id ?? name;
-		if (EntityPool.pools[poolID]) throw new TypeError(`EntityPool already exists with this id ${poolID}`);
-		const pool = new EntityPool(rm, size, () => createEntityByName(rm, name, ...args));
+
+		const pool = new EntityPool(rm, 0, 0);
 		pool.id = poolID;
-		EntityPool.pools[poolID] = pool;
+
+		const spawnOne = () => createEntityByName(rm, name, ...args);
+		pool.fill(size, spawnOne);
+
 		return pool;
 	}
-	static clear() {
-		EntityPool.pools = {};
-	}
 
-	constructor(resourceManager: ResourceManager, size: number, createObject) {
-		super(resourceManager, 0, 0);
-
+	fill(size: number, createObject: () => Entity) {
 		this.pool = Array.from({ length: size }, createObject);
 		this.usedList = Array(size).fill(false);
-		this.usedCount = 0;
 	}
 
 	get(idxOrId: string | number) {
@@ -38,20 +33,19 @@ export class EntityPool extends Entity {
 		return this.pool.find((entity) => entity.id === idxOrId);
 	}
 
-	use() {
-		const index = this.usedList.indexOf(false);
-		if (index !== -1) {
-			this.usedList[index] = true;
-			const entity = this.pool[index];
-			this.usedCount++;
-			this.queue(EntityPool.POOL_SPAWNED, this.id, entity.id, this.usedCount, entity);
-			return entity;
+	use(howMany = 1) {
+		const batch: Entity[] = [];
+		for (let idx = 0; idx < howMany; idx++) {
+			const index = this.usedList.indexOf(false);
+			if (index !== -1) {
+				this.usedList[index] = true;
+				const entity = this.pool[index];
+				this.usedCount++;
+				this.queue(EntityPool.POOL_SPAWNED, this.id, entity.id, this.usedCount, entity);
+				batch.push(entity);
+			}
 		}
-
-		// Optionally create a new object if the pool is empty
-		// const newIndex = this.pool.push(this._createObject()) - 1;
-		// this.available.push(true);
-		// return this.pool[newIndex];
+		return batch.length === 1 ? batch[0] : batch;
 	}
 
 	release(obj?) {
