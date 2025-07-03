@@ -1,16 +1,16 @@
 {
-  "name": "gamer2d-monorepo",
-  "private": true,
-  "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "test": "turbo run test",
-    "clean": "turbo run clean && rm -rf node_modules"
-  },
-  "devDependencies": {
-    "turbo": "^2.5.4",
-     "@biomejs/biome": "^2.0.5"
-  },
-    "packageManager": "pnpm@10.12.3"
+	"name": "gamer2d-monorepo",
+	"private": true,
+	"scripts": {
+		"build": "turbo run build",
+		"dev": "turbo run dev",
+		"lint": "turbo run lint",
+		"test": "turbo run test",
+		"clean": "turbo run clean && rm -rf node_modules"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"turbo": "^2.5.4"
+	},
+	"packageManager": "pnpm@10.12.3"
 }
