@@ -8,12 +8,13 @@ import { OP_TYPES } from "../types/operation.types";
 import { ArgColor } from "../types/value.types";
 import { createLevelEntities } from "../utils/createLevelEntities.utils";
 import { TVars } from "../utils/vars.utils";
-import { repeat } from "./display/repeat.manager";
 import { Layer } from "./Layer";
+import { repeat } from "./display/repeat.manager";
 
 export class EntitiesLayer extends Layer {
 	static TASK_REMOVE_ENTITY = Symbol.for("removeEntity");
 	static TASK_ADD_ENTITY = Symbol.for("addEntity");
+	static TASK_ADD_BEFORE_ENTITY = Symbol.for("addBeforeEntity");
 
 	private selectedEntity: Entity | undefined;
 	public entities: Entity[] = [];
@@ -77,6 +78,11 @@ export class EntitiesLayer extends Layer {
 		});
 
 		tasks.onTask(EntitiesLayer.TASK_ADD_ENTITY, (entity: Entity) => this.entities.push(entity));
+
+		tasks.onTask(EntitiesLayer.TASK_ADD_BEFORE_ENTITY, (beforeEntity: Entity, entity: Entity) => {
+			const idx = this.entities.indexOf(beforeEntity);
+			if (idx !== -1) this.entities.splice(idx, 0, entity);
+		});
 	}
 
 	// TODO: check Matter-js collisions : https://github.com/liabru/matter-js/blob/master/src/collision/Collision.js

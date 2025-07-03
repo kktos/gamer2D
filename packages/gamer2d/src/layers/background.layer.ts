@@ -3,30 +3,49 @@ import type { Scene } from "../scene/Scene";
 import type { TNeatCommand } from "../script/compiler2/types/commands.type";
 import { runCommands } from "../script/engine2/exec";
 import type { ExecutionContext } from "../script/engine2/exec.type";
-import type { TNeatFunctions } from "../utils/functionDict.utils";
-import { TVarDict, TVars } from "../utils/vars.utils";
+import { functions } from "../script/engine2/functions/functionDict.utils";
+import { createVariableStore } from "../utils/vars.store";
 import { Layer } from "./Layer";
+import { loadSprite } from "./display/sprite.renderer";
 
 export class BackgroundLayer extends Layer {
 	private color: string;
+	private images: unknown[];
 
 	constructor(gc: GameContext, parent: Scene, sheet: { data: TNeatCommand[] }) {
 		super(gc, parent, "background");
-		// this.color = sheet.color.value;
 
-		const variables: TVars = new TVars(new TVarDict());
 		const context: ExecutionContext = {
-			variables,
-			functions: null as unknown as TNeatFunctions,
+			variables: createVariableStore(true),
+			functions,
 		};
 
-		runCommands(sheet.data, context);
+		this.images = runCommands(sheet.data, context);
 
 		this.color = context.currentColor ?? "white";
 	}
 
-	render({ viewport: { ctx, width, height } }) {
+	render({ resourceManager, viewport: { ctx, width, height } }) {
 		ctx.fillStyle = this.color;
 		ctx.fillRect(0, 0, width, height);
+		for (const image of this.images) {
+			renderImage(ctx, resourceManager, image);
+		}
 	}
+}
+
+function renderImage(ctx, resourceManager, image) {
+	const { ss, sprite } = loadSprite({ resourceManager }, image.source.value);
+
+	const zoom = 1;
+	const size = ss.spriteSize(sprite);
+	const imgCanvas = document.createElement("canvas");
+	imgCanvas.width = image.repeat[0] * size.width * zoom;
+	imgCanvas.height = image.repeat[1] * size.height * zoom;
+	const imgCtx = imgCanvas.getContext("2d") as CanvasRenderingContext2D;
+
+	for (let row = 0; row < image.repeat[1]; row++)
+		for (let col = 0; col < image.repeat[0]; col++) ss.draw(sprite, imgCtx, col * size.width * zoom, row * size.height * zoom, { flip: 0, zoom });
+
+	ctx.drawImage(imgCanvas, image.x.value, image.y.value);
 }
