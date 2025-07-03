@@ -1,7 +1,7 @@
 import { createTraitByName } from "../../traits/Trait.factory";
 import type { TResultValue } from "../../types/engine.types";
 import { ArgColor, ArgExpression, ArgIdentifier, ArgVariable, ValueTrait } from "../../types/value.types";
-import type { TVars, TVarTypes } from "../../utils/vars.utils";
+import type { TVarTypes, TVars } from "../../utils/vars.utils";
 import type { TActionStatement, TFunctionArg } from "../compiler/shared/action.rules";
 import { execAction, execParseArgs } from "./exec.script";
 

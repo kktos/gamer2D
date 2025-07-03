@@ -33,7 +33,7 @@ export class System {
 	}
 
 	EntityPool(id: string) {
-		return EntityPool.pools[id];
+		// return EntityPool.pools[id];
 	}
 
 	entities(name: string) {
