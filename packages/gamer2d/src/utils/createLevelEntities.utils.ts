@@ -1,8 +1,7 @@
 import type { Entity } from "../entities/Entity";
 import { createEntityByName } from "../entities/Entity.factory";
-import { GLOBAL_VARIABLES } from "../game/globals";
 import type { ResourceManager } from "../game/ResourceManager";
-import { addTraits } from "../layers/display/trait.manager";
+import { GLOBAL_VARIABLES } from "../game/globals";
 import type { Grid } from "../maths/grid.math";
 import type { TLayerEntitiesSprite } from "../script/compiler/layers/entities/entities.rules";
 import { TVars } from "./vars.utils";
@@ -17,7 +16,9 @@ export function createLevelEntities(resourceManager: ResourceManager, grid: Grid
 			if (sprite.id) entity.id = sprite.id;
 			if (sprite.width !== undefined) entity.bbox.width = sprite.width;
 			if (sprite.height !== undefined) entity.bbox.height = sprite.height;
-			if (sprite.traits) addTraits(sprite.traits, entity, vars);
+
+			// if (sprite.traits) addTraits(sprite.traits, entity, vars);
+
 			entities.push(entity);
 		}
 	}

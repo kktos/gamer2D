@@ -1,15 +1,16 @@
 import type { Entity } from "../entities/Entity";
-import { GLOBAL_VARIABLES } from "../game/globals";
 import type { GameContext } from "../game/types/GameContext";
 import type { Grid } from "../maths/grid.math";
 import type { Scene } from "../scene/Scene";
-import type { TLayerEntitiesSheet, TLayerEntitiesSprite, TLayerEntitiesStatement } from "../script/compiler/layers/entities/entities.rules";
-import { OP_TYPES } from "../types/operation.types";
+import type { TLayerEntitiesSprite } from "../script/compiler/layers/entities/entities.rules";
+import type { TNeatCommand } from "../script/compiler2/types/commands.type";
+import { runCommands } from "../script/engine2/exec";
+import type { ExecutionContext } from "../script/engine2/exec.type";
+import { functions } from "../script/engine2/functions/functionDict.utils";
 import { ArgColor } from "../types/value.types";
 import { createLevelEntities } from "../utils/createLevelEntities.utils";
-import { TVars } from "../utils/vars.utils";
+import { createVariableStore } from "../utils/vars.store";
 import { Layer } from "./Layer";
-import { repeat } from "./display/repeat.manager";
 
 export class EntitiesLayer extends Layer {
 	static TASK_REMOVE_ENTITY = Symbol.for("removeEntity");
@@ -23,10 +24,11 @@ export class EntitiesLayer extends Layer {
 	public wannaShowFrame: boolean;
 	public frameColor: string;
 
-	constructor(gc: GameContext, parent: Scene, sheet: TLayerEntitiesSheet, grid?: Grid) {
+	constructor(gc: GameContext, parent: Scene, sheet, grid?: Grid) {
 		super(gc, parent, "entities");
 
-		if (sheet.statements) this.sprites = this.prepareRendering(sheet.statements);
+		// if (sheet.statements) this.sprites = this.prepareRendering(sheet.statements);
+		if (sheet.statements) this.prepareRendering(gc, sheet.statements);
 
 		if (grid) this.spawnEntities(grid);
 
@@ -57,16 +59,25 @@ export class EntitiesLayer extends Layer {
 		return this.selectedEntity;
 	}
 
-	private prepareRendering(statements: TLayerEntitiesStatement[]) {
-		const repeatList = statements.filter((statement) => statement.type === OP_TYPES.REPEAT);
-		if (!repeatList.length) return statements as unknown as TLayerEntitiesSprite[];
+	private prepareRendering(gc: GameContext, statements: TNeatCommand[]) {
+		const context: ExecutionContext = {
+			variables: createVariableStore(),
+			functions: functions,
+			gc,
+			currentScene: this.scene,
+		};
 
-		const vars = new TVars(GLOBAL_VARIABLES, GLOBAL_VARIABLES);
-		const sprites: TLayerEntitiesSprite[] = [];
-		for (const repeatItem of repeatList) repeat(repeatItem, (item) => sprites.push(item as unknown as TLayerEntitiesSprite), vars);
+		runCommands(statements, context);
 
-		const spriteList = statements.filter((statement) => statement.type === OP_TYPES.SPRITE);
-		return spriteList.concat(sprites);
+		// const repeatList = statements.filter((statement) => statement.type === OP_TYPES.REPEAT);
+		// if (!repeatList.length) return statements as unknown as TLayerEntitiesSprite[];
+
+		// const vars = new TVars(GLOBAL_VARIABLES, GLOBAL_VARIABLES);
+		// const sprites: TLayerEntitiesSprite[] = [];
+		// for (const repeatItem of repeatList) repeat(repeatItem, (item) => sprites.push(item as unknown as TLayerEntitiesSprite), vars);
+
+		// const spriteList = statements.filter((statement) => statement.type === OP_TYPES.SPRITE);
+		// return spriteList.concat(sprites);
 	}
 
 	public setTaskHandlers() {
