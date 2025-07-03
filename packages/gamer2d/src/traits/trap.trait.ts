@@ -2,6 +2,7 @@ import type { Entity } from "../entities/Entity";
 import type { GameContext } from "../game/types/GameContext";
 import type { Scene } from "../scene/Scene";
 import { Trait } from "./Trait";
+import { setupTrait } from "./Trait.factory";
 
 export class TrapTrait extends Trait {
 	static EVENT_TRAPPED = Symbol.for("TRAPPED");
@@ -30,3 +31,4 @@ export class TrapTrait extends Trait {
 		}
 	}
 }
+setupTrait({ name: "TrapTrait", alias: "trap", classType: TrapTrait });

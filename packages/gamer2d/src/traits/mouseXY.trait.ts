@@ -2,6 +2,7 @@ import type { Entity } from "../entities/Entity";
 import type { GameContext } from "../game/types/GameContext";
 import type { Scene } from "../scene/Scene";
 import { Trait } from "./Trait";
+import { setupTrait } from "./Trait.factory";
 
 export class MouseXYTrait extends Trait {
 	update(gc: GameContext, entity: Entity, scene: Scene) {
@@ -11,3 +12,4 @@ export class MouseXYTrait extends Trait {
 		entity.bbox.clampTo(scene.bbox);
 	}
 }
+setupTrait({ name: "MouseXYTrait", alias: "MouseXY", classType: MouseXYTrait });

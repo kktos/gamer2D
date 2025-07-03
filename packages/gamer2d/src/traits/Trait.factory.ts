@@ -1,44 +1,22 @@
-import type { TraitConstructor, TTraitDefinition } from "../game/types/GameOptions";
-import { FadeTrait } from "./fade.trait";
-import { KillableTrait } from "./killable.trait";
-import { KillIfOffscreenTrait } from "./killOffscreen.trait";
-import { MouseXTrait } from "./mouseX.trait";
-import { MouseXYTrait } from "./mouseXY.trait";
-import { OffscreenTrait } from "./offscreen.trait";
+import type { TTraitDefinition } from "../game/types/GameOptions";
+import { addFunction } from "../script/engine2/functions/functionDict.utils";
 import type { Trait } from "./Trait";
-import { TrapTrait } from "./trap.trait";
-import { XDragTrait } from "./xdrag.trait";
 
-const traitClasses = {
-	MouseXTrait: MouseXTrait,
-	MouseXYTrait: MouseXYTrait,
-	FadeTrait: FadeTrait,
-	XDragTrait: XDragTrait,
-	OffscreenTrait: OffscreenTrait,
-	KillIfOffscreenTrait: KillIfOffscreenTrait,
-	KillableTrait: KillableTrait,
-	TrapTrait: TrapTrait,
-};
-
-const traitNames = {
-	mousex: "MouseXTrait",
-	mousexy: "MouseXYTrait",
-	fade: "FadeTrait",
-	xdrag: "XDragTrait",
-	offscreen: "OffscreenTrait",
-	killifoffscreen: "KillIfOffscreenTrait",
-	killable: "KillableTrait",
-	trap: "TrapTrait",
-};
+const traitClassMap = {};
+const traitNames = {};
 
 export function setupTraits(traitsDefinitions: TTraitDefinition[]) {
-	for (const def of traitsDefinitions) setupTrait(def.name, def.classType);
+	for (const def of traitsDefinitions) setupTrait({ name: def.name, classType: def.classType });
 }
 
-export function setupTrait(className: string, classType: TraitConstructor) {
+export function setupTrait(traitDef: TTraitDefinition) {
+	const { name: className, classType, alias } = traitDef;
 	// const className = getClassName(classType);
-	if (traitClasses[className]) return;
-	traitClasses[className] = classType;
+	if (traitClassMap[className]) return;
+	if (alias) traitNames[alias.toLowerCase()] = className;
+	traitClassMap[className] = classType;
+
+	addFunction(className, (context, ...args: unknown[]) => new classType(...args));
 }
 
 export function getTraitClassname(name: string) {
@@ -49,8 +27,8 @@ export function getTraitClassname(name: string) {
 
 export function createTraitByName(className: string, ...args: unknown[]): Trait {
 	// const className = getTraitClassname(name);
-	if (!traitClasses[className]) {
+	if (!traitClassMap[className]) {
 		throw new TypeError(`Unknown Trait Type ${className}`);
 	}
-	return new traitClasses[className](...args);
+	return new traitClassMap[className](...args);
 }

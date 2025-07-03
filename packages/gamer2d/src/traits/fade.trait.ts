@@ -2,6 +2,7 @@ import type { TextEntity } from "../entities/text.entity";
 import type { GameContext } from "../game/types/GameContext";
 import { hexToRgb } from "../utils/canvas.utils";
 import { Trait } from "./Trait";
+import { setupTrait } from "./Trait.factory";
 
 export class FadeTrait extends Trait {
 	static EVENT_FADED = Symbol.for("FADED");
@@ -46,3 +47,4 @@ export class FadeTrait extends Trait {
 		entity.color = `rgba(${this.color}, ${Math.floor(this.alpha)}%)`;
 	}
 }
+setupTrait({ name: "FadeTrait", alias: "Fade", classType: FadeTrait });

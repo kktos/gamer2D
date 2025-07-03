@@ -2,6 +2,7 @@ import type { Entity } from "../entities/Entity";
 import { EntitiesLayer } from "../layers/entities.layer";
 import type { Scene } from "../scene/Scene";
 import { Trait } from "./Trait";
+import { setupTrait } from "./Trait.factory";
 
 export class KillableTrait extends Trait {
 	static EVENT_KILLED = Symbol.for("KILLED");
@@ -44,9 +45,8 @@ export class KillableTrait extends Trait {
 
 			this.deadTime += dt;
 			entity.pause();
-			if (this.deadTime > this.removeAfter) {
-				scene.addTask(EntitiesLayer.TASK_REMOVE_ENTITY, entity);
-			}
+			if (this.deadTime > this.removeAfter) scene.addTask(EntitiesLayer.TASK_REMOVE_ENTITY, entity);
 		}
 	}
 }
+setupTrait({ name: "KillableTrait", alias: "killable", classType: KillableTrait });

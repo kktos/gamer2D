@@ -1,6 +1,7 @@
 import type { Entity } from "../entities/Entity";
 import type { Scene } from "../scene/Scene";
 import { Trait } from "./Trait";
+import { setupTrait } from "./Trait.factory";
 
 export class XDragTrait extends Trait {
 	constructor(
@@ -18,3 +19,4 @@ export class XDragTrait extends Trait {
 		entity.vel.x = entity.vel.x > 0 ? newVelocity : -newVelocity;
 	}
 }
+setupTrait({ name: "XDragTrait", alias: "XDrag", classType: XDragTrait });
