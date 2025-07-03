@@ -11,7 +11,6 @@ import type { ExecutionContext } from "../script/engine2/exec.type";
 import { functions } from "../script/engine2/functions/functionDict.utils";
 import { type NeatVariableStore, createVariableStore } from "../utils/vars.store";
 import { HTMLLayer } from "./HTMLLayer";
-import type { GameMenu } from "./display/menu/menu.manager";
 import type { Timers } from "./display/timers.class";
 import type { View } from "./display/views/View";
 
@@ -31,7 +30,7 @@ export class UiLayer extends HTMLLayer {
 	// private lastJoyTime: number;
 	private views: TViewDef[];
 
-	private menu: GameMenu | null;
+	// private menu: GameMenu | null;
 
 	constructor(gc: GameContext, parent: Scene, sheet) {
 		super(gc, parent, "ui", sheet.ui);
@@ -52,7 +51,7 @@ export class UiLayer extends HTMLLayer {
 
 		// const menus = this.layout.filter((op) => op.type === OP_TYPES.MENU);
 		// this.menu = GameMenu.create(gc, this, menus);
-		this.menu = null;
+		// this.menu = null;
 
 		this.prepareRendering(gc);
 
@@ -142,7 +141,7 @@ export class UiLayer extends HTMLLayer {
 				break;
 		}
 
-		if (this.menu?.handleEvent(e)) return;
+		// if (this.menu?.handleEvent(e)) return;
 
 		for (let idx = 0; idx < this.views.length; idx++) {
 			const view = this.views[idx];

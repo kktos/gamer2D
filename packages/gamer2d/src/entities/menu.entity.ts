@@ -7,6 +7,70 @@ import { Entity } from "./Entity";
 import { setupEntity } from "./Entity.factory";
 import type { RectEntity } from "./rect.entity";
 
+/**
+TODO:
+		this.DefaultColorSelectedText = gc.resourceManager.settings.get("MENU.COLORS.SELECTED_TEXT") as string;
+		this.DefaultColorSelectedRect = gc.resourceManager.settings.get("MENU.COLORS.SELECT_RECT") as string;
+
+
+	handleEvent(e: GameEvent) {
+		switch (e.type) {
+			case "click": {
+				const menuIdx = this.findMenuByPoint(e.x, e.y);
+				if (menuIdx >= 0) {
+					this.execMenuItemAction(menuIdx);
+					return true;
+				}
+				break;
+			}
+			case "mousemove": {
+				const menuIdx = this.findMenuByPoint(e.x, e.y);
+				if (this.layer.scene.wannaShowCursor) this.gc.viewport.canvas.style.cursor = menuIdx >= 0 ? "pointer" : "default";
+				if (menuIdx >= 0) {
+					this.selectMenuItem(menuIdx);
+					return true;
+				}
+				break;
+			}
+			case "joybuttondown":
+				if (e.X || e.TRIGGER_RIGHT) {
+					this.execMenuItemAction();
+					return true;
+				}
+				if (e.CURSOR_UP) {
+					this.selectPreviousItem();
+					return true;
+				}
+				if (e.CURSOR_DOWN) {
+					this.selectNextItem();
+					return true;
+				}
+				break;
+
+			case "keyup":
+				switch ((e as KeyEvent).key) {
+					case "Control":
+						this.wannaDisplayHitzones = false;
+						break;
+				}
+				break;
+			case "keydown":
+				if ((e as KeyEvent).key in this.keys) {
+					this.keys[(e as KeyEvent).key]();
+					return true;
+				}
+				if ((e as KeyEvent).key === "Control") {
+					this.wannaDisplayHitzones = true;
+					return false;
+				}
+				break;
+		}
+		return false;
+	}
+
+
+*/
+
 export type MenuDTO = {
 	selection: TNeatMenuSelection;
 	keys: TNeatMenuKeys;
