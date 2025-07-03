@@ -1,9 +1,9 @@
 import type { Entity } from "../entities/Entity";
 import type { GameContext } from "../game/types/GameContext";
-import type { BBox } from "../maths/BBox.class";
-import { type Grid, GridCell } from "../maths/grid.math";
-import { COLLISION_SIDES } from "../maths/math";
 import type { Scene } from "../scenes/Scene";
+import type { BBox } from "../utils/maths/BBox.class";
+import { type Grid, GridCell } from "../utils/maths/grid.math";
+import { COLLISION_SIDES } from "../utils/maths/math";
 import { Layer } from "./Layer.class";
 
 type TCellRect = BBox & {

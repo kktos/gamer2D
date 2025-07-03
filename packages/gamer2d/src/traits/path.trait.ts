@@ -1,10 +1,10 @@
 import type { Entity } from "../entities/Entity";
-import type { Point } from "../maths/math";
 import type { Scene } from "../scenes/Scene";
 import type { TAnimDef } from "../script/compiler/layers/display/layout/defanim.rules";
 import { typeOfArg } from "../script/engine/eval.script";
 import { DIRECTIONS } from "../types/direction.type";
 import { ArgColor } from "../types/value.types";
+import type { Point } from "../utils/maths/math";
 import { Trait } from "./Trait";
 
 type ProviderFn = (deltaTime: number, entity: Entity) => Point | null;

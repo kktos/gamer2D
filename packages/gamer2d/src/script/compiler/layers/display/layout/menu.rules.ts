@@ -1,7 +1,7 @@
-import type { BBox } from "../../../../../maths/BBox.class";
 import { OP_TYPES } from "../../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../../types/typescript.types";
 import type { ArgColor } from "../../../../../types/value.types";
+import type { BBox } from "../../../../../utils/maths/BBox.class";
 import { tokens } from "../../../lexer";
 import type { TImage } from "./image.rules";
 import type { TRepeat } from "./repeat.rules";

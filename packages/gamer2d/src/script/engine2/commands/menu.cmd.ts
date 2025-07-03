@@ -4,7 +4,7 @@ import { type RectDTO, RectEntity } from "../../../entities/rect.entity";
 import { Events } from "../../../events";
 import type { GameContext } from "../../../game";
 import { EntitiesLayer } from "../../../layers";
-import { BBox } from "../../../maths";
+import { BBox } from "../../../utils/maths";
 import type { TNeatMenuCommand } from "../../compiler2/types/commands.type";
 import { runCommands } from "../exec";
 import type { ExecutionContext } from "../exec.type";

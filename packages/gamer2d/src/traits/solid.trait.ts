@@ -1,7 +1,7 @@
 import type { Entity } from "../entities/Entity";
 import type { GameContext } from "../game/types/GameContext";
-import type { GridCell } from "../maths/grid.math";
-import { COLLISION_SIDES, type TCollisionSide } from "../maths/math";
+import type { GridCell } from "../utils/maths/grid.math";
+import { COLLISION_SIDES, type TCollisionSide } from "../utils/maths/math";
 import { type ITraitObstructedOn, Trait } from "./Trait";
 
 export class SolidTrait extends Trait implements ITraitObstructedOn {

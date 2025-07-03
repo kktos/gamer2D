@@ -1,6 +1,5 @@
 import type { Entity } from "../entities/Entity";
 import type { GameContext } from "../game/types/GameContext";
-import type { Grid } from "../maths/grid.math";
 import type { Scene } from "../scenes/Scene";
 import type { TLayerEntitiesSprite } from "../script/compiler/layers/entities/entities.rules";
 import type { TNeatCommand } from "../script/compiler2/types/commands.type";
@@ -9,6 +8,7 @@ import type { ExecutionContext } from "../script/engine2/exec.type";
 import { functions } from "../script/engine2/functions/functionDict.utils";
 import { ArgColor } from "../types/value.types";
 import { createLevelEntities } from "../utils/createLevelEntities.utils";
+import type { Grid } from "../utils/maths/grid.math";
 import { createVariableStore } from "../utils/vars.store";
 import { Layer } from "./Layer.class";
 

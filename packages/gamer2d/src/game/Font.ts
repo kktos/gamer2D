@@ -1,8 +1,8 @@
-import { BBox } from "../maths/BBox.class";
 import { ALIGN_TYPES, type TAlignType } from "../script/compiler2/types/align.type";
 import type { RequireAllOrNone } from "../types/typescript.types";
 import { nameToRgba } from "../utils/canvas.utils";
 import { loadImage, loadJson } from "../utils/loaders.util";
+import { BBox } from "../utils/maths/BBox.class";
 import { SpriteSheet } from "./Spritesheet";
 
 // const CHARS= ' 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ©!-×.';

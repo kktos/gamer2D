@@ -2,14 +2,14 @@ import { EventBuffer } from "../events/EventBuffer";
 import type { ResourceManager } from "../game/ResourceManager";
 import type { SpriteSheet } from "../game/Spritesheet";
 import type { GameContext } from "../game/types/GameContext";
-import { BBox } from "../maths/BBox.class";
-import type { GridCell } from "../maths/grid.math";
-import type { Point, TCollisionSide } from "../maths/math";
 import type { Scene } from "../scenes/Scene";
 import { type ITraitCollides, type ITraitObstructedOn, type ITraitUpdate, type Trait, TraitDict } from "../traits/Trait";
 import { getTraitClassname } from "../traits/Trait.factory";
 import { DIRECTIONS } from "../types/direction.type";
 import { generateID } from "../utils/id.util";
+import { BBox } from "../utils/maths/BBox.class";
+import type { GridCell } from "../utils/maths/grid.math";
+import type { Point, TCollisionSide } from "../utils/maths/math";
 import { getClassName } from "../utils/object.util";
 
 export class Entity {

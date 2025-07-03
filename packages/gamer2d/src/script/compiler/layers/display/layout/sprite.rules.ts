@@ -1,9 +1,9 @@
 import type { Entity } from "../../../../../entities/Entity";
-import type { BBox } from "../../../../../maths/BBox.class";
 import type { DIRECTIONS } from "../../../../../types/direction.type";
 import { OP_TYPES } from "../../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../../types/typescript.types";
 import type { ArgVariable, ValueTrait } from "../../../../../types/value.types";
+import type { BBox } from "../../../../../utils/maths/BBox.class";
 import { tokens } from "../../../lexer";
 
 // TODO: set proper type for pos and others using expr/var

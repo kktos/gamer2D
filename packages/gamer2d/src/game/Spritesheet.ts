@@ -1,9 +1,9 @@
-import type { Rect } from "../maths/math";
 import { compileSpriteSheetScript } from "../script/compiler/compiler";
 import type { TSpriteSheet, TSpriteSheetGrid } from "../script/compiler/ressources/spritesheet.rules";
-import { drawZoomedImage, type TImageData } from "../utils/canvas.utils";
+import { type TImageData, drawZoomedImage } from "../utils/canvas.utils";
 import { createSpriteSheet } from "../utils/createSpriteSheet.util";
 import { loadImage, loadText } from "../utils/loaders.util";
+import type { Rect } from "../utils/maths/math";
 import { Anim } from "./Anim";
 
 export type SpriteMap = Map<string, Sprite>;

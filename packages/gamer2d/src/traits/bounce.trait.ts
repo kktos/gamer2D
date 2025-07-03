@@ -1,6 +1,6 @@
 import type { Entity } from "../entities/Entity";
 import type { GameContext } from "../game/types/GameContext";
-import { COLLISION_SIDES, type TCollisionSide } from "../maths/math";
+import { COLLISION_SIDES, type TCollisionSide } from "../utils/maths/math";
 import { Trait } from "./Trait";
 
 export class BounceTrait extends Trait {

@@ -6,10 +6,10 @@ import { enableDebug } from "../inspectors/debug-manager.class";
 import type { HTMLLayer } from "../layers/HTMLLayer";
 import type { Layer } from "../layers/Layer.class";
 import { createLayerByName } from "../layers/Layer.factory";
-import { BBox } from "../maths/BBox.class";
 import type { TNeatLayer } from "../script/compiler2/types/layers.type";
 import type { TNeatScene } from "../script/compiler2/types/scenes.type";
 import { generateID } from "../utils/id.util";
+import { BBox } from "../utils/maths/BBox.class";
 import { getClassName } from "../utils/object.util";
 
 export class LayerMap extends Map<string, Layer> {

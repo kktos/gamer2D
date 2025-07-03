@@ -1,8 +1,8 @@
 import type { TextEntity } from "../../../../../entities/text.entity";
-import type { BBox } from "../../../../../maths/BBox.class";
 import { OP_TYPES } from "../../../../../types/operation.types";
 import type { TupleToUnion } from "../../../../../types/typescript.types";
 import type { ArgColor, ArgExpression, ArgVariable, ValueTrait } from "../../../../../types/value.types";
+import type { BBox } from "../../../../../utils/maths/BBox.class";
 import { tokens } from "../../../lexer";
 import type { TAlignType } from "./text-sprite-props.rules";
 
