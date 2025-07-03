@@ -1,10 +1,15 @@
 import type { NeatParser } from "../../parser";
-import type { TNeatAlignCommand, TNeatColorCommand, TNeatFontCommand } from "../../types/commands.type";
+import type { TNeatAlignCommand, TNeatBgColorCommand, TNeatColorCommand, TNeatFontCommand, TNeatZoomCommand } from "../../types/commands.type";
+import { parseValueExpression } from "./value-expr.rule";
 
 export function parseColor(parser: NeatParser): TNeatColorCommand {
 	parser.identifier();
-	const color = parser.consume(["COLOR", "IDENTIFIER"]);
-	return { cmd: "COLOR", color: color.value as string };
+	return { cmd: "COLOR", color: parseColorValue(parser) };
+}
+
+export function parseBgColor(parser: NeatParser): TNeatBgColorCommand {
+	parser.identifier();
+	return { cmd: "BGCOLOR", color: parseColorValue(parser) };
 }
 
 export function parseAlign(parser: NeatParser) {
@@ -14,6 +19,12 @@ export function parseAlign(parser: NeatParser) {
 		parser.advance();
 		result.valign = parser.identifier(["top", "center", "bottom"]);
 	}
+	return result;
+}
+
+export function parseZoom(parser: NeatParser) {
+	parser.identifier("zoom");
+	const result: TNeatZoomCommand = { cmd: "ZOOM", value: parseValueExpression(parser) };
 	return result;
 }
 
@@ -33,4 +44,26 @@ export function parseFont(parser: NeatParser) {
 	}
 
 	return fontSpec;
+}
+
+function parseColorValue(parser: NeatParser) {
+	if (parser.is("COLOR")) return parser.color();
+
+	const identifier = parser.identifier();
+	let color = "";
+	if (identifier === "rgba" && parser.is("PUNCT", "(")) {
+		parser.consume("PUNCT", "(");
+		const r = parser.number();
+		if (parser.is("PUNCT")) parser.consume("PUNCT", ",");
+		const g = parser.number();
+		if (parser.is("PUNCT")) parser.consume("PUNCT", ",");
+		const b = parser.number();
+		if (parser.is("PUNCT")) parser.consume("PUNCT", ",");
+		const a = parser.number();
+		color = `rgba(${r}, ${g}, ${b}, ${a})`;
+		parser.consume("PUNCT", ")");
+	} else {
+		color = identifier;
+	}
+	return color;
 }

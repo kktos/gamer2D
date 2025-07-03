@@ -9,7 +9,9 @@ export type TNeatTerm =
 	| { type: "array"; value: TNeatExpression[] }
 	| { type: "object"; value: Record<string, TNeatExpression> }
 	| { type: "prop" }
-	| { type: "fn"; name: string; args: TNeatExpression[] };
+	| TNeatFunctionTerm
+	| { type: "method"; name: string; args: TNeatExpression[] };
 
 export type TNeatVarTerm = { type: "var"; name: string };
 export type TNeatConstTerm = { type: "const"; value: number | string };
+export type TNeatFunctionTerm = { type: "fn"; name: string; args: TNeatExpression[] };

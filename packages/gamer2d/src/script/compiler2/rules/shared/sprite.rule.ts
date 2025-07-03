@@ -7,7 +7,7 @@ import { parseValueExpression } from "./value-expr.rule";
 export function parseSprite(parser: NeatParser) {
 	parser.consume("IDENTIFIER", "sprite");
 
-	const name = parser.consume(["STRING", "IDENTIFIER"]).value as string;
+	const name = parseValueExpression(parser);
 
 	const result: PartialExcept<TNeatSpriteCommand, "cmd" | "name"> = { cmd: "SPRITE", name };
 
@@ -28,12 +28,13 @@ export function parseSprite(parser: NeatParser) {
 				result.id = parser.consume(["STRING", "IDENTIFIER"]).value as string;
 				break;
 			case "dir": {
-				result.dir = parseDir(parser);
+				parser.advance();
+				result.dir = parser.identifier(["left", "right"]);
 				break;
 			}
 			case "anim": {
 				parser.advance();
-				result.anim = parser.consume(["STRING", "IDENTIFIER"]).value as string;
+				result.anims = parseValueExpression(parser);
 				break;
 			}
 			case "traits":
@@ -50,9 +51,4 @@ export function parseSprite(parser: NeatParser) {
 	}
 
 	return result as TNeatSpriteCommand;
-}
-
-export function parseDir(parser: NeatParser) {
-	parser.identifier("dir");
-	return parser.identifier(["left", "right"]);
 }

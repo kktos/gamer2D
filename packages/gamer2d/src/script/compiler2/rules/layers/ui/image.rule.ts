@@ -1,13 +1,14 @@
 import type { NeatParser } from "../../../parser";
 import type { TNeatImageCommand } from "../../../types/commands.type";
 import { parseValueTuple } from "../../shared/common.rule";
+import { parseValueExpression } from "../../shared/value-expr.rule";
 
 export function parseImage(parser: NeatParser): TNeatImageCommand {
 	parser.consume("IDENTIFIER", "image");
 
 	const result: Partial<TNeatImageCommand> = { cmd: "IMAGE" };
 
-	result.source = parser.consume(["STRING", "IDENTIFIER"]).value as string;
+	result.source = parseValueExpression(parser);
 
 	while (parser.is("IDENTIFIER", ["at", "repeat"])) {
 		switch (parser.peekValue()) {

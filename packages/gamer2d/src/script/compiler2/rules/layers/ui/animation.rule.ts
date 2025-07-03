@@ -1,38 +1,31 @@
 import type { NeatParser } from "../../../parser";
+import type { TNeatAnimationCommand } from "../../../types/commands.type";
 import { parseStatementsBlock } from "../../shared/statements.rule";
 import { parseValueExpression } from "../../shared/value-expr.rule";
 
 export function parseAnimation(parser: NeatParser) {
-	parser.consume("IDENTIFIER", "animation");
+	parser.identifier("animation");
 
 	// name: IDENTIFIER or STRING
-	const nameToken = parser.consume(["IDENTIFIER", "STRING"]);
-	const name = nameToken.value as string;
+	const result: Partial<TNeatAnimationCommand> = { cmd: "ANIMATION", name: parser.name(), isPaused: false };
 
-	let speed: unknown = 1;
-	let repeat = false;
+	// paused // do not start automagically
+	if (parser.isIdentifier("paused")) {
+		parser.advance();
+		result.isPaused = true;
+	}
 
-	// parse optional 'speed' and 'repeat' in any order
-	while (parser.is("IDENTIFIER")) {
-		switch (parser.peekValue()) {
-			case "speed":
-				parser.advance();
-				speed = parseValueExpression(parser);
-				break;
-			case "repeat":
-				parser.advance();
-				repeat = true;
-				break;
+	// repeat [<expression>] // expression default to Infinity
+	if (parser.isIdentifier("repeat")) {
+		parser.advance();
+		if (parser.is("PUNCT", "{")) {
+			result.repeat = [{ type: "const", value: Number.MAX_SAFE_INTEGER }];
+		} else {
+			result.repeat = parseValueExpression(parser);
 		}
 	}
 
-	const statements = parseStatementsBlock(parser);
+	result.statements = parseStatementsBlock(parser);
 
-	return {
-		cmd: "ANIMATION",
-		name,
-		speed,
-		repeat,
-		statements,
-	};
+	return result as TNeatAnimationCommand;
 }

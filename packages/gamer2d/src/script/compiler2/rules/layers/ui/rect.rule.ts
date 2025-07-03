@@ -2,6 +2,7 @@ import type { NeatParser } from "../../../parser";
 import type { TNeatRectCommand } from "../../../types/commands.type";
 import { parseAt, parseValueTuple } from "../../shared/common.rule";
 import { parseColor } from "../../shared/style.rule";
+import { parseValueExpression } from "../../shared/value-expr.rule";
 
 export function parseRect(parser: NeatParser) {
 	parser.consume("IDENTIFIER", "rect");
@@ -33,6 +34,16 @@ export function parseRect(parser: NeatParser) {
 				result.color = parseColor(parser).color;
 				break;
 			}
+			case "anim": {
+				parser.advance();
+				result.anims = parseValueExpression(parser);
+				break;
+			}
+			case "traits": {
+				parser.advance();
+				result.traits = parseValueExpression(parser);
+				break;
+			}
 			default:
 				break loop;
 		}
@@ -42,5 +53,5 @@ export function parseRect(parser: NeatParser) {
 		throw new Error("Missing required 'at' or 'size' argument in rect command.");
 	}
 
-	return result;
+	return result as TNeatRectCommand;
 }

@@ -44,11 +44,15 @@ export function parseText(parser: NeatParser) {
 				break;
 			case "anim":
 				parser.advance();
-				result.anim = parser.consume(["STRING", "IDENTIFIER"]).value as string;
+				result.anims = parseValueExpression(parser);
 				break;
 			case "traits":
 				parser.advance();
 				result.traits = parseValueExpression(parser);
+				break;
+			case "color":
+				parser.advance();
+				result.color = parseValueExpression(parser);
 				break;
 			default:
 				break loop;

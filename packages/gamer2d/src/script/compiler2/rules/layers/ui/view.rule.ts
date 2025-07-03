@@ -31,5 +31,5 @@ export function parseView(parser: NeatParser) {
 
 	if (!result.at || !result.size || !result.type) throw new Error("Missing required 'at' or 'size' or 'type' argument in view command.");
 
-	return result;
+	return result as TNeatViewCommand;
 }

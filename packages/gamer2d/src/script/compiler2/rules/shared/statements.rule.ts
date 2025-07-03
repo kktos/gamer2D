@@ -1,25 +1,30 @@
 import type { NeatParser } from "../../parser";
 import type { TNeatAssignCommand, TNeatCallCommand } from "../../types/commands.type";
 import type { TNeatExpression, TNeatTerm } from "../../types/expression.type";
-import { parseVariableAssignment } from "./assign.rule";
 import { parseValueExpression } from "./value-expr.rule";
 
 export function parseStatementsBlock(parser: NeatParser) {
-	parser.consume("PUNCT", "{");
+	parser.punct("{");
 
 	const statements: (TNeatAssignCommand | TNeatCallCommand)[] = [];
 	while (parser.is(["VARIABLE", "IDENTIFIER"])) {
 		switch (parser.peek().type) {
-			case "VARIABLE":
-				statements.push(parseVariableAssignment(parser));
+			case "VARIABLE": {
+				const lhs = parseMethodCall(parser, [{ type: "var", name: parser.variable() }]);
+				if (parser.is("PUNCT", "=")) {
+					parser.advance();
+					statements.push({ cmd: "ASSIGN", name: lhs, value: parseValueExpression(parser) });
+				} else statements.push({ cmd: "CALL", value: lhs });
+
 				break;
+			}
 			case "IDENTIFIER":
 				statements.push({ cmd: "CALL", value: parseMethodCall(parser, [parseFunctionCall(parser)]) });
 				break;
 		}
 	}
 
-	parser.consume("PUNCT", "}");
+	parser.punct("}");
 
 	return statements;
 }
@@ -30,18 +35,26 @@ export function parseMethodCall(parser: NeatParser, startExpr: TNeatExpression):
 		parser.advance();
 		const nextToken = parser.peek();
 		switch (nextToken.type) {
+			// object prop or method call
 			case "IDENTIFIER": {
-				const name = parser.identifier();
+				const name = parser.rawIdentifier();
 				if (parser.is("PUNCT", "(")) {
-					object.push({ type: "fn", name, args: parseCallArguments(parser) });
+					object.push({ type: "method", name, args: parseCallArguments(parser) });
 				} else {
 					object.push({ type: "const", value: name });
 					object.push({ type: "prop" });
 				}
 				break;
 			}
+			// variable object prop or variable array index
 			case "VARIABLE": {
 				object.push({ type: "var", name: parser.variable() });
+				object.push({ type: "prop" });
+				break;
+			}
+			// array index
+			case "NUMBER": {
+				object.push({ type: "const", value: parser.number() });
 				object.push({ type: "prop" });
 				break;
 			}
@@ -54,7 +67,7 @@ export function parseMethodCall(parser: NeatParser, startExpr: TNeatExpression):
 
 // Parses a function call: foo(...)
 export function parseFunctionCall(parser: NeatParser): TNeatTerm {
-	const funcName = parser.identifier();
+	const funcName = parser.rawIdentifier();
 	const args = parseCallArguments(parser);
 	return { type: "fn", name: funcName, args };
 }

@@ -1,4 +1,4 @@
-import { NeatLexer, type TNeatToken, type TokenValueMap, type TTokenType } from "./lexer";
+import { NeatLexer, type TNeatToken, type TTokenType, type TokenValueMap } from "./lexer";
 import { NeatLexerError } from "./lexerError";
 
 export type NeatParserRuleHandler = (parser: NeatParser) => unknown;
@@ -46,13 +46,25 @@ export class NeatParser {
 	public consume<T extends TTokenType>(expectedType: T, expectedValue?: TokenValueMap[T] | TokenValueMap[T][]): TNeatToken<T>;
 	public consume(expectedType: TTokenType[], expectedValue?: unknown | unknown[]): TNeatToken;
 	public consume(expectedType: TTokenType | TTokenType[], expectedValue?: unknown | unknown[]): TNeatToken {
-		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+		// biome-ignore lint/suspicious/noExplicitAny: wasn't able to avoid it
 		return this.lexer.consume(expectedType as any, expectedValue);
 	}
 
 	public identifier(expected?: string | string[]): string {
 		const token = expected ? this.consume("IDENTIFIER", expected) : this.consume("IDENTIFIER");
-		return token.value as string;
+		return token.value;
+	}
+	public rawIdentifier(expected?: string | string[]): string {
+		const token = expected ? this.consume("IDENTIFIER", expected) : this.consume("IDENTIFIER");
+		return token.rawValue;
+	}
+
+	public punct(expected?: string): string {
+		return this.consume("PUNCT", expected).value as string;
+	}
+
+	public name() {
+		return this.isIdentifier() ? this.lexer.consume("IDENTIFIER").rawValue : this.lexer.consume("STRING").value;
 	}
 
 	public variable() {
@@ -98,6 +110,10 @@ export class NeatParser {
 
 	public isIdentifier(expectedValue?: unknown | unknown[]) {
 		return this.lexer.is("IDENTIFIER", expectedValue);
+	}
+
+	public isNumber() {
+		return this.lexer.is("NUMBER");
 	}
 
 	public isString() {

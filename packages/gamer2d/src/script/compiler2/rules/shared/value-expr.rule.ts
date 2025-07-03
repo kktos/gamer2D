@@ -10,25 +10,25 @@ export function parseValueExpression(parser: NeatParser): TNeatExpression {
 
 function parseArrayLiteral(parser: NeatParser): TNeatExpression {
 	const arr: TNeatExpression[] = [];
-	parser.consume("PUNCT", "[");
+	parser.punct("[");
 	while (!parser.is("PUNCT", "]")) {
 		arr.push(parseValueExpression(parser));
-		if (parser.is("PUNCT", ",")) parser.consume("PUNCT", ",");
+		if (parser.is("PUNCT", ",")) parser.punct(",");
 	}
-	parser.consume("PUNCT", "]");
+	parser.punct("]");
 	return [{ type: "array", value: arr }];
 }
 
 function parseObjectLiteral(parser: NeatParser): TNeatExpression {
 	const obj: Record<string, TNeatExpression> = {};
-	parser.consume("PUNCT", "{");
+	parser.punct("{");
 	while (parser.isIdentifier()) {
 		const key = parser.identifier();
-		parser.consume("PUNCT", ":");
+		parser.punct(":");
 		obj[key] = parseValueExpression(parser);
-		if (parser.is("PUNCT", ",")) parser.consume("PUNCT", ",");
+		if (parser.is("PUNCT", ",")) parser.punct(",");
 	}
-	parser.consume("PUNCT", "}");
+	parser.punct("}");
 	return [{ type: "object", value: obj }];
 }
 
@@ -103,9 +103,9 @@ function parsePrimaryExpression(parser: NeatParser) {
 			baseExpr = [{ type: "var", name: parser.variable() }];
 			break;
 		case "PUNCT": {
-			parser.consume("PUNCT", "(");
+			parser.punct("(");
 			baseExpr = parseAdditiveExpression(parser);
-			parser.consume("PUNCT", ")");
+			parser.punct(")");
 			break;
 		}
 		case "IDENTIFIER": {

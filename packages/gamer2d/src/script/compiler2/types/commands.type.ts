@@ -4,11 +4,14 @@ type TNeatPropertyAt = { x: TNeatExpression; y: TNeatExpression };
 type TNeatPropertySize = { width: TNeatExpression; height: TNeatExpression };
 
 export type TNeatCommand =
+	| TNeatClearContextCommand
 	| TNeatFontCommand
 	| TNeatColorCommand
+	| TNeatBgColorCommand
 	| TNeatAlignCommand
 	| TNeatTextCommand
 	| TNeatSpriteCommand
+	| TNeatZoomCommand
 	| TNeatRectCommand
 	| TNeatViewCommand
 	| TNeatAssignCommand
@@ -16,9 +19,14 @@ export type TNeatCommand =
 	| TNeatImageCommand
 	| TNeatCallCommand
 	| TNeatMenuCommand
-	// | TNeatPoolCommand
+	| TNeatPoolCommand
 	| TNeatOnCommand
+	| TNeatAnimationCommand
 	| TNeatForCommand;
+
+export type TNeatClearContextCommand = {
+	cmd: "CLEARCONTEXT";
+};
 
 export type TNeatAssignCommand = {
 	cmd: "ASSIGN";
@@ -43,8 +51,18 @@ export type TNeatAlignCommand = {
 	valign?: string;
 };
 
+export type TNeatZoomCommand = {
+	cmd: "ZOOM";
+	value: TNeatExpression;
+};
+
 export type TNeatColorCommand = {
 	cmd: "COLOR";
+	color: string;
+};
+
+export type TNeatBgColorCommand = {
+	cmd: "BGCOLOR";
 	color: string;
 };
 
@@ -56,6 +74,8 @@ export type TNeatRectCommand = {
 	pad?: [TNeatExpression, TNeatExpression];
 	fill?: string;
 	color?: string;
+	anims?: TNeatExpression;
+	traits?: TNeatExpression;
 };
 
 export type TNeatTextCommand = {
@@ -64,27 +84,28 @@ export type TNeatTextCommand = {
 	at: TNeatPropertyAt;
 	font?: { name?: string; size?: number };
 	size?: TNeatPropertySize;
+	color?: TNeatExpression;
 	id?: string;
 	align?: TNeatAlignCommand;
-	anim?: string;
-	traits?: unknown;
+	anims?: TNeatExpression;
+	traits?: TNeatExpression;
 	nocache?: boolean;
 };
 
 export type TNeatSpriteCommand = {
 	cmd: "SPRITE";
-	name: string;
+	name: TNeatExpression;
 	at: TNeatPropertyAt;
 	size?: TNeatPropertySize;
 	id?: string;
-	anim?: string;
 	dir?: string;
-	traits?: unknown;
+	anims?: TNeatExpression;
+	traits?: TNeatExpression;
 };
 
 export type TNeatImageCommand = {
 	cmd: "IMAGE";
-	source: string;
+	source: TNeatExpression;
 	at: TNeatPropertyAt;
 	repeat?: [TNeatExpression, TNeatExpression];
 };
@@ -95,6 +116,19 @@ export type TNeatViewCommand = {
 	at: TNeatPropertyAt;
 	size: TNeatPropertySize;
 	id?: string;
+};
+
+export type TNeatTimerCommand = {
+	cmd: "TIMER";
+	id: string;
+	duration: TNeatExpression;
+	isRepeating: boolean;
+};
+
+export type TNeatSoundCommand = {
+	cmd: "SOUND";
+	name: string;
+	isPaused: boolean;
 };
 
 export type TNeatItemCommand = {
@@ -121,20 +155,16 @@ export type TNeatForCommand = TNeatVariableForCommand | TNeatRangeForCommand;
 
 // MENU
 
-type TNeatMenuSelection = {
+export type TNeatMenuSelection = {
 	// color
 	color?: string;
 	// bgcolor
 	background?: string;
-	// left sprite
-	left?: string;
-	// right sprite
-	right?: string;
-	// var holding the selection
-	var?: string;
+	// selectiong rect padding
+	pad?: [TNeatExpression, TNeatExpression];
 };
 
-type TNeatMenuKeys = {
+export type TNeatMenuKeys = {
 	previous?: TNeatExpression;
 	next?: TNeatExpression;
 	select?: TNeatExpression;
@@ -142,6 +172,7 @@ type TNeatMenuKeys = {
 
 export type TNeatMenuCommand = {
 	cmd: "MENU";
+	id: string;
 	selection: TNeatMenuSelection;
 	keys: TNeatMenuKeys;
 	items: TNeatCommand[];
@@ -152,6 +183,29 @@ export type TNeatMenuCommand = {
 export type TNeatOnCommand = {
 	cmd: "ON";
 	event: string;
+	from?: string;
 	params: string[];
 	statements: TNeatCommand[];
+};
+
+// ANIMATION
+
+export type TNeatAnimationCommand = {
+	cmd: "ANIMATION";
+	name: string;
+	isPaused: boolean;
+	repeat?: TNeatExpression;
+	statements: TNeatCommand[];
+};
+
+// POOL
+
+export type TNeatPoolCommand = {
+	cmd: "POOL";
+	spriteName: string;
+	at?: { x: TNeatExpression; y: TNeatExpression };
+	count: TNeatExpression;
+	id: string;
+	spawn?: TNeatExpression;
+	traits?: TNeatExpression;
 };

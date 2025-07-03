@@ -5,7 +5,7 @@ import { parseLayers } from "../layers/layers.rules";
 export function parseSceneDisplay(parser: NeatParser) {
 	parser.consume("PUNCT", "{");
 
-	const result: TNeatScene = { layers: [] };
+	const result: Partial<TNeatScene> = { layers: [] };
 
 	// scene properties
 	properties: while (parser.is("IDENTIFIER")) {

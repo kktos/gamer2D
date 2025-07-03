@@ -1,22 +1,14 @@
 import type { NeatParser } from "../../../parser";
+import type { TNeatPoolCommand } from "../../../types/commands.type";
 import { parseAt } from "../../shared/common.rule";
 import { parseValueExpression } from "../../shared/value-expr.rule";
-
-export type TNeatPool = {
-	cmd: "POOL";
-	name: string;
-	at: { x: unknown; y: unknown };
-	count: unknown;
-	id?: string;
-	spawn?: unknown;
-};
 
 export function parsePool(parser: NeatParser) {
 	parser.consume("IDENTIFIER", "pool");
 
-	const name = parser.consume(["STRING", "IDENTIFIER"]).value as string;
+	const spriteName = parser.consume(["STRING", "IDENTIFIER"]).value as string;
 
-	const result: Partial<TNeatPool> = { cmd: "POOL", name };
+	const result: Partial<TNeatPoolCommand> = { cmd: "POOL", spriteName };
 
 	loop: while (parser.is("IDENTIFIER")) {
 		switch (parser.peekValue()) {
@@ -34,18 +26,24 @@ export function parsePool(parser: NeatParser) {
 				result.spawn = parseValueExpression(parser);
 				break;
 			}
-			case "id":
+			case "id": {
 				parser.advance();
 				result.id = parser.consume(["STRING", "IDENTIFIER"]).value as string;
 				break;
+			}
+			case "traits": {
+				parser.advance();
+				result.traits = parseValueExpression(parser);
+				break;
+			}
 			default:
 				break loop;
 		}
 	}
 
-	if (!result.at) {
-		throw new Error("Missing required 'at' argument in pool command.");
+	if (!result.count || !result.id) {
+		throw new Error("Missing required 'id' or 'count' argument in pool command.");
 	}
 
-	return result;
+	return result as TNeatPoolCommand;
 }

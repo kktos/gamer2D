@@ -1,6 +1,7 @@
 import type { PartialExcept } from "../../../../../types";
 import type { NeatParser } from "../../../parser";
 import type { TNeatMenuCommand } from "../../../types/commands.type";
+import { parseValueTuple } from "../../shared/common.rule";
 import { parseFor } from "../../shared/for.rule";
 import { parseItemGroup } from "../../shared/item-group.rule";
 import { parseColor } from "../../shared/style.rule";
@@ -9,13 +10,13 @@ import { parseValueExpression } from "../../shared/value-expr.rule";
 export function parseMenu(parser: NeatParser) {
 	parser.consume("IDENTIFIER", "menu");
 
-	let selectionVar: string | undefined;
-	if (parser.is("VARIABLE")) selectionVar = parser.variable();
+	const id = parser.consume(["STRING", "IDENTIFIER"]).value as string;
 
 	parser.consume("PUNCT", "{");
 
 	const menu: PartialExcept<TNeatMenuCommand, "cmd" | "items"> = {
 		cmd: "MENU",
+		id,
 		items: [],
 	};
 
@@ -59,13 +60,8 @@ export function parseMenu(parser: NeatParser) {
 		}
 	}
 
-	if (selectionVar) {
-		if (!menu.selection) menu.selection = {};
-		menu.selection.var = selectionVar;
-	}
-
 	parser.consume("PUNCT", "}");
-	return menu;
+	return menu as TNeatMenuCommand;
 }
 
 function parseMenuSelection(parser: NeatParser) {
@@ -77,18 +73,19 @@ function parseMenuSelection(parser: NeatParser) {
 	// scene properties
 	loop: while (parser.isIdentifier()) {
 		switch (parser.peekValue()) {
-			case "color":
-				result.color = parseColor(parser).color;
-				break;
+			// not possible atm
+			// case "color":
+			// 	result.color = parseColor(parser).color;
+			// 	break;
 			case "background":
 				result.background = parseColor(parser).color;
 				break;
-			case "left":
-				result.left = parser.string();
+			case "pad": {
+				parser.advance();
+				result.pad = parseValueTuple(parser);
 				break;
-			case "right":
-				result.right = parser.string();
-				break;
+			}
+
 			default:
 				break loop;
 		}

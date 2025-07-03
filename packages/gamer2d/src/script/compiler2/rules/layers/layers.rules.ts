@@ -21,11 +21,11 @@ export function parseLayer(parser: NeatParser) {
 	parser.identifier("layer");
 
 	const layerType = parser.identifier();
-	const layer: TNeatLayer = { type: layerType, data: null };
+	const layer: Partial<TNeatLayer> = { type: layerType };
 
 	if (parser.is("STRING")) layer.name = parser.string();
 
 	layer.data = parser.invokeRule(`layer_${layerType}`);
 
-	return layer;
+	return layer as TNeatLayer;
 }
