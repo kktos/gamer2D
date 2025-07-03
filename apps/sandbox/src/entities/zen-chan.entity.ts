@@ -1,4 +1,4 @@
-import { Entity } from "gamer2d/entities/Entity";
+import { Entity } from "gamer2d";
 import type { ResourceManager } from "gamer2d/game/ResourceManager";
 import { AnimationTrait } from "gamer2d/traits/animation.trait";
 import { KillableTrait } from "gamer2d/traits/killable.trait";

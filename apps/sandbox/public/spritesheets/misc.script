@@ -21,4 +21,13 @@ spritesheet "misc" {
 			tiles at:177,17 count:6
 		}
 	}
+
+	animations {
+		"logo" { frames "logo" range:0,5 }
+		"bubble" { 
+			frames "bubble" range:0,5
+			// loop 1
+		}
+	}
+
 }

@@ -1,9 +1,14 @@
 import "./index.css";
 
-import { Game } from "gamer2d";
+import { Game, addEntity } from "gamer2d";
 import { evalExpression } from "gamer2d/script/engine2/expr.eval";
 import { compile } from "../../../packages/gamer2d/src/script/compiler2/compiler";
 import { runCommands } from "../../../packages/gamer2d/src/script/engine2/exec";
+import { BubbleEntity } from "./entities/bubble.entity.js";
+import { BubblunEntity } from "./entities/bubblun.entity.js";
+import { ZenChanEntity } from "./entities/zen-chan.entity.js";
+
+const SCRIPT = "intro";
 
 const settings = `
 	FPS = 60
@@ -62,11 +67,13 @@ function startGame() {
 		const canvas = document.querySelector<HTMLCanvasElement>("#game");
 		if (!canvas) throw new Error("No Canvas game element found !?!");
 
-		// addEntity("zen-chan", ZenChanEntity);
+		addEntity("zen-chan", ZenChanEntity);
+		addEntity("BubbleEntity", BubbleEntity);
+		addEntity("BubblunEntity", BubblunEntity);
 
 		game = new Game(canvas, options);
 		game.load("resources.json").then(() => {
-			game?.start("test");
+			game?.start(SCRIPT);
 		});
 
 		// .catch((e) => {
@@ -96,9 +103,7 @@ async function loadText(url: string) {
 
 document.addEventListener("DOMContentLoaded", async () => {
 	// Script Editor elements
-	const scriptInput = document.getElementById(
-		"scriptInput",
-	) as HTMLTextAreaElement;
+	const scriptInput = document.getElementById("scriptInput") as HTMLTextAreaElement;
 	const parseSceneButton = document.getElementById("parseSceneButton");
 	const parseLayerButton = document.getElementById("parseLayerButton");
 	const loadButton = document.getElementById("loadButton");
@@ -108,28 +113,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 	const jsonInput = document.getElementById("jsonInput") as HTMLTextAreaElement;
 	const evalButton = document.getElementById("evalButton") as HTMLButtonElement;
 	const evalOutput = document.getElementById("evalOutput") as HTMLPreElement;
-	const resultOutput = document.getElementById(
-		"resultOutput",
-	) as HTMLPreElement;
-	const expressionInput = document.getElementById(
-		"expressionInput",
-	) as HTMLInputElement;
+	const resultOutput = document.getElementById("resultOutput") as HTMLPreElement;
+	const expressionInput = document.getElementById("expressionInput") as HTMLInputElement;
 
-	const startGameButton = document.getElementById(
-		"startGameButton",
-	) as HTMLButtonElement;
+	const startGameButton = document.getElementById("startGameButton") as HTMLButtonElement;
 	// Check if all required elements exist
-	if (
-		!startGameButton ||
-		!scriptInput ||
-		!parseSceneButton ||
-		!parseLayerButton ||
-		!loadButton ||
-		!outputTokens ||
-		!jsonInput ||
-		!evalButton ||
-		!evalOutput
-	) {
+	if (!startGameButton || !scriptInput || !parseSceneButton || !parseLayerButton || !loadButton || !outputTokens || !jsonInput || !evalButton || !evalOutput) {
 		console.error("One or more required HTML elements are missing.");
 		return;
 	}
@@ -208,10 +197,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	// Load default script (fallback if file doesn't exist)
 	try {
-		scriptInput.value = await loadText("scenes/test.script");
+		scriptInput.value = await loadText(`scenes/${SCRIPT}.script`);
 	} catch (error) {
 		console.warn("Could not load default script file:", error);
-		scriptInput.value =
-			"// Default script file not found\n// Enter your script here...";
+		scriptInput.value = "// Default script file not found\n// Enter your script here...";
 	}
 });
