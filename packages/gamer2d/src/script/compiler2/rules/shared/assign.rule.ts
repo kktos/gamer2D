@@ -3,7 +3,7 @@ import type { TNeatAssignCommand } from "../../types/commands.type";
 import type { TNeatConstTerm, TNeatVarTerm } from "../../types/expression.type";
 import { parseValueExpression } from "./value-expr.rule";
 
-export function parseVariableAssignment(parser: NeatParser): TNeatAssignCommand {
+export function parseVariableAssignment(parser: NeatParser, options?: { isConst?: boolean }): TNeatAssignCommand {
 	const path: (TNeatConstTerm | TNeatVarTerm)[] = [{ type: "var", name: parser.variable() }];
 
 	while (parser.is("PUNCT", ".")) {
@@ -28,5 +28,9 @@ export function parseVariableAssignment(parser: NeatParser): TNeatAssignCommand 
 
 	parser.consume("PUNCT", "=");
 
-	return { cmd: "ASSIGN", name: path, value: parseValueExpression(parser) };
+	const result: TNeatAssignCommand = { cmd: "ASSIGN", name: path, value: parseValueExpression(parser) };
+
+	if (options?.isConst) result.isConst = true;
+
+	return result;
 }

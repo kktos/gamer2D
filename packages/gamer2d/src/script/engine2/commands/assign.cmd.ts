@@ -14,7 +14,8 @@ export function executeAssignmentCommand(command: TNeatAssignCommand, context: E
 
 	if (path.length === 1) {
 		// Simple assignment: $var = value
-		context.variables.set(rootVarName, valueToAssign);
+		if (command.isConst) context.variables.setStaticLocal(rootVarName, valueToAssign);
+		else context.variables.set(rootVarName, valueToAssign);
 		return;
 	}
 

@@ -2,6 +2,7 @@ import type { PartialExcept } from "../../../../types";
 import type { NeatParser } from "../../parser";
 import type { TNeatCommand, TNeatForCommand, TNeatRangeForCommand, TNeatVariableForCommand } from "../../types/commands.type";
 import { parseText } from "../layers/ui/text.rule";
+import { parseVariableAssignment } from "./assign.rule";
 import { parseValueTuple } from "./common.rule";
 import { parseItemGroup } from "./item-group.rule";
 import { parseSprite } from "./sprite.rule";
@@ -43,18 +44,31 @@ export function parseFor(parser: NeatParser) {
 	}
 
 	parser.consume("PUNCT", "{");
-	while (parser.is("IDENTIFIER")) {
-		switch (parser.peekValue()) {
-			case "item":
-				result.body.push(parseItemGroup(parser) as unknown as TNeatCommand);
+
+	while (parser.is(["IDENTIFIER", "VARIABLE"])) {
+		const token = parser.peek();
+		switch (token.type) {
+			case "IDENTIFIER": {
+				switch (token.value) {
+					case "item":
+						result.body.push(parseItemGroup(parser) as unknown as TNeatCommand);
+						break;
+					case "text":
+						result.body.push(parseText(parser));
+						break;
+					case "sprite":
+						result.body.push(parseSprite(parser));
+						break;
+					case "const":
+						parser.advance();
+						result.body.push(parseVariableAssignment(parser, { isConst: true }));
+						break;
+				}
 				break;
-			case "text":
-				result.body.push(parseText(parser));
+			}
+			case "VARIABLE":
+				result.body.push(parseVariableAssignment(parser));
 				break;
-			case "sprite":
-				result.body.push(parseSprite(parser));
-				break;
-			default:
 		}
 	}
 	parser.consume("PUNCT", "}");
