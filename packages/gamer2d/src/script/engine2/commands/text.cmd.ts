@@ -4,7 +4,7 @@ import { EntitiesLayer } from "../../../layers";
 import { reactiveExpression } from "../../../utils/reactive.utils";
 import type { TNeatTextCommand } from "../../compiler2/types/commands.type";
 import type { ExecutionContext } from "../exec.type";
-import { evalExpressionAs } from "../expr.eval";
+import { evalExpression, evalExpressionAs } from "../expr.eval";
 import { interpolateString } from "../string.eval";
 import { evalAlign } from "./align.cmd";
 import { evalFont } from "./font.cmd";
@@ -12,7 +12,7 @@ import { addAnims } from "./shared/add.anims";
 import { addTraits } from "./shared/add.traits";
 
 export function executeTextCommand(command: TNeatTextCommand, context: ExecutionContext) {
-	const srcString = evalExpressionAs(command.value, context, "string");
+	const srcString = String(evalExpression(command.value, context));
 	const text = reactiveExpression((varsUsed) => interpolateString(srcString, context, varsUsed), context.variables);
 
 	const x = reactiveExpression((varsUsed) => evalExpressionAs(command.at.x, context, "number", varsUsed), context.variables);
