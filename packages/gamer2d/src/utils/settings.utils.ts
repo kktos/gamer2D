@@ -1,7 +1,11 @@
 import { compile } from "../script/compiler2/compiler";
 import type { TNeatSettingsCommand } from "../script/compiler2/types/commands.type";
 
-export function parseSettings(settings: string) {
+export type TNeatSettings = {
+	get<T>(key: string): T | null | undefined;
+};
+
+export function parseSettings(settings: string): TNeatSettings {
 	const settingsScript = `settings {${settings}}`;
 	const values = compile<TNeatSettingsCommand>(settingsScript, "settings").value;
 	return {

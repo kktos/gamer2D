@@ -1,5 +1,5 @@
-import { compileSpriteSheetScript } from "../script/compiler/compiler";
-import type { TSpriteSheet, TSpriteSheetGrid } from "../script/compiler/ressources/spritesheet.rules";
+import { compile } from "../script/compiler2/compiler";
+import type { TSpriteSheet, TSpriteSheetGrid } from "../script/compiler2/rules/ressources/spritesheet.rule";
 import { type TImageData, drawZoomedImage } from "../utils/canvas.utils";
 import { createSpriteSheet } from "../utils/createSpriteSheet.util";
 import { loadImage, loadText } from "../utils/loaders.util";
@@ -39,7 +39,7 @@ export class SpriteSheet {
 
 	static loadScript(filename: string) {
 		return loadText(filename)
-			.then((script) => compileSpriteSheetScript(filename, script))
+			.then((script) => compile<TSpriteSheet>(script, "spritesheet")) //; compileSpriteSheetScript(filename, script))
 			.then((sheet) => SpriteSheet.loadData(sheet));
 	}
 

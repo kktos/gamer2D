@@ -1,8 +1,8 @@
-import type { TSpriteSheet } from "../script/compiler/ressources/spritesheet.rules";
+import type { TSpriteSheet } from "../script/compiler2/rules/ressources/spritesheet.rule";
 import { loadJson, loadText } from "../utils/loaders.util";
-import type { TSettings } from "../utils/settings.utils";
+import type { TNeatSettings } from "../utils/settings.utils";
 import { Audio, loadSounds } from "./Audio";
-import { Font, loadFontData, type TFontSheet } from "./Font";
+import { Font, type TFontSheet, loadFontData } from "./Font";
 import { SpriteSheet } from "./Spritesheet";
 import type { GameOptions } from "./types/GameOptions";
 
@@ -15,13 +15,9 @@ export class ResourceManager {
 
 	constructor(
 		private gameOptions: GameOptions,
-		public settings: TSettings,
+		public settings: TNeatSettings,
 	) {
 		this.cache = new Map();
-	}
-
-	get mainFontName() {
-		return this.settings.get("FONT.MAIN");
 	}
 
 	async load(resources: string | TResourceGroupsDict) {
@@ -61,7 +57,7 @@ export class ResourceManager {
 		});
 	}
 
-	private loadAudiosheets(sheets: (string | unknown)[], paths: GameOptions["paths"], settings: TSettings) {
+	private loadAudiosheets(sheets: (string | unknown)[], paths: GameOptions["paths"], settings: TNeatSettings) {
 		return sheets.map((filename) => {
 			let promise: Promise<Audio>;
 			if (typeof filename === "string") promise = Audio.load(`${paths.audiosheets}/${filename}`, settings);

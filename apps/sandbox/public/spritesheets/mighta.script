@@ -3,7 +3,7 @@ spritesheet "mighta" {
 
 	sprites {
 		grid 16,16 
-		"mighta" scale:2 {
+		"mighta" scale 2 {
 			rects {
 				 [5,278,16,16]
 				 [24,278,16,16]
@@ -40,8 +40,8 @@ spritesheet "mighta" {
 	}
 
 	animations {
-		"walk" { length 16 frames "mighta"  range:0,9 }
-		"angry" { length 16 frames "mighta"  range:0,9 }
-		"dead" { length 16 frames "mighta"  range:0,8 }
+		"walk" { length 16 frames "mighta"  range 0,9 }
+		"angry" { length 16 frames "mighta"  range 0,9 }
+		"dead" { length 16 frames "mighta"  range 0,8 }
 	}
 }

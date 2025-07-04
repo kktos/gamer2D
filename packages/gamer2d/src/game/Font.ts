@@ -52,6 +52,9 @@ export function loadFontData(sheetDef: TFontSheet) {
 		.catch((err) => console.error("loadImage", sheetDef.img, err));
 }
 
+const fonts: Map<string, Font> = new Map();
+let mainFont = "";
+
 export class Font {
 	public name: string;
 	public size: number;
@@ -66,11 +69,17 @@ export class Font {
 	private spriteWidth: number;
 	private cache: Map<string, HTMLCanvasElement>;
 
-	static fonts: Map<string, Font> = new Map();
-
 	static async load(filename: string) {
 		const sheet = (await loadJson(filename)) as TFontSheet;
 		return loadFontData(sheet);
+	}
+
+	static setMainFont(name: string) {
+		mainFont = name;
+	}
+
+	static get(name?: string) {
+		return fonts.get(name ?? mainFont) as Font;
 	}
 
 	constructor(name: string, spritesheet: SpriteSheet, height: number, width: number, hasLowercase = false) {
@@ -84,7 +93,7 @@ export class Font {
 		this.cache = new Map();
 		this.hasLowercase = hasLowercase;
 
-		Font.fonts.set(name, this);
+		fonts.set(name, this);
 	}
 
 	[Symbol.for("inspect")]() {

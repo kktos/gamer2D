@@ -23,6 +23,7 @@ export type TNeatCommand =
 	| TNeatPoolCommand
 	| TNeatOnCommand
 	| TNeatAnimationCommand
+	| TNeatTimerCommand
 	| TNeatForCommand;
 
 export type TNeatClearContextCommand = {

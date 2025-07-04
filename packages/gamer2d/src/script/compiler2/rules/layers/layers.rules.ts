@@ -7,7 +7,8 @@ export function parseLayers(parser: NeatParser) {
 
 	while (parser.isIdentifier("layer")) {
 		if (parser.isLookahead("STRING")) {
-			result.push({ type: "LAYER", path: parser.string() });
+			parser.advance();
+			result.push({ type: "*", path: parser.string() });
 			continue;
 		}
 

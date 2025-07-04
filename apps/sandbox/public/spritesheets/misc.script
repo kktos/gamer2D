@@ -9,24 +9,24 @@ spritesheet "misc" {
 			rect [177,1,72,15]
 		}
 
-		grid 175,142 inc:0,1 gap:0,1
+		grid 175,142 inc 0,1 gap 0,1
 
 		logo {
-			tiles at:1,1 count:6
+			tiles at 1,1 count 6
 		}
 
-		grid 14,16 inc:1,0 gap:1,0
+		grid 14,16 inc 1,0 gap 1,0
 
 		bubble {
-			tiles at:177,17 count:6
+			tiles at 177,17 count 6
 		}
 	}
 
 	animations {
-		"logo" { frames "logo" range:0,5 }
+		"logo" { frames "logo" range 0,5 }
 		"bubble" { 
-			frames "bubble" range:0,5
-			// loop 1
+			frames "bubble" range 0,5
+			loop 1
 		}
 	}
 

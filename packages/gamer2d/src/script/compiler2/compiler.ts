@@ -6,6 +6,7 @@ import { parseLayerLevel } from "./rules/layers/layer_level.rule";
 import { parseLayerUi } from "./rules/layers/layer_ui.rule";
 import { parseLayer } from "./rules/layers/layers.rules";
 import { parseLayerWorldCollision } from "./rules/layers/worldcollision.rule";
+import { parseSpritesheet } from "./rules/ressources/spritesheet.rule";
 import { parseScene } from "./rules/scene.rule";
 import { parseSceneDisplay } from "./rules/scenes/scene_display.rule";
 import { parseSceneGame } from "./rules/scenes/scene_game.rule";
@@ -22,6 +23,7 @@ export function compile<T>(text: string, startRule: string, _globals?: Map<strin
 	parser.addRule("assign", parseVariableAssignment);
 	parser.addRule("statements", parseStatementsBlock);
 	parser.addRule("settings", parseSettings);
+	parser.addRule("spritesheet", parseSpritesheet);
 
 	parser.addRule("scene", parseScene);
 	parser.addRule("layer", parseLayer);

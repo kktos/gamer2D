@@ -3,7 +3,7 @@ spritesheet "level-tiles" {
 
 	sprites {
 		grid 16,16 
-		"large" scale:2 {
+		"large" scale 2 {
 			rects {
 				 [72,4,16,16]
 				 [72,23,16,16]
@@ -109,7 +109,7 @@ spritesheet "level-tiles" {
 		}
 
 		grid 8,8 
-		"small" scale:2 {
+		"small" scale 2 {
 			rects {
 				 [37,4,8,8]
 				 [37,23,8,8]

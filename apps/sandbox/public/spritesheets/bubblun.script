@@ -18,45 +18,48 @@ spritesheet "bubblun" {
 			}
 		}
 
-		grid 16,16 gap:1,0
-		"bubblun-walk" scale:2 {
-			tiles at:9,14 count:7
+		grid 16,16 gap 1,0
+		"bubblun-walk" scale 2 {
+			tiles at 9,14 count 7
 		}
 
-		"bubblun-up" scale:2 {
-			tiles at:196,54 count:2
+		"bubblun-up" scale 2 {
+			tiles at 196,54 count 2
 		}
-		"bubblun-down" scale:2 {
-			tiles at:162,54 count:2
-		}
-
-		"bubblun-burp" scale:2 {
-			tiles at:9,34 count:16
+		"bubblun-down" scale 2 {
+			tiles at 162,54 count 2
 		}
 
-		grid 16,16 inc:2,0 gap:1,0
-		"bubblun-idle" scale:2 {
-			tiles at:9,14 count:2
+		"bubblun-burp" scale 2 {
+			tiles at 9,34 count 16
 		}
 
-		grid 11,13  gap:1,0
-		"bubblun-star" scale:2 {
-			tiles at:244,17 count:3
+		grid 16,16 inc 2,0 gap 1,0
+		"bubblun-idle" scale 2 {
+			tiles at 9,14 count 2
 		}
 
+		grid 11,13  gap 1,0
+		"bubblun-star" scale 2 {
+			tiles at 244,17 count 3
+		}
+
+		life scale 2 {
+			rect [604, 1285, 8, 8]
+		}
 	}
 
 	animations {
-		"bubblun-walk" { length 6 frames "bubblun-walk" range:0,4 }
-		"bubblun-burp" { length 6 frames "bubblun-burp" range:0,15 }
+		"bubblun-walk" { length 6 frames "bubblun-walk" range 0,4 }
+		"bubblun-burp" { length 6 frames "bubblun-burp" range 0,15 }
 
-		"bubblun-idle" { length 12 frames "bubblun-idle" range:0,1 }
-		"bubblun-up" { length 12 frames "bubblun-up" range:0,1 }
-		"bubblun-down" { length 12 frames "bubblun-down" range:0,1 }
+		"bubblun-idle" { length 12 frames "bubblun-idle" range 0,1 }
+		"bubblun-up" { length 12 frames "bubblun-up" range 0,1 }
+		"bubblun-down" { length 12 frames "bubblun-down" range 0,1 }
 
-		"bubblun-star" { length 12 frames "bubblun-star" range:0,2 }
+		"bubblun-star" { length 12 frames "bubblun-star" range 0,2 }
 
-		"in-bubble" { frames "in-bubble" range:0,9 }
+		"in-bubble" { frames "in-bubble" range 0,9 }
 	}
 
 }

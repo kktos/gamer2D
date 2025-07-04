@@ -12,7 +12,7 @@ export function executeFontCommand(command: TNeatFontCommand, context: Execution
 export function evalFont(command: { name?: string; size?: number }) {
 	const result: { font?: Font; size?: number } = {};
 	if (command.name) {
-		const font = Font.fonts.get(command.name);
+		const font = Font.get(command.name);
 		if (font === undefined) throw new Error(`Font ${command.name} not found`);
 		result.font = font;
 	}

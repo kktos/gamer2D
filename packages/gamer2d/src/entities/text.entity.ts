@@ -1,4 +1,4 @@
-import type { Font } from "../game/Font";
+import { Font } from "../game/Font";
 import type { ResourceManager } from "../game/ResourceManager";
 import { ALIGN_TYPES, type TAlignType } from "../script/compiler2/types/align.type";
 import type { Signal } from "../utils/signals.util";
@@ -43,7 +43,7 @@ export class TextEntity extends Entity {
 		this.y = textObj.y;
 		this.isFixed = false;
 		this.isDynamic = !!textObj.isDynamic;
-		this.font = textObj.font ?? resourceMgr.get("font", resourceMgr.mainFontName);
+		this.font = textObj.font ?? Font.get();
 		this.text = textObj.text;
 		this.color = textObj.color?.value ?? "white";
 		this.bgcolor = textObj.bgcolor;

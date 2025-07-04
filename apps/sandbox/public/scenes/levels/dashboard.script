@@ -8,7 +8,7 @@ layer ui {
 	// }
 
 	on PLAYER_DEAD {
-		EntityPool("lifePool").release()
+		entity("lifePool").release()
 		$bubblun.lives= $bubblun.lives-1
 	}
 
@@ -17,20 +17,20 @@ layer ui {
 		// timer("death").start()
 	}
 
-	on "POOL_SPAWNED:lifePool" $id $count {
-		$pos= 20+($count-1)*12
-		log("POOL_SPAWNED", $id, $count, $pos)
-		EntityPool("lifePool").get($count-1).bbox.setPosition($pos, 460)
+	on POOL_SPAWNED from lifePool $id $count $entity {
+		$pos= 40 + ($count-1)*16
+		// log("POOL_SPAWNED", $id, $count, $pos)
+		$entity.bbox.setPosition($pos, 490)
 	}
 
-	on "POOL_RELEASED:lifePool" $id $count {
+	on POOL_RELEASED from lifePool $id $count {
 		log("POOL_RELEASED", $id, $count)
 	}
 
-	on "TRAPPED:trigRound" $target {
-		entities("round1").trait("KillableTrait").kill()
-		entities("round2").trait("KillableTrait").kill()
-		entities("trigRound").trait("KillableTrait").kill()
+	on TRAPPED from trigRound $target {
+		entity("round1").trait("KillableTrait").kill()
+		entity("round2").trait("KillableTrait").kill()
+		entity("trigRound").trait("KillableTrait").kill()
 	}
 
 	
@@ -39,7 +39,7 @@ layer ui {
 	text "HIGH SCORE" at 300,0 align center color #FF0000
 	text "2UP" at 500,0 color #00BBFF align center
 
-	text "${bubblun.score}" at 155,24 align right
+	text "${$bubblun.score}" at 155,24 align right
 	text $highscore at 300,24 align center
 	text "00" at 560,24 align right
 

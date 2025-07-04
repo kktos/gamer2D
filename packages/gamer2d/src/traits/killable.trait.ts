@@ -49,4 +49,4 @@ export class KillableTrait extends Trait {
 		}
 	}
 }
-setupTrait({ name: "KillableTrait", alias: "killable", classType: KillableTrait });
+setupTrait({ name: "KillableTrait", alias: "Killable", classType: KillableTrait });

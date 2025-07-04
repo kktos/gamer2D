@@ -1,12 +1,13 @@
 import "./index.css";
 
-import { Game, addEntity, addScene } from "gamer2d";
+import { Game, addEntity, addLayer, addScene } from "gamer2d";
 import { evalExpression } from "gamer2d/script/engine2/expr.eval";
 import { compile } from "../../../packages/gamer2d/src/script/compiler2/compiler";
 import { runCommands } from "../../../packages/gamer2d/src/script/engine2/exec";
 import { BubbleEntity } from "./entities/bubble.entity.js";
 import { BubblunEntity } from "./entities/bubblun.entity.js";
 import { ZenChanEntity } from "./entities/zen-chan.entity.js";
+import { LevelLayer } from "./layers/level.layer.js";
 import { BBGameScene } from "./scenes/game.scene.js";
 import BBLevelScene from "./scenes/level.scene.js";
 
@@ -35,8 +36,12 @@ const settings = `
 	}
 
 	LEVEL_GRID = {
-		X : 20
-		Y : 55
+		X : 40
+		Y : 60
+		COL: 35
+		ROW: 28
+		CELL_WIDTH: 16
+		CELL_HEIGHT: 16
 	}
 
 	PHYSICS = {
@@ -89,6 +94,8 @@ function startGame() {
 
 		addScene("game", BBGameScene);
 		addScene("level", BBLevelScene);
+
+		addLayer("level", LevelLayer);
 
 		game = new Game(canvas, options);
 		game.load("resources.json").then(() => {

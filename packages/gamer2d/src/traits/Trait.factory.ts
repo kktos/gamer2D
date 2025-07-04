@@ -11,12 +11,17 @@ export function setupTraits(traitsDefinitions: TTraitDefinition[]) {
 
 export function setupTrait(traitDef: TTraitDefinition) {
 	const { name: className, classType, alias } = traitDef;
-	// const className = getClassName(classType);
+
+	const functions = [className];
+
 	if (traitClassMap[className]) return;
-	if (alias) traitNames[alias.toLowerCase()] = className;
+	if (alias) {
+		traitNames[alias] = className;
+		functions.push(alias);
+	}
 	traitClassMap[className] = classType;
 
-	addFunction(className, (context, ...args: unknown[]) => new classType(...args));
+	addFunction(functions, (context, ...args: unknown[]) => new classType(...args));
 }
 
 export function getTraitClassname(name: string) {

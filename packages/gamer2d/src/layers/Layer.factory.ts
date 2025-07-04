@@ -1,8 +1,7 @@
-import { GLOBAL_VARIABLES } from "../game/globals";
 import type { GameContext } from "../game/types/GameContext";
 import type { TLayerDefinition } from "../game/types/GameOptions";
-import { compileLayerScript } from "../script/compiler/compiler";
-import type { TLayerSheet } from "../script/compiler/layers/layer.rules";
+import { compile } from "../script/compiler2/compiler";
+import type { TNeatLayer } from "../script/compiler2/types/layers.type";
 import { getClassName } from "../utils/object.util";
 import { LocalDB } from "../utils/storage.util";
 import type { Layer } from "./Layer.class";
@@ -53,11 +52,12 @@ export function createLayerByName(gc: GameContext, name: string, ...args: unknow
 }
 
 export async function loadLayer(gc: GameContext, name: string) {
-	let sheet: TLayerSheet | null = LocalDB.loadResource(name);
+	let sheet: TNeatLayer | null = LocalDB.loadResource(name);
 	if (!sheet) {
 		try {
 			const scriptText = await gc.resourceManager.loadScene(name);
-			sheet = compileLayerScript(scriptText, GLOBAL_VARIABLES);
+			// sheet = compileLayerScript(scriptText, GLOBAL_VARIABLES);
+			sheet = compile<TNeatLayer>(scriptText, "layer");
 		} catch (e) {
 			console.error((e as Error).message);
 		}

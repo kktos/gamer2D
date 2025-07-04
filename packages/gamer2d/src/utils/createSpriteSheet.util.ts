@@ -1,8 +1,5 @@
 import { SpriteSheet } from "../game/Spritesheet";
-import type { TRepeat } from "../script/compiler/layers/display/layout/repeat.rules";
-import type { TSpriteDef, TSpriteSheet, TSpriteSheetGrid } from "../script/compiler/ressources/spritesheet.rules";
-import { evalValue } from "../script/engine/eval.script";
-import { TVars, type TVarTypes } from "./vars.utils";
+import type { TSpriteDef, TSpriteDefTiles, TSpriteSheet, TSpriteSheetGrid } from "../script/compiler2/rules/ressources/spritesheet.rule";
 
 export function createSpriteSheet(sheet: TSpriteSheet, img: HTMLImageElement | HTMLCanvasElement) {
 	const s = new SpriteSheet(sheet.name, img);
@@ -13,7 +10,6 @@ export function createSpriteSheet(sheet: TSpriteSheet, img: HTMLImageElement | H
 // this function to allow the editor to add definitions to the sprite sheet
 export function addDefsToSpriteSheet(sheet: Partial<TSpriteSheet>, s: SpriteSheet) {
 	let grid: TSpriteSheetGrid;
-	const vars = new TVars(new Map<string, TVarTypes>());
 
 	let nameSuffix = 0;
 
@@ -29,12 +25,12 @@ export function addDefsToSpriteSheet(sheet: Partial<TSpriteSheet>, s: SpriteShee
 		nameSuffix += rects.length;
 	};
 
-	const processTiles = (name: string, tiles, scale = 1) => {
+	const processTiles = (name: string, tiles: TSpriteDefTiles, scale = 1) => {
 		const [width, height] = grid.size;
 		const [offsetX, offsetY] = grid.gap ?? [0, 0];
 
-		const [x, y] = [evalValue({ vars }, tiles.pos[0]), evalValue({ vars }, tiles.pos[1])];
-		const baseName = evalValue({ vars }, name);
+		const [x, y] = [tiles.at.x, tiles.at.y];
+		const baseName = name;
 
 		let [dx, dy] = grid.inc ?? [0, 0];
 		dx *= width + offsetX;
@@ -44,17 +40,17 @@ export function addDefsToSpriteSheet(sheet: Partial<TSpriteSheet>, s: SpriteShee
 		nameSuffix += tiles.count;
 	};
 
-	type TDefs = TSpriteDef | TSpriteSheetGrid | TRepeat;
+	type TDefs = TSpriteDef | TSpriteSheetGrid; // | TRepeat;
 	const processSpriteDefinition = (spriteDef: TDefs) => {
 		if ("size" in spriteDef) {
 			grid = spriteDef;
 			return;
 		}
 
-		if ("type" in spriteDef) {
-			processSpriteLoop(spriteDef);
-			return;
-		}
+		// if ("type" in spriteDef) {
+		// 	processSpriteLoop(spriteDef);
+		// 	return;
+		// }
 
 		nameSuffix = 0;
 		for (const def of spriteDef.def) {
@@ -62,7 +58,7 @@ export function addDefsToSpriteSheet(sheet: Partial<TSpriteSheet>, s: SpriteShee
 			else processTiles(spriteDef.name, def, spriteDef.scale);
 		}
 	};
-
+	/*
 	const processSpriteLoop = (spriteDef: TRepeat) => {
 		if (!spriteDef.list || !Array.isArray(spriteDef.list)) return;
 
@@ -77,7 +73,7 @@ export function addDefsToSpriteSheet(sheet: Partial<TSpriteSheet>, s: SpriteShee
 			idx++;
 		}
 	};
-
+*/
 	if (sheet.sprites) for (const spriteDef of sheet.sprites) processSpriteDefinition(spriteDef);
 	if (sheet.animations) for (const [name, animDef] of Object.entries(sheet.animations)) s.defineAnim(name, animDef);
 }

@@ -1,5 +1,5 @@
 import type { Entity } from "../entities/Entity";
-import type { Font } from "../game/Font";
+import { Font } from "../game/Font";
 import type { GameContext } from "../game/types/GameContext";
 import type { BaseEvent, KeyEvent } from "../game/types/GameEvent";
 import type { Scene } from "../scenes/Scene";
@@ -35,7 +35,7 @@ export class UiLayer extends HTMLLayer {
 		super(gc, parent, "ui", sheet.ui);
 
 		const rezMgr = gc.resourceManager;
-		this.font = rezMgr.get<Font>("font", sheet.font ?? gc.resourceManager.mainFontName);
+		this.font = Font.get(sheet.font);
 
 		this.layout = sheet.data;
 		// this.lastJoyTime = 0;

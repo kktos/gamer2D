@@ -1,5 +1,5 @@
 import { EventEmitter } from "../events/EventEmitter";
-import type { TAnimation } from "../script/compiler/ressources/spritesheet.rules";
+import type { TAnimation } from "../script/compiler2/rules/ressources/spritesheet.rule";
 
 export class Anim {
 	static EVENT_END = Symbol.for("ANIM_ENDED");

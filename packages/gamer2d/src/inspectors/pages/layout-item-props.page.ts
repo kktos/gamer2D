@@ -1,7 +1,6 @@
 import type { Entity } from "../../entities/Entity";
 import type { UiLayer } from "../../layers/ui.layer";
 import type { Director } from "../../scenes/Director";
-import { evalVar } from "../../script/engine/eval.script";
 import type { PropertiesInspector } from "../elements/properties.inspector";
 import { DebugPage } from "./debug-page.class";
 
@@ -41,7 +40,11 @@ export class LayoutItemPropsPage extends DebugPage {
 				},
 			});
 
-			this.element.evalValue = (name: string) => evalVar({ vars: layer.vars }, name);
+			// this.element.evalValue = (name: string) => evalVar({ vars: layer.vars }, name);
+			this.element.evalValue = (name: string) => {
+				throw new Error("Function not implemented.");
+				// evalVar({ vars: layer.vars }, name);
+			};
 
 			const item = this.params.data;
 

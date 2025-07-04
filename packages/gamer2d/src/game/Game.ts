@@ -9,6 +9,7 @@ import { readGamepad } from "../utils/gamepad.util";
 import { path } from "../utils/path.util";
 import { parseSettings } from "../utils/settings.utils";
 import { FPSManager } from "./FPSManager";
+import { Font } from "./Font";
 import { addEntity, addLayer, addScene, addTrait } from "./GameHelpers";
 import { KeyMap } from "./KeyMap";
 import { ResourceManager, type TResourceGroupsDict } from "./ResourceManager";
@@ -87,6 +88,10 @@ export class Game {
 			// 	has: (name: string) => GLOBAL_VARIABLES.has(name),
 			// },
 		};
+
+		const maintFont = settings.get<string>("FONT.MAIN");
+		if (!maintFont) throw new Error("Missing mandatory FONT.MAIN in settings");
+		Font.setMainFont(maintFont);
 
 		this.gc.viewport.ctx.scale(this.gc.viewport.ratioWidth, this.gc.viewport.ratioHeight);
 
