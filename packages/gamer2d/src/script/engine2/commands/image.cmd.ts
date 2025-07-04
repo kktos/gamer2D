@@ -17,5 +17,5 @@ export function executeImageCommand(command: TNeatImageCommand, context: Executi
 		repeat[1] = Math.max(1, evalExpressionAs(command.repeat[1], context, "number"));
 	}
 
-	return { type: "IMAGE", x, y, source, repeat };
+	return { type: "IMAGE", x, y, source, repeat, zoom: context.currentZoom ?? 1 };
 }
