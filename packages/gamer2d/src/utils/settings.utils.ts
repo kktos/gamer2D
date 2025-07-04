@@ -1,31 +1,19 @@
-export type TSettings = {
-	get: (key: string) => string;
-	getNumber: (key: string) => number;
-	has: (key: string) => boolean;
-};
-export function parseSettings(settings: string): TSettings {
-	const settingsMap = settings
-		.trim()
-		.split("\n")
-		.map((line: string) => line.trim())
-		.filter((line: string) => line.length)
-		.reduce((acc, curr) => {
-			const [key, value] = curr.split(/\s*=\s*/);
-			acc.set(key, value);
-			return acc;
-		}, new Map());
+import { compile } from "../script/compiler2/compiler";
+import type { TNeatSettingsCommand } from "../script/compiler2/types/commands.type";
+
+export function parseSettings(settings: string) {
+	const settingsScript = `settings {${settings}}`;
+	const values = compile<TNeatSettingsCommand>(settingsScript, "settings").value;
 	return {
-		get(key: string) {
-			return settingsMap.get(key);
-		},
-		getNumber(key: string) {
-			const value = settingsMap.get(key);
-			const number = Number.parseFloat(value); //Number.parseInt(value);
-			if (Number.isNaN(number)) throw new TypeError(`Setting ${key} is not a number '${value}'`);
-			return number;
-		},
-		has(key: string) {
-			return settingsMap.has(key);
+		get<T>(key: string) {
+			const parts = key.split(".");
+			let obj = values as unknown;
+			for (let i = 0; i < parts.length; i++) {
+				if (typeof obj !== "object") return undefined;
+				if (obj === null) return null;
+				obj = obj[parts[i]] as Record<string, unknown>;
+			}
+			return obj as T;
 		},
 	};
 }

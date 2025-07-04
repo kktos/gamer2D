@@ -1,6 +1,6 @@
 game "game" {
 
-	globals {
+	layer globals {
 		$bubblun.score= 1969
 		$bubblun.lives= 3
 	

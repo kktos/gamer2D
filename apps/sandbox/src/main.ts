@@ -1,37 +1,53 @@
 import "./index.css";
 
-import { Game, addEntity } from "gamer2d";
+import { Game, addEntity, addScene } from "gamer2d";
 import { evalExpression } from "gamer2d/script/engine2/expr.eval";
 import { compile } from "../../../packages/gamer2d/src/script/compiler2/compiler";
 import { runCommands } from "../../../packages/gamer2d/src/script/engine2/exec";
 import { BubbleEntity } from "./entities/bubble.entity.js";
 import { BubblunEntity } from "./entities/bubblun.entity.js";
 import { ZenChanEntity } from "./entities/zen-chan.entity.js";
+import { BBGameScene } from "./scenes/game.scene.js";
+import BBLevelScene from "./scenes/level.scene.js";
 
-const SCRIPT = "intro";
+const SCRIPT = "test";
 
 const settings = `
 	FPS = 60
 
-	FONT.MAIN = bubble-bobble
+	FONT = {
+		MAIN : "bubble-bobble"
+	}
 
-	VIEWPORT.WIDTH = 600
-	VIEWPORT.HEIGHT = 600
-	VIEWPORT.RATIO = 1
-	VIEWPORT.RATIO_OLD = 1.066666
-	UI.HEIGHT = 200
+	VIEWPORT = {
+		WIDTH : 600
+		HEIGHT : 600
+		RATIO : 1
+		RATIO_OLD : 1.066666
+	}
+
+	UI = {
+		HEIGHT : 200
+	}
 	
-	MENU.COLORS.SELECT_RECT = #A5A5A5
-	MENU.COLORS.SELECTED_TEXT = #ffff07
+	MENU = {
+		COLOR_SELECTED :#df9b0a
+	}
 
-	LEVEL_GRID.X = 20
-	LEVEL_GRID.Y = 55
+	LEVEL_GRID = {
+		X : 20
+		Y : 55
+	}
 
-	PHYSICS.GRAVITY = 10
+	PHYSICS = {
+		GRAVITY : 10
+	}
 
-	AUDIO.VOLUME = 50
+	AUDIO = {
+		VOLUME : 50
+	}
 
-	LOGS = 
+	//LOGS = 
 `;
 
 const options = {
@@ -70,6 +86,9 @@ function startGame() {
 		addEntity("zen-chan", ZenChanEntity);
 		addEntity("BubbleEntity", BubbleEntity);
 		addEntity("BubblunEntity", BubblunEntity);
+
+		addScene("game", BBGameScene);
+		addScene("level", BBLevelScene);
 
 		game = new Game(canvas, options);
 		game.load("resources.json").then(() => {
