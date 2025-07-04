@@ -106,7 +106,7 @@ display "menu" {
 		// === MENU EVENT HANDLERS ===
 		on MENU_ITEM_CLICKED {
 			$pageIdx = $main.selected
-			// goto($sceneTargets.$pageIdx)
+			goto($sceneTargets.$pageIdx)
 			log("MENU_ITEM_CLICKED", $pageIdx)
 		}
 		
