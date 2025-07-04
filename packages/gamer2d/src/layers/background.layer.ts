@@ -37,7 +37,7 @@ export class BackgroundLayer extends Layer {
 function renderImage(ctx, resourceManager, image) {
 	const { ss, sprite } = loadSprite({ resourceManager }, image.source.value);
 
-	const zoom = 1;
+	const zoom = image.zoom;
 	const size = ss.spriteSize(sprite);
 	const imgCanvas = document.createElement("canvas");
 	imgCanvas.width = image.repeat[0] * size.width * zoom;

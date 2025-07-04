@@ -1,6 +1,6 @@
 import type { NeatParser } from "../../parser";
 import { parseVariableAssignment } from "../shared/assign.rule";
-import { parseColor } from "../shared/style.rule";
+import { parseColor, parseZoom } from "../shared/style.rule";
 import { parseImage } from "./ui/image.rule";
 
 export function parseLayerBackground(parser: NeatParser) {
@@ -19,6 +19,9 @@ export function parseLayerBackground(parser: NeatParser) {
 				break;
 			case "image":
 				result.push(parseImage(parser));
+				break;
+			case "zoom":
+				result.push(parseZoom(parser));
 				break;
 			default:
 				break loop;
