@@ -72,22 +72,25 @@ TODO:
 */
 
 export type MenuDTO = {
-	selection: TNeatMenuSelection;
-	keys: TNeatMenuKeys;
+	selection?: TNeatMenuSelection;
+	keys?: TNeatMenuKeys;
 	items: RectEntity[];
 };
 
 export class MenuEntity extends Entity {
-	public selection: TNeatMenuSelection;
-	private keys: TNeatMenuKeys;
+	public selection?: TNeatMenuSelection;
+	private keys?: TNeatMenuKeys;
 	private items: RectEntity[];
-	private selectedIdx = 0;
+	private selectedIdx = -1;
 	private lastX = -1;
 	private lastY = -1;
 
 	constructor(resourceMgr: ResourceManager, menuObj: MenuDTO) {
 		super(resourceMgr, 0, 0);
-		this.selection = menuObj.selection;
+		this.selection = menuObj.selection ?? {};
+		if (!this.selection.background) {
+			this.selection.background = resourceMgr.settings.get<string>("MENU.COLOR_SELECTED") ?? "white";
+		}
 		this.keys = menuObj.keys;
 		this.items = menuObj.items;
 	}
@@ -101,7 +104,7 @@ export class MenuEntity extends Entity {
 		if (this.lastX !== gc.mouse.x || this.lastY !== gc.mouse.y) {
 			this.lastX = gc.mouse.x;
 			this.lastY = gc.mouse.y;
-			selectedIdx = this.findMenuByPoint(gc.mouse.x, gc.mouse.y);
+			selectedIdx = this.findMenuByPoint(this.lastX, this.lastY);
 		}
 
 		if (selectedIdx === -1 && gc.tick % 5 === 0) {
@@ -119,11 +122,13 @@ export class MenuEntity extends Entity {
 		}
 
 		if (selectedIdx >= 0 && this.selectedIdx !== selectedIdx) {
-			this.items[this.selectedIdx].fillcolor = "transparent";
+			if (this.selectedIdx >= 0) this.items[this.selectedIdx].fillcolor = "transparent";
 			this.selectedIdx = selectedIdx;
-			this.items[this.selectedIdx].fillcolor = this.selection.background;
+			this.items[this.selectedIdx].fillcolor = this.selection?.background;
 			scene.emit(Events.MENU_ITEM_SELECTED, this.selectedIdx);
 		}
+
+		if (gc.mouse.down && this.selectedIdx >= 0) scene.emit(Events.MENU_ITEM_CLICKED, this.selectedIdx);
 	}
 }
 

@@ -15,6 +15,7 @@ export type TNeatCommand =
 	| TNeatRectCommand
 	| TNeatViewCommand
 	| TNeatAssignCommand
+	| TNeatSettingsCommand
 	| TNeatItemCommand
 	| TNeatImageCommand
 	| TNeatCallCommand
@@ -32,6 +33,13 @@ export type TNeatAssignCommand = {
 	cmd: "ASSIGN";
 	name: TNeatExpression;
 	value: TNeatExpression;
+	isConst?: boolean;
+};
+
+type TNeatSettingValue = boolean | string | number | Record<string, unknown> | (boolean | string | number)[];
+export type TNeatSettingsCommand = {
+	cmd: "SETTINGS";
+	value: Record<string, TNeatSettingValue>;
 };
 
 export type TNeatCallCommand = {
@@ -134,6 +142,7 @@ export type TNeatSoundCommand = {
 export type TNeatItemCommand = {
 	cmd: "ITEM";
 	body: TNeatCommand[];
+	action?: TNeatCommand[];
 };
 
 // FOR
@@ -173,8 +182,8 @@ export type TNeatMenuKeys = {
 export type TNeatMenuCommand = {
 	cmd: "MENU";
 	id: string;
-	selection: TNeatMenuSelection;
-	keys: TNeatMenuKeys;
+	selection?: TNeatMenuSelection;
+	keys?: TNeatMenuKeys;
 	items: TNeatCommand[];
 };
 

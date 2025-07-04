@@ -2,20 +2,16 @@ import { GAME_EVENTS } from "../constants/events.const";
 import { setupEntities } from "../entities/Entity.factory";
 import { enableDebugInspectors } from "../inspectors/debug-manager.class";
 import { setupLayers } from "../layers/Layer.factory";
-import { Timers } from "../layers/display/timers.class";
 import { Director } from "../scenes/Director";
 import { setupTraits } from "../traits/Trait.factory";
 import { createViewport } from "../utils/canvas.utils";
 import { readGamepad } from "../utils/gamepad.util";
-import { Loader } from "../utils/loaders.util";
 import { path } from "../utils/path.util";
 import { parseSettings } from "../utils/settings.utils";
 import { FPSManager } from "./FPSManager";
 import { addEntity, addLayer, addScene, addTrait } from "./GameHelpers";
 import { KeyMap } from "./KeyMap";
 import { ResourceManager, type TResourceGroupsDict } from "./ResourceManager";
-import { SpriteSheet } from "./Spritesheet";
-import { GLOBAL_VARIABLES } from "./globals";
 import type { GameContext } from "./types/GameContext";
 import type { GameEvent, KeyEvent } from "./types/GameEvent";
 import type { GameOptions } from "./types/GameOptions";
@@ -38,29 +34,33 @@ export class Game {
 
 		const settings = parseSettings(options.settings);
 
-		if (settings.has("LOGS")) {
-			const logs = settings.get("LOGS").split(/\s*,\s*/);
-			if (logs.includes("Timer")) {
-				Timers.wannaLog = true;
-			}
-			if (logs.includes("Loader")) {
-				Loader.wannaLog = true;
-			}
-			if (logs.includes("SpriteSheet")) {
-				SpriteSheet.wannaLog = true;
-			}
-		}
+		// if (settings.has("LOGS")) {
+		// 	const logs = settings.get("LOGS").split(/\s*,\s*/);
+		// 	if (logs.includes("Timer")) {
+		// 		Timers.wannaLog = true;
+		// 	}
+		// 	if (logs.includes("Loader")) {
+		// 		Loader.wannaLog = true;
+		// 	}
+		// 	if (logs.includes("SpriteSheet")) {
+		// 		SpriteSheet.wannaLog = true;
+		// 	}
+		// }
 
 		if (this.options.isDebugEnabled) this.isDebugEnabled = true;
 
-		const FPS = settings.getNumber("FPS") ?? 60;
+		const FPS = settings.get<number>("FPS") ?? 60;
+		const VIEWPORT = settings.get<Record<string, number>>("VIEWPORT") ?? {};
+		const UI = settings.get<Record<string, number>>("UI") ?? {};
+		const PHYSICS = settings.get<Record<string, number>>("PHYSICS") ?? {};
+
 		this.gc = {
 			viewport: createViewport(canvas, {
-				width: settings.getNumber("VIEWPORT.WIDTH"),
-				height: settings.getNumber("VIEWPORT.HEIGHT"),
-				ratio: settings.getNumber("VIEWPORT.RATIO"),
+				width: VIEWPORT.WIDTH,
+				height: VIEWPORT.HEIGHT,
+				ratio: VIEWPORT.RATIO,
 			}),
-			ui: { height: settings.getNumber("UI.HEIGHT") ?? 200 },
+			ui: { height: UI.HEIGHT ?? 200 },
 
 			resourceManager: new ResourceManager(this.options, settings),
 
@@ -77,15 +77,15 @@ export class Game {
 			keys: new KeyMap(),
 			scene: null,
 
-			gravity: settings.getNumber("PHYSICS.GRAVITY") ?? 50,
+			gravity: PHYSICS.GRAVITY ?? 50,
 
 			wannaPauseOnBlur: true,
 
-			globals: {
-				set: (name: string, value) => GLOBAL_VARIABLES.set(name, value),
-				get: (name: string) => GLOBAL_VARIABLES.get(name),
-				has: (name: string) => GLOBAL_VARIABLES.has(name),
-			},
+			// globals: {
+			// 	set: (name: string, value) => GLOBAL_VARIABLES.set(name, value),
+			// 	get: (name: string) => GLOBAL_VARIABLES.get(name),
+			// 	has: (name: string) => GLOBAL_VARIABLES.has(name),
+			// },
 		};
 
 		this.gc.viewport.ctx.scale(this.gc.viewport.ratioWidth, this.gc.viewport.ratioHeight);
@@ -267,12 +267,12 @@ export class Game {
 		if (this.isDebugEnabled) enableDebugInspectors(coppola);
 	}
 
-	setGlobal(name: string, value: unknown) {
-		this.gc.globals.set(name, value);
-	}
-	getGlobal(name: string) {
-		return this.gc.globals.get(name);
-	}
+	// setGlobal(name: string, value: unknown) {
+	// 	this.gc.globals.set(name, value);
+	// }
+	// getGlobal(name: string) {
+	// 	return this.gc.globals.get(name);
+	// }
 
 	uselessMethodToIncludeHelpers() {
 		addEntity;

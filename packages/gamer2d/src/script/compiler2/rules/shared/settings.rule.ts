@@ -1,75 +1,73 @@
-import { NeatLexerError } from "../../lexerError";
 import type { NeatParser } from "../../parser";
+import type { TNeatSettingsCommand } from "../../types/commands.type";
 
-type SettingValue = boolean | string | number | (string | number)[];
-interface SettingsData {
-	[key: string]: SettingValue;
-}
-
-export function parseSettings(parser: NeatParser): { type: string; data: SettingsData } {
+export function parseSettings(parser: NeatParser) {
 	parser.identifier("settings");
-	parser.consume("PUNCT", "{");
 
-	const settings: SettingsData = {};
+	const settings: TNeatSettingsCommand = { cmd: "SETTINGS", value: {} };
+
+	parser.punct("{");
 
 	while (parser.is("IDENTIFIER")) {
-		const name = parser.identifier();
-		parser.consume("PUNCT", "=");
+		const name = parser.rawIdentifier();
+		parser.punct("=");
 		const value = parseSettingValue(parser);
-		settings[name] = value;
+		settings.value[name] = value;
 	}
 
-	parser.consume("PUNCT", "}");
-	return { type: "settings", data: settings };
+	parser.punct("}");
+
+	return settings;
 }
 
 // Helper for parsing a single setting value
 function parseSettingValue(parser: NeatParser) {
-	const peekedToken = parser.peek();
-	switch (peekedToken.type) {
-		case "PUNCT":
-			if (peekedToken.value === "[") {
-				parser.consume("PUNCT", "[");
-				const arr: (string | number)[] = [];
+	if (parser.is("PUNCT", "[")) return parseArrayValue(parser);
+	if (parser.is("PUNCT", "{")) return parseObjectValue(parser);
+	return parseScalarValue(parser);
+}
 
-				// Handle empty array or first element
-				if (!parser.is("PUNCT", "]")) {
-					arr.push(parseArrayElementValue(parser));
+// Helper for parsing an array value
+function parseArrayValue(parser: NeatParser) {
+	parser.punct("[");
+	const arr: (string | number | boolean)[] = [];
 
-					// Parse subsequent elements (comma-separated)
-					while (parser.is("PUNCT", ",")) {
-						parser.consume("PUNCT", ",");
-						// Ensure there's an element after the comma and not an immediate ']'
-						if (parser.is("PUNCT", "]")) {
-							NeatLexerError.throwInvalidToken(
-								parser.lexer.lines,
-								parser.peek(), // The ']' token
-								"an array element after comma",
-								`but found ']' at line ${parser.peek().pos[0]}, col ${parser.peek().pos[1]}`,
-							);
-						}
-						arr.push(parseArrayElementValue(parser));
-					}
-				}
-				parser.consume("PUNCT", "]");
-				return arr;
-			}
-			// If PUNCT is not '[', fall through to the default error case
-			break;
-		case "STRING":
-			return parser.string();
-		case "NUMBER":
-			return parser.number();
-		case "IDENTIFIER":
-			return parser.isBoolean() ? parser.boolean() : parser.identifier();
-		case "COLOR":
-			return parser.consume("COLOR").value as string;
+	if (parser.is("PUNCT", "]")) {
+		parser.advance();
+		return arr;
 	}
-	throw new Error("a setting value (e.g., string, number, identifier, color, or array starting with '[')");
+
+	do {
+		arr.push(parseScalarValue(parser));
+	} while (parser.is("PUNCT", ",") && parser.advance());
+
+	parser.punct("]");
+	return arr;
+}
+
+// Helper for parsing an object value
+function parseObjectValue(parser: NeatParser) {
+	const object: Record<string, unknown> = {};
+	parser.punct("{");
+
+	if (parser.is("PUNCT", "}")) {
+		parser.advance();
+		return object;
+	}
+
+	while (parser.is("IDENTIFIER")) {
+		const name = parser.rawIdentifier();
+		parser.punct(":");
+		const value = parseSettingValue(parser);
+		object[name] = value;
+	}
+
+	parser.punct("}");
+	return object;
 }
 
 // Helper for parsing elements within an array: strings, numbers, or identifiers (as strings)
-function parseArrayElementValue(parser: NeatParser): string | number {
+function parseScalarValue(parser: NeatParser): string | number | boolean {
 	const token = parser.peek();
 	switch (token.type) {
 		case "STRING":
@@ -77,7 +75,9 @@ function parseArrayElementValue(parser: NeatParser): string | number {
 		case "NUMBER":
 			return parser.number();
 		case "IDENTIFIER":
-			return parser.identifier();
+			return parser.isBoolean() ? parser.boolean() : parser.rawIdentifier();
+		case "COLOR":
+			return parser.consume("COLOR").value as string;
 	}
 
 	throw new Error("a STRING, NUMBER, or IDENTIFIER for an array element");

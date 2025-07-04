@@ -37,9 +37,9 @@ export interface GameContext {
 
 	wannaPauseOnBlur: boolean;
 
-	globals: {
-		set: (name, value) => void;
-		get: (name) => unknown;
-		has: (name) => boolean;
-	};
+	// globals: {
+	// 	set: (name, value) => void;
+	// 	get: (name) => unknown;
+	// 	has: (name) => boolean;
+	// };
 }

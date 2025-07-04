@@ -5,10 +5,11 @@ import { Events } from "../../../events";
 import type { GameContext } from "../../../game";
 import { EntitiesLayer } from "../../../layers";
 import { BBox } from "../../../utils/maths";
-import type { TNeatMenuCommand } from "../../compiler2/types/commands.type";
+import type { TNeatCommand, TNeatMenuCommand } from "../../compiler2/types/commands.type";
 import { runCommands } from "../exec";
 import type { ExecutionContext } from "../exec.type";
 import { evalExpressionAs } from "../expr.eval";
+import type { TNeatItemAction } from "./item.cmd";
 
 export function executeMenuCommand(command: TNeatMenuCommand, context: ExecutionContext) {
 	const gc = context.gc as GameContext;
@@ -19,7 +20,7 @@ export function executeMenuCommand(command: TNeatMenuCommand, context: Execution
 	});
 
 	let padding = [0, 0];
-	if (command.selection.pad)
+	if (command.selection?.pad)
 		padding = [evalExpressionAs(command.selection.pad[0], context, "number"), evalExpressionAs(command.selection.pad[1], context, "number")];
 
 	const rectObj: RectDTO = {
@@ -33,20 +34,29 @@ export function executeMenuCommand(command: TNeatMenuCommand, context: Execution
 	const menuItems = runCommands(command.items, context) as (Entity | Entity[])[];
 	const firstItem = Array.isArray(menuItems[0]) ? menuItems[0][0] : menuItems[0];
 
-	const itemRects: RectEntity[] = [];
-	for (let i = 0; i < menuItems.length; i++) {
-		const rectSelectionEntity = new RectEntity(gc.resourceManager, rectObj);
-		rectSelectionEntity.bbox = getBoundingBox(gc, menuItems[i]);
-		rectSelectionEntity.bbox.inflate(padding[0], padding[1]);
-		gc.scene?.addTask(EntitiesLayer.TASK_ADD_BEFORE_ENTITY, firstItem, rectSelectionEntity);
-		itemRects.push(rectSelectionEntity);
-	}
+	const actions: TNeatCommand[][] = [];
 
 	const menuObj: MenuDTO = {
 		selection: command.selection,
 		keys: command.keys,
-		items: itemRects,
+		items: [],
 	};
+
+	for (let i = 0; i < menuItems.length; i++) {
+		const item = menuItems[i];
+
+		if ("type" in item && item.type === "ACTION") {
+			actions[menuObj.items.length - 1] = (item as unknown as TNeatItemAction).value;
+			continue;
+		}
+
+		const rectSelectionEntity = new RectEntity(gc.resourceManager, rectObj);
+		rectSelectionEntity.bbox = getBoundingBox(gc, item);
+		rectSelectionEntity.bbox.inflate(padding[0], padding[1]);
+		gc.scene?.addTask(EntitiesLayer.TASK_ADD_BEFORE_ENTITY, firstItem, rectSelectionEntity);
+		menuObj.items.push(rectSelectionEntity);
+	}
+
 	const entity = new MenuEntity(gc.resourceManager, menuObj);
 	entity.id = command.id;
 
@@ -58,6 +68,11 @@ export function executeMenuCommand(command: TNeatMenuCommand, context: Execution
 		});
 		// const menu = context.variables.get(command.id) as { selected: number };
 		// menu.selected = idx as number;
+	});
+
+	gc.scene?.on(Events.MENU_ITEM_CLICKED, (idx) => {
+		const action = actions[idx as number];
+		if (action) runCommands(action, context);
 	});
 
 	// console.log("KEYS", command.keys);

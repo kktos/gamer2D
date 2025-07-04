@@ -1,5 +1,5 @@
 import { loadJson, loadSound } from "../utils/loaders.util";
-import type { TSettings } from "../utils/settings.utils";
+import type { parseSettings } from "../utils/settings.utils";
 
 const audioContext = new window.AudioContext();
 unlockAudioContext(audioContext);
@@ -49,7 +49,7 @@ async function loadFile(context: AudioContext, soundName: string) {
 		.catch((err) => console.error(`loadSound(${soundName})`, err));
 }
 
-export async function loadSounds(sheet, settings: TSettings) {
+export async function loadSounds(sheet, settings: ReturnType<typeof parseSettings>) {
 	const audio = new Audio(settings);
 	return Promise.all(
 		Object.keys(sheet).map((name) =>
@@ -68,16 +68,17 @@ export class Audio {
 	public context: AudioContext;
 	public name: string;
 
-	static async load(filename: string, settings: TSettings) {
+	static async load(filename: string, settings: ReturnType<typeof parseSettings>) {
 		const sheet = await loadJson(filename).catch((err) => console.error(`Audio.load(${filename})`, err));
 		return loadSounds(sheet, settings);
 	}
 
-	constructor(settings: TSettings) {
+	constructor(settings: ReturnType<typeof parseSettings>) {
+		const volume = settings.get<number>("AUDIO.VOLUME") ?? 50;
 		this.buffers = new Map();
 		this.context = audioContext;
 		this.gainNode = this.context.createGain();
-		this.gainNode.gain.value = (settings.getNumber("AUDIO.VOLUME") / 100) ** 2;
+		this.gainNode.gain.value = (volume / 100) ** 2;
 		this.name = "";
 	}
 
