@@ -3,63 +3,50 @@ level "001" {
 		color black
 	}
 
-	layer level {
+	layer level with settings from "scenes/levels/maps/001.json" {
 		settings {
 			big = "level1-L"
 			small = "level1-S"
 			colorLight = #730000
 			colorDark = #8C0042
-			fontColor = #FFA4FF
-		
-			map = [
-				"##----------------------------##",
-				"##                            ##",
-				"##                            ##",
-				"##                            ##",
-				"##                            ##",
-				"##                            ##",
-				"##                            ##",
-				"##                            ##",
-				"##                            ##",
-				"##                            ##",
-				"##--   ------------------   --##",
-				"##                            ##",
-				"##                            ##",
-				"##                            ##",
-				"##                            ##",
-				"##                            ##",
-				"##--   ------------------   --##",
-				"##                            ##",
-				"##                            ##",
-				"##                            ##",
-				"##                            ##",
-				"##--   ------------------   --##",
-				"##                            ##",
-				"##                            ##",
-				"##                            ##",
-				"##                            ##",
-				"##                            ##",
-				"##----------------------------##"
-			]
-
+			fontColor = #FFA4FF	
 		}
 	}
 
-	layer entities {
+	layer entities with variables from "scenes/levels/data/001.json" {
 		settings {
 			show_entities_count = true
 			show_entity_frame = true
 			entity_frame_color = blue
 		}
 
-		sprite "bubblun" id "player1" at 2,20 dir right
+		// sprite "bubblun" id "player1" at 2,20 dir right
+		sprite "bubblun" id "player1" at 75,40 dir right
 
-		for $ypos of [-5,-11,-18] as $idx {
-			item {
-				sprite "zen-chan" at 17,$ypos dir left
-					traits [ZenChanNormalBehaviourTrait(130, left, 20)]
-			}
+		$monsterCount= 0
+		// timer "spawner" every 20ms
+		timer "spawner" at extractFields($monsters, "delay")
+
+		on TIMER from "spawner" {
+			$monster= $monsters.$monsterCount
+			spawn({
+				type: $monster.type,
+				at: {
+					x: $monster.position.0,
+					y: $monster.position.1
+				},
+				dir: left
+				// traits: [ZenChanNormalBehaviourTrait(130, left, 20)]
+			})
+			$monsterCount= $monsterCount+1
 		}
+
+		// for $monster of $monsters as $idx {
+		// 	item {
+		// 		sprite $monster.type at $monster.position.0,$monster.position.1 dir left
+		// 			traits [ZenChanNormalBehaviourTrait(130, left, 20)]
+		// 	}
+		// }
 
 		// trap (triggered only once) for the 1st ZenChan to remove the ROUND X message
 		sprite "*" id "trigRound" at 15,12 size 100,10 traits [TrapTrait(),KillableTrait()]

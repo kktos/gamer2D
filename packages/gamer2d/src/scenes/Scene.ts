@@ -3,7 +3,6 @@ import { EventEmitter } from "../events/EventEmitter";
 import { TaskList } from "../game/TaskList";
 import type { GameContext } from "../game/types/GameContext";
 import { enableDebug } from "../inspectors/debug-manager.class";
-import type { Timers } from "../layers";
 import type { HTMLLayer } from "../layers/HTMLLayer";
 import type { Layer } from "../layers/Layer.class";
 import { createLayerByName } from "../layers/Layer.factory";
@@ -12,6 +11,7 @@ import type { TNeatScene } from "../script/compiler2/types/scenes.type";
 import { generateID } from "../utils/id.util";
 import { BBox } from "../utils/maths/BBox.class";
 import { getClassName } from "../utils/object.util";
+import type { TimerManager } from "../utils/timermanager.class";
 
 export class LayerMap extends Map<string, Layer> {
 	[Symbol.for("inspect")]() {
@@ -45,7 +45,7 @@ export class Scene {
 	private screenHeight: number;
 	private layers: LayerMap;
 
-	public timers?: Timers;
+	public timers?: TimerManager;
 	// private next: null;
 	// private settings?: Record<string, unknown>;
 
@@ -112,6 +112,8 @@ export class Scene {
 	public useLayer<T extends Layer>(name: string, fn: (layer: T) => void) {
 		const layer = this.layers.get(name) as T;
 		if (layer) fn(layer);
+		else console.warn(`Layer ${name} not found`);
+		return this;
 	}
 
 	pause() {

@@ -1,10 +1,13 @@
 import type { ExecutionContext } from "../exec.type";
 import { fnEntity } from "./entity.function";
+import { fnExtractFields } from "./extractfields.function";
+import { fnGoto } from "./goto.function";
 import { fnLog } from "./log.function";
 import { fnInt, fnRandom } from "./math.function";
+import { fnTimer } from "./timer.function";
 
 export class NeatFunctions extends Map<string, (context: ExecutionContext, ...args: unknown[]) => unknown> {
-	call(context: ExecutionContext, name: string, args: unknown[]): unknown {
+	call(context: ExecutionContext, name: string, args: unknown[]) {
 		const fn = this.get(name);
 		if (!fn) throw new Error(`Function not found: ${name}`);
 		return fn(context, ...args);
@@ -29,15 +32,4 @@ addFunction(["random", "rand", "rnd"], fnRandom);
 addFunction("int", fnInt);
 addFunction("timer", fnTimer);
 addFunction("goto", fnGoto);
-
-function fnTimer(context: ExecutionContext, ...args: unknown[]) {
-	const id = args[0] as string;
-	const scene = context.currentScene;
-	return scene?.timers?.get(id);
-}
-
-function fnGoto(context: ExecutionContext, ...args: unknown[]) {
-	const page = args[0] as string;
-	const scene = context.currentScene;
-	return scene?.goto(page);
-}
+addFunction("extractFields", fnExtractFields);

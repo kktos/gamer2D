@@ -22,7 +22,7 @@ const PATTERNS = [
 	{ type: "IDENTIFIER", regex: String.raw`[a-zA-Z_][a-zA-Z0-9_]*` },
 
 	// symbols
-	{ type: "PUNCT", regex: String.raw`[{}(),+\-/*=[\]:<>!%\.]` },
+	{ type: "PUNCT", regex: String.raw`[{}(),+\-/*=[\]:<>!%\.@]` },
 ] as const;
 
 export type TokenValueMap = {
@@ -105,7 +105,7 @@ export class NeatLexer {
 						token.value = Number.parseFloat(value);
 						break;
 					case "STRING":
-						token.value = value.slice(1, -1).replace(/\\([^\\])/g,"$1");
+						token.value = value.slice(1, -1).replace(/\\([^\\])/g, "$1");
 						break;
 					case "VARIABLE":
 						token.value = value.slice(1);

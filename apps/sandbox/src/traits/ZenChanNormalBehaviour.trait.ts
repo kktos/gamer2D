@@ -21,7 +21,7 @@ export class ZenChanNormalBehaviourTrait extends Trait {
 		this.newMass = 20;
 	}
 
-	obstructedOn(gc: GameContext, entity: Entity, side: TCollisionSide, rect: BBox) {
+	obstructedOn(_: GameContext, entity: Entity, side: TCollisionSide, __: BBox) {
 		switch (side) {
 			case COLLISION_SIDES.LEFT: {
 				this.wannaChange = true;

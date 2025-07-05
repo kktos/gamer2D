@@ -16,12 +16,11 @@ export class EntitiesLayer extends Layer {
 
 	private selectedEntity: Entity | undefined;
 	public entities: Entity[] = [];
-	// private sprites: TLayerEntitiesSprite[] | undefined;
 	public wannaShowCount: boolean;
 	public wannaShowFrame: boolean;
 	public frameColor: string;
 
-	constructor(gc: GameContext, parent: Scene, sheet, grid?: Grid) {
+	constructor(gc: GameContext, parent: Scene, sheet, _grid?: Grid) {
 		super(gc, parent, "entities");
 
 		const settings = this.prepareRendering(gc, sheet.data);
@@ -42,12 +41,6 @@ export class EntitiesLayer extends Layer {
 		return this.entities.find((entity) => entity.id === idxOrId);
 	}
 
-	// public spawnEntities(grid: Grid) {
-	// 	if (!this.sprites) return;
-	// 	this.entities = createLevelEntities(this.gc.resourceManager, grid, this.sprites);
-	// 	return this.entities.length;
-	// }
-
 	public selectEntity(idxOrId: string | number) {
 		this.selectedEntity = this.get(idxOrId);
 		return this.selectedEntity;
@@ -61,10 +54,13 @@ export class EntitiesLayer extends Layer {
 			currentScene: this.scene,
 		};
 
-		const results= runCommands(statements, context) as Record<string, unknown>[];
-		const [settings] = results.filter((result) => "type" in result && result.type === "SETTINGS");
-		return settings.value as Record<string, unknown>;
- 	}
+		const results = runCommands(statements, context) as Record<string, unknown>[];
+
+		const settingBlocks = results.filter((result) => "type" in result && result.type === "SETTINGS");
+		let settings: Record<string, unknown> = {};
+		for (const block of settingBlocks) settings = { ...settings, ...(block.value as Record<string, unknown>) };
+		return settings;
+	}
 
 	public setTaskHandlers() {
 		const tasks = this.scene.tasks;

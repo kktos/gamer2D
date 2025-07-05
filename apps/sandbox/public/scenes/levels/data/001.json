@@ -1,0 +1,42 @@
+{
+  "hurry_after": 30,
+  "skel_after": 10,
+  "skel_speed": 1,
+  "special_item": [
+    160,
+    144
+  ],
+  "points_item": [
+    83,
+    144
+  ],
+  "monster_run_speed": 10,
+  "monster_bubbled_time": 30,
+  "bubble_speed": 4,
+  "monsters": [
+    {
+      "type": "Zen-Chan",
+      "delay": 1,
+      "position": [
+        120,
+        144
+      ]
+    },
+    {
+      "type": "Zen-Chan",
+      "delay": 21,
+      "position": [
+        120,
+        144
+      ]
+    },
+    {
+      "type": "Zen-Chan",
+      "delay": 41,
+      "position": [
+        120,
+        144
+      ]
+    }
+  ]
+}

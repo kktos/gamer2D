@@ -2,10 +2,13 @@ import type { GameContext } from "../game/types/GameContext";
 import type { SceneConstructor } from "../game/types/GameOptions";
 import { loadLayer } from "../layers/Layer.factory";
 import { compile } from "../script/compiler2/compiler";
+import type { TNeatSettingsCommand, TNeatVariablesCommand } from "../script/compiler2/types/commands.type";
+import type { TNeatLayerLoad } from "../script/compiler2/types/layers.type";
 import type { TNeatScene } from "../script/compiler2/types/scenes.type";
+import { loadJson } from "../utils/loaders.util";
 import { LocalDB } from "../utils/storage.util";
-import type { Scene } from "./Scene";
 import { DisplayScene } from "./display.scene";
+import type { Scene } from "./Scene";
 
 const sceneClasses: Record<string, SceneConstructor | null> = {
 	display: DisplayScene,
@@ -53,8 +56,15 @@ export class SceneFactory {
 		let idx = -1;
 		for await (const layerDef of sheet.layers) {
 			idx++;
-			if (layerDef.type !== "*") continue;
-			sheet.layers[idx] = await loadLayer(gc, String(layerDef.path));
+			if (layerDef.type === "*") sheet.layers[idx] = await loadLayer(gc, String(layerDef.path));
+			const layer = sheet.layers[idx];
+			if (layer.load?.length) {
+				for await (const blockDef of layer.load) {
+					const block = await loadBlock(blockDef);
+					if (!layer.data) layer.data = [];
+					layer.data.unshift(block);
+				}
+			}
 		}
 
 		if (!["display", "level", "game"].includes(sheet.type)) throw new Error(`Unknown Scene type: ${sheet.type}`);
@@ -66,4 +76,18 @@ export class SceneFactory {
 
 		return scene;
 	}
+}
+
+async function loadBlock(block: TNeatLayerLoad) {
+	let result: TNeatSettingsCommand | TNeatVariablesCommand;
+	const content = await loadJson(block.path);
+	switch (block.type) {
+		case "variables":
+			result = { cmd: "VARIABLES", value: content };
+			break;
+		case "settings":
+			result = { cmd: "SETTINGS", value: content };
+			break;
+	}
+	return result;
 }

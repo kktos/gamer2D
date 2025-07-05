@@ -16,6 +16,7 @@ export type TNeatCommand =
 	| TNeatViewCommand
 	| TNeatAssignCommand
 	| TNeatSettingsCommand
+	| TNeatVariablesCommand
 	| TNeatItemCommand
 	| TNeatImageCommand
 	| TNeatCallCommand
@@ -41,6 +42,11 @@ export type TNeatAssignCommand = {
 type TNeatSettingValue = boolean | string | number | Record<string, unknown> | (boolean | string | number)[];
 export type TNeatSettingsCommand = {
 	cmd: "SETTINGS";
+	value: Record<string, TNeatSettingValue>;
+};
+
+export type TNeatVariablesCommand = {
+	cmd: "VARIABLES";
 	value: Record<string, TNeatSettingValue>;
 };
 
@@ -132,7 +138,7 @@ export type TNeatTimerCommand = {
 	cmd: "TIMER";
 	id: string;
 	duration: TNeatExpression;
-	isRepeating: boolean;
+	kind: "once" | "repeat" | "schedule";
 };
 
 export type TNeatSoundCommand = {

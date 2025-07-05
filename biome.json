@@ -1,30 +1,40 @@
 {
-      "$schema": "https://biomejs.dev/schemas/1.6.2/schema.json",
-      "organizeImports": {
-            "enabled": true
-      },
-      "files": {
-            "include": ["src/**/*"]
-      },
-      "linter": {
-            "enabled": true,
-            "rules": {
-                  "recommended": true
-            },
-            "include": ["src", "./rollup.config.mjs"]
-      },
-      "formatter": {
-            "lineWidth": 160,
-            "include": ["src", "./rollup.config.mjs"]
-      },
-      "javascript": {
-            "parser": {
-                  "unsafeParameterDecoratorsEnabled": true
-            }
-      },
-      "css": {
-            "formatter": {
-                  "enabled": true
-            }
-      }
+	"$schema": "https://biomejs.dev/schemas/2.0.6/schema.json",
+	"assist": { "actions": { "source": { "organizeImports": "on" } } },
+	"files": {
+		"includes": ["**/src/**/*"]
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"style": {
+				"noParameterAssign": "error",
+				"useAsConstAssertion": "error",
+				"useDefaultParameterLast": "error",
+				"useEnumInitializers": "error",
+				"useSelfClosingElements": "error",
+				"useSingleVarDeclarator": "error",
+				"noUnusedTemplateLiteral": "error",
+				"useNumberNamespace": "error",
+				"noInferrableTypes": "error",
+				"noUselessElse": "error"
+			}
+		},
+		"includes": ["**/src/**", "rollup.config.mjs"]
+	},
+	"formatter": {
+		"lineWidth": 160,
+		"includes": ["**/src/**", "rollup.config.mjs"]
+	},
+	"javascript": {
+		"parser": {
+			"unsafeParameterDecoratorsEnabled": true
+		}
+	},
+	"css": {
+		"formatter": {
+			"enabled": true
+		}
+	}
 }

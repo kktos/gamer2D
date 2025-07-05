@@ -1,3 +1,4 @@
+import { loadJson } from "../../../../utils/loaders.util";
 import type { NeatParser } from "../../parser";
 import type { TNeatSettingsCommand } from "../../types/commands.type";
 
@@ -8,7 +9,12 @@ export function parseSettings(parser: NeatParser) {
 
 	parser.punct("{");
 
-	while (parser.is("IDENTIFIER")) {
+	while (parser.isIdentifier() || parser.isPunct("@")) {
+		if (parser.isPunct("@")) {
+			parseInclude(parser, settings.value);
+			continue;
+		}
+
 		const name = parser.rawIdentifier();
 		parser.punct("=");
 		const value = parseSettingValue(parser);
@@ -20,10 +26,23 @@ export function parseSettings(parser: NeatParser) {
 	return settings;
 }
 
+function parseInclude(parser: NeatParser, settings: Record<string, unknown>) {
+	parser.advance();
+	parser.identifier("include");
+	const path = parser.string();
+	loadJson(path)
+		.then((json) => {
+			for (const key in json) {
+				settings[key] = json[key];
+			}
+		})
+		.catch((err) => console.error(`Unable to include settings file: ${path}\n${err}`));
+}
+
 // Helper for parsing a single setting value
 function parseSettingValue(parser: NeatParser) {
-	if (parser.is("PUNCT", "[")) return parseArrayValue(parser);
-	if (parser.is("PUNCT", "{")) return parseObjectValue(parser);
+	if (parser.isPunct("[")) return parseArrayValue(parser);
+	if (parser.isPunct("{")) return parseObjectValue(parser);
 	return parseScalarValue(parser);
 }
 

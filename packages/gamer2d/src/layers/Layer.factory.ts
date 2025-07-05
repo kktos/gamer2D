@@ -4,10 +4,10 @@ import { compile } from "../script/compiler2/compiler";
 import type { TNeatLayer } from "../script/compiler2/types/layers.type";
 import { getClassName } from "../utils/object.util";
 import { LocalDB } from "../utils/storage.util";
-import type { Layer } from "./Layer.class";
 import { BackgroundLayer } from "./background.layer";
 import { EntitiesLayer } from "./entities.layer";
 import { GlobalsLayer } from "./globals.layer";
+import type { Layer } from "./Layer.class";
 import { UiLayer } from "./ui.layer";
 import { WorldCollisionLayer } from "./worldcollision.layer";
 
@@ -56,7 +56,6 @@ export async function loadLayer(gc: GameContext, name: string) {
 	if (!sheet) {
 		try {
 			const scriptText = await gc.resourceManager.loadScene(name);
-			// sheet = compileLayerScript(scriptText, GLOBAL_VARIABLES);
 			sheet = compile<TNeatLayer>(scriptText, "layer");
 		} catch (e) {
 			console.error((e as Error).message);

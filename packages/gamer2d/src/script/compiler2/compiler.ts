@@ -1,10 +1,10 @@
 import { NeatParser } from "./parser";
+import { parseLayer } from "./rules/layers/layer.rule";
 import { parseLayerBackground } from "./rules/layers/layer_background.rule";
 import { parseLayerEntites } from "./rules/layers/layer_entities.rule";
 import { parseLayerGlobals } from "./rules/layers/layer_globals.rule";
 import { parseLayerLevel } from "./rules/layers/layer_level.rule";
 import { parseLayerUi } from "./rules/layers/layer_ui.rule";
-import { parseLayer } from "./rules/layers/layers.rules";
 import { parseLayerWorldCollision } from "./rules/layers/worldcollision.rule";
 import { parseFontsheet } from "./rules/ressources/font.rule";
 import { parseSpritesheet } from "./rules/ressources/spritesheet.rule";
