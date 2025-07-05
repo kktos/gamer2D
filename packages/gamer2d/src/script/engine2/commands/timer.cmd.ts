@@ -1,21 +1,28 @@
 import { Events } from "../../../events";
-import { Timers } from "../../../layers";
+import { TimerManager } from "../../../utils/timermanager.class";
 import type { TNeatTimerCommand } from "../../compiler2/types/commands.type";
 import type { ExecutionContext } from "../exec.type";
-import { evalExpressionAs } from "../expr.eval";
+import { evalExpression } from "../expr.eval";
 
 export function executeTimerCommand(command: TNeatTimerCommand, context: ExecutionContext) {
 	if (!context.currentScene) throw new Error("No scene");
 	const scene = context.currentScene;
 
 	if (!context.currentScene.timers) {
-		context.currentScene.timers = new Timers((name: string, count: number) => {
+		context.currentScene.timers = new TimerManager((name: string, count: number) => {
 			scene.emit(Events.EVENT_TIMER, name, count);
 		});
 	}
 
-	const duration = evalExpressionAs(command.duration, context, "number");
-	const timers = context.currentScene.timers;
+	const duration = evalExpression(command.duration, context);
 
-	timers.add(command.id, duration, command.isRepeating ? Number.MAX_SAFE_INTEGER : 1);
+	const timers = context.currentScene.timers;
+	if (command.kind === "schedule") {
+		if (!Array.isArray(duration)) throw new TypeError("Timer at needs an array of durations");
+		if (!duration.every((d) => typeof d === "number")) throw new TypeError("Timer at needs an array of numbers");
+		timers.addArray(command.id, duration);
+	} else {
+		if (typeof duration !== "number") throw new TypeError("Timer duration needs to be a number");
+		timers.add(command.id, duration, command.kind === "repeat" ? Number.MAX_SAFE_INTEGER : 1);
+	}
 }

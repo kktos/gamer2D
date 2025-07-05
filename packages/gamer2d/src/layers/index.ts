@@ -1,6 +1,5 @@
 export * from "./background.layer";
 export * from "./display/sound.manager";
-export * from "./display/timers.class";
 export * from "./display/views/debug.view";
 export * from "./display/views/System.view";
 export * from "./display/views/View";
