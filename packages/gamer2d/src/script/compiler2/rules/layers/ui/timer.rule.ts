@@ -26,7 +26,7 @@ export function parseTimer(parser: NeatParser) {
 
 	result.duration = parseValueExpression(parser);
 
-	parser.identifier("ms");
+	if (result.kind !== "schedule") parser.identifier("ms");
 
 	return result as TNeatTimerCommand;
 }

@@ -97,11 +97,10 @@ export class Timer {
 			this.currentIndex++;
 			this.counter--;
 
-			// Timer finished
-			if (this.counter <= 0) return false;
+			if (this.counter > 0) this.countdown = this.getNextCountdown();
 
-			// Set up next countdown
-			this.countdown = this.getNextCountdown();
+			return true;
 		}
+		return false;
 	}
 }
