@@ -1,24 +1,11 @@
+import { compile } from "../script/compiler2/compiler";
+import type { TFontSheet } from "../script/compiler2/rules/ressources/font.rule";
 import { ALIGN_TYPES, type TAlignType } from "../script/compiler2/types/align.type";
 import type { RequireAllOrNone } from "../types/typescript.types";
 import { nameToRgba } from "../utils/canvas.utils";
-import { loadImage, loadJson } from "../utils/loaders.util";
+import { loadImage, loadText } from "../utils/loaders.util";
 import { BBox } from "../utils/maths/BBox.class";
 import { SpriteSheet } from "./Spritesheet";
-
-// const CHARS= ' 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ©!-×.';
-
-export type TFontSheet = {
-	name: string;
-	height: number;
-	width: number;
-	charset: string;
-	img: string;
-	offsetX: number;
-	offsetY: number;
-	gapX: number;
-	gapY: number;
-	hasLowercase: boolean;
-};
 
 type TPrintOptionsBase = {
 	ctx: CanvasRenderingContext2D;
@@ -33,8 +20,12 @@ type TPrintOptionsBase = {
 };
 export type PrintOptions = RequireAllOrNone<TPrintOptionsBase, "width" | "height">;
 
+function hasLowercase(charset: string): boolean {
+	return /[a-z]/.test(charset);
+}
+
 export function loadFontData(sheetDef: TFontSheet) {
-	return loadImage(sheetDef.img)
+	return loadImage(sheetDef.image)
 		.then((image) => {
 			const spritesheet = new SpriteSheet(sheetDef.name, image);
 			const offsetX = sheetDef.offsetX;
@@ -47,9 +38,9 @@ export function loadFontData(sheetDef: TFontSheet) {
 				const y = offsetY + Math.floor(index / charsPerLine) * charHeight;
 				spritesheet.define(char, { x, y, width: sheetDef.width, height: sheetDef.height });
 			}
-			return new Font(sheetDef.name, spritesheet, sheetDef.height, sheetDef.width, sheetDef.hasLowercase);
+			return new Font(sheetDef.name, spritesheet, sheetDef.height, sheetDef.width, hasLowercase(sheetDef.charset), sheetDef.isMulticolor);
 		})
-		.catch((err) => console.error("loadImage", sheetDef.img, err));
+		.catch((err) => console.error("loadImage", sheetDef.image, err));
 }
 
 const fonts: Map<string, Font> = new Map();
@@ -69,8 +60,11 @@ export class Font {
 	private spriteWidth: number;
 	private cache: Map<string, HTMLCanvasElement>;
 
+	private applyColor: (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, color: string) => void;
+
 	static async load(filename: string) {
-		const sheet = (await loadJson(filename)) as TFontSheet;
+		const script = await loadText(filename);
+		const sheet = compile<TFontSheet>(script, "fontsheet");
 		return loadFontData(sheet);
 	}
 
@@ -82,7 +76,7 @@ export class Font {
 		return fonts.get(name ?? mainFont) as Font;
 	}
 
-	constructor(name: string, spritesheet: SpriteSheet, height: number, width: number, hasLowercase = false) {
+	constructor(name: string, spritesheet: SpriteSheet, height: number, width: number, hasLowercase: boolean, isMulticolor: boolean) {
 		this.name = name;
 		this.spritesheet = spritesheet;
 		this.spriteHeight = height;
@@ -92,6 +86,9 @@ export class Font {
 		this.valign = ALIGN_TYPES.TOP;
 		this.cache = new Map();
 		this.hasLowercase = hasLowercase;
+
+		if (isMulticolor) this.applyColor = this.applyColorTransform.bind(this);
+		else this.applyColor = this.applyColorTransformFast.bind(this);
 
 		fonts.set(name, this);
 	}
@@ -271,25 +268,34 @@ export class Font {
 		});
 
 		// Apply color transformation if needed
-		if (textColor !== "white") this.applyColorTransformFast(canvasCtx, canvas, textColor);
+		if (textColor !== "white") this.applyColor(canvasCtx, canvas, textColor);
 
 		return canvas;
 	}
 
+
 	private applyColorTransform(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, color: string): void {
-		const [r, g, b, a = 255] = nameToRgba(color);
 		const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 		const data = imageData.data;
+		
+		// Parse target color
+		const targetColor = nameToRgba(color);    
+		const whiteThreshold = 200;
+		
 		for (let i = 0; i < data.length; i += 4) {
-			if (data[i] === 255 && data[i + 1] === 255 && data[i + 2] === 255) {
-				data[i] = r;
-				data[i + 1] = g;
-				data[i + 2] = b;
-				data[i + 3] = a;
-			} else {
-				data[i + 3] = 0;
+			const r = data[i];
+			const g = data[i + 1];
+			const b = data[i + 2];
+			const a = data[i + 3];
+			
+			// Check if pixel is white-ish and not transparent
+			if (r > whiteThreshold && g > whiteThreshold && b > whiteThreshold && a > 0) {
+				data[i] = targetColor[0];
+				data[i + 1] = targetColor[1];
+				data[i + 2] = targetColor[2];
 			}
 		}
+		
 		ctx.putImageData(imageData, 0, 0);
 	}
 

@@ -11,8 +11,7 @@
 		"music.json"
 	],
 	"fonts": [
-		"bubble-bobble.json",
-		"level-numbers.json",
-		"wargames.json"
+		"bubble-bobble.script",
+		"level-numbers.script"
 	]
 }

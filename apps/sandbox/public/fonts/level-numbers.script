@@ -1,0 +1,15 @@
+font "level-numbers" {
+	image "images/level-numbers.png"
+
+	// characters width & height
+	size 11,8
+
+	// gap X&Y between each character
+	gap 1,1
+
+	charset [
+		"0123456789"
+	]
+
+	multicolor
+}

@@ -1,8 +1,9 @@
+import type { TFontSheet } from "../script/compiler2/rules/ressources/font.rule";
 import type { TSpriteSheet } from "../script/compiler2/rules/ressources/spritesheet.rule";
 import { loadJson, loadText } from "../utils/loaders.util";
 import type { TNeatSettings } from "../utils/settings.utils";
 import { Audio, loadSounds } from "./Audio";
-import { Font, type TFontSheet, loadFontData } from "./Font";
+import { Font, loadFontData } from "./Font";
 import { SpriteSheet } from "./Spritesheet";
 import type { GameOptions } from "./types/GameOptions";
 
@@ -75,13 +76,12 @@ export class ResourceManager {
 
 			if (typeof filename === "string") promise = Font.load(`${path}/${filename}`);
 			else promise = loadFontData(filename);
-			promise.catch((err) => {
-				console.error(`Font.load ${filename}`, err);
-			});
+
 			promise.then((r) => {
 				if (!(r instanceof Font)) throw new TypeError("Can't load font");
 				this.add("font", r.name, r);
 			});
+			promise.catch((err) => console.error(`Font.load ${filename}`, err));
 
 			return promise;
 		});

@@ -24,6 +24,7 @@ export type TNeatCommand =
 	| TNeatOnCommand
 	| TNeatAnimationCommand
 	| TNeatTimerCommand
+	| TNeatSoundCommand
 	| TNeatForCommand;
 
 export type TNeatClearContextCommand = {

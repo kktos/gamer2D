@@ -16,5 +16,5 @@ font "bubble-bobble" {
 		"ABCDEFGHIJKLMNOPQ",
 		"RSTUVWXYZ[]"
 	]
-	hasLowercase
+	
 }
