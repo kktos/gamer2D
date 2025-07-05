@@ -15,7 +15,7 @@ const PATTERNS = [
 
 	// Colors and strings
 	{ type: "COLOR", regex: String.raw`#[a-fA-F0-9]{3,8}` },
-	{ type: "STRING", regex: String.raw`"(?:\\.|(?:\${[^}]*})|[^"\\$])*"` },
+	{ type: "STRING", regex: String.raw`"(?:\\.|(?:\${[^}]*})|[^"\\])*"` },
 
 	// Identifiers and variables
 	{ type: "VARIABLE", regex: String.raw`\$[a-zA-Z_][a-zA-Z0-9_]*` },
@@ -105,7 +105,7 @@ export class NeatLexer {
 						token.value = Number.parseFloat(value);
 						break;
 					case "STRING":
-						token.value = value.slice(1, -1);
+						token.value = value.slice(1, -1).replace(/\\([^\\])/g,"$1");
 						break;
 					case "VARIABLE":
 						token.value = value.slice(1);
