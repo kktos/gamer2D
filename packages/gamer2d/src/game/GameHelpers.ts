@@ -11,7 +11,7 @@ export function addEntity(entityName: string, entityClass: EntityConstructor) {
 }
 
 export function addTrait(name: string, traitClass: TraitConstructor) {
-	setupTrait(name, traitClass);
+	setupTrait({ name, classType: traitClass });
 }
 
 export function addScene(sceneType: TSceneSheet["type"], sceneClass: SceneConstructor) {

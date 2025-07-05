@@ -1,6 +1,6 @@
 import "./index.css";
 
-import { Game, addEntity, addLayer, addScene } from "gamer2d";
+import { Game, addEntity, addLayer, addScene, addTrait } from "gamer2d";
 import { evalExpression } from "gamer2d/script/engine2/expr.eval";
 import { compile } from "../../../packages/gamer2d/src/script/compiler2/compiler";
 import { runCommands } from "../../../packages/gamer2d/src/script/engine2/exec";
@@ -10,6 +10,7 @@ import { ZenChanEntity } from "./entities/zen-chan.entity.js";
 import { LevelLayer } from "./layers/level.layer.js";
 import { BBGameScene } from "./scenes/game.scene.js";
 import BBLevelScene from "./scenes/level.scene.js";
+import { ZenChanNormalBehaviourTrait } from "./traits/ZenChanNormalBehaviour.trait.js";
 
 const SCRIPT = "test";
 
@@ -90,7 +91,9 @@ function startGame() {
 
 		addEntity("zen-chan", ZenChanEntity);
 		addEntity("BubbleEntity", BubbleEntity);
-		addEntity("BubblunEntity", BubblunEntity);
+		addEntity("bubblun", BubblunEntity);
+
+		addTrait("ZenChanNormalBehaviourTrait", ZenChanNormalBehaviourTrait);
 
 		addScene("game", BBGameScene);
 		addScene("level", BBLevelScene);

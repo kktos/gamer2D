@@ -48,7 +48,8 @@ level "001" {
 	layer entities {
 		settings {
 			show_entities_count = true
-			show_entity_frame = false
+			show_entity_frame = true
+			entity_frame_color = blue
 		}
 
 		sprite "bubblun" id "player1" at 2,20 dir right

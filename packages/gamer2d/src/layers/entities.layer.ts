@@ -1,13 +1,10 @@
 import type { Entity } from "../entities/Entity";
 import type { GameContext } from "../game/types/GameContext";
 import type { Scene } from "../scenes/Scene";
-import type { TLayerEntitiesSprite } from "../script/compiler/layers/entities/entities.rules";
 import type { TNeatCommand } from "../script/compiler2/types/commands.type";
 import { runCommands } from "../script/engine2/exec";
 import type { ExecutionContext } from "../script/engine2/exec.type";
 import { functions } from "../script/engine2/functions/functionDict.utils";
-import { ArgColor } from "../types/value.types";
-import { createLevelEntities } from "../utils/createLevelEntities.utils";
 import type { Grid } from "../utils/maths/grid.math";
 import { createVariableStore } from "../utils/vars.store";
 import { Layer } from "./Layer.class";
@@ -19,7 +16,7 @@ export class EntitiesLayer extends Layer {
 
 	private selectedEntity: Entity | undefined;
 	public entities: Entity[] = [];
-	private sprites: TLayerEntitiesSprite[] | undefined;
+	// private sprites: TLayerEntitiesSprite[] | undefined;
 	public wannaShowCount: boolean;
 	public wannaShowFrame: boolean;
 	public frameColor: string;
@@ -27,14 +24,11 @@ export class EntitiesLayer extends Layer {
 	constructor(gc: GameContext, parent: Scene, sheet, grid?: Grid) {
 		super(gc, parent, "entities");
 
-		// if (sheet.statements) this.sprites = this.prepareRendering(sheet.statements);
-		if (sheet.statements) this.prepareRendering(gc, sheet.statements);
+		const settings = this.prepareRendering(gc, sheet.data);
 
-		if (grid) this.spawnEntities(grid);
-
-		this.wannaShowCount = sheet.settings?.show_entities_count === true;
-		this.wannaShowFrame = !!sheet.settings?.show_entity_frame;
-		this.frameColor = sheet.settings?.show_entity_frame instanceof ArgColor ? sheet.settings?.show_entity_frame.value : "red";
+		this.wannaShowCount = settings?.show_entities_count === true;
+		this.wannaShowFrame = !!settings?.show_entity_frame;
+		this.frameColor = (settings?.entity_frame_color as string) ?? "red";
 
 		this.setTaskHandlers();
 	}
@@ -48,11 +42,11 @@ export class EntitiesLayer extends Layer {
 		return this.entities.find((entity) => entity.id === idxOrId);
 	}
 
-	public spawnEntities(grid: Grid) {
-		if (!this.sprites) return;
-		this.entities = createLevelEntities(this.gc.resourceManager, grid, this.sprites);
-		return this.entities.length;
-	}
+	// public spawnEntities(grid: Grid) {
+	// 	if (!this.sprites) return;
+	// 	this.entities = createLevelEntities(this.gc.resourceManager, grid, this.sprites);
+	// 	return this.entities.length;
+	// }
 
 	public selectEntity(idxOrId: string | number) {
 		this.selectedEntity = this.get(idxOrId);
@@ -67,18 +61,10 @@ export class EntitiesLayer extends Layer {
 			currentScene: this.scene,
 		};
 
-		runCommands(statements, context);
-
-		// const repeatList = statements.filter((statement) => statement.type === OP_TYPES.REPEAT);
-		// if (!repeatList.length) return statements as unknown as TLayerEntitiesSprite[];
-
-		// const vars = new TVars(GLOBAL_VARIABLES, GLOBAL_VARIABLES);
-		// const sprites: TLayerEntitiesSprite[] = [];
-		// for (const repeatItem of repeatList) repeat(repeatItem, (item) => sprites.push(item as unknown as TLayerEntitiesSprite), vars);
-
-		// const spriteList = statements.filter((statement) => statement.type === OP_TYPES.SPRITE);
-		// return spriteList.concat(sprites);
-	}
+		const results= runCommands(statements, context) as Record<string, unknown>[];
+		const [settings] = results.filter((result) => "type" in result && result.type === "SETTINGS");
+		return settings.value as Record<string, unknown>;
+ 	}
 
 	public setTaskHandlers() {
 		const tasks = this.scene.tasks;

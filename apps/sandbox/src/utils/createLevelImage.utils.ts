@@ -9,7 +9,7 @@ type TSettings = {
 };
 
 export function createLevelImage(LEVEL_GRID: Record<string, number>, resourceManager: ResourceManager, grid: Grid, settings) {
-	const name = 1; //sheet.name;
+	const name = 0; //sheet.name;
 	const spritesheet = resourceManager.get("sprite", "level-tiles") as SpriteSheet;
 	const levelNumber = Number(name);
 
