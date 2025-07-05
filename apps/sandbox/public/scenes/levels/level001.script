@@ -25,20 +25,25 @@ level "001" {
 
 		$monsterCount= 0
 		// timer "spawner" every 20ms
-		timer "spawner" at extractFields($monsters, "delay")
+		timer "spawner" at extractFields($monsters, "delay") ms
 
 		on TIMER from "spawner" {
 			$monster= $monsters.$monsterCount
-			spawn({
-				type: $monster.type,
-				at: {
-					x: $monster.position.0,
-					y: $monster.position.1
-				},
-				dir: left
-				// traits: [ZenChanNormalBehaviourTrait(130, left, 20)]
-			})
+			// spawn({
+			// 	type: $monster.type,
+			// 	at: {
+			// 		x: $monster.position.0,
+			// 		y: $monster.position.1
+			// 	},
+			// 	dir: left
+			// })
 			$monsterCount= $monsterCount+1
+
+			log($monster, $monsterCount)
+		}
+
+		on SCENE_STARTED {
+			timer("spawner").resume()
 		}
 
 		// for $monster of $monsters as $idx {
