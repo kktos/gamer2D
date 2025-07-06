@@ -27,12 +27,11 @@ layer ui {
 		log("POOL_RELEASED", $id, $count)
 	}
 
-	on TRAPPED from trigRound $target {
+	on TRAPPED from trigRound {
 		entity("round1").trait("KillableTrait").kill()
 		entity("round2").trait("KillableTrait").kill()
 		entity("trigRound").trait("KillableTrait").kill()
 	}
-
 	
 	font 3
 	text "1UP" at 130,0 align right color #00FF00
@@ -49,5 +48,4 @@ layer ui {
 	pool "bubblun:life" id "lifePool" at 0,460 count 10 spawn $bubblun.lives
 	// text "${bubblun.lives}" at 80, 463 color black size:1
 
-	
 }

@@ -1,8 +1,10 @@
 game "game" {
 
 	layer globals {
+		$highscore = 2025
 		$bubblun.score= 1969
 		$bubblun.lives= 3
+
 		$level = 0
 	
 		// 	$bubblun= {

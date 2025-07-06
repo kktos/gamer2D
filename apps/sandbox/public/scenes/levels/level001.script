@@ -1,4 +1,7 @@
 level "001" {
+
+	debug true
+
 	layer background {
 		color black
 	}
@@ -21,40 +24,32 @@ level "001" {
 		}
 
 		// sprite "bubblun" id "player1" at 2,20 dir right
-		sprite "bubblun" id "player1" at 75,40 dir right
+		sprite "bubblun" id "player1" at 75,40 dir right traits [PlayerTrait()]
 
 		$monsterCount= 0
-		// timer "spawner" every 20ms
-		timer "spawner" at extractFields($monsters, "delay") ms
+		timer "spawner" at extractFields($monsters, "delay") ds
 
 		on TIMER from "spawner" {
 			$monster= $monsters.$monsterCount
-			// spawn({
-			// 	type: $monster.type,
-			// 	at: {
-			// 		x: $monster.position.0,
-			// 		y: $monster.position.1
-			// 	},
-			// 	dir: left
-			// })
+			spawn({
+				type: $monster.type,
+				at: {
+					x: $monster.position.0,
+					y: $monster.position.1
+				},
+				dir: left
+				traits: [ZenChanNormalBehaviourTrait(130, left, 20)]
+			})
 			$monsterCount= $monsterCount+1
-
-			log($monster, $monsterCount)
 		}
 
 		on SCENE_STARTED {
 			timer("spawner").resume()
 		}
 
-		// for $monster of $monsters as $idx {
-		// 	item {
-		// 		sprite $monster.type at $monster.position.0,$monster.position.1 dir left
-		// 			traits [ZenChanNormalBehaviourTrait(130, left, 20)]
-		// 	}
-		// }
-
 		// trap (triggered only once) for the 1st ZenChan to remove the ROUND X message
-		sprite "*" id "trigRound" at 15,12 size 100,10 traits [TrapTrait(),KillableTrait()]
+		// sprite "*" id "trigRound" at 15,12 size 100,10 traits [TrapTrait(),KillableTrait()]
+		sprite "*" id "trigRound" at 100,400 size 60,10 traits [TrapTrait(),KillableTrait()]
 
 	}
 	
