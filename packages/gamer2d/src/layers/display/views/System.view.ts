@@ -1,12 +1,9 @@
 import type { Entity } from "../../../entities/Entity";
-import { createEntityByName } from "../../../entities/Entity.factory";
-import { EntityPool } from "../../../entities/EntityPool";
 import type { GameContext } from "../../../game/types/GameContext";
-import type { TText } from "../../../script/compiler/layers/display/layout/text.rules";
 import type { TVarSounds } from "../../../types/engine.types";
 import { LocalDB } from "../../../utils/storage.util";
 import type { TVars } from "../../../utils/vars.utils";
-import { EntitiesLayer } from "../../entities.layer";
+import type { EntitiesLayer } from "../../entities.layer";
 import type { UiLayer } from "../../ui.layer";
 
 export class System {
@@ -19,20 +16,20 @@ export class System {
 		this.vars = vars;
 		this.layer = layer;
 
-		this.vars.set("SYSTEM", this);
+		// this.vars.set("SYSTEM", this);
 
-		const EntityPoolStub = {
-			create: (id: string, name: string, size: number, ...args: unknown[]) => {
-				const pool = EntityPool.create(gc.resourceManager, id, name, size, ...args);
-				this.layer.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, pool);
-				return pool;
-			},
-		};
+		// const EntityPoolStub = {
+		// 	create: (id: string, name: string, size: number, ...args: unknown[]) => {
+		// 		const pool = EntityPool.create(gc.resourceManager, id, name, size, ...args);
+		// 		this.layer.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, pool);
+		// 		return pool;
+		// 	},
+		// };
 
-		this.vars.set("EntityPool", EntityPoolStub);
+		// this.vars.set("EntityPool", EntityPoolStub);
 	}
 
-	EntityPool(id: string) {
+	EntityPool(_id: string) {
 		// return EntityPool.pools[id];
 	}
 
@@ -55,25 +52,25 @@ export class System {
 		}
 	}
 
-	concat(str: string, maxLen: number) {
-		let value = this.vars.get(str) as string;
-		const text = (this.vars.get("itemSelected") as TText).text;
-		if (maxLen) {
-			if (value.length >= maxLen) value = "";
-			value += text;
-			value = value.substring(0, maxLen);
-		} else value += text;
-		this.vars.set(str, value);
-	}
+	// concat(str: string, maxLen: number) {
+	// 	let value = this.vars.get(str) as string;
+	// 	const text = (this.vars.get("itemSelected") as TText).text;
+	// 	if (maxLen) {
+	// 		if (value.length >= maxLen) value = "";
+	// 		value += text;
+	// 		value = value.substring(0, maxLen);
+	// 	} else value += text;
+	// 	this.vars.set(str, value);
+	// }
 
-	spawn(name: string, ...args: unknown[]) {
-		const entity = createEntityByName(this.gc.resourceManager, name, ...args);
-		this.layer.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
-	}
+	// spawn(name: string, ...args: unknown[]) {
+	// 	const entity = createEntityByName(this.gc.resourceManager, name, ...args);
+	// 	this.layer.scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
+	// }
 
-	timer(name: string) {
-		return this.layer.timers?.get(name);
-	}
+	// timer(name: string) {
+	// 	return this.layer.timers?.get(name);
+	// }
 
 	sprite(id: string) {
 		return (this.vars.get("sprites") as Map<string, Entity>).get(id);

@@ -3,15 +3,24 @@ import { Font } from "../game/Font";
 import type { GameContext } from "../game/types/GameContext";
 import type { BaseEvent, KeyEvent } from "../game/types/GameEvent";
 import type { Scene } from "../scenes/Scene";
-import type { TView } from "../script/compiler/layers/display/layout/view.rules";
 import type { TNeatCommand } from "../script/compiler2/types/commands.type";
 import { runCommands } from "../script/engine2/exec";
 import type { ExecutionContext } from "../script/engine2/exec.type";
-import { functions } from "../script/engine2/functions/functionDict.utils";
+import { functions } from "../script/engine2/functions/functions.store";
+import type { ArgVariable, OP_TYPES, TupleToUnion } from "../types";
 import type { BBox } from "../utils/maths/BBox.class";
-import { type NeatVariableStore, createVariableStore } from "../utils/vars.store";
-import { HTMLLayer } from "./HTMLLayer";
+import { createVariableStore, type NeatVariableStore } from "../utils/vars.store";
 import type { View } from "./display/views/View";
+import { HTMLLayer } from "./HTMLLayer";
+
+type TView = {
+	type: TupleToUnion<[typeof OP_TYPES.VIEW]>;
+	id: string;
+	view: string;
+	pos: [number, number];
+	width: number | ArgVariable;
+	height: number | ArgVariable;
+};
 
 type TViewDef = TView & {
 	component?: View;
@@ -34,7 +43,7 @@ export class UiLayer extends HTMLLayer {
 	constructor(gc: GameContext, parent: Scene, sheet) {
 		super(gc, parent, "ui", sheet.ui);
 
-		const rezMgr = gc.resourceManager;
+		const _rezMgr = gc.resourceManager;
 		this.font = Font.get(sheet.font);
 
 		this.layout = sheet.data;
@@ -105,7 +114,7 @@ export class UiLayer extends HTMLLayer {
 		// }
 	}
 
-	prepareView(gc: GameContext, viewDef: TViewDef) {
+	prepareView(_gc: GameContext, _viewDeff: TViewDef) {
 		// if (!viewClasses[viewDef.view]) throw new TypeError(`Unknown View Type ${viewDef.view}`);
 		// const width = evalNumberValue({ vars: this.variables }, viewDef.width);
 		// const height = evalNumberValue({ vars: this.variables }, viewDef.height);
@@ -171,12 +180,12 @@ export class UiLayer extends HTMLLayer {
 		// gc.viewport.ctx.drawImage(op.canvas, left, top);
 	}
 
-	update(gc: GameContext, scene: Scene) {
+	update(_gc: GameContext, _scenee: Scene) {
 		// this.timers?.update(gc, scene);
 		if (this.debugCallback) this.debugCallback();
 	}
 
-	render(gc: GameContext) {
+	render(_gc: GameContext) {
 		// for (let idx = 0; idx < this.layout.length; idx++) {
 		// 	const op = this.layout[idx];
 		// 	switch (op.type) {

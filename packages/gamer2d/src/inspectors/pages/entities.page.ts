@@ -1,5 +1,5 @@
 import type { Entity } from "../../entities/Entity";
-import type { EntitiesLayer } from "../../layers/entities.layer";
+import type { EntitiesLayer } from "../../layers";
 import type { ItemList, TableColumn } from "../elements/items.inspector";
 import { DebugPage } from "./debug-page.class";
 import type { PageKey } from "./pages-definitions";
