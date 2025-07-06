@@ -3,13 +3,14 @@ import { setupEntities } from "../entities/Entity.factory";
 import { enableDebugInspectors } from "../inspectors/debug-manager.class";
 import { setupLayers } from "../layers/Layer.factory";
 import { Director } from "../scenes/Director";
+import { addFunctions } from "../script/engine2/functions/addfunctions";
 import { setupTraits } from "../traits/Trait.factory";
 import { createViewport } from "../utils/canvas.utils";
 import { readGamepad } from "../utils/gamepad.util";
 import { path } from "../utils/path.util";
 import { parseSettings } from "../utils/settings.utils";
-import { FPSManager } from "./FPSManager";
 import { Font } from "./Font";
+import { FPSManager } from "./FPSManager";
 import { addEntity, addLayer, addScene, addTrait } from "./GameHelpers";
 import { KeyMap } from "./KeyMap";
 import { ResourceManager, type TResourceGroupsDict } from "./ResourceManager";
@@ -32,6 +33,8 @@ export class Game {
 		for (const [key, value] of Object.entries(this.options.paths)) {
 			this.options.paths[key as keyof GameOptions["paths"]] = path(value);
 		}
+
+		addFunctions();
 
 		const settings = parseSettings(options.settings);
 
