@@ -1,24 +1,22 @@
 import type { Entity } from "../entities/Entity";
+import { Events } from "../events";
 import type { GameContext } from "../game/types/GameContext";
 import type { Scene } from "../scenes/Scene";
 import type { TNeatCommand } from "../script/compiler2/types/commands.type";
 import { runCommands } from "../script/engine2/exec";
 import type { ExecutionContext } from "../script/engine2/exec.type";
-import { functions } from "../script/engine2/functions/functionDict.utils";
+import { functions } from "../script/engine2/functions/functions.store";
 import type { Grid } from "../utils/maths/grid.math";
 import { createVariableStore } from "../utils/vars.store";
 import { Layer } from "./Layer.class";
 
 export class EntitiesLayer extends Layer {
-	static TASK_REMOVE_ENTITY = Symbol.for("removeEntity");
-	static TASK_ADD_ENTITY = Symbol.for("addEntity");
-	static TASK_ADD_BEFORE_ENTITY = Symbol.for("addBeforeEntity");
-
 	private selectedEntity: Entity | undefined;
 	public entities: Entity[] = [];
 	public wannaShowCount: boolean;
 	public wannaShowFrame: boolean;
 	public frameColor: string;
+	private solidEntities: Entity[] = [];
 
 	constructor(gc: GameContext, parent: Scene, sheet, _grid?: Grid) {
 		super(gc, parent, "entities");
@@ -65,25 +63,31 @@ export class EntitiesLayer extends Layer {
 	public setTaskHandlers() {
 		const tasks = this.scene.tasks;
 
-		tasks.onTask(EntitiesLayer.TASK_REMOVE_ENTITY, (entity: Entity) => {
-			const idx = this.entities.indexOf(entity);
+		tasks.onTask(Events.TASK_REMOVE_ENTITY, (entity: Entity) => {
+			let idx = this.entities.indexOf(entity);
 			if (idx !== -1) this.entities.splice(idx, 1);
+			idx = this.solidEntities.indexOf(entity);
+			if (idx !== -1) this.solidEntities.splice(idx, 1);
 		});
 
-		tasks.onTask(EntitiesLayer.TASK_ADD_ENTITY, (entity: Entity) => this.entities.push(entity));
+		tasks.onTask(Events.TASK_ADD_ENTITY, (entity: Entity) => {
+			this.entities.push(entity);
+			if (entity.isSolid) this.solidEntities.push(entity);
+		});
 
-		tasks.onTask(EntitiesLayer.TASK_ADD_BEFORE_ENTITY, (beforeEntity: Entity, entity: Entity) => {
+		tasks.onTask(Events.TASK_ADD_BEFORE_ENTITY, (beforeEntity: Entity, entity: Entity) => {
 			const idx = this.entities.indexOf(beforeEntity);
 			if (idx !== -1) this.entities.splice(idx, 0, entity);
+			if (entity.isSolid) this.solidEntities.push(entity);
 		});
 	}
 
 	// TODO: check Matter-js collisions : https://github.com/liabru/matter-js/blob/master/src/collision/Collision.js
 	private handleCollisions(gc: GameContext) {
-		for (let targetIdx = 0; targetIdx < this.entities.length; targetIdx++) {
-			const target = this.entities[targetIdx];
-			for (let idx = targetIdx + 1; idx < this.entities.length; idx++)
-				if (target.bbox.intersects(this.entities[idx].bbox)) target.collides(gc, this.entities[idx]);
+		for (let targetIdx = 0; targetIdx < this.solidEntities.length; targetIdx++) {
+			const target = this.solidEntities[targetIdx];
+			for (let idx = targetIdx + 1; idx < this.solidEntities.length; idx++)
+				if (target.bbox.intersects(this.solidEntities[idx].bbox)) target.collides(gc, this.solidEntities[idx]);
 		}
 	}
 
@@ -105,7 +109,7 @@ export class EntitiesLayer extends Layer {
 			ctx.fillStyle = "#fff";
 			ctx.font = "10px";
 			ctx.textAlign = "right";
-			ctx.fillText(`${this.entities.length}`, gc.viewport.width - 5, 12);
+			ctx.fillText(`${this.solidEntities.length}/${this.entities.length}`, gc.viewport.width - 5, 12);
 		}
 
 		if (this.wannaShowFrame) {

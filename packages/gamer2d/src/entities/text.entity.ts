@@ -39,6 +39,9 @@ export class TextEntity extends Entity {
 	constructor(resourceMgr: ResourceManager, textObj: TextDTO) {
 		super(resourceMgr, textObj.x.value, textObj.y.value);
 
+		// no physics
+		this.isSolid = false;
+
 		this.x = textObj.x;
 		this.y = textObj.y;
 		this.isFixed = false;

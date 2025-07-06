@@ -11,6 +11,11 @@ export class EntityPool extends Entity {
 	private usedList: boolean[] = [];
 	private usedCount = 0;
 
+	constructor(rm: ResourceManager, x: number, y: number) {
+		super(rm, x, y);
+		this.isSolid = false;
+	}
+
 	static create(rm: ResourceManager, id: string | undefined, name: string, size: number, ...args) {
 		const poolID = id ?? name;
 
