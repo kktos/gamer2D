@@ -69,6 +69,9 @@ export class Timer {
 	resume() {
 		this.parent.start(this.name);
 
+		// console.time(this.name);
+		// console.timeLog(this.name, "Timer.resume", this.timingArray);
+
 		if (TimerManager.wannaLog) {
 			console.log("Timer.resume", this.name);
 		}
@@ -77,11 +80,17 @@ export class Timer {
 	private getNextCountdown(): number {
 		if (!this.timingArray) return this.duration;
 
-		if (this.currentIndex >= this.timingArray.length - 1) return 0;
+		let countdown: number;
 
-		const nextTime = this.timingArray[this.currentIndex + 1];
-		const currentTime = this.timingArray[this.currentIndex];
-		return nextTime - currentTime;
+		if (this.currentIndex >= this.timingArray.length) countdown = 0;
+		else {
+			const nextTime = this.timingArray[this.currentIndex];
+			const currentTime = this.timingArray[this.currentIndex - 1];
+			countdown = nextTime - currentTime;
+		}
+		// console.log("Timer.getNextCountdown", this.name, countdown, this.currentIndex);
+
+		return countdown;
 	}
 
 	update(deltaTime: number) {

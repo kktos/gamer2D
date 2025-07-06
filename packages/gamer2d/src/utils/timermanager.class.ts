@@ -59,11 +59,16 @@ export class TimerManager {
 			const fired = timer.update(gc.deltaTime);
 
 			if (fired) {
+				// console.timeLog(name, "Timer.ticks - total time", timer.totalElapsed);
+				// console.timeEnd(name);
 				this.onTimer(name, timer.counter);
+				// console.time(name);
+				// console.log("-");
 			}
 
 			// Check if timer is finished
 			if (timer.counter <= 0) {
+				// console.timeEnd(name);
 				this.stop(name);
 			}
 		}
