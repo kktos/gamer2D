@@ -2,7 +2,7 @@ import type { Font } from "../../game";
 import type { Scene } from "../../scenes";
 import type { NeatVariableStore } from "../../utils/vars.store";
 import type { TAlignType } from "../compiler2/types/align.type";
-import type { NeatFunctions } from "./functions/functionDict.utils";
+import type { NeatFunctions } from "./functions/functions.store";
 
 // Command execution context - holds rendering state, variables, etc.
 export interface ExecutionContext {

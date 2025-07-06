@@ -75,7 +75,7 @@ export * from "./scenes/game.scene";
 export * from "./scenes/Scene";
 export * from "./scenes/Scene.factory";
 export * from "./script/engine2/exec";
-export * from "./script/engine2/functions/functionDict.utils";
+export * from "./script/engine2/functions/functions.store";
 export * from "./traits/animation.trait";
 export * from "./traits/bounce.trait";
 export * from "./traits/boundingBox.trait";

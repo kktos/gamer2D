@@ -3,7 +3,7 @@ import type { Scene } from "../scenes/Scene";
 import type { TNeatCommand } from "../script/compiler2/types/commands.type";
 import { runCommands } from "../script/engine2/exec";
 import type { ExecutionContext } from "../script/engine2/exec.type";
-import { functions } from "../script/engine2/functions/functionDict.utils";
+import { functions } from "../script/engine2/functions/functions.store";
 import { loadSprite } from "../utils/loaders.util";
 import { createVariableStore } from "../utils/vars.store";
 import { Layer } from "./Layer.class";

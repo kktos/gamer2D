@@ -112,7 +112,7 @@ export class Scene {
 	public useLayer<T extends Layer>(name: string, fn: (layer: T) => void) {
 		const layer = this.layers.get(name) as T;
 		if (layer) fn(layer);
-		else console.warn(`Layer ${name} not found`);
+		// else console.warn(`Layer ${name} not found`);
 		return this;
 	}
 
