@@ -1,6 +1,6 @@
 import type { Entity } from "../entities/Entity";
+import { Events } from "../events";
 import type { GameContext } from "../game/types/GameContext";
-import { EntitiesLayer } from "../layers/entities.layer";
 import type { Scene } from "../scenes/Scene";
 import { Trait } from "./Trait";
 
@@ -25,7 +25,7 @@ export class SpawnerTrait extends Trait {
 		this.wannaSpawn = false;
 		for (let idx = 0; idx < this.entities.length; idx++) {
 			const entity = this.entities[idx];
-			scene.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
+			scene.addTask(Events.TASK_ADD_ENTITY, entity);
 		}
 		this.entities.length = 0;
 	}

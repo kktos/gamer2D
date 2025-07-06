@@ -2,6 +2,7 @@ import type { Entity } from "../entities/Entity";
 import type { GameContext } from "../game/types/GameContext";
 import { KillableTrait } from "./killable.trait";
 import { Trait } from "./Trait";
+import { setupTrait } from "./Trait.factory";
 
 export class PlayerTrait extends Trait {
 	static EVENT_PLAYER_DEAD = Symbol.for("PLAYER_DEAD");
@@ -34,5 +35,8 @@ export class PlayerTrait extends Trait {
 		// });
 	}
 
-	collides(_gc: GameContext, _entity: Entity, _target: Entity): void {}
+	collides(_gc: GameContext, _entity: Entity, _target: Entity): void {
+		console.log("collides", _target);
+	}
 }
+setupTrait({ name: "PlayerTrait", alias: "Player", classType: PlayerTrait });

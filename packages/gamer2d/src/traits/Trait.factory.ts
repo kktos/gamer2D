@@ -1,5 +1,5 @@
 import type { TTraitDefinition } from "../game/types/GameOptions";
-import { addFunction } from "../script/engine2/functions/functionDict.utils";
+import { addFunction } from "../script/engine2/functions/functions.store";
 import type { Trait } from "./Trait";
 
 const traitClassMap = {};
@@ -21,7 +21,7 @@ export function setupTrait(traitDef: TTraitDefinition) {
 	}
 	traitClassMap[className] = classType;
 
-	addFunction(functions, (context, ...args: unknown[]) => new classType(...args));
+	addFunction(functions, (_context, ...args: unknown[]) => new classType(...args));
 }
 
 export function getTraitClassname(name: string) {
