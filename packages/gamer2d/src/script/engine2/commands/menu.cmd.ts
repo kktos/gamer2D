@@ -3,7 +3,6 @@ import { type MenuDTO, MenuEntity } from "../../../entities/menu.entity";
 import { type RectDTO, RectEntity } from "../../../entities/rect.entity";
 import { Events } from "../../../events";
 import type { GameContext } from "../../../game";
-import { EntitiesLayer } from "../../../layers";
 import { BBox } from "../../../utils/maths";
 import type { TNeatCommand, TNeatMenuCommand } from "../../compiler2/types/commands.type";
 import { runCommands } from "../exec";
@@ -53,14 +52,14 @@ export function executeMenuCommand(command: TNeatMenuCommand, context: Execution
 		const rectSelectionEntity = new RectEntity(gc.resourceManager, rectObj);
 		rectSelectionEntity.bbox = getBoundingBox(gc, item);
 		rectSelectionEntity.bbox.inflate(padding[0], padding[1]);
-		gc.scene?.addTask(EntitiesLayer.TASK_ADD_BEFORE_ENTITY, firstItem, rectSelectionEntity);
+		gc.scene?.addTask(Events.TASK_ADD_BEFORE_ENTITY, firstItem, rectSelectionEntity);
 		menuObj.items.push(rectSelectionEntity);
 	}
 
 	const entity = new MenuEntity(gc.resourceManager, menuObj);
 	entity.id = command.id;
 
-	gc.scene?.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
+	gc.scene?.addTask(Events.TASK_ADD_ENTITY, entity);
 	gc.scene?.on(Events.MENU_ITEM_SELECTED, (idx) => {
 		context.variables.set(command.id, {
 			selected: idx as number,
