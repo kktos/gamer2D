@@ -34,7 +34,7 @@ function parseShowCursor(parser: NeatParser) {
 	return { showCursor: value };
 }
 
-function parseDebug(parser: NeatParser) {
+export function parseDebug(parser: NeatParser) {
 	parser.identifier("debug");
 	return { debug: parser.boolean() };
 }
