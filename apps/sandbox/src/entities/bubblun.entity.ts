@@ -14,6 +14,14 @@ import {
 } from "gamer2d";
 import { JumpTrait } from "../traits/jump.trait.js";
 
+type BubblunDTO = {
+	at: {
+		x: number;
+		y: number;
+	};
+	dir: DIRECTIONS;
+};
+
 export class BubblunEntity extends Entity {
 	// private physicsTrait: PhysicsTrait;
 	// private solidTrait: SolidTrait;
@@ -21,11 +29,11 @@ export class BubblunEntity extends Entity {
 	private jumpTrait: JumpTrait;
 	private xdragTrait: XDragTrait;
 
-	constructor(resourceMgr: ResourceManager, x: number, y: number, dir = DIRECTIONS.LEFT) {
-		super(resourceMgr, x, y, "bubblun");
+	constructor(resourceMgr: ResourceManager, bubblunDTO: BubblunDTO) {
+		super(resourceMgr, bubblunDTO.at.x, bubblunDTO.at.y, "bubblun");
 
 		this.isFixed = false;
-		this.dir = dir;
+		this.dir = bubblunDTO.dir;
 		this.mass = 60;
 
 		this.addTrait(new PlayerTrait());

@@ -8,14 +8,22 @@ import { DIRECTIONS } from "gamer2d/types/direction.type";
 
 // import EnemyTrait from "../traits/enemy.trait";
 
-const NORMAL_SPEED = 250;
+const _NORMAL_SPEED = 250;
+
+type ZenChanDTO = {
+	at: {
+		x: number;
+		y: number;
+	};
+	dir: DIRECTIONS;
+};
 
 export class ZenChanEntity extends Entity {
 	private physicsTrait: PhysicsTrait;
 	private solidTrait: SolidTrait;
 
-	constructor(resourceMgr: ResourceManager, x: number, y: number, dir = DIRECTIONS.LEFT) {
-		super(resourceMgr, x, y, "zen-chan");
+	constructor(resourceMgr: ResourceManager, zenChanDTO: ZenChanDTO) {
+		super(resourceMgr, zenChanDTO.at.x, zenChanDTO.at.y, "zen-chan");
 
 		this.isFixed = false;
 		// this.mass = 3;

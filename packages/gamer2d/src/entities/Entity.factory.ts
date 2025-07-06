@@ -1,7 +1,7 @@
 import type { ResourceManager } from "../game/ResourceManager";
 import type { TEntityDefinition } from "../game/types/GameOptions";
 import { getClassName } from "../utils/object.util";
-import type { Entity } from "./Entity"; // Type-only import is fine
+import type { Entity } from ".";
 
 const entityClassesRegistry: Record<string, new (resourceMgr: ResourceManager, ...args: unknown[]) => Entity> = {};
 const friendlyNamesToClassNameRegistry: Record<string, string> = {};
@@ -27,7 +27,7 @@ export function setupEntity(def: TEntityDefinition) {
 	if (friendlyName) friendlyNamesToClassNameRegistry[friendlyName.toLowerCase()] = actualClassName;
 }
 
-export function createEntityByName(resourceManager: ResourceManager, nameOrAlias: string, ...args: unknown[]): Entity {
+export function createEntityByName(resourceManager: ResourceManager, nameOrAlias: string, ...args: unknown[]) {
 	let className: string | undefined;
 
 	// 1. Check if nameOrAlias is a registered friendly name (alias)

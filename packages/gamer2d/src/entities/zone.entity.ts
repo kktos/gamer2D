@@ -2,15 +2,27 @@ import type { ResourceManager } from "../game/ResourceManager";
 import { Entity } from "./Entity";
 import { setupEntity } from "./Entity.factory";
 
+type zoneDTO = {
+	at: {
+		x: number;
+		y: number;
+	};
+	width: number;
+	height: number;
+};
+
 export class ZoneEntity extends Entity {
-	constructor(resourceMgr: ResourceManager, x: number, y: number, width: number, height: number) {
-		super(resourceMgr, x, y);
+	constructor(resourceMgr: ResourceManager, zoneDTO: zoneDTO) {
+		super(resourceMgr, zoneDTO.at.x, zoneDTO.at.y);
 		this.isFixed = true;
-		this.bbox.setSize(width, height);
+		this.bbox.setSize(zoneDTO.width, zoneDTO.height);
 	}
 
-	render(gc) {
-		const _ctx = gc.viewport.ctx;
+	// empty render to overload the default grey square
+	render(_gc) {
+		// 	const ctx = gc.viewport.ctx;
+		// 	ctx.fillStyle = "red";
+		// 	ctx.fillRect(this.bbox.left, this.bbox.top, this.bbox.width, this.bbox.height);
 	}
 }
 
