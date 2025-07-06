@@ -1,6 +1,6 @@
 import { EntityPool } from "../../../entities";
+import { Events } from "../../../events";
 import type { GameContext } from "../../../game";
-import { EntitiesLayer } from "../../../layers";
 import type { TNeatPoolCommand } from "../../compiler2/types/commands.type";
 import type { ExecutionContext } from "../exec.type";
 import { evalExpressionAs } from "../expr.eval";
@@ -20,6 +20,6 @@ export function executePoolCommand(command: TNeatPoolCommand, context: Execution
 
 	for (let idx = 0; idx < spawnCount; idx++) entityPool.use();
 
-	gc.scene?.addTask(EntitiesLayer.TASK_ADD_ENTITY, entityPool);
+	gc.scene?.addTask(Events.TASK_ADD_ENTITY, entityPool);
 	return entityPool;
 }

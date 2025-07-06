@@ -1,6 +1,6 @@
 import { createEntityByName } from "../../../entities";
+import { Events } from "../../../events";
 import type { GameContext } from "../../../game";
-import { EntitiesLayer } from "../../../layers";
 import { DIRECTIONS } from "../../../types";
 import type { TNeatSpriteCommand } from "../../compiler2/types/commands.type";
 import type { ExecutionContext } from "../exec.type";
@@ -20,7 +20,12 @@ export function executeSpriteCommand(command: TNeatSpriteCommand, context: Execu
 	const width = command.size ? evalExpressionAs(command.size.width, context, "number") : undefined;
 	const height = command.size ? evalExpressionAs(command.size.height, context, "number") : undefined;
 
-	const entity = createEntityByName(gc.resourceManager, name, x, y, command.dir === "right" ? DIRECTIONS.RIGHT : DIRECTIONS.LEFT);
+	const spriteDTO = {
+		at: { x, y },
+		name,
+		dir: command.dir === "right" ? DIRECTIONS.RIGHT : DIRECTIONS.LEFT,
+	};
+	const entity = createEntityByName(gc.resourceManager, name, spriteDTO);
 	if (command.id) entity.id = command.id;
 	if (context.currentZoom) entity.zoom = context.currentZoom;
 
@@ -30,7 +35,7 @@ export function executeSpriteCommand(command: TNeatSpriteCommand, context: Execu
 	if (command.anims) addAnims(command.anims, entity, context);
 	if (command.traits) addTraits(command.traits, entity, context);
 
-	gc.scene?.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
+	gc.scene?.addTask(Events.TASK_ADD_ENTITY, entity);
 
 	return entity;
 }

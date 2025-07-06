@@ -1,6 +1,6 @@
 import { type TextDTO, TextEntity } from "../../../entities";
+import { Events } from "../../../events";
 import type { GameContext } from "../../../game";
-import { EntitiesLayer } from "../../../layers";
 import { reactiveExpression } from "../../../utils/reactive.utils";
 import type { TNeatTextCommand } from "../../compiler2/types/commands.type";
 import type { ExecutionContext } from "../exec.type";
@@ -61,7 +61,7 @@ export function executeTextCommand(command: TNeatTextCommand, context: Execution
 	if (command.anims) addAnims(command.anims, entity, context);
 	if (command.traits) addTraits(command.traits, entity, context);
 
-	gc.scene?.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
+	gc.scene?.addTask(Events.TASK_ADD_ENTITY, entity);
 
 	return entity;
 }

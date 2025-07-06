@@ -1,6 +1,6 @@
 import { type RectDTO, RectEntity } from "../../../entities/rect.entity";
+import { Events } from "../../../events";
 import type { GameContext } from "../../../game";
-import { EntitiesLayer } from "../../../layers";
 import type { TNeatRectCommand } from "../../compiler2/types/commands.type";
 import type { ExecutionContext } from "../exec.type";
 import { evalExpressionAs } from "../expr.eval";
@@ -42,7 +42,7 @@ export function executeRectCommand(command: TNeatRectCommand, context: Execution
 	if (command.anims) addAnims(command.anims, entity, context);
 	if (command.traits) addTraits(command.traits, entity, context);
 
-	gc.scene?.addTask(EntitiesLayer.TASK_ADD_ENTITY, entity);
+	gc.scene?.addTask(Events.TASK_ADD_ENTITY, entity);
 
 	return entity;
 }
