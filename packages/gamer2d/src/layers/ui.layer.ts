@@ -29,7 +29,6 @@ type TViewDef = TView & {
 };
 
 export class UiLayer extends HTMLLayer {
-	// public timers: Timers | null;
 	public font: Font;
 	public variables: NeatVariableStore;
 
@@ -38,12 +37,9 @@ export class UiLayer extends HTMLLayer {
 	// private lastJoyTime: number;
 	private views: TViewDef[];
 
-	// private menu: GameMenu | null;
-
 	constructor(gc: GameContext, parent: Scene, sheet) {
 		super(gc, parent, "ui", sheet.ui);
 
-		const _rezMgr = gc.resourceManager;
 		this.font = Font.get(sheet.font);
 
 		this.layout = sheet.data;
@@ -57,16 +53,8 @@ export class UiLayer extends HTMLLayer {
 		// initViews({ canvas: gc.viewport.canvas, gc, vars: this.vars, layer: this });
 		this.views = [];
 
-		// const menus = this.layout.filter((op) => op.type === OP_TYPES.MENU);
-		// this.menu = GameMenu.create(gc, this, menus);
-		// this.menu = null;
-
 		this.prepareRendering(gc);
 
-		// this.menu?.prepareMenu();
-
-		// this.timers = Timers.createTimers(sheet);
-		// this.timers = null;
 		// if (sheet.sounds) this.vars.set("sounds", initSounds({ soundDefs: sheet.sounds, parent, resourceManager: rezMgr }));
 	}
 
@@ -98,8 +86,6 @@ export class UiLayer extends HTMLLayer {
 		};
 
 		runCommands(this.layout, context);
-
-		// console.log("prepareRendering", this.layout);
 
 		// const views = this.layout.filter((op) => op.type === OP_TYPES.VIEW);
 		// for (const view of views) this.vars.set(view.id, 0);
@@ -180,22 +166,7 @@ export class UiLayer extends HTMLLayer {
 		// gc.viewport.ctx.drawImage(op.canvas, left, top);
 	}
 
-	update(_gc: GameContext, _scenee: Scene) {
-		// this.timers?.update(gc, scene);
+	update(_gc: GameContext, _scene: Scene) {
 		if (this.debugCallback) this.debugCallback();
-	}
-
-	render(_gc: GameContext) {
-		// for (let idx = 0; idx < this.layout.length; idx++) {
-		// 	const op = this.layout[idx];
-		// 	switch (op.type) {
-		// 		case OP_TYPES.IMAGE:
-		// 			renderSprite(gc, this, op);
-		// 			break;
-		// 		case OP_TYPES.VIEW:
-		// 			this.renderView(gc, op);
-		// 			break;
-		// 	}
-		// }
 	}
 }
