@@ -138,6 +138,7 @@ export type TNeatTimerCommand = {
 	cmd: "TIMER";
 	id: string;
 	duration: TNeatExpression;
+	unit: "ds" | "cs" | "ms" | "s";
 	kind: "once" | "repeat" | "schedule";
 };
 
