@@ -16,13 +16,33 @@ export function executeTimerCommand(command: TNeatTimerCommand, context: Executi
 
 	const duration = evalExpression(command.duration, context);
 
+	let magnitude: number;
+	switch (command.unit) {
+		case "ms":
+			magnitude = 1;
+			break;
+		case "s":
+			magnitude = 1000;
+			break;
+		case "cs":
+			magnitude = 100;
+			break;
+		case "ds":
+			magnitude = 10;
+			break;
+	}
+
 	const timers = context.currentScene.timers;
 	if (command.kind === "schedule") {
 		if (!Array.isArray(duration)) throw new TypeError("Timer at needs an array of durations");
 		if (!duration.every((d) => typeof d === "number")) throw new TypeError("Timer at needs an array of numbers");
-		timers.addArray(command.id, duration);
+
+		timers.addArray(
+			command.id,
+			duration.map((d) => d * magnitude),
+		);
 	} else {
 		if (typeof duration !== "number") throw new TypeError("Timer duration needs to be a number");
-		timers.add(command.id, duration, command.kind === "repeat" ? Number.MAX_SAFE_INTEGER : 1);
+		timers.add(command.id, duration * magnitude, command.kind === "repeat" ? Number.MAX_SAFE_INTEGER : 1);
 	}
 }
