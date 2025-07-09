@@ -2,14 +2,14 @@ import { type RectDTO, RectEntity } from "../../../entities/rect.entity";
 import { Events } from "../../../events";
 import type { GameContext } from "../../../game";
 import type { TNeatRectCommand } from "../../compiler2/types/commands.type";
-import type { ExecutionContext } from "../exec.type";
+import { type ExecutionContext, toOrigin } from "../exec.context";
 import { evalExpressionAs } from "../expr.eval";
 import { addAnims } from "./shared/add.anims";
 import { addTraits } from "./shared/add.traits";
 
 export function executeRectCommand(command: TNeatRectCommand, context: ExecutionContext) {
-	let x = evalExpressionAs(command.at.x, context, "number");
-	let y = evalExpressionAs(command.at.y, context, "number");
+	let relativeX = evalExpressionAs(command.at.x, context, "number");
+	let relativeY = evalExpressionAs(command.at.y, context, "number");
 	let width = evalExpressionAs(command.size.width, context, "number");
 	let height = evalExpressionAs(command.size.height, context, "number");
 
@@ -17,8 +17,8 @@ export function executeRectCommand(command: TNeatRectCommand, context: Execution
 	let padding = [0, 0];
 	if (command.pad) padding = [evalExpressionAs(command.pad[0], context, "number"), evalExpressionAs(command.pad[1], context, "number")];
 
-	x = x - padding[0];
-	y = y - padding[1];
+	relativeX = relativeX - padding[0];
+	relativeY = relativeY - padding[1];
 	width = width + padding[0] * 2;
 	height = height + padding[1] * 2;
 
@@ -27,16 +27,18 @@ export function executeRectCommand(command: TNeatRectCommand, context: Execution
 	let fill: string | undefined;
 	if (command.fill) fill = command.fill;
 
+	const at = toOrigin(relativeX, relativeY, context);
+
 	const gc = context.gc as GameContext;
 	const rectObj: RectDTO = {
-		x,
-		y,
+		x: at.x,
+		y: at.y,
 		width,
 		height,
 		strokecolor: color,
 		fillcolor: fill,
 	};
-	const entity = new RectEntity(gc.resourceManager, rectObj);
+	const entity = new RectEntity(rectObj);
 	if (command.id) entity.id = command.id;
 
 	if (command.anims) addAnims(command.anims, entity, context);

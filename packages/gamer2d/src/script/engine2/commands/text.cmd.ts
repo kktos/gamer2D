@@ -3,7 +3,7 @@ import { Events } from "../../../events";
 import type { GameContext } from "../../../game";
 import { reactiveExpression } from "../../../utils/reactive.utils";
 import type { TNeatTextCommand } from "../../compiler2/types/commands.type";
-import type { ExecutionContext } from "../exec.type";
+import { type ExecutionContext, getOrigin } from "../exec.context";
 import { evalExpression, evalExpressionAs } from "../expr.eval";
 import { interpolateString } from "../string.eval";
 import { evalAlign } from "./align.cmd";
@@ -15,8 +15,9 @@ export function executeTextCommand(command: TNeatTextCommand, context: Execution
 	const srcString = String(evalExpression(command.value, context));
 	const text = reactiveExpression((varsUsed) => interpolateString(srcString, context, varsUsed), context.variables);
 
-	const x = reactiveExpression((varsUsed) => evalExpressionAs(command.at.x, context, "number", varsUsed), context.variables);
-	const y = reactiveExpression((varsUsed) => evalExpressionAs(command.at.y, context, "number", varsUsed), context.variables);
+	const origin = getOrigin(context);
+	const x = reactiveExpression((varsUsed) => origin.x + evalExpressionAs(command.at.x, context, "number", varsUsed), context.variables);
+	const y = reactiveExpression((varsUsed) => origin.y + evalExpressionAs(command.at.y, context, "number", varsUsed), context.variables);
 
 	let align: ReturnType<typeof evalAlign> | undefined;
 
@@ -55,7 +56,7 @@ export function executeTextCommand(command: TNeatTextCommand, context: Execution
 		if (align.v) textObj.valign = align.v;
 	}
 
-	const entity = new TextEntity(gc.resourceManager, textObj);
+	const entity = new TextEntity(textObj);
 	if (command.id) entity.id = command.id;
 
 	if (command.anims) addAnims(command.anims, entity, context);
