@@ -8,9 +8,9 @@ const PATTERNS = [
 	// { type: "FUNCALL", regex: String.raw`[a-zA-Z_][a-zA-Z0-9_]*\((?:[^)"']|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')*\)` },
 
 	// Units and numbers
-	{ type: "DIMENSION", regex: String.raw`\d+x\d+` },
-	{ type: "PIXEL", regex: String.raw`\d+px` },
-	{ type: "SECONDS", regex: String.raw`\d+s` },
+	// { type: "DIMENSION", regex: String.raw`\d+x\d+` },
+	// { type: "PIXEL", regex: String.raw`\d+px` },
+	// { type: "SECONDS", regex: String.raw`\d+s` },
 	{ type: "NUMBER", regex: String.raw`\d+\.\d+|\d+` },
 
 	// Colors and strings

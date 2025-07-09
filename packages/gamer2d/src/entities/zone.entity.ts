@@ -1,4 +1,3 @@
-import type { ResourceManager } from "../game/ResourceManager";
 import { Entity } from "./Entity";
 import { setupEntity } from "./Entity.factory";
 
@@ -12,8 +11,8 @@ type zoneDTO = {
 };
 
 export class ZoneEntity extends Entity {
-	constructor(resourceMgr: ResourceManager, zoneDTO: zoneDTO) {
-		super(resourceMgr, zoneDTO.at.x, zoneDTO.at.y);
+	constructor(zoneDTO: zoneDTO) {
+		super(zoneDTO.at.x, zoneDTO.at.y);
 		this.isFixed = true;
 		this.bbox.setSize(zoneDTO.width, zoneDTO.height);
 	}

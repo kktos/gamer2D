@@ -39,6 +39,7 @@ export class KillableTrait extends Trait {
 
 			if (!this.isEmitted) {
 				this.isEmitted = true;
+				entity.queue(KillableTrait.EVENT_KILLED, entity);
 				scene.emit(KillableTrait.EVENT_KILLED, entity);
 				// scene.broadcast(KillableTrait.EVENT_KILLED, entity);
 			}

@@ -1,5 +1,5 @@
 import type { GameContext } from "../game/types/GameContext";
-import { createEntityByName } from ".";
+import { createEntityByName, type TBaseEntityDTO } from ".";
 import { Entity } from "./Entity";
 
 export class EntityPool extends Entity {
@@ -15,13 +15,15 @@ export class EntityPool extends Entity {
 		this.isSolid = false;
 	}
 
-	static create(id: string | undefined, name: string, size: number, ...args) {
+	// static create(id: string | undefined, name: string, size: number, ...args) {
+	static create(id: string | undefined, name: string, size: number, dto: TBaseEntityDTO) {
 		const poolID = id ?? name;
 
 		const pool = new EntityPool(0, 0);
 		pool.id = poolID;
 
-		const spawnOne = () => createEntityByName(name, ...args);
+		// const spawnOne = () => createEntityByName(name, ...args);
+		const spawnOne = () => createEntityByName(name, dto);
 		pool.fill(size, spawnOne);
 		return pool;
 	}

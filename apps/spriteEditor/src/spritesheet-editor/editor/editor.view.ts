@@ -1,9 +1,9 @@
+import { clampPointInRect, ptInRect, type Rect } from "gamer2d";
 import type { Anim } from "gamer2d/game/Anim";
 import { SpriteSheet } from "gamer2d/game/Spritesheet";
 import { FloatingWindowElement } from "gamer2d/inspectors/elements/floating-window.element";
 import { View } from "gamer2d/layers/display/views/View";
 import type { ViewContext } from "gamer2d/layers/display/views/View.factory";
-import { clampPointInRect, ptInRect, type Rect } from "gamer2d/maths/math";
 import { compile } from "gamer2d/script/compiler/compiler";
 import type { TSpriteSheet } from "gamer2d/script/compiler/ressources/spritesheet.rules";
 import { getImgData } from "gamer2d/utils/canvas.utils";
@@ -114,7 +114,7 @@ export class SpritesheetEditorView extends View {
 		selectedAnim.subscribe(() => tabs.activateTab("anims-tab"));
 	}
 
-	onChangeUI(el: HTMLInputElement | HTMLSelectElement) {}
+	onChangeUI(_el: HTMLInputElement | HTMLSelectElement) {}
 
 	onClickUIBtn(id: string, data?: unknown) {
 		switch (id) {
@@ -368,7 +368,7 @@ export class SpritesheetEditorView extends View {
 		this.cmd = CMD_PICK_COLOR;
 	}
 
-	public selectSprite(name: string) {
+	public selectSprite(_name: string) {
 		// const foundSprite = this.sheet?.sprites.filter((sprite) => {
 		// 	if (!("name" in sprite)) return false;
 		// 	if (sprite.name === name) return true;
@@ -376,7 +376,7 @@ export class SpritesheetEditorView extends View {
 		// });
 	}
 
-	public selectAnim(animDef: { name: string; anim: Anim }) {
+	public selectAnim(_animDef: { name: string; anim: Anim }) {
 		// if (!animDef.anim) return;
 		// selectedAnim.value = animDef;
 	}

@@ -1,12 +1,12 @@
-import { type Entity, TextEntity } from "../../../entities";
+import type { Entity } from "../../../entities";
 import { type MenuDTO, MenuEntity } from "../../../entities/menu.entity";
 import { type RectDTO, RectEntity } from "../../../entities/rect.entity";
 import { Events } from "../../../events";
 import type { GameContext } from "../../../game";
-import { BBox } from "../../../utils/maths";
+import { getBoundingBox } from "../../../utils/maths/bbox.util";
 import type { TNeatCommand, TNeatMenuCommand } from "../../compiler2/types/commands.type";
 import { runCommands } from "../exec";
-import type { ExecutionContext } from "../exec.type";
+import type { ExecutionContext } from "../exec.context";
 import { evalExpressionAs } from "../expr.eval";
 import type { TNeatItemAction } from "./item.cmd";
 
@@ -36,11 +36,13 @@ export function executeMenuCommand(command: TNeatMenuCommand, context: Execution
 	const actions: TNeatCommand[][] = [];
 
 	const menuObj: MenuDTO = {
-		selection: command.selection,
+		selection: command.selection ?? {},
 		keys: command.keys,
 		items: [],
 	};
-
+	if (!menuObj.selection.background) {
+		menuObj.selection.background = gc.resourceManager.settings.get<string>("MENU.COLOR_SELECTED") ?? "white";
+	}
 	for (let i = 0; i < menuItems.length; i++) {
 		const item = menuItems[i];
 
@@ -49,14 +51,14 @@ export function executeMenuCommand(command: TNeatMenuCommand, context: Execution
 			continue;
 		}
 
-		const rectSelectionEntity = new RectEntity(gc.resourceManager, rectObj);
+		const rectSelectionEntity = new RectEntity(rectObj);
 		rectSelectionEntity.bbox = getBoundingBox(gc, item);
 		rectSelectionEntity.bbox.inflate(padding[0], padding[1]);
 		gc.scene?.addTask(Events.TASK_ADD_BEFORE_ENTITY, firstItem, rectSelectionEntity);
 		menuObj.items.push(rectSelectionEntity);
 	}
 
-	const entity = new MenuEntity(gc.resourceManager, menuObj);
+	const entity = new MenuEntity(menuObj);
 	entity.id = command.id;
 
 	gc.scene?.addTask(Events.TASK_ADD_ENTITY, entity);
@@ -77,32 +79,4 @@ export function executeMenuCommand(command: TNeatMenuCommand, context: Execution
 	// console.log("KEYS", command.keys);
 
 	return entity;
-}
-
-function getBoundingBox(gc: GameContext, item: Entity | Entity[]) {
-	const bbox = BBox.createSmallest();
-	let entities: Entity[];
-
-	if (Array.isArray(item)) entities = item;
-	else entities = [item];
-
-	for (const entity of entities) {
-		// needs to render the text to get its bbox
-		if (entity instanceof TextEntity) {
-			entity.render(gc);
-			const textBox = BBox.copy(entity.bbox);
-			if (entity.alignWidth) {
-				textBox.width = entity.alignWidth;
-				textBox.left = entity.x.value;
-			}
-			if (entity.alignHeight) {
-				textBox.height = entity.alignHeight;
-				textBox.top = entity.y.value;
-			}
-			bbox.unionWith(textBox);
-			continue;
-		}
-		bbox.unionWith(entity.bbox);
-	}
-	return bbox;
 }

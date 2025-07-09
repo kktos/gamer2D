@@ -1,7 +1,7 @@
 import type { Entity } from "../../../../entities";
 import type { Trait } from "../../../../traits";
 import type { TNeatExpression } from "../../../compiler2/types/expression.type";
-import type { ExecutionContext } from "../../exec.type";
+import type { ExecutionContext } from "../../exec.context";
 import { evalExpression } from "../../expr.eval";
 
 export function addTraits(expr: TNeatExpression, entity: Entity, context: ExecutionContext) {

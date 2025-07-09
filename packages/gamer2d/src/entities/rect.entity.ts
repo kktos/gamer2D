@@ -1,4 +1,3 @@
-import type { ResourceManager } from "../game/ResourceManager";
 import { Entity } from "./Entity";
 import { setupEntity } from "./Entity.factory";
 
@@ -15,8 +14,8 @@ export class RectEntity extends Entity {
 	public strokecolor: string | undefined;
 	public fillcolor: string | undefined;
 
-	constructor(resourceMgr: ResourceManager, rectObj: RectDTO) {
-		super(resourceMgr, rectObj.x, rectObj.y);
+	constructor(rectObj: RectDTO) {
+		super(rectObj.x, rectObj.y);
 		this.strokecolor = rectObj.strokecolor;
 		this.fillcolor = rectObj.fillcolor;
 		this.bbox.setSize(rectObj.width, rectObj.height);

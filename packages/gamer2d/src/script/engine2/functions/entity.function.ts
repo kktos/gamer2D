@@ -1,7 +1,7 @@
 import type { Entity } from "../../../entities";
 import type { GameContext } from "../../../game";
 import type { EntitiesLayer } from "../../../layers";
-import type { ExecutionContext } from "../exec.type";
+import type { ExecutionContext } from "../exec.context";
 
 export function fnEntity(context: ExecutionContext, ...args: unknown[]) {
 	const gc = context.gc as GameContext;

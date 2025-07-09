@@ -27,7 +27,7 @@ export class GridCell {
 	}
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+// biome-ignore lint/suspicious/noExplicitAny: needed for constructor
 export type GridCellConstructor = new (...args: any[]) => GridCell;
 
 export class Grid {

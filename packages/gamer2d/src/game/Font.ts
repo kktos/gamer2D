@@ -273,21 +273,20 @@ export class Font {
 		return canvas;
 	}
 
-
 	private applyColorTransform(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, color: string): void {
 		const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 		const data = imageData.data;
-		
+
 		// Parse target color
-		const targetColor = nameToRgba(color);    
+		const targetColor = nameToRgba(color);
 		const whiteThreshold = 200;
-		
+
 		for (let i = 0; i < data.length; i += 4) {
 			const r = data[i];
 			const g = data[i + 1];
 			const b = data[i + 2];
 			const a = data[i + 3];
-			
+
 			// Check if pixel is white-ish and not transparent
 			if (r > whiteThreshold && g > whiteThreshold && b > whiteThreshold && a > 0) {
 				data[i] = targetColor[0];
@@ -295,13 +294,14 @@ export class Font {
 				data[i + 2] = targetColor[2];
 			}
 		}
-		
+
 		ctx.putImageData(imageData, 0, 0);
 	}
 
 	private calculateAlignmentOffset(canvas: HTMLCanvasElement, boxWidth?: number, boxHeight?: number): { x: number; y: number } {
 		let offsetX = 0;
-		let offsetY = 0;
+		// to compensate real font height... TODO: in font definition ?
+		let offsetY = 2;
 
 		// Text alignment relative to its own dimensions
 		switch (this.align) {

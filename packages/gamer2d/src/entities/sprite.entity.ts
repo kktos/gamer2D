@@ -1,16 +1,21 @@
-import type { ResourceManager } from "../game/ResourceManager";
 import { AnimationTrait } from "../traits/animation.trait";
 import { DIRECTIONS } from "../types/direction.type";
 import { Entity } from "./Entity";
 import { setupEntity } from "./Entity.factory";
 
+type SpriteDTO = {
+	at: {
+		x: number;
+		y: number;
+	};
+};
 export class SpriteEntity extends Entity {
-	constructor(resourceMgr: ResourceManager, sprite: string, x: number, y: number) {
-		const [sheet, spriteName] = sprite.split(":");
+	constructor(sprite: string, spriteDTO: SpriteDTO) {
+		const [sheetFilename, spriteName] = sprite.split(":");
 
 		if (!spriteName) throw new TypeError(`Need a SpriteSheet and a Name for Sprite "${sprite}"`);
 
-		super(resourceMgr, x, y, sheet);
+		super(spriteDTO.at.x, spriteDTO.at.y, sheetFilename);
 
 		this.isFixed = false;
 

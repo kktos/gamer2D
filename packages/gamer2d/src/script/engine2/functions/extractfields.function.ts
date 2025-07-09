@@ -1,4 +1,4 @@
-import type { ExecutionContext } from "../exec.type";
+import type { ExecutionContext } from "../exec.context";
 
 export function fnExtractFields<T>(_context: ExecutionContext, ...args: unknown[]) {
 	const array = args[0] as T[];

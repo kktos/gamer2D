@@ -1,6 +1,6 @@
 import type { TNeatAssignCommand } from "../../compiler2/types/commands.type";
 import type { TNeatVarTerm } from "../../compiler2/types/expression.type";
-import type { ExecutionContext } from "../exec.type";
+import type { ExecutionContext } from "../exec.context";
 import { evalExpression, evalExpressionAs } from "../expr.eval";
 
 export function executeAssignmentCommand(command: TNeatAssignCommand, context: ExecutionContext): void {

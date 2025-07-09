@@ -1,5 +1,4 @@
 import { Font } from "../game/Font";
-import type { ResourceManager } from "../game/ResourceManager";
 import { ALIGN_TYPES, type TAlignType } from "../script/compiler2/types/align.type";
 import type { Signal } from "../utils/signals.util";
 import { Entity } from "./Entity";
@@ -36,8 +35,8 @@ export class TextEntity extends Entity {
 	public alignWidth: number;
 	public alignHeight: number;
 
-	constructor(resourceMgr: ResourceManager, textObj: TextDTO) {
-		super(resourceMgr, textObj.x.value, textObj.y.value);
+	constructor(textObj: TextDTO) {
+		super(textObj.x.value, textObj.y.value);
 
 		// no physics
 		this.isSolid = false;

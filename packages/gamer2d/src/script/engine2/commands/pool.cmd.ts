@@ -1,8 +1,8 @@
-import { EntityPool } from "../../../entities";
+import { EntityPool } from "../../../entities/pool.entity";
 import { Events } from "../../../events";
 import type { GameContext } from "../../../game";
 import type { TNeatPoolCommand } from "../../compiler2/types/commands.type";
-import type { ExecutionContext } from "../exec.type";
+import type { ExecutionContext } from "../exec.context";
 import { evalExpressionAs } from "../expr.eval";
 import { addTraits } from "./shared/add.traits";
 
@@ -14,11 +14,11 @@ export function executePoolCommand(command: TNeatPoolCommand, context: Execution
 	const count = evalExpressionAs(command.count, context, "number");
 	const spawnCount = command.spawn ? evalExpressionAs(command.spawn, context, "number") : 0;
 
-	const entityPool = EntityPool.create(gc.resourceManager, command.id, command.spriteName, count, x, y);
+	const entityPool = EntityPool.create(command.id, command.spriteName, count, { at: { x, y } });
 
 	if (command.traits) addTraits(command.traits, entityPool, context);
 
-	for (let idx = 0; idx < spawnCount; idx++) entityPool.use();
+	for (let idx = 0; idx < spawnCount; idx++) entityPool; //.use();
 
 	gc.scene?.addTask(Events.TASK_ADD_ENTITY, entityPool);
 	return entityPool;

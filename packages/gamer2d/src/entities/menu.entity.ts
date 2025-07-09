@@ -1,6 +1,5 @@
 import { Events } from "../events";
 import type { GameContext } from "../game";
-import type { ResourceManager } from "../game/ResourceManager";
 import type { Scene } from "../scenes";
 import type { TNeatMenuKeys, TNeatMenuSelection } from "../script/compiler2/types/commands.type";
 import { Entity } from "./Entity";
@@ -72,25 +71,22 @@ TODO:
 */
 
 export type MenuDTO = {
-	selection?: TNeatMenuSelection;
+	selection: TNeatMenuSelection;
 	keys?: TNeatMenuKeys;
 	items: RectEntity[];
 };
 
 export class MenuEntity extends Entity {
-	public selection?: TNeatMenuSelection;
+	public selection: TNeatMenuSelection;
 	private keys?: TNeatMenuKeys;
 	private items: RectEntity[];
 	private selectedIdx = -1;
 	private lastX = -1;
 	private lastY = -1;
 
-	constructor(resourceMgr: ResourceManager, menuObj: MenuDTO) {
-		super(resourceMgr, 0, 0);
-		this.selection = menuObj.selection ?? {};
-		if (!this.selection.background) {
-			this.selection.background = resourceMgr.settings.get<string>("MENU.COLOR_SELECTED") ?? "white";
-		}
+	constructor(menuObj: MenuDTO) {
+		super(0, 0);
+		this.selection = menuObj.selection;
 		this.keys = menuObj.keys;
 		this.items = menuObj.items;
 	}

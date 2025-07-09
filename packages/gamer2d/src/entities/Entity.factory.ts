@@ -1,9 +1,9 @@
-import type { ResourceManager } from "../game/ResourceManager";
 import type { TEntityDefinition } from "../game/types/GameOptions";
 import { getClassName } from "../utils/object.util";
 import type { Entity } from ".";
 
-const entityClassesRegistry: Record<string, new (resourceMgr: ResourceManager, ...args: unknown[]) => Entity> = {};
+// const entityClassesRegistry: Record<string, new (resourceMgr: ResourceManager, ...args: unknown[]) => Entity> = {};
+const entityClassesRegistry: Record<string, new (...args: unknown[]) => Entity> = {};
 const friendlyNamesToClassNameRegistry: Record<string, string> = {};
 
 export function setupEntities(entitiesDefinitions: TEntityDefinition[]) {
@@ -27,8 +27,20 @@ export function setupEntity(def: TEntityDefinition) {
 	if (friendlyName) friendlyNamesToClassNameRegistry[friendlyName.toLowerCase()] = actualClassName;
 }
 
-export function createEntityByName(resourceManager: ResourceManager, nameOrAlias: string, ...args: unknown[]) {
+export type TBaseEntityDTO = {
+	at: {
+		x: number;
+		y: number;
+	};
+	[key: string]: unknown;
+};
+
+// export function createEntityByName(nameOrAlias: string, ...args: unknown[]) {
+export function createEntityByName(nameOrAlias: string, dto: TBaseEntityDTO) {
 	let className: string | undefined;
+
+	if (typeof dto !== "object" || !dto || typeof dto.at !== "object" || !dto.at || typeof dto.at.x !== "number" || typeof dto.at.y !== "number")
+		throw new Error(`Invalid Entity descriptor: it needs at least a position { at : { x: 0, y: 0 } }. Received:"${JSON.stringify(dto)}"`);
 
 	// 1. Check if nameOrAlias is a registered friendly name (alias)
 	className = friendlyNamesToClassNameRegistry[nameOrAlias.toLowerCase()];
@@ -41,7 +53,8 @@ export function createEntityByName(resourceManager: ResourceManager, nameOrAlias
 	const EntityClassToInstantiate = className ? entityClassesRegistry[className] : undefined;
 
 	if (EntityClassToInstantiate) {
-		return new EntityClassToInstantiate(resourceManager, ...args);
+		// return new EntityClassToInstantiate(resourceManager, ...args);
+		return new EntityClassToInstantiate(dto);
 	}
 
 	// 3. Fallback: Try to create a SpriteEntity, using nameOrAlias as the sprite identifier.
@@ -49,8 +62,8 @@ export function createEntityByName(resourceManager: ResourceManager, nameOrAlias
 	const FallbackSpriteEntityClass = entityClassesRegistry.SpriteEntity;
 	if (FallbackSpriteEntityClass) {
 		// 'nameOrAlias' becomes the 'sprite' parameter for SpriteEntity constructor.
-		// '...args' are expected to be x, y, etc. for the SpriteEntity.
-		return new FallbackSpriteEntityClass(resourceManager, nameOrAlias, ...args);
+		// return new FallbackSpriteEntityClass(nameOrAlias, ...args);
+		return new FallbackSpriteEntityClass(nameOrAlias, dto);
 	}
 
 	throw new Error(`Entity class not found for identifier: "${nameOrAlias}". No fallback available or SpriteEntity not registered.`);

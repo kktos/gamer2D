@@ -3,8 +3,9 @@ import type { GameContext } from "../game/types/GameContext";
 import type { Scene } from "../scenes/Scene";
 import { DIRECTIONS } from "../types/direction.type";
 import { Trait } from "./Trait";
+import { setupTrait } from "./Trait.factory";
 
-export class KeyboardPlayerOneTrait extends Trait {
+export class KeyboardPlayerTrait extends Trait {
 	update(gc: GameContext, entity: Entity, _scene: Scene) {
 		if (entity.isFixed) return;
 
@@ -16,5 +17,9 @@ export class KeyboardPlayerOneTrait extends Trait {
 			entity.vel.x = 150;
 			entity.dir = DIRECTIONS.RIGHT;
 		}
+		// if (gc.keys.get(" ")) {
+		// 	entity.useTrait("JumpTrait", (trait) => trait.start());
+		// }
 	}
 }
+setupTrait({ name: "KeyboardPlayerTrait", alias: "KeyboardPlayer", classType: KeyboardPlayerTrait });

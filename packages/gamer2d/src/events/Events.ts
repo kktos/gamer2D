@@ -6,9 +6,12 @@ export const Events = {
 	MENU_ITEM_SELECTED: Symbol.for("MENU_ITEM_SELECTED"),
 	MENU_ITEM_CLICKED: Symbol.for("MENU_ITEM_CLICKED"),
 
+	BUTTON_CLICKED: Symbol.for("BUTTON_CLICKED"),
+
 	EVENT_TIMER: Symbol.for("TIMER"),
 
 	TASK_REMOVE_ENTITY: Symbol.for("removeEntity"),
 	TASK_ADD_ENTITY: Symbol.for("addEntity"),
+	TASK_ADD_ENTITY_AT: Symbol.for("addEntityAt"),
 	TASK_ADD_BEFORE_ENTITY: Symbol.for("addBeforeEntity"),
 } as const;

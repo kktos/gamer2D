@@ -8,7 +8,7 @@ import type { TCollisionSide } from "../utils/maths/math";
 import { getClassName } from "../utils/object.util";
 
 export interface ITrait {
-	on(name: string, callback, count: number): Trait;
+	on(name: string | symbol, callback, count?: number): Trait;
 	finalize(entity: Entity): void;
 
 	collides?(gc: GameContext, entity: Entity, target: Entity): void;

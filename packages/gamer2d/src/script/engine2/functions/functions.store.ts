@@ -1,4 +1,4 @@
-import type { ExecutionContext } from "../exec.type";
+import type { ExecutionContext } from "../exec.context";
 
 export class NeatFunctions extends Map<string, (context: ExecutionContext, ...args: unknown[]) => unknown> {
 	call(context: ExecutionContext, name: string, args: unknown[]) {

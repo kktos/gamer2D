@@ -1,5 +1,5 @@
 import type { TNeatExpression } from "../compiler2/types/expression.type";
-import type { ExecutionContext } from "./exec.type";
+import type { ExecutionContext } from "./exec.context";
 import { interpolateString } from "./string.eval";
 
 interface EvalArray extends Array<EvalValue> {}

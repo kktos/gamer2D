@@ -1,6 +1,6 @@
 import type { TAlignType } from "../../compiler2/types/align.type";
 import type { TNeatAlignCommand } from "../../compiler2/types/commands.type";
-import type { ExecutionContext } from "../exec.type";
+import type { ExecutionContext } from "../exec.context";
 
 const ALIGN_NAMES = {
 	left: 1,

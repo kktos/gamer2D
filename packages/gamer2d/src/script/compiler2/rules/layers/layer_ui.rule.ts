@@ -6,6 +6,7 @@ import { parseOn } from "../shared/on.rule";
 import { parseSprite } from "../shared/sprite.rule";
 import { parseAlign, parseBgColor, parseColor, parseFont, parseZoom } from "../shared/style.rule";
 import { parseAnimation } from "./ui/animation.rule";
+import { parseButton } from "./ui/button.rule";
 import { parseImage } from "./ui/image.rule";
 import { parseMenu } from "./ui/menu.rule";
 import { parsePool } from "./ui/pool.rule";
@@ -33,6 +34,7 @@ const COMMAND_HANDLERS = {
 	for: parseFor,
 	timer: parseTimer,
 	sound: parseSound,
+	button: parseButton,
 } as const;
 
 export function parseLayerUi(parser: NeatParser) {

@@ -1,4 +1,4 @@
-import type { ExecutionContext } from "../exec.type";
+import type { ExecutionContext } from "../exec.context";
 
 export function fnRandom(context: ExecutionContext, ...args: unknown[]) {
 	const from = args[0] as number;

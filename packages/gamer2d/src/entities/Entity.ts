@@ -1,5 +1,5 @@
 import { EventBuffer } from "../events/EventBuffer";
-import type { ResourceManager } from "../game/ResourceManager";
+import { ResourceManager } from "../game";
 import type { SpriteSheet } from "../game/Spritesheet";
 import type { GameContext } from "../game/types/GameContext";
 import type { Scene } from "../scenes/Scene";
@@ -17,7 +17,7 @@ export class Entity {
 	public id: string;
 
 	public currSprite: string | null;
-	public spritesheet: SpriteSheet | null;
+	public spritesheet?: SpriteSheet;
 	public speed: number;
 	public dir: number;
 	public points: number;
@@ -45,7 +45,8 @@ export class Entity {
 	private updateTraits: ITraitUpdate[];
 	private obstructedOnTraits: ITraitObstructedOn[];
 
-	constructor(resourceMgr: ResourceManager, x: number, y: number, sheetFilename?: string) {
+	// constructor(resourceMgr: ResourceManager, x: number, y: number, sheetFilename?: string) {
+	constructor(x: number, y: number, spritesheetName?: string) {
 		this.class = getClassName(this.constructor);
 		this.id = generateID();
 
@@ -73,7 +74,8 @@ export class Entity {
 		this.obstructedOnTraits = [];
 
 		this.currSprite = null;
-		this.spritesheet = sheetFilename ? (resourceMgr.get("sprite", sheetFilename) as SpriteSheet) : null;
+		// this.spritesheet = sheetFilename ? (resourceMgr.get("sprite", sheetFilename) as SpriteSheet) : null;
+		if (spritesheetName) this.spritesheet = ResourceManager.getSpritesheet(spritesheetName);
 	}
 
 	public get mass() {
@@ -148,6 +150,10 @@ export class Entity {
 		if ("update" in trait) this.updateTraits.push(trait as ITraitUpdate);
 		if ("obstructedOn" in trait) this.obstructedOnTraits.push(trait as ITraitObstructedOn);
 		return trait;
+	}
+
+	public addTraits(traits: Trait[]) {
+		for (const trait of traits) this.addTrait(trait);
 	}
 
 	public useTrait<T extends Trait>(name: string, fn: (trait: T) => void) {

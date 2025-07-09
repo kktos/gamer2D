@@ -1,7 +1,7 @@
 import type { GameContext } from "../game/types/GameContext";
 import type { Scene } from "../scenes/Scene";
 import { runCommands } from "../script/engine2/exec";
-import type { ExecutionContext } from "../script/engine2/exec.type";
+import type { ExecutionContext } from "../script/engine2/exec.context";
 import type { NeatFunctions } from "../script/engine2/functions/functions.store";
 import { createVariableStore } from "../utils/vars.store";
 import { Layer } from "./Layer.class";
@@ -25,8 +25,16 @@ export class GlobalsLayer extends Layer {
 		super(gc, parent, "globals");
 
 		const context: ExecutionContext = {
+			gc,
 			variables: createVariableStore(true),
 			functions: null as unknown as NeatFunctions,
+			currentScene: this.scene,
+			currentOrigin: [
+				{
+					x: 0,
+					y: 0,
+				},
+			],
 		};
 
 		// make sure the system var is set; usually done once at startup

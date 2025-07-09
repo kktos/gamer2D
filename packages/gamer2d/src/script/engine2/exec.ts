@@ -3,6 +3,7 @@ import { executeAlignCommand } from "./commands/align.cmd";
 import { executeAnimationCommand } from "./commands/animation.cmd";
 import { executeAssignmentCommand } from "./commands/assign.cmd";
 import { executeBgColorCommand } from "./commands/bgcolor.cmd";
+import { executeButtonCommand } from "./commands/button.cmd";
 import { executeCallCommand } from "./commands/call.cmd";
 import { executeClearContextCommand } from "./commands/clearcontext.cmd";
 import { executeColorCommand } from "./commands/color.cmd";
@@ -22,7 +23,7 @@ import { executeTimerCommand } from "./commands/timer.cmd";
 import { executeVariablesCommand } from "./commands/variables.cmd";
 import { executeViewCommand } from "./commands/view.cmd";
 import { executeZoomCommand } from "./commands/zoom.cmd";
-import type { ExecutionContext } from "./exec.type";
+import type { ExecutionContext } from "./exec.context";
 
 // Command executor with metadata
 interface CommandExecutor {
@@ -82,3 +83,4 @@ addCommand("CALL", executeCallCommand);
 addCommand("CLEARCONTEXT", executeClearContextCommand);
 addCommand("SETTINGS", executeSettingsCommand);
 addCommand("VARIABLES", executeVariablesCommand);
+addCommand("BUTTON", executeButtonCommand);

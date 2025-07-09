@@ -1,6 +1,6 @@
 import type { TAnimationPathPathDTO } from "../../../traits/animation_path.trait";
 import type { TNeatAnimationCommand } from "../../compiler2/types/commands.type";
-import type { ExecutionContext } from "../exec.type";
+import type { ExecutionContext } from "../exec.context";
 import { evalExpressionAs } from "../expr.eval";
 
 export function executeAnimationCommand(command: TNeatAnimationCommand, context: ExecutionContext) {

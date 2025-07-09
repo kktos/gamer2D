@@ -1,6 +1,6 @@
 import { compile } from "../compiler2/compiler";
 import type { TNeatExpression } from "../compiler2/types/expression.type";
-import type { ExecutionContext } from "./exec.type";
+import type { ExecutionContext } from "./exec.context";
 import { evalExpression } from "./expr.eval";
 
 export function interpolateString(template: string, context: ExecutionContext, varsUsed?: Set<string>): string {

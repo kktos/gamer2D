@@ -4,8 +4,9 @@ import type { GameContext } from "../game/types/GameContext";
 import type { Scene } from "../scenes/Scene";
 import type { TNeatCommand } from "../script/compiler2/types/commands.type";
 import { runCommands } from "../script/engine2/exec";
-import type { ExecutionContext } from "../script/engine2/exec.type";
+import type { ExecutionContext } from "../script/engine2/exec.context";
 import { functions } from "../script/engine2/functions/functions.store";
+import { BBox } from "../utils/maths";
 import type { Grid } from "../utils/maths/grid.math";
 import { createVariableStore } from "../utils/vars.store";
 import { Layer } from "./Layer.class";
@@ -39,6 +40,10 @@ export class EntitiesLayer extends Layer {
 		return this.entities.find((entity) => entity.id === idxOrId);
 	}
 
+	public findByTrait(trait: string) {
+		return this.entities.filter((entity) => entity.trait(trait));
+	}
+
 	public selectEntity(idxOrId: string | number) {
 		this.selectedEntity = this.get(idxOrId);
 		return this.selectedEntity;
@@ -50,6 +55,12 @@ export class EntitiesLayer extends Layer {
 			functions: functions,
 			gc,
 			currentScene: this.scene,
+			currentOrigin: [
+				{
+					x: 0,
+					y: 0,
+				},
+			],
 		};
 
 		const results = runCommands(statements, context) as Record<string, unknown>[];
@@ -75,10 +86,19 @@ export class EntitiesLayer extends Layer {
 			if (entity.isSolid) this.solidEntities.push(entity);
 		});
 
+		tasks.onTask(Events.TASK_ADD_ENTITY_AT, (entity: Entity, index = -1) => {
+			if (index >= 0) {
+				this.entities.splice(index, 0, entity);
+				if (entity.isSolid) this.solidEntities.push(entity);
+			}
+		});
+
 		tasks.onTask(Events.TASK_ADD_BEFORE_ENTITY, (beforeEntity: Entity, entity: Entity) => {
 			const idx = this.entities.indexOf(beforeEntity);
-			if (idx !== -1) this.entities.splice(idx, 0, entity);
-			if (entity.isSolid) this.solidEntities.push(entity);
+			if (idx !== -1) {
+				this.entities.splice(idx, 0, entity);
+				if (entity.isSolid) this.solidEntities.push(entity);
+			}
 		});
 	}
 
@@ -87,7 +107,9 @@ export class EntitiesLayer extends Layer {
 		for (let targetIdx = 0; targetIdx < this.solidEntities.length; targetIdx++) {
 			const target = this.solidEntities[targetIdx];
 			for (let idx = targetIdx + 1; idx < this.solidEntities.length; idx++)
-				if (target.bbox.intersects(this.solidEntities[idx].bbox)) target.collides(gc, this.solidEntities[idx]);
+				if (target.bbox.intersects(this.solidEntities[idx].bbox)) {
+					target.collides(gc, this.solidEntities[idx]);
+				}
 		}
 	}
 
@@ -116,7 +138,12 @@ export class EntitiesLayer extends Layer {
 			const ctx = gc.viewport.ctx;
 			for (const entity of this.entities) {
 				ctx.strokeStyle = this.frameColor;
-				ctx.strokeRect(entity.bbox.left, entity.bbox.top, entity.bbox.width, entity.bbox.height);
+				if (entity.zoom > 1) {
+					const bbox = BBox.copy(entity.bbox);
+					bbox.width *= entity.zoom;
+					bbox.height *= entity.zoom;
+					ctx.strokeRect(bbox.left, bbox.top, bbox.width, bbox.height);
+				} else ctx.strokeRect(entity.bbox.left, entity.bbox.top, entity.bbox.width, entity.bbox.height);
 			}
 		}
 

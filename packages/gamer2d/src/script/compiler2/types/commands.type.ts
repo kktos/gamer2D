@@ -1,6 +1,6 @@
 import type { TNeatExpression } from "./expression.type";
 
-type TNeatPropertyAt = { x: TNeatExpression; y: TNeatExpression };
+export type TNeatPropertyAt = { x: TNeatExpression; y: TNeatExpression };
 type TNeatPropertySize = { width: TNeatExpression; height: TNeatExpression };
 
 export type TNeatCommand =
@@ -18,6 +18,7 @@ export type TNeatCommand =
 	| TNeatSettingsCommand
 	| TNeatVariablesCommand
 	| TNeatItemCommand
+	| TNeatButtonCommand
 	| TNeatImageCommand
 	| TNeatCallCommand
 	| TNeatMenuCommand
@@ -138,7 +139,7 @@ export type TNeatTimerCommand = {
 	cmd: "TIMER";
 	id: string;
 	duration: TNeatExpression;
-	unit: "ds" | "cs" | "ms" | "s";
+	timeScale: number;
 	kind: "once" | "repeat" | "schedule";
 };
 
@@ -177,8 +178,8 @@ export type TNeatMenuSelection = {
 	// color
 	color?: string;
 	// bgcolor
-	background?: string;
-	// selectiong rect padding
+	background: string;
+	// selection rect padding
 	pad?: [TNeatExpression, TNeatExpression];
 };
 
@@ -191,7 +192,7 @@ export type TNeatMenuKeys = {
 export type TNeatMenuCommand = {
 	cmd: "MENU";
 	id: string;
-	selection?: TNeatMenuSelection;
+	selection: TNeatMenuSelection;
 	keys?: TNeatMenuKeys;
 	items: TNeatCommand[];
 };
@@ -227,3 +228,48 @@ export type TNeatPoolCommand = {
 	spawn?: TNeatExpression;
 	traits?: TNeatExpression;
 };
+
+// BUTTON
+
+// export type TNeatButtonCommand = {
+// 	cmd: "BUTTON";
+// 	id?: string;
+// 	at?: TNeatPropertyAt;
+// 	size?: TNeatPropertySize;
+// 	body?: TNeatCommand[];
+// 	trigger?: string;
+// 	// border rect padding
+// 	pad?: [TNeatExpression, TNeatExpression];
+// };
+
+// button <id> { statements }
+export type TNeatButtonDefineCommand = {
+	cmd: "BUTTON";
+	id: string;
+	body: TNeatCommand[];
+};
+
+// button at <x,y> trigger <string> { statements }
+export type TNeatButtonInstantiationWithBodyCommand = {
+	cmd: "BUTTON";
+	trigger: string;
+	at: TNeatPropertyAt;
+	body: TNeatCommand[];
+	id?: string;
+	size?: TNeatPropertySize;
+	pad?: [TNeatExpression, TNeatExpression];
+};
+
+// button <id> at <x,y> trigger <string> [content <expr>]
+export type TNeatButtonInstantiationWithoutBodyCommand = {
+	cmd: "BUTTON";
+	trigger: string;
+	at: TNeatPropertyAt;
+	id: string; // required if body is absent
+	body?: undefined; // ensures body is not present
+	size?: TNeatPropertySize;
+	pad?: [TNeatExpression, TNeatExpression];
+	content?: TNeatExpression;
+};
+
+export type TNeatButtonCommand = TNeatButtonDefineCommand | TNeatButtonInstantiationWithBodyCommand | TNeatButtonInstantiationWithoutBodyCommand;

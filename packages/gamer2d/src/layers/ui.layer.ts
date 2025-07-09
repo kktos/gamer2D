@@ -5,7 +5,7 @@ import type { BaseEvent, KeyEvent } from "../game/types/GameEvent";
 import type { Scene } from "../scenes/Scene";
 import type { TNeatCommand } from "../script/compiler2/types/commands.type";
 import { runCommands } from "../script/engine2/exec";
-import type { ExecutionContext } from "../script/engine2/exec.type";
+import type { ExecutionContext } from "../script/engine2/exec.context";
 import { functions } from "../script/engine2/functions/functions.store";
 import type { ArgVariable, OP_TYPES, TupleToUnion } from "../types";
 import type { BBox } from "../utils/maths/BBox.class";
@@ -83,6 +83,12 @@ export class UiLayer extends HTMLLayer {
 			functions: functions,
 			gc,
 			currentScene: this.scene,
+			currentOrigin: [
+				{
+					x: 0,
+					y: 0,
+				},
+			],
 		};
 
 		runCommands(this.layout, context);

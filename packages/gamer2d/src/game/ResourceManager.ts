@@ -12,14 +12,36 @@ type TResourceGroupNames = "spritesheets" | "audiosheets" | "fonts";
 export type TResourceGroupsDict = Partial<Record<TResourceGroupNames, (string | unknown)[]>>;
 
 export class ResourceManager {
-	private cache: Map<string, unknown>;
+	static readonly cache: Map<string, unknown> = new Map();
+
+	static addResource(kind: TResourceKind, name: string, rez) {
+		const id = `${kind}:${name}`.replace(/\.json/, "");
+		if (ResourceManager.cache.has(id)) throw new Error(`Duplicate resource ${id}!`);
+		console.log(`ResourceManager.add(${id})`);
+		ResourceManager.cache.set(id, rez);
+	}
+
+	static getResource<T>(kind: string, name?: string) {
+		const id = name ? `${kind}:${name}` : kind;
+		if (!ResourceManager.cache.has(id)) throw new Error(`Unable to find resource ${id}!`);
+		return ResourceManager.cache.get(id) as T;
+	}
+
+	static getSpritesheet(name: string) {
+		const id = `sprite:${name}`;
+		if (!ResourceManager.cache.has(id)) throw new Error(`Unable to find resource ${id}!`);
+		return ResourceManager.cache.get(id) as SpriteSheet;
+	}
+
+	// static byKind(kind: TResourceKind) {
+	// 	const re = new RegExp(`^${kind}:`);
+	// 	return [...ResourceManager.cache.keys()].filter((k) => k.match(re));
+	// }
 
 	constructor(
 		private gameOptions: GameOptions,
 		public settings: TNeatSettings,
-	) {
-		this.cache = new Map();
-	}
+	) {}
 
 	async load(resources: string | TResourceGroupsDict) {
 		let sheet: TResourceGroupsDict;
@@ -92,20 +114,15 @@ export class ResourceManager {
 	}
 
 	add(kind: TResourceKind, name: string, rez) {
-		const id = `${kind}:${name}`.replace(/\.json/, "");
-		if (this.cache.has(id)) throw new Error(`Duplicate resource ${id}!`);
-		console.log(`ResourceManager.add(${id})`);
-		this.cache.set(id, rez);
+		ResourceManager.addResource(kind, name, rez);
 	}
 
 	get<T>(kind: string, name?: string) {
-		const id = name ? `${kind}:${name}` : kind;
-		if (!this.cache.has(id)) throw new Error(`Unable to find resource ${id}!`);
-		return this.cache.get(id) as T;
+		return ResourceManager.getResource<T>(kind, name);
 	}
 
 	byKind(kind: TResourceKind) {
 		const re = new RegExp(`^${kind}:`);
-		return [...this.cache.keys()].filter((k) => k.match(re));
+		return [...ResourceManager.cache.keys()].filter((k) => k.match(re));
 	}
 }

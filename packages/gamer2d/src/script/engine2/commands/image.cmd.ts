@@ -1,6 +1,6 @@
 import { reactiveExpression } from "../../../utils/reactive.utils";
 import type { TNeatImageCommand } from "../../compiler2/types/commands.type";
-import type { ExecutionContext } from "../exec.type";
+import type { ExecutionContext } from "../exec.context";
 import { evalExpressionAs } from "../expr.eval";
 import { interpolateString } from "../string.eval";
 

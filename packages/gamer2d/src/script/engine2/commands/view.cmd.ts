@@ -1,5 +1,5 @@
 import type { TNeatViewCommand } from "../../compiler2/types/commands.type";
-import type { ExecutionContext } from "../exec.type";
+import type { ExecutionContext } from "../exec.context";
 import { evalExpression } from "../expr.eval";
 
 export function executeViewCommand(command: TNeatViewCommand, context: ExecutionContext) {

@@ -68,7 +68,7 @@ function parseMenuSelection(parser: NeatParser) {
 	parser.identifier("selection");
 	parser.consume("PUNCT", "{");
 
-	const result: TNeatMenuCommand["selection"] = {};
+	const result: TNeatMenuCommand["selection"] = { background: "transparent" };
 
 	// scene properties
 	loop: while (parser.isIdentifier()) {

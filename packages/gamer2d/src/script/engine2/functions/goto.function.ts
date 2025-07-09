@@ -1,4 +1,4 @@
-import type { ExecutionContext } from "../exec.type";
+import type { ExecutionContext } from "../exec.context";
 
 export function fnGoto(context: ExecutionContext, ...args: unknown[]) {
 	const page = args[0] as string;

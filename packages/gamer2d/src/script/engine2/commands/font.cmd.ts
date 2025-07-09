@@ -1,6 +1,6 @@
 import { Font } from "../../../game";
 import type { TNeatFontCommand } from "../../compiler2/types/commands.type";
-import type { ExecutionContext } from "../exec.type";
+import type { ExecutionContext } from "../exec.context";
 
 export function executeFontCommand(command: TNeatFontCommand, context: ExecutionContext) {
 	const font = evalFont(command);

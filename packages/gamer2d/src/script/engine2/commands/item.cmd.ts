@@ -1,6 +1,6 @@
 import type { TNeatItemCommand } from "../../compiler2/types/commands.type";
 import { runCommands } from "../exec";
-import type { ExecutionContext } from "../exec.type";
+import type { ExecutionContext } from "../exec.context";
 
 export type TNeatItemAction = {
 	type: "ACTION";

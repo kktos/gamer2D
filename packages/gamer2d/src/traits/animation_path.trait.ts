@@ -2,7 +2,7 @@ import type { Entity } from "../entities/Entity";
 import type { Scene } from "../scenes/Scene";
 import type { TNeatCommand } from "../script/compiler2/types/commands.type";
 import type { TNeatFunctionTerm } from "../script/compiler2/types/expression.type";
-import type { ExecutionContext } from "../script/engine2/exec.type";
+import type { ExecutionContext } from "../script/engine2/exec.context";
 import { evalExpression } from "../script/engine2/expr.eval";
 import { DIRECTIONS } from "../types";
 import type { Point } from "../utils/maths/math";
