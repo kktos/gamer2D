@@ -1,7 +1,7 @@
 import { Events } from "../../../events";
 import { TimerManager } from "../../../utils/timermanager.class";
 import type { TNeatTimerCommand } from "../../compiler2/types/commands.type";
-import type { ExecutionContext } from "../exec.type";
+import type { ExecutionContext } from "../exec.context";
 import { evalExpression } from "../expr.eval";
 
 export function executeTimerCommand(command: TNeatTimerCommand, context: ExecutionContext) {
@@ -16,22 +16,6 @@ export function executeTimerCommand(command: TNeatTimerCommand, context: Executi
 
 	const duration = evalExpression(command.duration, context);
 
-	let magnitude: number;
-	switch (command.unit) {
-		case "ms":
-			magnitude = 1;
-			break;
-		case "s":
-			magnitude = 1000;
-			break;
-		case "cs":
-			magnitude = 100;
-			break;
-		case "ds":
-			magnitude = 10;
-			break;
-	}
-
 	const timers = context.currentScene.timers;
 	if (command.kind === "schedule") {
 		if (!Array.isArray(duration)) throw new TypeError("Timer at needs an array of durations");
@@ -39,10 +23,10 @@ export function executeTimerCommand(command: TNeatTimerCommand, context: Executi
 
 		timers.addArray(
 			command.id,
-			duration.map((d) => d * magnitude),
+			duration.map((d) => d * command.timeScale),
 		);
 	} else {
 		if (typeof duration !== "number") throw new TypeError("Timer duration needs to be a number");
-		timers.add(command.id, duration * magnitude, command.kind === "repeat" ? Number.MAX_SAFE_INTEGER : 1);
+		timers.add(command.id, duration * command.timeScale, command.kind === "repeat" ? Number.MAX_SAFE_INTEGER : 1);
 	}
 }

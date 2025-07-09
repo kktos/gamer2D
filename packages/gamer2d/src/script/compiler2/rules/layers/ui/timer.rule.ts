@@ -26,7 +26,28 @@ export function parseTimer(parser: NeatParser) {
 
 	result.duration = parseValueExpression(parser);
 
-	result.unit = parser.identifier(["ms", "s", "cs", "ds"]) as TNeatTimerCommand["unit"];
+	const unit = parser.identifier(["ms", "s", "cs", "ds", "unit"]);
+	switch (unit) {
+		case "ms":
+			result.timeScale = 1;
+			break;
+		case "s":
+			result.timeScale = 1000;
+			break;
+		case "cs":
+			result.timeScale = 100;
+			break;
+		case "ds":
+			result.timeScale = 10;
+			break;
+		case "unit": {
+			parser.consume("NUMBER", 1);
+			parser.punct("/");
+			result.timeScale = parser.number();
+			parser.identifier("s");
+			break;
+		}
+	}
 
 	return result as TNeatTimerCommand;
 }
