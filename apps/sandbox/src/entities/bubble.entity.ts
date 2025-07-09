@@ -1,8 +1,12 @@
-import { AnimationTrait, Entity, OffscreenTrait, type ResourceManager, VelocityTrait, getRandom } from "gamer2d";
+import { Entity } from "gamer2d/entities/Entity";
+import { AnimationTrait } from "gamer2d/traits/animation.trait";
+import { OffscreenTrait } from "gamer2d/traits/offscreen.trait";
+import { VelocityTrait } from "gamer2d/traits/velocity.trait";
+import { getRandom } from "gamer2d/utils/maths/math";
 
 export class BubbleEntity extends Entity {
-	constructor(resourceMgr: ResourceManager, x: number, y: number) {
-		super(resourceMgr, x, y, "misc");
+	constructor(x: number, y: number) {
+		super(x, y, "misc");
 
 		this.reset(x, y);
 

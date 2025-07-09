@@ -1,10 +1,10 @@
-import { Entity } from "gamer2d";
-import type { ResourceManager } from "gamer2d/game/ResourceManager";
+import { Entity } from "gamer2d/entities/Entity";
 import { AnimationTrait } from "gamer2d/traits/animation.trait";
 import { KillableTrait } from "gamer2d/traits/killable.trait";
 import { PhysicsTrait } from "gamer2d/traits/physics.trait";
 import { SolidTrait } from "gamer2d/traits/solid.trait";
 import { DIRECTIONS } from "gamer2d/types/direction.type";
+import { AITrait } from "../traits/ai.trait.js";
 
 // import EnemyTrait from "../traits/enemy.trait";
 
@@ -15,15 +15,15 @@ type ZenChanDTO = {
 		x: number;
 		y: number;
 	};
-	dir: DIRECTIONS;
+	dir: number;
 };
 
 export class ZenChanEntity extends Entity {
 	private physicsTrait: PhysicsTrait;
 	private solidTrait: SolidTrait;
 
-	constructor(resourceMgr: ResourceManager, zenChanDTO: ZenChanDTO) {
-		super(resourceMgr, zenChanDTO.at.x, zenChanDTO.at.y, "zen-chan");
+	constructor(zenChanDTO: ZenChanDTO) {
+		super(zenChanDTO.at.x, zenChanDTO.at.y, "zen-chan");
 
 		this.isFixed = false;
 		// this.mass = 3;
@@ -40,6 +40,8 @@ export class ZenChanEntity extends Entity {
 		this.addTrait(new KillableTrait());
 		// this.addTrait(new EnemyTrait());
 		this.addTrait(animTrait);
+
+		this.addTrait(new AITrait());
 
 		animTrait.setAnim(this, "zen-chan");
 	}

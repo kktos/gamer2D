@@ -1,54 +1,67 @@
-import {
-	AnimationTrait,
-	DIRECTIONS,
-	Entity,
-	type GameContext,
-	KeyboardPlayerOneTrait,
-	KillableTrait,
-	PhysicsTrait,
-	PlayerTrait,
-	type ResourceManager,
-	type Scene,
-	SolidTrait,
-	XDragTrait,
-} from "gamer2d";
+import { Entity } from "gamer2d/entities/Entity";
+import type { GameContext } from "gamer2d/game/index";
+import type { Scene } from "gamer2d/scenes/Scene";
+import { AnimationTrait } from "gamer2d/traits/animation.trait";
+import { KillableTrait } from "gamer2d/traits/killable.trait";
+import { PhysicsTrait } from "gamer2d/traits/physics.trait";
+import { PlayerTrait } from "gamer2d/traits/player.trait";
+import { SolidTrait } from "gamer2d/traits/solid.trait";
+import { type ITrait, Trait } from "gamer2d/traits/Trait";
+import { XDragTrait } from "gamer2d/traits/xdrag.trait";
+import { DIRECTIONS } from "gamer2d/types/direction.type";
 import { JumpTrait } from "../traits/jump.trait.js";
+import { KeyboardPlayerTrait } from "../traits/keyboard_player.trait.js";
 
 type BubblunDTO = {
 	at: {
 		x: number;
 		y: number;
 	};
-	dir: DIRECTIONS;
+	dir: number;
 };
 
 export class BubblunEntity extends Entity {
-	// private physicsTrait: PhysicsTrait;
-	// private solidTrait: SolidTrait;
 	private animTrait: AnimationTrait;
 	private jumpTrait: JumpTrait;
 	private xdragTrait: XDragTrait;
 
-	constructor(resourceMgr: ResourceManager, bubblunDTO: BubblunDTO) {
-		super(resourceMgr, bubblunDTO.at.x, bubblunDTO.at.y, "bubblun");
+	private isDead = false;
+	private isBuried = false;
+
+	constructor(bubblunDTO: BubblunDTO) {
+		super(bubblunDTO.at.x, bubblunDTO.at.y, "bubblun");
 
 		this.isFixed = false;
 		this.dir = bubblunDTO.dir;
 		this.mass = 60;
 
-		this.addTrait(new PlayerTrait());
-		this.addTrait(new KeyboardPlayerOneTrait());
 		this.xdragTrait = new XDragTrait();
-		this.addTrait(this.xdragTrait);
 		this.jumpTrait = new JumpTrait();
-		this.addTrait(this.jumpTrait);
-		this.addTrait(new PhysicsTrait());
-		this.addTrait(new SolidTrait());
-		// this.addTrait(new KillableTrait(80000));
-		this.addTrait(new KillableTrait());
-
 		this.animTrait = new AnimationTrait();
-		this.addTrait(this.animTrait);
+
+		// let the enemy handles the collision
+		const collisionTrait: ITrait = new Trait();
+		collisionTrait.collides = (gc: GameContext, entity: Entity, target: Entity) => {
+			target.collides(gc, entity);
+		};
+
+		const deathTrait: ITrait = new Trait();
+		deathTrait.on(KillableTrait.EVENT_KILLED, (_entity) => {
+			this.isDead = true;
+		});
+
+		this.addTraits([
+			new PlayerTrait(),
+			new KeyboardPlayerTrait(),
+			collisionTrait as Trait,
+			deathTrait as Trait,
+			this.xdragTrait,
+			this.jumpTrait,
+			new PhysicsTrait(),
+			new SolidTrait(),
+			new KillableTrait(0.1),
+			this.animTrait,
+		]);
 	}
 
 	stateToAnim() {
@@ -64,9 +77,13 @@ export class BubblunEntity extends Entity {
 	update(gc: GameContext, scene: Scene): void {
 		this.stateToAnim();
 		super.update(gc, scene);
+		if (this.isDead && !this.isBuried) {
+			this.isBuried = true;
+			scene.emit(Symbol.for("PLAYER_DEAD"), this);
+		}
 	}
 
-	render({ scene, viewport: { ctx } }) {
+	render({ viewport: { ctx } }) {
 		if (this.currSprite)
 			this.spritesheet?.draw(this.currSprite, ctx, this.bbox.left, this.bbox.top, {
 				zoom: 1,

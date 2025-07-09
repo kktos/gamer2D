@@ -1,4 +1,7 @@
-import { type GameContext, type Grid, Scene, type TSceneSheet, type WorldCollisionLayer } from "gamer2d";
+import type { GameContext } from "gamer2d/game/index";
+import type { WorldCollisionLayer } from "gamer2d/layers/worldcollision.layer";
+import { Scene } from "gamer2d/scenes/Scene";
+import type { Grid } from "gamer2d/utils/maths/grid.math";
 import type { LevelLayer } from "../layers/level.layer.js";
 
 export default class BBLevelScene extends Scene {

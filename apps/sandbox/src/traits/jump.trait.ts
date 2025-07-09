@@ -1,4 +1,9 @@
-import { type BBox, COLLISION_SIDES, type Entity, type GameContext, type Scene, type TCollisionSide, Trait } from "gamer2d";
+import type { Entity } from "gamer2d/entities/Entity";
+import type { GameContext } from "gamer2d/game/index";
+import type { Scene } from "gamer2d/scenes/Scene";
+import { Trait } from "gamer2d/traits/Trait";
+import type { BBox } from "gamer2d/utils/maths/BBox.class";
+import { COLLISION_SIDES, type TCollisionSide } from "gamer2d/utils/maths/math";
 
 export class JumpTrait extends Trait {
 	private duration = 0.25;
@@ -18,7 +23,7 @@ export class JumpTrait extends Trait {
 		this.requestTime = 0;
 	}
 
-	update({ dt }, entity: Entity, scene: Scene) {
+	update({ dt }, entity: Entity, _scene: Scene) {
 		if (this.requestTime > 0) {
 			if (this.readyState > 0) {
 				// entity.sounds.add("jump");
@@ -37,7 +42,7 @@ export class JumpTrait extends Trait {
 		this.readyState -= 1;
 	}
 
-	obstructedOn(gc: GameContext, entity: Entity, side: TCollisionSide, rect: BBox) {
+	obstructedOn(_gc: GameContext, _entity: Entity, side: TCollisionSide, _rect: BBox) {
 		if (side === COLLISION_SIDES.BOTTOM) this.readyState = 1;
 	}
 

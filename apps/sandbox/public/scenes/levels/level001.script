@@ -24,21 +24,21 @@ level "001" {
 		}
 
 		// sprite "bubblun" id "player1" at 2,20 dir right
-		sprite "bubblun" id "player1" at 75,40 dir right traits [PlayerTrait()]
+		sprite "bubblun" id "player1" at 75,40 dir right
 
 		$monsterCount= 0
-		timer "spawner" at extractFields($monsters, "delay") ds
+		timer "spawner" at extractFields($monsters, "delay") unit 1/20s
 
 		on TIMER from "spawner" {
 			$monster= $monsters.$monsterCount
 			spawn({
 				type: $monster.type,
 				at: {
-					x: $monster.position.0,
-					y: $monster.position.1
+					x: $monster.position.0 * 600 / 256,
+					y: -40
 				},
 				dir: left
-				traits: [ZenChanNormalBehaviourTrait(130, left, 20)]
+				traits: [ZenChanNormalBehaviourTrait({speed:130, dir:left, mass:20})]
 			})
 			$monsterCount= $monsterCount+1
 		}

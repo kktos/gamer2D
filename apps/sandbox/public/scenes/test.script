@@ -71,6 +71,14 @@ display "menu" {
 		color white
 		align center,center
 
+		// for $menuItem of $menuItems as $idx {
+		// 	button {
+		// 		text $menuItem
+		// 			at $menuStart.x, $menuStart.y + $menuSpacing * $idx
+		// 			size $menuItemSize.x,$menuItemSize.y
+		// 	}
+		// }
+
 		menu main {		
 			selection {
 				background rgba(60, 139, 243, 0.97)
@@ -218,6 +226,7 @@ display "menu" {
 	layer entities {
 		settings {
 			show_entities_count = true
+			show_entity_frame = false
 		}
 	}
 

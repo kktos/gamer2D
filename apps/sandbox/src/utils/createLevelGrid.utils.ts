@@ -1,4 +1,4 @@
-import { Grid, GridCell } from "gamer2d";
+import { Grid, GridCell } from "gamer2d/utils/maths/grid.math";
 import { BoundsGridCell } from "./cells/bounds.cell.js";
 import { FloorGridCell } from "./cells/floor.cell.js";
 

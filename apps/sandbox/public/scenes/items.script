@@ -85,17 +85,25 @@ display "menu" {
 
 		font 2
 
-		// button {
-		// 	rect at 260,500 width 260 height 440
-		// 	text "back" at 260,500
-		// }
+		// rect at $centerX,0 size 0,600
 
-		menu back {
-			items {
-				// item {text "back" at 260,500 action:{ goto("test")	}}
-				item { text "back" at $centerX,500 align center,center } action { goto("test") }
-			}
+		button backBtn {
+			rect at 0,0 size 100,30 pad 10,5
+			text $content at 0,0 size 101,30 align center,center
 		}
+
+		button backBtn at $centerX-50.5,500.5 content "back" trigger go_back
+
+		on go_back {
+			goto("test")
+		}
+
+		// menu back {
+		// 	items {
+		// 		// item {text "back" at 260,500 action:{ goto("test")	}}
+		// 		item { text "back" at $centerX,500 align center,center } action { goto("test") }
+		// 	}
+		// }
 
 	}
 

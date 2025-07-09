@@ -1,6 +1,7 @@
-import type { GameContext } from "gamer2d";
-import type { Entity } from "gamer2d";
-import { COLLISION_SIDES, GridCell } from "gamer2d";
+import type { Entity } from "gamer2d/entities/Entity";
+import type { GameContext } from "gamer2d/game/index";
+import { GridCell } from "gamer2d/utils/maths/grid.math";
+import { COLLISION_SIDES } from "gamer2d/utils/maths/math";
 
 export class BoundsGridCell extends GridCell {
 	collisionX(gc: GameContext, entity: Entity) {
