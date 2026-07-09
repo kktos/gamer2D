@@ -92,18 +92,14 @@ display "menu" {
 			text $content at 0,0 size 101,30 align center,center
 		}
 
-		button backBtn at $centerX-50.5,500.5 content "back" trigger go_back
+		button backBtn
+			at $centerX-50.5,500.5
+			content "back"
+			trigger go_back
 
 		on go_back {
 			goto("test")
 		}
-
-		// menu back {
-		// 	items {
-		// 		// item {text "back" at 260,500 action:{ goto("test")	}}
-		// 		item { text "back" at $centerX,500 align center,center } action { goto("test") }
-		// 	}
-		// }
 
 	}
 

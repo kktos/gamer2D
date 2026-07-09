@@ -14,7 +14,7 @@ import BBLevelScene from "./scenes/level.scene.js";
 import { KeyboardPlayerTrait } from "./traits/keyboard_player.trait.js";
 import { ZenChanNormalBehaviourTrait } from "./traits/ZenChanNormalBehaviour.trait.js";
 
-const SCRIPT = "items";
+const SCRIPT = "game";
 
 const settings = `
 	FPS = 60
@@ -156,14 +156,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 	}
 
 	loadGame();
+	startGame();
 
 	startGameButton.addEventListener("click", async () => {
-		try {
-			startGame();
-		} catch (error) {
-			console.error("Error loading script:", error);
-			scriptInput.value = "// Error loading script file";
-		}
+		// try {
+		// 	startGame();
+		// } catch (error) {
+		// 	console.error("Error loading script:", error);
+		// 	scriptInput.value = "// Error loading script file";
+		// }
 	});
 
 	loadButton.addEventListener("click", async () => {

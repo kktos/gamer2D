@@ -23,8 +23,8 @@ level "001" {
 			entity_frame_color = blue
 		}
 
-		// sprite "bubblun" id "player1" at 2,20 dir right
-		sprite "bubblun" id "player1" at 75,40 dir right
+		sprite "bubblun" id "player1" at 75,420 dir right
+		// sprite "bubblun" id "player1" at 75,40 dir right
 
 		$monsterCount= 0
 		timer "spawner" at extractFields($monsters, "delay") unit 1/20s
@@ -37,8 +37,8 @@ level "001" {
 					x: $monster.position.0 * 600 / 256,
 					y: -40
 				},
-				dir: left
-				traits: [ZenChanNormalBehaviourTrait({speed:130, dir:left, mass:20})]
+				dir: right
+				// traits: [ZenChanNormalBehaviourTrait({speed:130, dir:left, mass:20})]
 			})
 			$monsterCount= $monsterCount+1
 		}

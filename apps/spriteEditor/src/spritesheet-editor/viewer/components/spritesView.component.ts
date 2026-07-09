@@ -1,9 +1,9 @@
 import type { Font } from "gamer2d/game/Font";
 import type { KeyMap } from "gamer2d/game/KeyMap";
 import type { GameContext } from "gamer2d/game/types/GameContext";
-import { BBox } from "gamer2d/maths/BBox.class";
-import type { Rect } from "gamer2d/maths/math";
-import { ALIGN_TYPES } from "gamer2d/script/compiler/layers/display/layout/text-sprite-props.rules";
+import { BBox } from "gamer2d/utils/maths/BBox.class";
+import type { Rect } from "gamer2d/utils/maths/math";
+import { ALIGN_TYPES } from "gamer2d/script/compiler2/types/align.type";
 import { confirmDialog } from "../../shared/dialog.class.js";
 import type { Signal } from "../../shared/signal.class.js";
 import { ScrollView } from "./scrollView.component.js";

@@ -1,13 +1,14 @@
 import type { GameContext } from "gamer2d/game/index";
 import type { WorldCollisionLayer } from "gamer2d/layers/worldcollision.layer";
 import { Scene } from "gamer2d/scenes/Scene";
+import type { TNeatScene } from "gamer2d/script/compiler2/types/scenes.type";
 import type { Grid } from "gamer2d/utils/maths/grid.math";
 import type { LevelLayer } from "../layers/level.layer.js";
 
 export default class BBLevelScene extends Scene {
 	public grid: Grid | undefined;
 
-	constructor(gc: GameContext, filename: string, sheet: TSceneSheet) {
+	constructor(gc: GameContext, filename: string, sheet: TNeatScene) {
 		super(gc, filename, sheet);
 
 		this.isPermanent = false;

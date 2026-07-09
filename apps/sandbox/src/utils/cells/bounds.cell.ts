@@ -8,10 +8,12 @@ export class BoundsGridCell extends GridCell {
 		if (entity.vel.x > 0) {
 			if (entity.bbox.right > this.left) {
 				entity.obstructedOn(gc, COLLISION_SIDES.RIGHT, this);
+				return COLLISION_SIDES.RIGHT;
 			}
 		} else if (entity.vel.x < 0) {
 			if (entity.bbox.left < this.right) {
 				entity.obstructedOn(gc, COLLISION_SIDES.LEFT, this);
+				return COLLISION_SIDES.LEFT;
 			}
 		}
 	}
@@ -20,10 +22,12 @@ export class BoundsGridCell extends GridCell {
 		if (entity.vel.y > 0) {
 			if (entity.bbox.bottom > this.top) {
 				entity.obstructedOn(gc, COLLISION_SIDES.BOTTOM, this);
+				return COLLISION_SIDES.BOTTOM;
 			}
 		} else if (entity.vel.y < 0) {
 			if (entity.bbox.top < this.bottom) {
 				entity.obstructedOn(gc, COLLISION_SIDES.TOP, this);
+				return COLLISION_SIDES.TOP;
 			}
 		}
 	}

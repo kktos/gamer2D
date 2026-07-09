@@ -1,4 +1,4 @@
-import { BBox } from "gamer2d/maths/BBox.class";
+import { BBox } from "gamer2d/utils/maths/BBox.class";
 
 type SpriteItem = { width: number; height: number };
 

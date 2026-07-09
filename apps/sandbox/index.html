@@ -149,13 +149,13 @@
 <body>
     <!-- Tab Navigation -->
     <div class="tab-navigation">
-        <button class="tab-button active" onclick="showTab('script-editor')">Script Editor & Parser</button>
+        <button class="tab-button" onclick="showTab('script-editor')">Script Editor & Parser</button>
         <button class="tab-button" onclick="showTab('expression-evaluator')">Expression Evaluator</button>
-        <button class="tab-button" onclick="showTab('gameCanvas')">Game Canvas</button>
+        <button class="tab-button active" onclick="showTab('gameCanvas')">Game Canvas</button>
     </div>
 
     <!-- Script Editor Tab -->
-    <div id="script-editor" class="tab-content active">
+    <div id="script-editor" class="tab-content">
         <div class="script-editor-container">
             <div style="display: grid; grid-template-rows: auto auto 1fr;gap:5px;">
                 <h2>Script Editor & Parser</h2>
@@ -201,7 +201,7 @@
     </div>
 
     <!-- Game Tab -->
-    <div id="gameCanvas" class="tab-content">
+    <div id="gameCanvas" class="tab-content active">
         <div class="game-container">
             <div>
                 <h2>Game Canvas</h2>

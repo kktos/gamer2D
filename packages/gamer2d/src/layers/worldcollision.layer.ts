@@ -1,23 +1,25 @@
 import type { Entity } from "../entities/Entity";
 import type { GameContext } from "../game/types/GameContext";
 import type { Scene } from "../scenes/Scene";
-import type { BBox } from "../utils/maths/BBox.class";
 import { type Grid, GridCell } from "../utils/maths/grid.math";
 import { COLLISION_SIDES } from "../utils/maths/math";
 import { Layer } from "./Layer.class";
 
-type TCellRect = BBox & {
+type TCellRect = {
+	left: number;
+	top: number;
 	width: number;
 	height: number;
+
 	color: string;
 	isFrame?: boolean;
 };
 
 interface ICollisionGridCellX {
-	collisionX(gc: GameContext, entity: Entity): void;
+	collisionX(gc: GameContext, entity: Entity): number | undefined;
 }
 interface ICollisionGridCellY {
-	collisionY(gc: GameContext, entity: Entity): void;
+	collisionY(gc: GameContext, entity: Entity): number | undefined;
 }
 
 export class CollisionGridCell extends GridCell {
@@ -53,15 +55,41 @@ export class WorldCollisionLayer extends Layer {
 
 		const x = entity.vel.x > 0 ? entity.bbox.right : entity.bbox.left;
 		const matches = this.grid.searchByRange(x, x, entity.bbox.top, entity.bbox.bottom);
-		for (const match of matches) if ("collisionX" in match) (match as ICollisionGridCellX).collisionX(this.gc, entity);
+		for (const match of matches)
+			if ("collisionX" in match) {
+				const side = (match as ICollisionGridCellX).collisionX(this.gc, entity);
+				if (side !== undefined) {
+					this.collisionRects.push({
+						left: match.left,
+						top: match.top,
+						width: match.right - match.left,
+						height: match.bottom - match.top,
+						color: "red",
+					});
+					return;
+				}
+			}
 	}
 
 	checkY(entity: Entity) {
 		if (!entity.vel.y || !this.grid) return;
 
 		const y = entity.vel.y > 0 ? entity.bbox.bottom : entity.bbox.top;
-		const matches = this.grid.searchByRange(entity.bbox.left, entity.bbox.right, y, y);
-		for (const match of matches) if ("collisionY" in match) (match as ICollisionGridCellY).collisionY(this.gc, entity);
+		const matches = this.grid.searchByRange(entity.bbox.left + 1, entity.bbox.right - 1, y, y);
+		for (const match of matches)
+			if ("collisionY" in match) {
+				const side = (match as ICollisionGridCellY).collisionY(this.gc, entity);
+				if (side !== undefined) {
+					this.collisionRects.push({
+						left: match.left,
+						top: match.top,
+						width: match.right - match.left,
+						height: match.bottom - match.top,
+						color: "blue",
+					});
+					return;
+				}
+			}
 	}
 
 	/*

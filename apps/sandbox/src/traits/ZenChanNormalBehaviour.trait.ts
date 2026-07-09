@@ -13,7 +13,7 @@ type ZenChanNormalBehaviourDTO = {
 export class ZenChanNormalBehaviourTrait extends Trait {
 	private wannaChange = true;
 	private newSpeed: number;
-	private newDir: number;
+	public newDir: number;
 	private newMass: number;
 	private timeFalling = 0;
 	private prevVelX = 0;

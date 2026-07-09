@@ -21,6 +21,15 @@
         120,
         144
       ]
+    }
+  ],  "monsters0": [
+    {
+      "type": "Zen-Chan",
+      "delay": 1,
+      "position": [
+        120,
+        144
+      ]
     },
     {
       "type": "Zen-Chan",

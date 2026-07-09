@@ -17,13 +17,13 @@
 		"publishIt": "cd dist && npm publish",
 		"build:tsup": "tsup"
 	},
-	"packageManager": "pnpm@10.12.3",
+	"packageManager": "pnpm@10.33.0",
 	"devDependencies": {
-		"barrelize": "^1.6.1",
-		"tsdown": "^0.12.9",
-		"tsup": "^8.5.0",
-		"typescript": "^5.8.3",
-		"vitest": "^3.2.4"
+		"barrelize": "^1.8.0",
+		"tsdown": "^0.21.7",
+		"tsup": "^8.5.1",
+		"typescript": "^6.0.2",
+		"vitest": "^4.1.4"
 	},
 	"main": "./dist/index.js",
 	"module": "./dist/index.js",
@@ -44,6 +44,10 @@
 		"./entities/background.entity": {
 			"types": "./dist/entities/background.entity.d.ts",
 			"import": "./dist/entities/background.entity.js"
+		},
+		"./entities/button.entity": {
+			"types": "./dist/entities/button.entity.d.ts",
+			"import": "./dist/entities/button.entity.js"
 		},
 		"./entities/Entity": {
 			"types": "./dist/entities/Entity.d.ts",
@@ -413,6 +417,10 @@
 			"types": "./dist/script/compiler2/rules/layers/ui/animation.rule.d.ts",
 			"import": "./dist/script/compiler2/rules/layers/ui/animation.rule.js"
 		},
+		"./script/compiler2/rules/layers/ui/button.rule": {
+			"types": "./dist/script/compiler2/rules/layers/ui/button.rule.d.ts",
+			"import": "./dist/script/compiler2/rules/layers/ui/button.rule.js"
+		},
 		"./script/compiler2/rules/layers/ui/image.rule": {
 			"types": "./dist/script/compiler2/rules/layers/ui/image.rule.d.ts",
 			"import": "./dist/script/compiler2/rules/layers/ui/image.rule.js"
@@ -553,6 +561,10 @@
 			"types": "./dist/script/engine2/commands/bgcolor.cmd.d.ts",
 			"import": "./dist/script/engine2/commands/bgcolor.cmd.js"
 		},
+		"./script/engine2/commands/button.cmd": {
+			"types": "./dist/script/engine2/commands/button.cmd.d.ts",
+			"import": "./dist/script/engine2/commands/button.cmd.js"
+		},
 		"./script/engine2/commands/call.cmd": {
 			"types": "./dist/script/engine2/commands/call.cmd.d.ts",
 			"import": "./dist/script/engine2/commands/call.cmd.js"
@@ -641,9 +653,9 @@
 			"types": "./dist/script/engine2/exec.d.ts",
 			"import": "./dist/script/engine2/exec.js"
 		},
-		"./script/engine2/exec.type": {
-			"types": "./dist/script/engine2/exec.type.d.ts",
-			"import": "./dist/script/engine2/exec.type.js"
+		"./script/engine2/exec.context": {
+			"types": "./dist/script/engine2/exec.context.d.ts",
+			"import": "./dist/script/engine2/exec.context.js"
 		},
 		"./script/engine2/expr.eval": {
 			"types": "./dist/script/engine2/expr.eval.d.ts",
@@ -689,13 +701,98 @@
 			"types": "./dist/script/engine2/string.eval.d.ts",
 			"import": "./dist/script/engine2/string.eval.js"
 		},
-
-		
+		"./traits/animation_path.trait": {
+			"types": "./dist/traits/animation_path.trait.d.ts",
+			"import": "./dist/traits/animation_path.trait.js"
+		},
+		"./traits/animation.trait": {
+			"types": "./dist/traits/animation.trait.d.ts",
+			"import": "./dist/traits/animation.trait.js"
+		},
+		"./traits/bounce.trait": {
+			"types": "./dist/traits/bounce.trait.d.ts",
+			"import": "./dist/traits/bounce.trait.js"
+		},
+		"./traits/boundingBox.trait": {
+			"types": "./dist/traits/boundingBox.trait.d.ts",
+			"import": "./dist/traits/boundingBox.trait.js"
+		},
+		"./traits/fade.trait": {
+			"types": "./dist/traits/fade.trait.d.ts",
+			"import": "./dist/traits/fade.trait.js"
+		},
+		"./traits/gravity.trait": {
+			"types": "./dist/traits/gravity.trait.d.ts",
+			"import": "./dist/traits/gravity.trait.js"
+		},
 		"./traits/index": {
 			"types": "./dist/traits/index.d.ts",
 			"import": "./dist/traits/index.js"
 		},
-		
+		"./traits/keyboard_player.trait": {
+			"types": "./dist/traits/keyboard_player.trait.d.ts",
+			"import": "./dist/traits/keyboard_player.trait.js"
+		},
+		"./traits/killable.trait": {
+			"types": "./dist/traits/killable.trait.d.ts",
+			"import": "./dist/traits/killable.trait.js"
+		},
+		"./traits/killOffscreen.trait": {
+			"types": "./dist/traits/killOffscreen.trait.d.ts",
+			"import": "./dist/traits/killOffscreen.trait.js"
+		},
+		"./traits/mouseX.trait": {
+			"types": "./dist/traits/mouseX.trait.d.ts",
+			"import": "./dist/traits/mouseX.trait.js"
+		},
+		"./traits/mouseXY.trait": {
+			"types": "./dist/traits/mouseXY.trait.d.ts",
+			"import": "./dist/traits/mouseXY.trait.js"
+		},
+		"./traits/offscreen.trait": {
+			"types": "./dist/traits/offscreen.trait.d.ts",
+			"import": "./dist/traits/offscreen.trait.js"
+		},
+		"./traits/physics.trait": {
+			"types": "./dist/traits/physics.trait.d.ts",
+			"import": "./dist/traits/physics.trait.js"
+		},
+		"./traits/player.trait": {
+			"types": "./dist/traits/player.trait.d.ts",
+			"import": "./dist/traits/player.trait.js"
+		},
+		"./traits/solid.trait": {
+			"types": "./dist/traits/solid.trait.d.ts",
+			"import": "./dist/traits/solid.trait.js"
+		},
+		"./traits/spawner.trait": {
+			"types": "./dist/traits/spawner.trait.d.ts",
+			"import": "./dist/traits/spawner.trait.js"
+		},
+		"./traits/timer.trait": {
+			"types": "./dist/traits/timer.trait.d.ts",
+			"import": "./dist/traits/timer.trait.js"
+		},
+		"./traits/Trait": {
+			"types": "./dist/traits/Trait.d.ts",
+			"import": "./dist/traits/Trait.js"
+		},
+		"./traits/Trait.factory": {
+			"types": "./dist/traits/Trait.factory.d.ts",
+			"import": "./dist/traits/Trait.factory.js"
+		},
+		"./traits/trap.trait": {
+			"types": "./dist/traits/trap.trait.d.ts",
+			"import": "./dist/traits/trap.trait.js"
+		},
+		"./traits/velocity.trait": {
+			"types": "./dist/traits/velocity.trait.d.ts",
+			"import": "./dist/traits/velocity.trait.js"
+		},
+		"./traits/xdrag.trait": {
+			"types": "./dist/traits/xdrag.trait.d.ts",
+			"import": "./dist/traits/xdrag.trait.js"
+		},
 		"./types/direction.type": {
 			"types": "./dist/types/direction.type.d.ts",
 			"import": "./dist/types/direction.type.js"
@@ -724,10 +821,6 @@
 			"types": "./dist/utils/canvas.utils.d.ts",
 			"import": "./dist/utils/canvas.utils.js"
 		},
-		"./utils/createLevelEntities.utils": {
-			"types": "./dist/utils/createLevelEntities.utils.d.ts",
-			"import": "./dist/utils/createLevelEntities.utils.js"
-		},
 		"./utils/createSpriteSheet.util": {
 			"types": "./dist/utils/createSpriteSheet.util.d.ts",
 			"import": "./dist/utils/createSpriteSheet.util.js"
@@ -751,6 +844,10 @@
 		"./utils/maths/BBox.test": {
 			"types": "./dist/utils/maths/BBox.test.d.ts",
 			"import": "./dist/utils/maths/BBox.test.js"
+		},
+		"./utils/maths/bbox.util": {
+			"types": "./dist/utils/maths/bbox.util.d.ts",
+			"import": "./dist/utils/maths/bbox.util.js"
 		},
 		"./utils/maths/grid.math": {
 			"types": "./dist/utils/maths/grid.math.d.ts",

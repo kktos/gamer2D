@@ -1,20 +1,27 @@
 import type { Entity } from "gamer2d/entities/Entity";
 import type { GameContext } from "gamer2d/game/index";
 import type { Scene } from "gamer2d/scenes/Scene";
-import { Trait } from "gamer2d/traits/Trait";
+import { Trait } from "gamer2d/traits/index";
 import type { BBox } from "gamer2d/utils/maths/BBox.class";
 import { COLLISION_SIDES, type TCollisionSide } from "gamer2d/utils/maths/math";
 
 export class JumpTrait extends Trait {
-	private duration = 0.25;
-	private velocity = 193;
 	private engageTime = 0;
 	private readyState = 0;
 	private requestTime = 0;
 	private gracePeriod = 0.1;
 	private speedBoost = 0.3;
 
-	start() {
+	constructor(
+		private duration = 0.25,
+		private velocity = 193,
+	) {
+		super();
+	}
+
+	start(duration = 0.25, velocity = 193) {
+		this.duration = duration;
+		this.velocity = velocity;
 		this.requestTime = this.gracePeriod;
 	}
 

@@ -1,11 +1,11 @@
-import { clampPointInRect, ptInRect, type Rect } from "gamer2d";
+import { clampPointInRect, ptInRect, type Rect } from "gamer2d/utils/maths";
 import type { Anim } from "gamer2d/game/Anim";
 import { SpriteSheet } from "gamer2d/game/Spritesheet";
 import { FloatingWindowElement } from "gamer2d/inspectors/elements/floating-window.element";
 import { View } from "gamer2d/layers/display/views/View";
 import type { ViewContext } from "gamer2d/layers/display/views/View.factory";
-import { compile } from "gamer2d/script/compiler/compiler";
-import type { TSpriteSheet } from "gamer2d/script/compiler/ressources/spritesheet.rules";
+import { compile } from "gamer2d/script/compiler2/compiler";
+import type { TSpriteSheet } from "gamer2d/script/compiler2/rules/ressources/spritesheet.rule";
 import { getImgData } from "gamer2d/utils/canvas.utils";
 import { loadText } from "gamer2d/utils/loaders.util";
 import { createCanvasFromRect } from "../../sprites.util.js";
