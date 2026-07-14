@@ -6,7 +6,7 @@ describe("compiler - expression", () => {
 	it("should compile a mathematical expression", () => {
 		const script = "1 + 2 / ($x + 3)";
 		const result = compile<TNeatExpression>(script, "expression");
-		
+
 		expect(result).toStrictEqual({
 			op: "+",
 			left: 1,
@@ -16,9 +16,9 @@ describe("compiler - expression", () => {
 				right: {
 					op: "+",
 					left: { variable: "x" },
-					right: 3
-				}
-			}
+					right: 3,
+				},
+			},
 		});
 	});
 

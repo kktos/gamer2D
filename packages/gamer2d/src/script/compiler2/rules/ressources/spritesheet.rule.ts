@@ -52,7 +52,8 @@ export function parseSpritesheet(parser: NeatParser) {
 	}
 
 	if (!result.image) throw new SyntaxError(`Missing image property for spritesheet ${result.name}`);
-	if (!result.sprites || result.sprites.length === 0) throw new SyntaxError(`Missing sprites for spritesheet ${result.name}`);
+	if (!result.sprites || result.sprites.length === 0)
+		throw new SyntaxError(`Missing sprites for spritesheet ${result.name}`);
 
 	parser.punct("}");
 

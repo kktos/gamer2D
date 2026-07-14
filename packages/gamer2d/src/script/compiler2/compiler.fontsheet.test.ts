@@ -13,7 +13,7 @@ describe("compiler - fontsheet", () => {
 		`;
 
 		const result = compile<TFontSheet>(script, "fontsheet");
-		
+
 		expect(result).toMatchObject({
 			name: "min_font",
 			image: "assets/font.png",
@@ -24,7 +24,7 @@ describe("compiler - fontsheet", () => {
 			offsetY: 0,
 			gapX: 0,
 			gapY: 0,
-			isMulticolor: false
+			isMulticolor: false,
 		});
 	});
 
@@ -41,7 +41,7 @@ describe("compiler - fontsheet", () => {
 		`;
 
 		const result = compile<TFontSheet>(script, "fontsheet");
-		
+
 		expect(result).toMatchObject({
 			name: "full_font",
 			image: "assets/font2.png",
@@ -52,7 +52,7 @@ describe("compiler - fontsheet", () => {
 			offsetY: 4,
 			gapX: 1,
 			gapY: 1,
-			isMulticolor: true
+			isMulticolor: true,
 		});
 	});
 
@@ -63,7 +63,9 @@ describe("compiler - fontsheet", () => {
 				charset [ "ABC" ]
 			}
 		`;
-		expect(() => compile<TFontSheet>(script, "fontsheet")).toThrow("Missing mandatory 'charset' or 'image' or 'size' property for fontsheet bad_font");
+		expect(() => compile<TFontSheet>(script, "fontsheet")).toThrow(
+			"Missing mandatory 'charset' or 'image' or 'size' property for fontsheet bad_font",
+		);
 	});
 
 	it("should throw an error if size is missing", () => {
@@ -73,7 +75,9 @@ describe("compiler - fontsheet", () => {
 				charset [ "ABC" ]
 			}
 		`;
-		expect(() => compile<TFontSheet>(script, "fontsheet")).toThrow("Missing mandatory 'charset' or 'image' or 'size' property for fontsheet bad_font");
+		expect(() => compile<TFontSheet>(script, "fontsheet")).toThrow(
+			"Missing mandatory 'charset' or 'image' or 'size' property for fontsheet bad_font",
+		);
 	});
 
 	it("should throw an error if charset is missing", () => {
@@ -83,6 +87,8 @@ describe("compiler - fontsheet", () => {
 				size 16, 16
 			}
 		`;
-		expect(() => compile<TFontSheet>(script, "fontsheet")).toThrow("Missing mandatory 'charset' or 'image' or 'size' property for fontsheet bad_font");
+		expect(() => compile<TFontSheet>(script, "fontsheet")).toThrow(
+			"Missing mandatory 'charset' or 'image' or 'size' property for fontsheet bad_font",
+		);
 	});
 });
