@@ -4,8 +4,7 @@
 
   "compilerOptions": {
     "target": "esnext",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-    "module":"nodenext",                                /* Specify what module code is generated. */
-    "moduleResolution": "nodenext",
+    "moduleResolution": "bundler",
     "allowJs": false,                                  /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
     "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
     "strict": true,                                      /* Enable all strict type-checking options. */
@@ -13,11 +12,14 @@
     "skipLibCheck": true,
     "noEmit": true,
     "lib": ["ESNext", "DOM", "DOM.Iterable" ],
-        "composite": false,
+    "composite": false,
     "declaration": true,
     "declarationMap": true,
     "esModuleInterop": true,
     "types": ["vite/client"],
-    "customConditions": ["development"]
+    "customConditions": ["development"],
+    "paths": {
+      "gamer2d/*": ["../../packages/gamer2d/src/*"]
+    }
   }
 }

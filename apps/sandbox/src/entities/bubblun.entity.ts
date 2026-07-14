@@ -1,5 +1,5 @@
 import { Entity } from "gamer2d/entities/Entity";
-import type { GameContext } from "gamer2d/game/index";
+import type { GameContext } from "gamer2d/game/types/GameContext";
 import type { Scene } from "gamer2d/scenes/Scene";
 import { AnimationTrait } from "gamer2d/traits/animation.trait";
 import { KillableTrait } from "gamer2d/traits/killable.trait";

@@ -5,7 +5,7 @@
   "description": " gamer2d: workspace:* ",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc --noEmit && vite build",
     "serve": "http-server ./dist -o -d -c-1"
   },
   "devDependencies": {

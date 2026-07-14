@@ -2,7 +2,7 @@ import type { GameContext } from "gamer2d/game/index";
 import { Layer } from "gamer2d/layers/Layer.class";
 import type { Scene } from "gamer2d/scenes/Scene";
 import { runCommands } from "gamer2d/script/engine2/exec";
-import type { ExecutionContext } from "gamer2d/script/engine2/exec.type";
+import type { ExecutionContext } from "gamer2d/script/engine2/exec.context";
 import { functions } from "gamer2d/script/engine2/functions/functions.store";
 import type { Grid } from "gamer2d/utils/maths/grid.math";
 import { createVariableStore } from "gamer2d/utils/vars.store";

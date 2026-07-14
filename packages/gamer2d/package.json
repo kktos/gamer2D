@@ -17,13 +17,13 @@
 		"publishIt": "cd dist && npm publish",
 		"build:tsup": "tsup"
 	},
-	"packageManager": "pnpm@10.33.0",
+	"packageManager": "pnpm@11.13.0",
 	"devDependencies": {
-		"barrelize": "^1.8.0",
-		"tsdown": "^0.21.7",
+		"barrelize": "^1.8.2",
+		"tsdown": "^0.22.7",
 		"tsup": "^8.5.1",
-		"typescript": "^6.0.2",
-		"vitest": "^4.1.4"
+		"typescript": "^7.0.2",
+		"vitest": "^4.1.10"
 	},
 	"main": "./dist/index.js",
 	"module": "./dist/index.js",
@@ -31,883 +31,1103 @@
 	"exports": {
 		"./constants/events.const": {
 			"types": "./dist/constants/events.const.d.ts",
-			"import": "./dist/constants/events.const.js"
+			"import": "./dist/constants/events.const.js",
+			"development": "./src/constants/events.const.ts"
 		},
 		"./constants/gamepad.const": {
 			"types": "./dist/constants/gamepad.const.d.ts",
-			"import": "./dist/constants/gamepad.const.js"
+			"import": "./dist/constants/gamepad.const.js",
+			"development": "./src/constants/gamepad.const.ts"
 		},
 		"./constants/index": {
 			"types": "./dist/constants/index.d.ts",
-			"import": "./dist/constants/index.js"
+			"import": "./dist/constants/index.js",
+			"development": "./src/constants/index.ts"
 		},
 		"./entities/background.entity": {
 			"types": "./dist/entities/background.entity.d.ts",
-			"import": "./dist/entities/background.entity.js"
+			"import": "./dist/entities/background.entity.js",
+			"development": "./src/entities/background.entity.ts"
 		},
 		"./entities/button.entity": {
 			"types": "./dist/entities/button.entity.d.ts",
-			"import": "./dist/entities/button.entity.js"
+			"import": "./dist/entities/button.entity.js",
+			"development": "./src/entities/button.entity.ts"
 		},
 		"./entities/Entity": {
 			"types": "./dist/entities/Entity.d.ts",
-			"import": "./dist/entities/Entity.js"
+			"import": "./dist/entities/Entity.js",
+			"development": "./src/entities/Entity.ts"
 		},
 		"./entities/Entity.factory": {
 			"types": "./dist/entities/Entity.factory.d.ts",
-			"import": "./dist/entities/Entity.factory.js"
+			"import": "./dist/entities/Entity.factory.js",
+			"development": "./src/entities/Entity.factory.ts"
 		},
 		"./entities/index": {
 			"types": "./dist/entities/index.d.ts",
-			"import": "./dist/entities/index.js"
+			"import": "./dist/entities/index.js",
+			"development": "./src/entities/index.ts"
 		},
 		"./entities/menu.entity": {
 			"types": "./dist/entities/menu.entity.d.ts",
-			"import": "./dist/entities/menu.entity.js"
+			"import": "./dist/entities/menu.entity.js",
+			"development": "./src/entities/menu.entity.ts"
 		},
 		"./entities/pool.entity": {
 			"types": "./dist/entities/pool.entity.d.ts",
-			"import": "./dist/entities/pool.entity.js"
+			"import": "./dist/entities/pool.entity.js",
+			"development": "./src/entities/pool.entity.ts"
 		},
 		"./entities/rect.entity": {
 			"types": "./dist/entities/rect.entity.d.ts",
-			"import": "./dist/entities/rect.entity.js"
+			"import": "./dist/entities/rect.entity.js",
+			"development": "./src/entities/rect.entity.ts"
 		},
 		"./entities/sprite.entity": {
 			"types": "./dist/entities/sprite.entity.d.ts",
-			"import": "./dist/entities/sprite.entity.js"
+			"import": "./dist/entities/sprite.entity.js",
+			"development": "./src/entities/sprite.entity.ts"
 		},
 		"./entities/text.entity": {
 			"types": "./dist/entities/text.entity.d.ts",
-			"import": "./dist/entities/text.entity.js"
+			"import": "./dist/entities/text.entity.js",
+			"development": "./src/entities/text.entity.ts"
 		},
 		"./entities/zone.entity": {
 			"types": "./dist/entities/zone.entity.d.ts",
-			"import": "./dist/entities/zone.entity.js"
+			"import": "./dist/entities/zone.entity.js",
+			"development": "./src/entities/zone.entity.ts"
 		},
 		"./events/EventBuffer": {
 			"types": "./dist/events/EventBuffer.d.ts",
-			"import": "./dist/events/EventBuffer.js"
+			"import": "./dist/events/EventBuffer.js",
+			"development": "./src/events/EventBuffer.ts"
 		},
 		"./events/EventEmitter": {
 			"types": "./dist/events/EventEmitter.d.ts",
-			"import": "./dist/events/EventEmitter.js"
+			"import": "./dist/events/EventEmitter.js",
+			"development": "./src/events/EventEmitter.ts"
 		},
 		"./events/Events": {
 			"types": "./dist/events/Events.d.ts",
-			"import": "./dist/events/Events.js"
+			"import": "./dist/events/Events.js",
+			"development": "./src/events/Events.ts"
 		},
 		"./events/index": {
 			"types": "./dist/events/index.d.ts",
-			"import": "./dist/events/index.js"
+			"import": "./dist/events/index.js",
+			"development": "./src/events/index.ts"
 		},
 		"./game/Anim": {
 			"types": "./dist/game/Anim.d.ts",
-			"import": "./dist/game/Anim.js"
+			"import": "./dist/game/Anim.js",
+			"development": "./src/game/Anim.ts"
 		},
 		"./game/Audio": {
 			"types": "./dist/game/Audio.d.ts",
-			"import": "./dist/game/Audio.js"
+			"import": "./dist/game/Audio.js",
+			"development": "./src/game/Audio.ts"
 		},
 		"./game/Font": {
 			"types": "./dist/game/Font.d.ts",
-			"import": "./dist/game/Font.js"
+			"import": "./dist/game/Font.js",
+			"development": "./src/game/Font.ts"
 		},
 		"./game/FPSManager": {
 			"types": "./dist/game/FPSManager.d.ts",
-			"import": "./dist/game/FPSManager.js"
+			"import": "./dist/game/FPSManager.js",
+			"development": "./src/game/FPSManager.ts"
 		},
 		"./game/Game": {
 			"types": "./dist/game/Game.d.ts",
-			"import": "./dist/game/Game.js"
+			"import": "./dist/game/Game.js",
+			"development": "./src/game/Game.ts"
 		},
 		"./game/GameHelpers": {
 			"types": "./dist/game/GameHelpers.d.ts",
-			"import": "./dist/game/GameHelpers.js"
+			"import": "./dist/game/GameHelpers.js",
+			"development": "./src/game/GameHelpers.ts"
 		},
 		"./game/globals": {
 			"types": "./dist/game/globals.d.ts",
-			"import": "./dist/game/globals.js"
+			"import": "./dist/game/globals.js",
+			"development": "./src/game/globals.ts"
 		},
 		"./game/index": {
 			"types": "./dist/game/index.d.ts",
-			"import": "./dist/game/index.js"
+			"import": "./dist/game/index.js",
+			"development": "./src/game/index.ts"
 		},
 		"./game/KeyMap": {
 			"types": "./dist/game/KeyMap.d.ts",
-			"import": "./dist/game/KeyMap.js"
+			"import": "./dist/game/KeyMap.js",
+			"development": "./src/game/KeyMap.ts"
 		},
 		"./game/ResourceManager": {
 			"types": "./dist/game/ResourceManager.d.ts",
-			"import": "./dist/game/ResourceManager.js"
+			"import": "./dist/game/ResourceManager.js",
+			"development": "./src/game/ResourceManager.ts"
 		},
 		"./game/Spritesheet": {
 			"types": "./dist/game/Spritesheet.d.ts",
-			"import": "./dist/game/Spritesheet.js"
+			"import": "./dist/game/Spritesheet.js",
+			"development": "./src/game/Spritesheet.ts"
 		},
 		"./game/TaskList": {
 			"types": "./dist/game/TaskList.d.ts",
-			"import": "./dist/game/TaskList.js"
+			"import": "./dist/game/TaskList.js",
+			"development": "./src/game/TaskList.ts"
 		},
 		"./game/types/GameContext": {
 			"types": "./dist/game/types/GameContext.d.ts",
-			"import": "./dist/game/types/GameContext.js"
+			"import": "./dist/game/types/GameContext.js",
+			"development": "./src/game/types/GameContext.ts"
 		},
 		"./game/types/GameEvent": {
 			"types": "./dist/game/types/GameEvent.d.ts",
-			"import": "./dist/game/types/GameEvent.js"
+			"import": "./dist/game/types/GameEvent.js",
+			"development": "./src/game/types/GameEvent.ts"
 		},
 		"./game/types/GameOptions": {
 			"types": "./dist/game/types/GameOptions.d.ts",
-			"import": "./dist/game/types/GameOptions.js"
+			"import": "./dist/game/types/GameOptions.js",
+			"development": "./src/game/types/GameOptions.ts"
 		},
 		"./inspectors/debug-manager.class": {
 			"types": "./dist/inspectors/debug-manager.class.d.ts",
-			"import": "./dist/inspectors/debug-manager.class.js"
+			"import": "./dist/inspectors/debug-manager.class.js",
+			"development": "./src/inspectors/debug-manager.class.ts"
 		},
 		"./inspectors/elements/bottom.panel": {
 			"types": "./dist/inspectors/elements/bottom.panel.d.ts",
-			"import": "./dist/inspectors/elements/bottom.panel.js"
+			"import": "./dist/inspectors/elements/bottom.panel.js",
+			"development": "./src/inspectors/elements/bottom.panel.ts"
 		},
 		"./inspectors/elements/debug-menu-item.element": {
 			"types": "./dist/inspectors/elements/debug-menu-item.element.d.ts",
-			"import": "./dist/inspectors/elements/debug-menu-item.element.js"
+			"import": "./dist/inspectors/elements/debug-menu-item.element.js",
+			"development": "./src/inspectors/elements/debug-menu-item.element.ts"
 		},
 		"./inspectors/elements/debug-menu.element": {
 			"types": "./dist/inspectors/elements/debug-menu.element.d.ts",
-			"import": "./dist/inspectors/elements/debug-menu.element.js"
+			"import": "./dist/inspectors/elements/debug-menu.element.js",
+			"development": "./src/inspectors/elements/debug-menu.element.ts"
 		},
 		"./inspectors/elements/floating-window.element": {
 			"types": "./dist/inspectors/elements/floating-window.element.d.ts",
-			"import": "./dist/inspectors/elements/floating-window.element.js"
+			"import": "./dist/inspectors/elements/floating-window.element.js",
+			"development": "./src/inspectors/elements/floating-window.element.ts"
 		},
 		"./inspectors/elements/items.inspector": {
 			"types": "./dist/inspectors/elements/items.inspector.d.ts",
-			"import": "./dist/inspectors/elements/items.inspector.js"
+			"import": "./dist/inspectors/elements/items.inspector.js",
+			"development": "./src/inspectors/elements/items.inspector.ts"
 		},
 		"./inspectors/elements/properties.inspector": {
 			"types": "./dist/inspectors/elements/properties.inspector.d.ts",
-			"import": "./dist/inspectors/elements/properties.inspector.js"
+			"import": "./dist/inspectors/elements/properties.inspector.js",
+			"development": "./src/inspectors/elements/properties.inspector.ts"
 		},
 		"./inspectors/elements/property.editors/array.editor": {
 			"types": "./dist/inspectors/elements/property.editors/array.editor.d.ts",
-			"import": "./dist/inspectors/elements/property.editors/array.editor.js"
+			"import": "./dist/inspectors/elements/property.editors/array.editor.js",
+			"development": "./src/inspectors/elements/property.editors/array.editor.ts"
 		},
 		"./inspectors/elements/property.editors/boolean.editor": {
 			"types": "./dist/inspectors/elements/property.editors/boolean.editor.d.ts",
-			"import": "./dist/inspectors/elements/property.editors/boolean.editor.js"
+			"import": "./dist/inspectors/elements/property.editors/boolean.editor.js",
+			"development": "./src/inspectors/elements/property.editors/boolean.editor.ts"
 		},
 		"./inspectors/elements/property.editors/editors.intf": {
 			"types": "./dist/inspectors/elements/property.editors/editors.intf.d.ts",
-			"import": "./dist/inspectors/elements/property.editors/editors.intf.js"
+			"import": "./dist/inspectors/elements/property.editors/editors.intf.js",
+			"development": "./src/inspectors/elements/property.editors/editors.intf.ts"
 		},
 		"./inspectors/elements/property.editors/number.editor": {
 			"types": "./dist/inspectors/elements/property.editors/number.editor.d.ts",
-			"import": "./dist/inspectors/elements/property.editors/number.editor.js"
+			"import": "./dist/inspectors/elements/property.editors/number.editor.js",
+			"development": "./src/inspectors/elements/property.editors/number.editor.ts"
 		},
 		"./inspectors/elements/property.editors/point.editor": {
 			"types": "./dist/inspectors/elements/property.editors/point.editor.d.ts",
-			"import": "./dist/inspectors/elements/property.editors/point.editor.js"
+			"import": "./dist/inspectors/elements/property.editors/point.editor.js",
+			"development": "./src/inspectors/elements/property.editors/point.editor.ts"
 		},
 		"./inspectors/elements/property.editors/rgba.editor": {
 			"types": "./dist/inspectors/elements/property.editors/rgba.editor.d.ts",
-			"import": "./dist/inspectors/elements/property.editors/rgba.editor.js"
+			"import": "./dist/inspectors/elements/property.editors/rgba.editor.js",
+			"development": "./src/inspectors/elements/property.editors/rgba.editor.ts"
 		},
 		"./inspectors/elements/property.editors/select.editor": {
 			"types": "./dist/inspectors/elements/property.editors/select.editor.d.ts",
-			"import": "./dist/inspectors/elements/property.editors/select.editor.js"
+			"import": "./dist/inspectors/elements/property.editors/select.editor.js",
+			"development": "./src/inspectors/elements/property.editors/select.editor.ts"
 		},
 		"./inspectors/elements/property.editors/text.editor": {
 			"types": "./dist/inspectors/elements/property.editors/text.editor.d.ts",
-			"import": "./dist/inspectors/elements/property.editors/text.editor.js"
+			"import": "./dist/inspectors/elements/property.editors/text.editor.js",
+			"development": "./src/inspectors/elements/property.editors/text.editor.ts"
 		},
 		"./inspectors/elements/property.editors/variable.editor": {
 			"types": "./dist/inspectors/elements/property.editors/variable.editor.d.ts",
-			"import": "./dist/inspectors/elements/property.editors/variable.editor.js"
+			"import": "./dist/inspectors/elements/property.editors/variable.editor.js",
+			"development": "./src/inspectors/elements/property.editors/variable.editor.ts"
 		},
 		"./inspectors/elements/side-panel.element": {
 			"types": "./dist/inspectors/elements/side-panel.element.d.ts",
-			"import": "./dist/inspectors/elements/side-panel.element.js"
+			"import": "./dist/inspectors/elements/side-panel.element.js",
+			"development": "./src/inspectors/elements/side-panel.element.ts"
 		},
 		"./inspectors/pages/debug-page.class": {
 			"types": "./dist/inspectors/pages/debug-page.class.d.ts",
-			"import": "./dist/inspectors/pages/debug-page.class.js"
+			"import": "./dist/inspectors/pages/debug-page.class.js",
+			"development": "./src/inspectors/pages/debug-page.class.ts"
 		},
 		"./inspectors/pages/display.page": {
 			"types": "./dist/inspectors/pages/display.page.d.ts",
-			"import": "./dist/inspectors/pages/display.page.js"
+			"import": "./dist/inspectors/pages/display.page.js",
+			"development": "./src/inspectors/pages/display.page.ts"
 		},
 		"./inspectors/pages/entities.page": {
 			"types": "./dist/inspectors/pages/entities.page.d.ts",
-			"import": "./dist/inspectors/pages/entities.page.js"
+			"import": "./dist/inspectors/pages/entities.page.js",
+			"development": "./src/inspectors/pages/entities.page.ts"
 		},
 		"./inspectors/pages/entity-props.page": {
 			"types": "./dist/inspectors/pages/entity-props.page.d.ts",
-			"import": "./dist/inspectors/pages/entity-props.page.js"
+			"import": "./dist/inspectors/pages/entity-props.page.js",
+			"development": "./src/inspectors/pages/entity-props.page.ts"
 		},
 		"./inspectors/pages/layout-item-props.page": {
 			"types": "./dist/inspectors/pages/layout-item-props.page.d.ts",
-			"import": "./dist/inspectors/pages/layout-item-props.page.js"
+			"import": "./dist/inspectors/pages/layout-item-props.page.js",
+			"development": "./src/inspectors/pages/layout-item-props.page.ts"
 		},
 		"./inspectors/pages/layout.page": {
 			"types": "./dist/inspectors/pages/layout.page.d.ts",
-			"import": "./dist/inspectors/pages/layout.page.js"
+			"import": "./dist/inspectors/pages/layout.page.js",
+			"development": "./src/inspectors/pages/layout.page.ts"
 		},
 		"./inspectors/pages/menu-page.class": {
 			"types": "./dist/inspectors/pages/menu-page.class.d.ts",
-			"import": "./dist/inspectors/pages/menu-page.class.js"
+			"import": "./dist/inspectors/pages/menu-page.class.js",
+			"development": "./src/inspectors/pages/menu-page.class.ts"
 		},
 		"./inspectors/pages/pages-definitions": {
 			"types": "./dist/inspectors/pages/pages-definitions.d.ts",
-			"import": "./dist/inspectors/pages/pages-definitions.js"
+			"import": "./dist/inspectors/pages/pages-definitions.js",
+			"development": "./src/inspectors/pages/pages-definitions.ts"
 		},
 		"./inspectors/pages/properties.page": {
 			"types": "./dist/inspectors/pages/properties.page.d.ts",
-			"import": "./dist/inspectors/pages/properties.page.js"
+			"import": "./dist/inspectors/pages/properties.page.js",
+			"development": "./src/inspectors/pages/properties.page.ts"
 		},
 		"./inspectors/pages/scene.page": {
 			"types": "./dist/inspectors/pages/scene.page.d.ts",
-			"import": "./dist/inspectors/pages/scene.page.js"
+			"import": "./dist/inspectors/pages/scene.page.js",
+			"development": "./src/inspectors/pages/scene.page.ts"
 		},
 		"./inspectors/pages/variables.page": {
 			"types": "./dist/inspectors/pages/variables.page.d.ts",
-			"import": "./dist/inspectors/pages/variables.page.js"
+			"import": "./dist/inspectors/pages/variables.page.js",
+			"development": "./src/inspectors/pages/variables.page.ts"
 		},
 		"./inspectors/utils/createItemsInspector.util": {
 			"types": "./dist/inspectors/utils/createItemsInspector.util.d.ts",
-			"import": "./dist/inspectors/utils/createItemsInspector.util.js"
+			"import": "./dist/inspectors/utils/createItemsInspector.util.js",
+			"development": "./src/inspectors/utils/createItemsInspector.util.ts"
 		},
 		"./inspectors/utils/createPropertiesInspector.util": {
 			"types": "./dist/inspectors/utils/createPropertiesInspector.util.d.ts",
-			"import": "./dist/inspectors/utils/createPropertiesInspector.util.js"
+			"import": "./dist/inspectors/utils/createPropertiesInspector.util.js",
+			"development": "./src/inspectors/utils/createPropertiesInspector.util.ts"
 		},
 		"./inspectors/utils/createSidePanel.utils": {
 			"types": "./dist/inspectors/utils/createSidePanel.utils.d.ts",
-			"import": "./dist/inspectors/utils/createSidePanel.utils.js"
+			"import": "./dist/inspectors/utils/createSidePanel.utils.js",
+			"development": "./src/inspectors/utils/createSidePanel.utils.ts"
 		},
 		"./inspectors/utils/createTriggerBtn.util": {
 			"types": "./dist/inspectors/utils/createTriggerBtn.util.d.ts",
-			"import": "./dist/inspectors/utils/createTriggerBtn.util.js"
+			"import": "./dist/inspectors/utils/createTriggerBtn.util.js",
+			"development": "./src/inspectors/utils/createTriggerBtn.util.ts"
 		},
 		"./layers/background.layer": {
 			"types": "./dist/layers/background.layer.d.ts",
-			"import": "./dist/layers/background.layer.js"
+			"import": "./dist/layers/background.layer.js",
+			"development": "./src/layers/background.layer.ts"
 		},
 		"./layers/display/sound.manager": {
 			"types": "./dist/layers/display/sound.manager.d.ts",
-			"import": "./dist/layers/display/sound.manager.js"
+			"import": "./dist/layers/display/sound.manager.js",
+			"development": "./src/layers/display/sound.manager.ts"
 		},
 		"./layers/display/views/debug.view": {
 			"types": "./dist/layers/display/views/debug.view.d.ts",
-			"import": "./dist/layers/display/views/debug.view.js"
+			"import": "./dist/layers/display/views/debug.view.js",
+			"development": "./src/layers/display/views/debug.view.ts"
 		},
 		"./layers/display/views/System.view": {
 			"types": "./dist/layers/display/views/System.view.d.ts",
-			"import": "./dist/layers/display/views/System.view.js"
+			"import": "./dist/layers/display/views/System.view.js",
+			"development": "./src/layers/display/views/System.view.ts"
 		},
 		"./layers/display/views/View": {
 			"types": "./dist/layers/display/views/View.d.ts",
-			"import": "./dist/layers/display/views/View.js"
+			"import": "./dist/layers/display/views/View.js",
+			"development": "./src/layers/display/views/View.ts"
 		},
 		"./layers/display/views/View.factory": {
 			"types": "./dist/layers/display/views/View.factory.d.ts",
-			"import": "./dist/layers/display/views/View.factory.js"
+			"import": "./dist/layers/display/views/View.factory.js",
+			"development": "./src/layers/display/views/View.factory.ts"
 		},
 		"./layers/entities.layer": {
 			"types": "./dist/layers/entities.layer.d.ts",
-			"import": "./dist/layers/entities.layer.js"
+			"import": "./dist/layers/entities.layer.js",
+			"development": "./src/layers/entities.layer.ts"
 		},
 		"./layers/globals.layer": {
 			"types": "./dist/layers/globals.layer.d.ts",
-			"import": "./dist/layers/globals.layer.js"
+			"import": "./dist/layers/globals.layer.js",
+			"development": "./src/layers/globals.layer.ts"
 		},
 		"./layers/HTMLLayer": {
 			"types": "./dist/layers/HTMLLayer.d.ts",
-			"import": "./dist/layers/HTMLLayer.js"
+			"import": "./dist/layers/HTMLLayer.js",
+			"development": "./src/layers/HTMLLayer.ts"
 		},
 		"./layers/index": {
 			"types": "./dist/layers/index.d.ts",
-			"import": "./dist/layers/index.js"
+			"import": "./dist/layers/index.js",
+			"development": "./src/layers/index.ts"
 		},
 		"./layers/Layer.class": {
 			"types": "./dist/layers/Layer.class.d.ts",
-			"import": "./dist/layers/Layer.class.js"
+			"import": "./dist/layers/Layer.class.js",
+			"development": "./src/layers/Layer.class.ts"
 		},
 		"./layers/Layer.factory": {
 			"types": "./dist/layers/Layer.factory.d.ts",
-			"import": "./dist/layers/Layer.factory.js"
+			"import": "./dist/layers/Layer.factory.js",
+			"development": "./src/layers/Layer.factory.ts"
 		},
 		"./layers/ui.layer": {
 			"types": "./dist/layers/ui.layer.d.ts",
-			"import": "./dist/layers/ui.layer.js"
+			"import": "./dist/layers/ui.layer.js",
+			"development": "./src/layers/ui.layer.ts"
 		},
 		"./layers/worldcollision.layer": {
 			"types": "./dist/layers/worldcollision.layer.d.ts",
-			"import": "./dist/layers/worldcollision.layer.js"
+			"import": "./dist/layers/worldcollision.layer.js",
+			"development": "./src/layers/worldcollision.layer.ts"
 		},
 		"./scenes/Director": {
 			"types": "./dist/scenes/Director.d.ts",
-			"import": "./dist/scenes/Director.js"
+			"import": "./dist/scenes/Director.js",
+			"development": "./src/scenes/Director.ts"
 		},
 		"./scenes/display.scene": {
 			"types": "./dist/scenes/display.scene.d.ts",
-			"import": "./dist/scenes/display.scene.js"
+			"import": "./dist/scenes/display.scene.js",
+			"development": "./src/scenes/display.scene.ts"
 		},
 		"./scenes/game.scene": {
 			"types": "./dist/scenes/game.scene.d.ts",
-			"import": "./dist/scenes/game.scene.js"
+			"import": "./dist/scenes/game.scene.js",
+			"development": "./src/scenes/game.scene.ts"
 		},
 		"./scenes/index": {
 			"types": "./dist/scenes/index.d.ts",
-			"import": "./dist/scenes/index.js"
+			"import": "./dist/scenes/index.js",
+			"development": "./src/scenes/index.ts"
 		},
 		"./scenes/Scene": {
 			"types": "./dist/scenes/Scene.d.ts",
-			"import": "./dist/scenes/Scene.js"
+			"import": "./dist/scenes/Scene.js",
+			"development": "./src/scenes/Scene.ts"
 		},
 		"./scenes/Scene.factory": {
 			"types": "./dist/scenes/Scene.factory.d.ts",
-			"import": "./dist/scenes/Scene.factory.js"
+			"import": "./dist/scenes/Scene.factory.js",
+			"development": "./src/scenes/Scene.factory.ts"
 		},
 		"./script/compiler2/compiler": {
 			"types": "./dist/script/compiler2/compiler.d.ts",
-			"import": "./dist/script/compiler2/compiler.js"
+			"import": "./dist/script/compiler2/compiler.js",
+			"development": "./src/script/compiler2/compiler.ts"
 		},
 		"./script/compiler2/lexer": {
 			"types": "./dist/script/compiler2/lexer.d.ts",
-			"import": "./dist/script/compiler2/lexer.js"
+			"import": "./dist/script/compiler2/lexer.js",
+			"development": "./src/script/compiler2/lexer.ts"
 		},
 		"./script/compiler2/lexerError": {
 			"types": "./dist/script/compiler2/lexerError.d.ts",
-			"import": "./dist/script/compiler2/lexerError.js"
+			"import": "./dist/script/compiler2/lexerError.js",
+			"development": "./src/script/compiler2/lexerError.ts"
 		},
 		"./script/compiler2/parser": {
 			"types": "./dist/script/compiler2/parser.d.ts",
-			"import": "./dist/script/compiler2/parser.js"
+			"import": "./dist/script/compiler2/parser.js",
+			"development": "./src/script/compiler2/parser.ts"
 		},
 		"./script/compiler2/rules/layers/layer_background.rule": {
 			"types": "./dist/script/compiler2/rules/layers/layer_background.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/layers/layer_background.rule.js"
+			"import": "./dist/script/compiler2/rules/layers/layer_background.rule.js",
+			"development": "./src/script/compiler2/rules/layers/layer_background.rule.ts"
 		},
 		"./script/compiler2/rules/layers/layer_entities.rule": {
 			"types": "./dist/script/compiler2/rules/layers/layer_entities.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/layers/layer_entities.rule.js"
+			"import": "./dist/script/compiler2/rules/layers/layer_entities.rule.js",
+			"development": "./src/script/compiler2/rules/layers/layer_entities.rule.ts"
 		},
 		"./script/compiler2/rules/layers/layer_globals.rule": {
 			"types": "./dist/script/compiler2/rules/layers/layer_globals.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/layers/layer_globals.rule.js"
+			"import": "./dist/script/compiler2/rules/layers/layer_globals.rule.js",
+			"development": "./src/script/compiler2/rules/layers/layer_globals.rule.ts"
 		},
 		"./script/compiler2/rules/layers/layer_level.rule": {
 			"types": "./dist/script/compiler2/rules/layers/layer_level.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/layers/layer_level.rule.js"
+			"import": "./dist/script/compiler2/rules/layers/layer_level.rule.js",
+			"development": "./src/script/compiler2/rules/layers/layer_level.rule.ts"
 		},
 		"./script/compiler2/rules/layers/layer_ui.rule": {
 			"types": "./dist/script/compiler2/rules/layers/layer_ui.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/layers/layer_ui.rule.js"
+			"import": "./dist/script/compiler2/rules/layers/layer_ui.rule.js",
+			"development": "./src/script/compiler2/rules/layers/layer_ui.rule.ts"
 		},
 		"./script/compiler2/rules/layers/layer.rule": {
 			"types": "./dist/script/compiler2/rules/layers/layer.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/layers/layer.rule.js"
+			"import": "./dist/script/compiler2/rules/layers/layer.rule.js",
+			"development": "./src/script/compiler2/rules/layers/layer.rule.ts"
 		},
 		"./script/compiler2/rules/layers/layers.rules": {
 			"types": "./dist/script/compiler2/rules/layers/layers.rules.d.ts",
-			"import": "./dist/script/compiler2/rules/layers/layers.rules.js"
+			"import": "./dist/script/compiler2/rules/layers/layers.rules.js",
+			"development": "./src/script/compiler2/rules/layers/layers.rules.ts"
 		},
 		"./script/compiler2/rules/layers/ui/animation.rule": {
 			"types": "./dist/script/compiler2/rules/layers/ui/animation.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/layers/ui/animation.rule.js"
+			"import": "./dist/script/compiler2/rules/layers/ui/animation.rule.js",
+			"development": "./src/script/compiler2/rules/layers/ui/animation.rule.ts"
 		},
 		"./script/compiler2/rules/layers/ui/button.rule": {
 			"types": "./dist/script/compiler2/rules/layers/ui/button.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/layers/ui/button.rule.js"
+			"import": "./dist/script/compiler2/rules/layers/ui/button.rule.js",
+			"development": "./src/script/compiler2/rules/layers/ui/button.rule.ts"
 		},
 		"./script/compiler2/rules/layers/ui/image.rule": {
 			"types": "./dist/script/compiler2/rules/layers/ui/image.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/layers/ui/image.rule.js"
+			"import": "./dist/script/compiler2/rules/layers/ui/image.rule.js",
+			"development": "./src/script/compiler2/rules/layers/ui/image.rule.ts"
 		},
 		"./script/compiler2/rules/layers/ui/menu.rule": {
 			"types": "./dist/script/compiler2/rules/layers/ui/menu.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/layers/ui/menu.rule.js"
+			"import": "./dist/script/compiler2/rules/layers/ui/menu.rule.js",
+			"development": "./src/script/compiler2/rules/layers/ui/menu.rule.ts"
 		},
 		"./script/compiler2/rules/layers/ui/pool.rule": {
 			"types": "./dist/script/compiler2/rules/layers/ui/pool.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/layers/ui/pool.rule.js"
+			"import": "./dist/script/compiler2/rules/layers/ui/pool.rule.js",
+			"development": "./src/script/compiler2/rules/layers/ui/pool.rule.ts"
 		},
 		"./script/compiler2/rules/layers/ui/rect.rule": {
 			"types": "./dist/script/compiler2/rules/layers/ui/rect.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/layers/ui/rect.rule.js"
+			"import": "./dist/script/compiler2/rules/layers/ui/rect.rule.js",
+			"development": "./src/script/compiler2/rules/layers/ui/rect.rule.ts"
 		},
 		"./script/compiler2/rules/layers/ui/sound.rule": {
 			"types": "./dist/script/compiler2/rules/layers/ui/sound.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/layers/ui/sound.rule.js"
+			"import": "./dist/script/compiler2/rules/layers/ui/sound.rule.js",
+			"development": "./src/script/compiler2/rules/layers/ui/sound.rule.ts"
 		},
 		"./script/compiler2/rules/layers/ui/text.rule": {
 			"types": "./dist/script/compiler2/rules/layers/ui/text.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/layers/ui/text.rule.js"
+			"import": "./dist/script/compiler2/rules/layers/ui/text.rule.js",
+			"development": "./src/script/compiler2/rules/layers/ui/text.rule.ts"
 		},
 		"./script/compiler2/rules/layers/ui/timer.rule": {
 			"types": "./dist/script/compiler2/rules/layers/ui/timer.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/layers/ui/timer.rule.js"
+			"import": "./dist/script/compiler2/rules/layers/ui/timer.rule.js",
+			"development": "./src/script/compiler2/rules/layers/ui/timer.rule.ts"
 		},
 		"./script/compiler2/rules/layers/ui/view.rule": {
 			"types": "./dist/script/compiler2/rules/layers/ui/view.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/layers/ui/view.rule.js"
+			"import": "./dist/script/compiler2/rules/layers/ui/view.rule.js",
+			"development": "./src/script/compiler2/rules/layers/ui/view.rule.ts"
 		},
 		"./script/compiler2/rules/layers/worldcollision.rule": {
 			"types": "./dist/script/compiler2/rules/layers/worldcollision.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/layers/worldcollision.rule.js"
+			"import": "./dist/script/compiler2/rules/layers/worldcollision.rule.js",
+			"development": "./src/script/compiler2/rules/layers/worldcollision.rule.ts"
 		},
 		"./script/compiler2/rules/ressources/font.rule": {
 			"types": "./dist/script/compiler2/rules/ressources/font.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/ressources/font.rule.js"
+			"import": "./dist/script/compiler2/rules/ressources/font.rule.js",
+			"development": "./src/script/compiler2/rules/ressources/font.rule.ts"
 		},
 		"./script/compiler2/rules/ressources/spritesheet.rule": {
 			"types": "./dist/script/compiler2/rules/ressources/spritesheet.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/ressources/spritesheet.rule.js"
+			"import": "./dist/script/compiler2/rules/ressources/spritesheet.rule.js",
+			"development": "./src/script/compiler2/rules/ressources/spritesheet.rule.ts"
 		},
 		"./script/compiler2/rules/scene.rule": {
 			"types": "./dist/script/compiler2/rules/scene.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/scene.rule.js"
+			"import": "./dist/script/compiler2/rules/scene.rule.js",
+			"development": "./src/script/compiler2/rules/scene.rule.ts"
 		},
 		"./script/compiler2/rules/scenes/scene_display.rule": {
 			"types": "./dist/script/compiler2/rules/scenes/scene_display.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/scenes/scene_display.rule.js"
+			"import": "./dist/script/compiler2/rules/scenes/scene_display.rule.js",
+			"development": "./src/script/compiler2/rules/scenes/scene_display.rule.ts"
 		},
 		"./script/compiler2/rules/scenes/scene_game.rule": {
 			"types": "./dist/script/compiler2/rules/scenes/scene_game.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/scenes/scene_game.rule.js"
+			"import": "./dist/script/compiler2/rules/scenes/scene_game.rule.js",
+			"development": "./src/script/compiler2/rules/scenes/scene_game.rule.ts"
 		},
 		"./script/compiler2/rules/scenes/scene_level.rule": {
 			"types": "./dist/script/compiler2/rules/scenes/scene_level.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/scenes/scene_level.rule.js"
+			"import": "./dist/script/compiler2/rules/scenes/scene_level.rule.js",
+			"development": "./src/script/compiler2/rules/scenes/scene_level.rule.ts"
 		},
 		"./script/compiler2/rules/shared/assign.rule": {
 			"types": "./dist/script/compiler2/rules/shared/assign.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/shared/assign.rule.js"
+			"import": "./dist/script/compiler2/rules/shared/assign.rule.js",
+			"development": "./src/script/compiler2/rules/shared/assign.rule.ts"
 		},
 		"./script/compiler2/rules/shared/common.rule": {
 			"types": "./dist/script/compiler2/rules/shared/common.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/shared/common.rule.js"
+			"import": "./dist/script/compiler2/rules/shared/common.rule.js",
+			"development": "./src/script/compiler2/rules/shared/common.rule.ts"
 		},
 		"./script/compiler2/rules/shared/for.rule": {
 			"types": "./dist/script/compiler2/rules/shared/for.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/shared/for.rule.js"
+			"import": "./dist/script/compiler2/rules/shared/for.rule.js",
+			"development": "./src/script/compiler2/rules/shared/for.rule.ts"
 		},
 		"./script/compiler2/rules/shared/item-group.rule": {
 			"types": "./dist/script/compiler2/rules/shared/item-group.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/shared/item-group.rule.js"
+			"import": "./dist/script/compiler2/rules/shared/item-group.rule.js",
+			"development": "./src/script/compiler2/rules/shared/item-group.rule.ts"
 		},
 		"./script/compiler2/rules/shared/on.rule": {
 			"types": "./dist/script/compiler2/rules/shared/on.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/shared/on.rule.js"
+			"import": "./dist/script/compiler2/rules/shared/on.rule.js",
+			"development": "./src/script/compiler2/rules/shared/on.rule.ts"
 		},
 		"./script/compiler2/rules/shared/settings.rule": {
 			"types": "./dist/script/compiler2/rules/shared/settings.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/shared/settings.rule.js"
+			"import": "./dist/script/compiler2/rules/shared/settings.rule.js",
+			"development": "./src/script/compiler2/rules/shared/settings.rule.ts"
 		},
 		"./script/compiler2/rules/shared/sprite.rule": {
 			"types": "./dist/script/compiler2/rules/shared/sprite.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/shared/sprite.rule.js"
+			"import": "./dist/script/compiler2/rules/shared/sprite.rule.js",
+			"development": "./src/script/compiler2/rules/shared/sprite.rule.ts"
 		},
 		"./script/compiler2/rules/shared/statements.rule": {
 			"types": "./dist/script/compiler2/rules/shared/statements.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/shared/statements.rule.js"
+			"import": "./dist/script/compiler2/rules/shared/statements.rule.js",
+			"development": "./src/script/compiler2/rules/shared/statements.rule.ts"
 		},
 		"./script/compiler2/rules/shared/style.rule": {
 			"types": "./dist/script/compiler2/rules/shared/style.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/shared/style.rule.js"
+			"import": "./dist/script/compiler2/rules/shared/style.rule.js",
+			"development": "./src/script/compiler2/rules/shared/style.rule.ts"
 		},
 		"./script/compiler2/rules/shared/value-expr.rule": {
 			"types": "./dist/script/compiler2/rules/shared/value-expr.rule.d.ts",
-			"import": "./dist/script/compiler2/rules/shared/value-expr.rule.js"
+			"import": "./dist/script/compiler2/rules/shared/value-expr.rule.js",
+			"development": "./src/script/compiler2/rules/shared/value-expr.rule.ts"
 		},
 		"./script/compiler2/rules/shared/value-expr.test": {
 			"types": "./dist/script/compiler2/rules/shared/value-expr.test.d.ts",
-			"import": "./dist/script/compiler2/rules/shared/value-expr.test.js"
+			"import": "./dist/script/compiler2/rules/shared/value-expr.test.js",
+			"development": "./src/script/compiler2/rules/shared/value-expr.test.ts"
 		},
 		"./script/compiler2/types/align.type": {
 			"types": "./dist/script/compiler2/types/align.type.d.ts",
-			"import": "./dist/script/compiler2/types/align.type.js"
+			"import": "./dist/script/compiler2/types/align.type.js",
+			"development": "./src/script/compiler2/types/align.type.ts"
 		},
 		"./script/compiler2/types/commands.type": {
 			"types": "./dist/script/compiler2/types/commands.type.d.ts",
-			"import": "./dist/script/compiler2/types/commands.type.js"
+			"import": "./dist/script/compiler2/types/commands.type.js",
+			"development": "./src/script/compiler2/types/commands.type.ts"
 		},
 		"./script/compiler2/types/expression.type": {
 			"types": "./dist/script/compiler2/types/expression.type.d.ts",
-			"import": "./dist/script/compiler2/types/expression.type.js"
+			"import": "./dist/script/compiler2/types/expression.type.js",
+			"development": "./src/script/compiler2/types/expression.type.ts"
 		},
 		"./script/compiler2/types/layers.type": {
 			"types": "./dist/script/compiler2/types/layers.type.d.ts",
-			"import": "./dist/script/compiler2/types/layers.type.js"
+			"import": "./dist/script/compiler2/types/layers.type.js",
+			"development": "./src/script/compiler2/types/layers.type.ts"
 		},
 		"./script/compiler2/types/scenes.type": {
 			"types": "./dist/script/compiler2/types/scenes.type.d.ts",
-			"import": "./dist/script/compiler2/types/scenes.type.js"
+			"import": "./dist/script/compiler2/types/scenes.type.js",
+			"development": "./src/script/compiler2/types/scenes.type.ts"
 		},
 		"./script/engine2/commands/align.cmd": {
 			"types": "./dist/script/engine2/commands/align.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/align.cmd.js"
+			"import": "./dist/script/engine2/commands/align.cmd.js",
+			"development": "./src/script/engine2/commands/align.cmd.ts"
 		},
 		"./script/engine2/commands/animation.cmd": {
 			"types": "./dist/script/engine2/commands/animation.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/animation.cmd.js"
+			"import": "./dist/script/engine2/commands/animation.cmd.js",
+			"development": "./src/script/engine2/commands/animation.cmd.ts"
 		},
 		"./script/engine2/commands/assign.cmd": {
 			"types": "./dist/script/engine2/commands/assign.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/assign.cmd.js"
+			"import": "./dist/script/engine2/commands/assign.cmd.js",
+			"development": "./src/script/engine2/commands/assign.cmd.ts"
 		},
 		"./script/engine2/commands/bgcolor.cmd": {
 			"types": "./dist/script/engine2/commands/bgcolor.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/bgcolor.cmd.js"
+			"import": "./dist/script/engine2/commands/bgcolor.cmd.js",
+			"development": "./src/script/engine2/commands/bgcolor.cmd.ts"
 		},
 		"./script/engine2/commands/button.cmd": {
 			"types": "./dist/script/engine2/commands/button.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/button.cmd.js"
+			"import": "./dist/script/engine2/commands/button.cmd.js",
+			"development": "./src/script/engine2/commands/button.cmd.ts"
 		},
 		"./script/engine2/commands/call.cmd": {
 			"types": "./dist/script/engine2/commands/call.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/call.cmd.js"
+			"import": "./dist/script/engine2/commands/call.cmd.js",
+			"development": "./src/script/engine2/commands/call.cmd.ts"
 		},
 		"./script/engine2/commands/clearcontext.cmd": {
 			"types": "./dist/script/engine2/commands/clearcontext.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/clearcontext.cmd.js"
+			"import": "./dist/script/engine2/commands/clearcontext.cmd.js",
+			"development": "./src/script/engine2/commands/clearcontext.cmd.ts"
 		},
 		"./script/engine2/commands/color.cmd": {
 			"types": "./dist/script/engine2/commands/color.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/color.cmd.js"
+			"import": "./dist/script/engine2/commands/color.cmd.js",
+			"development": "./src/script/engine2/commands/color.cmd.ts"
 		},
 		"./script/engine2/commands/font.cmd": {
 			"types": "./dist/script/engine2/commands/font.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/font.cmd.js"
+			"import": "./dist/script/engine2/commands/font.cmd.js",
+			"development": "./src/script/engine2/commands/font.cmd.ts"
 		},
 		"./script/engine2/commands/for.cmd": {
 			"types": "./dist/script/engine2/commands/for.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/for.cmd.js"
+			"import": "./dist/script/engine2/commands/for.cmd.js",
+			"development": "./src/script/engine2/commands/for.cmd.ts"
 		},
 		"./script/engine2/commands/image.cmd": {
 			"types": "./dist/script/engine2/commands/image.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/image.cmd.js"
+			"import": "./dist/script/engine2/commands/image.cmd.js",
+			"development": "./src/script/engine2/commands/image.cmd.ts"
 		},
 		"./script/engine2/commands/item.cmd": {
 			"types": "./dist/script/engine2/commands/item.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/item.cmd.js"
+			"import": "./dist/script/engine2/commands/item.cmd.js",
+			"development": "./src/script/engine2/commands/item.cmd.ts"
 		},
 		"./script/engine2/commands/menu.cmd": {
 			"types": "./dist/script/engine2/commands/menu.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/menu.cmd.js"
+			"import": "./dist/script/engine2/commands/menu.cmd.js",
+			"development": "./src/script/engine2/commands/menu.cmd.ts"
 		},
 		"./script/engine2/commands/on.cmd": {
 			"types": "./dist/script/engine2/commands/on.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/on.cmd.js"
+			"import": "./dist/script/engine2/commands/on.cmd.js",
+			"development": "./src/script/engine2/commands/on.cmd.ts"
 		},
 		"./script/engine2/commands/pool.cmd": {
 			"types": "./dist/script/engine2/commands/pool.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/pool.cmd.js"
+			"import": "./dist/script/engine2/commands/pool.cmd.js",
+			"development": "./src/script/engine2/commands/pool.cmd.ts"
 		},
 		"./script/engine2/commands/rect.cmd": {
 			"types": "./dist/script/engine2/commands/rect.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/rect.cmd.js"
+			"import": "./dist/script/engine2/commands/rect.cmd.js",
+			"development": "./src/script/engine2/commands/rect.cmd.ts"
 		},
 		"./script/engine2/commands/settings.cmd": {
 			"types": "./dist/script/engine2/commands/settings.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/settings.cmd.js"
+			"import": "./dist/script/engine2/commands/settings.cmd.js",
+			"development": "./src/script/engine2/commands/settings.cmd.ts"
 		},
 		"./script/engine2/commands/shared/add.anims": {
 			"types": "./dist/script/engine2/commands/shared/add.anims.d.ts",
-			"import": "./dist/script/engine2/commands/shared/add.anims.js"
+			"import": "./dist/script/engine2/commands/shared/add.anims.js",
+			"development": "./src/script/engine2/commands/shared/add.anims.ts"
 		},
 		"./script/engine2/commands/shared/add.traits": {
 			"types": "./dist/script/engine2/commands/shared/add.traits.d.ts",
-			"import": "./dist/script/engine2/commands/shared/add.traits.js"
+			"import": "./dist/script/engine2/commands/shared/add.traits.js",
+			"development": "./src/script/engine2/commands/shared/add.traits.ts"
 		},
 		"./script/engine2/commands/sound.cmd": {
 			"types": "./dist/script/engine2/commands/sound.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/sound.cmd.js"
+			"import": "./dist/script/engine2/commands/sound.cmd.js",
+			"development": "./src/script/engine2/commands/sound.cmd.ts"
 		},
 		"./script/engine2/commands/sprite.cmd": {
 			"types": "./dist/script/engine2/commands/sprite.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/sprite.cmd.js"
+			"import": "./dist/script/engine2/commands/sprite.cmd.js",
+			"development": "./src/script/engine2/commands/sprite.cmd.ts"
 		},
 		"./script/engine2/commands/text.cmd": {
 			"types": "./dist/script/engine2/commands/text.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/text.cmd.js"
+			"import": "./dist/script/engine2/commands/text.cmd.js",
+			"development": "./src/script/engine2/commands/text.cmd.ts"
 		},
 		"./script/engine2/commands/timer.cmd": {
 			"types": "./dist/script/engine2/commands/timer.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/timer.cmd.js"
+			"import": "./dist/script/engine2/commands/timer.cmd.js",
+			"development": "./src/script/engine2/commands/timer.cmd.ts"
 		},
 		"./script/engine2/commands/variables.cmd": {
 			"types": "./dist/script/engine2/commands/variables.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/variables.cmd.js"
+			"import": "./dist/script/engine2/commands/variables.cmd.js",
+			"development": "./src/script/engine2/commands/variables.cmd.ts"
 		},
 		"./script/engine2/commands/view.cmd": {
 			"types": "./dist/script/engine2/commands/view.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/view.cmd.js"
+			"import": "./dist/script/engine2/commands/view.cmd.js",
+			"development": "./src/script/engine2/commands/view.cmd.ts"
 		},
 		"./script/engine2/commands/zoom.cmd": {
 			"types": "./dist/script/engine2/commands/zoom.cmd.d.ts",
-			"import": "./dist/script/engine2/commands/zoom.cmd.js"
+			"import": "./dist/script/engine2/commands/zoom.cmd.js",
+			"development": "./src/script/engine2/commands/zoom.cmd.ts"
 		},
 		"./script/engine2/exec": {
 			"types": "./dist/script/engine2/exec.d.ts",
-			"import": "./dist/script/engine2/exec.js"
+			"import": "./dist/script/engine2/exec.js",
+			"development": "./src/script/engine2/exec.ts"
 		},
 		"./script/engine2/exec.context": {
 			"types": "./dist/script/engine2/exec.context.d.ts",
-			"import": "./dist/script/engine2/exec.context.js"
+			"import": "./dist/script/engine2/exec.context.js",
+			"development": "./src/script/engine2/exec.context.ts"
 		},
 		"./script/engine2/expr.eval": {
 			"types": "./dist/script/engine2/expr.eval.d.ts",
-			"import": "./dist/script/engine2/expr.eval.js"
+			"import": "./dist/script/engine2/expr.eval.js",
+			"development": "./src/script/engine2/expr.eval.ts"
 		},
 		"./script/engine2/functions/addfunctions": {
 			"types": "./dist/script/engine2/functions/addfunctions.d.ts",
-			"import": "./dist/script/engine2/functions/addfunctions.js"
+			"import": "./dist/script/engine2/functions/addfunctions.js",
+			"development": "./src/script/engine2/functions/addfunctions.ts"
 		},
 		"./script/engine2/functions/entity.function": {
 			"types": "./dist/script/engine2/functions/entity.function.d.ts",
-			"import": "./dist/script/engine2/functions/entity.function.js"
+			"import": "./dist/script/engine2/functions/entity.function.js",
+			"development": "./src/script/engine2/functions/entity.function.ts"
 		},
 		"./script/engine2/functions/extractfields.function": {
 			"types": "./dist/script/engine2/functions/extractfields.function.d.ts",
-			"import": "./dist/script/engine2/functions/extractfields.function.js"
+			"import": "./dist/script/engine2/functions/extractfields.function.js",
+			"development": "./src/script/engine2/functions/extractfields.function.ts"
 		},
 		"./script/engine2/functions/functions.store": {
 			"types": "./dist/script/engine2/functions/functions.store.d.ts",
-			"import": "./dist/script/engine2/functions/functions.store.js"
+			"import": "./dist/script/engine2/functions/functions.store.js",
+			"development": "./src/script/engine2/functions/functions.store.ts"
 		},
 		"./script/engine2/functions/goto.function": {
 			"types": "./dist/script/engine2/functions/goto.function.d.ts",
-			"import": "./dist/script/engine2/functions/goto.function.js"
+			"import": "./dist/script/engine2/functions/goto.function.js",
+			"development": "./src/script/engine2/functions/goto.function.ts"
 		},
 		"./script/engine2/functions/log.function": {
 			"types": "./dist/script/engine2/functions/log.function.d.ts",
-			"import": "./dist/script/engine2/functions/log.function.js"
+			"import": "./dist/script/engine2/functions/log.function.js",
+			"development": "./src/script/engine2/functions/log.function.ts"
 		},
 		"./script/engine2/functions/math.function": {
 			"types": "./dist/script/engine2/functions/math.function.d.ts",
-			"import": "./dist/script/engine2/functions/math.function.js"
+			"import": "./dist/script/engine2/functions/math.function.js",
+			"development": "./src/script/engine2/functions/math.function.ts"
 		},
 		"./script/engine2/functions/spawn.function": {
 			"types": "./dist/script/engine2/functions/spawn.function.d.ts",
-			"import": "./dist/script/engine2/functions/spawn.function.js"
+			"import": "./dist/script/engine2/functions/spawn.function.js",
+			"development": "./src/script/engine2/functions/spawn.function.ts"
 		},
 		"./script/engine2/functions/timer.function": {
 			"types": "./dist/script/engine2/functions/timer.function.d.ts",
-			"import": "./dist/script/engine2/functions/timer.function.js"
+			"import": "./dist/script/engine2/functions/timer.function.js",
+			"development": "./src/script/engine2/functions/timer.function.ts"
 		},
 		"./script/engine2/string.eval": {
 			"types": "./dist/script/engine2/string.eval.d.ts",
-			"import": "./dist/script/engine2/string.eval.js"
+			"import": "./dist/script/engine2/string.eval.js",
+			"development": "./src/script/engine2/string.eval.ts"
 		},
 		"./traits/animation_path.trait": {
 			"types": "./dist/traits/animation_path.trait.d.ts",
-			"import": "./dist/traits/animation_path.trait.js"
+			"import": "./dist/traits/animation_path.trait.js",
+			"development": "./src/traits/animation_path.trait.ts"
 		},
 		"./traits/animation.trait": {
 			"types": "./dist/traits/animation.trait.d.ts",
-			"import": "./dist/traits/animation.trait.js"
+			"import": "./dist/traits/animation.trait.js",
+			"development": "./src/traits/animation.trait.ts"
 		},
 		"./traits/bounce.trait": {
 			"types": "./dist/traits/bounce.trait.d.ts",
-			"import": "./dist/traits/bounce.trait.js"
+			"import": "./dist/traits/bounce.trait.js",
+			"development": "./src/traits/bounce.trait.ts"
 		},
 		"./traits/boundingBox.trait": {
 			"types": "./dist/traits/boundingBox.trait.d.ts",
-			"import": "./dist/traits/boundingBox.trait.js"
+			"import": "./dist/traits/boundingBox.trait.js",
+			"development": "./src/traits/boundingBox.trait.ts"
 		},
 		"./traits/fade.trait": {
 			"types": "./dist/traits/fade.trait.d.ts",
-			"import": "./dist/traits/fade.trait.js"
+			"import": "./dist/traits/fade.trait.js",
+			"development": "./src/traits/fade.trait.ts"
 		},
 		"./traits/gravity.trait": {
 			"types": "./dist/traits/gravity.trait.d.ts",
-			"import": "./dist/traits/gravity.trait.js"
+			"import": "./dist/traits/gravity.trait.js",
+			"development": "./src/traits/gravity.trait.ts"
 		},
-		"./traits/index": {
+		"./traits/": {
 			"types": "./dist/traits/index.d.ts",
-			"import": "./dist/traits/index.js"
+			"import": "./dist/traits/index.js",
+			"development": "./src/traits/index.ts"
 		},
 		"./traits/keyboard_player.trait": {
 			"types": "./dist/traits/keyboard_player.trait.d.ts",
-			"import": "./dist/traits/keyboard_player.trait.js"
+			"import": "./dist/traits/keyboard_player.trait.js",
+			"development": "./src/traits/keyboard_player.trait.ts"
 		},
 		"./traits/killable.trait": {
 			"types": "./dist/traits/killable.trait.d.ts",
-			"import": "./dist/traits/killable.trait.js"
+			"import": "./dist/traits/killable.trait.js",
+			"development": "./src/traits/killable.trait.ts"
 		},
 		"./traits/killOffscreen.trait": {
 			"types": "./dist/traits/killOffscreen.trait.d.ts",
-			"import": "./dist/traits/killOffscreen.trait.js"
+			"import": "./dist/traits/killOffscreen.trait.js",
+			"development": "./src/traits/killOffscreen.trait.ts"
 		},
 		"./traits/mouseX.trait": {
 			"types": "./dist/traits/mouseX.trait.d.ts",
-			"import": "./dist/traits/mouseX.trait.js"
+			"import": "./dist/traits/mouseX.trait.js",
+			"development": "./src/traits/mouseX.trait.ts"
 		},
 		"./traits/mouseXY.trait": {
 			"types": "./dist/traits/mouseXY.trait.d.ts",
-			"import": "./dist/traits/mouseXY.trait.js"
+			"import": "./dist/traits/mouseXY.trait.js",
+			"development": "./src/traits/mouseXY.trait.ts"
 		},
 		"./traits/offscreen.trait": {
 			"types": "./dist/traits/offscreen.trait.d.ts",
-			"import": "./dist/traits/offscreen.trait.js"
+			"import": "./dist/traits/offscreen.trait.js",
+			"development": "./src/traits/offscreen.trait.ts"
 		},
 		"./traits/physics.trait": {
 			"types": "./dist/traits/physics.trait.d.ts",
-			"import": "./dist/traits/physics.trait.js"
+			"import": "./dist/traits/physics.trait.js",
+			"development": "./src/traits/physics.trait.ts"
 		},
 		"./traits/player.trait": {
 			"types": "./dist/traits/player.trait.d.ts",
-			"import": "./dist/traits/player.trait.js"
+			"import": "./dist/traits/player.trait.js",
+			"development": "./src/traits/player.trait.ts"
 		},
 		"./traits/solid.trait": {
 			"types": "./dist/traits/solid.trait.d.ts",
-			"import": "./dist/traits/solid.trait.js"
+			"import": "./dist/traits/solid.trait.js",
+			"development": "./src/traits/solid.trait.ts"
 		},
 		"./traits/spawner.trait": {
 			"types": "./dist/traits/spawner.trait.d.ts",
-			"import": "./dist/traits/spawner.trait.js"
+			"import": "./dist/traits/spawner.trait.js",
+			"development": "./src/traits/spawner.trait.ts"
 		},
 		"./traits/timer.trait": {
 			"types": "./dist/traits/timer.trait.d.ts",
-			"import": "./dist/traits/timer.trait.js"
+			"import": "./dist/traits/timer.trait.js",
+			"development": "./src/traits/timer.trait.ts"
 		},
 		"./traits/Trait": {
 			"types": "./dist/traits/Trait.d.ts",
-			"import": "./dist/traits/Trait.js"
+			"import": "./dist/traits/Trait.js",
+			"development": "./src/traits/Trait.ts"
 		},
 		"./traits/Trait.factory": {
 			"types": "./dist/traits/Trait.factory.d.ts",
-			"import": "./dist/traits/Trait.factory.js"
+			"import": "./dist/traits/Trait.factory.js",
+			"development": "./src/traits/Trait.factory.ts"
 		},
 		"./traits/trap.trait": {
 			"types": "./dist/traits/trap.trait.d.ts",
-			"import": "./dist/traits/trap.trait.js"
+			"import": "./dist/traits/trap.trait.js",
+			"development": "./src/traits/trap.trait.ts"
 		},
 		"./traits/velocity.trait": {
 			"types": "./dist/traits/velocity.trait.d.ts",
-			"import": "./dist/traits/velocity.trait.js"
+			"import": "./dist/traits/velocity.trait.js",
+			"development": "./src/traits/velocity.trait.ts"
 		},
 		"./traits/xdrag.trait": {
 			"types": "./dist/traits/xdrag.trait.d.ts",
-			"import": "./dist/traits/xdrag.trait.js"
+			"import": "./dist/traits/xdrag.trait.js",
+			"development": "./src/traits/xdrag.trait.ts"
 		},
 		"./types/direction.type": {
 			"types": "./dist/types/direction.type.d.ts",
-			"import": "./dist/types/direction.type.js"
+			"import": "./dist/types/direction.type.js",
+			"development": "./src/types/direction.type.ts"
 		},
 		"./types/engine.types": {
 			"types": "./dist/types/engine.types.d.ts",
-			"import": "./dist/types/engine.types.js"
+			"import": "./dist/types/engine.types.js",
+			"development": "./src/types/engine.types.ts"
 		},
 		"./types/index": {
 			"types": "./dist/types/index.d.ts",
-			"import": "./dist/types/index.js"
+			"import": "./dist/types/index.js",
+			"development": "./src/types/index.ts"
 		},
 		"./types/operation.types": {
 			"types": "./dist/types/operation.types.d.ts",
-			"import": "./dist/types/operation.types.js"
+			"import": "./dist/types/operation.types.js",
+			"development": "./src/types/operation.types.ts"
 		},
 		"./types/typescript.types": {
 			"types": "./dist/types/typescript.types.d.ts",
-			"import": "./dist/types/typescript.types.js"
+			"import": "./dist/types/typescript.types.js",
+			"development": "./src/types/typescript.types.ts"
 		},
 		"./types/value.types": {
 			"types": "./dist/types/value.types.d.ts",
-			"import": "./dist/types/value.types.js"
+			"import": "./dist/types/value.types.js",
+			"development": "./src/types/value.types.ts"
 		},
 		"./utils/canvas.utils": {
 			"types": "./dist/utils/canvas.utils.d.ts",
-			"import": "./dist/utils/canvas.utils.js"
+			"import": "./dist/utils/canvas.utils.js",
+			"development": "./src/utils/canvas.utils.ts"
 		},
 		"./utils/createSpriteSheet.util": {
 			"types": "./dist/utils/createSpriteSheet.util.d.ts",
-			"import": "./dist/utils/createSpriteSheet.util.js"
+			"import": "./dist/utils/createSpriteSheet.util.js",
+			"development": "./src/utils/createSpriteSheet.util.ts"
 		},
 		"./utils/gamepad.util": {
 			"types": "./dist/utils/gamepad.util.d.ts",
-			"import": "./dist/utils/gamepad.util.js"
+			"import": "./dist/utils/gamepad.util.js",
+			"development": "./src/utils/gamepad.util.ts"
 		},
 		"./utils/id.util": {
 			"types": "./dist/utils/id.util.d.ts",
-			"import": "./dist/utils/id.util.js"
+			"import": "./dist/utils/id.util.js",
+			"development": "./src/utils/id.util.ts"
 		},
 		"./utils/loaders.util": {
 			"types": "./dist/utils/loaders.util.d.ts",
-			"import": "./dist/utils/loaders.util.js"
+			"import": "./dist/utils/loaders.util.js",
+			"development": "./src/utils/loaders.util.ts"
 		},
 		"./utils/maths/BBox.class": {
 			"types": "./dist/utils/maths/BBox.class.d.ts",
-			"import": "./dist/utils/maths/BBox.class.js"
-		},
-		"./utils/maths/BBox.test": {
-			"types": "./dist/utils/maths/BBox.test.d.ts",
-			"import": "./dist/utils/maths/BBox.test.js"
-		},
-		"./utils/maths/bbox.util": {
-			"types": "./dist/utils/maths/bbox.util.d.ts",
-			"import": "./dist/utils/maths/bbox.util.js"
-		},
-		"./utils/maths/grid.math": {
-			"types": "./dist/utils/maths/grid.math.d.ts",
-			"import": "./dist/utils/maths/grid.math.js"
-		},
-		"./utils/maths/grid.test": {
-			"types": "./dist/utils/maths/grid.test.d.ts",
-			"import": "./dist/utils/maths/grid.test.js"
-		},
-		"./utils/maths/index": {
-			"types": "./dist/utils/maths/index.d.ts",
-			"import": "./dist/utils/maths/index.js"
+			"import": "./dist/utils/maths/BBox.class.js",
+			"development": "./src/utils/maths/BBox.class.ts"
 		},
 		"./utils/maths/math": {
 			"types": "./dist/utils/maths/math.d.ts",
-			"import": "./dist/utils/maths/math.js"
+			"import": "./dist/utils/maths/math.js",
+			"development": "./src/utils/maths/math.ts"
+		},
+		"./utils/maths/bbox.util": {
+			"types": "./dist/utils/maths/bbox.util.d.ts",
+			"import": "./dist/utils/maths/bbox.util.js",
+			"development": "./src/utils/maths/bbox.util.ts"
+		},
+		"./utils/maths/grid.math": {
+			"types": "./dist/utils/maths/grid.math.d.ts",
+			"import": "./dist/utils/maths/grid.math.js",
+			"development": "./src/utils/maths/grid.math.ts"
+		},
+		"./utils/maths/BBox.test": {
+			"types": "./dist/utils/maths/BBox.test.d.ts",
+			"import": "./dist/utils/maths/BBox.test.js",
+			"development": "./src/utils/maths/BBox.test.ts"
+		},
+		"./utils/maths/grid.test": {
+			"types": "./dist/utils/maths/grid.test.d.ts",
+			"import": "./dist/utils/maths/grid.test.js",
+			"development": "./src/utils/maths/grid.test.ts"
+		},
+		"./utils/maths/index": {
+			"types": "./dist/utils/maths/index.d.ts",
+			"import": "./dist/utils/maths/index.js",
+			"development": "./src/utils/maths/index.ts"
 		},
 		"./utils/object.util": {
 			"types": "./dist/utils/object.util.d.ts",
-			"import": "./dist/utils/object.util.js"
+			"import": "./dist/utils/object.util.js",
+			"development": "./src/utils/object.util.ts"
 		},
 		"./utils/path.util": {
 			"types": "./dist/utils/path.util.d.ts",
-			"import": "./dist/utils/path.util.js"
+			"import": "./dist/utils/path.util.js",
+			"development": "./src/utils/path.util.ts"
 		},
 		"./utils/reactive.utils": {
 			"types": "./dist/utils/reactive.utils.d.ts",
-			"import": "./dist/utils/reactive.utils.js"
+			"import": "./dist/utils/reactive.utils.js",
+			"development": "./src/utils/reactive.utils.ts"
 		},
 		"./utils/settings.utils": {
 			"types": "./dist/utils/settings.utils.d.ts",
-			"import": "./dist/utils/settings.utils.js"
+			"import": "./dist/utils/settings.utils.js",
+			"development": "./src/utils/settings.utils.ts"
 		},
 		"./utils/signals.test": {
 			"types": "./dist/utils/signals.test.d.ts",
-			"import": "./dist/utils/signals.test.js"
+			"import": "./dist/utils/signals.test.js",
+			"development": "./src/utils/signals.test.ts"
 		},
 		"./utils/signals.util": {
 			"types": "./dist/utils/signals.util.d.ts",
-			"import": "./dist/utils/signals.util.js"
+			"import": "./dist/utils/signals.util.js",
+			"development": "./src/utils/signals.util.ts"
 		},
 		"./utils/storage.util": {
 			"types": "./dist/utils/storage.util.d.ts",
-			"import": "./dist/utils/storage.util.js"
+			"import": "./dist/utils/storage.util.js",
+			"development": "./src/utils/storage.util.ts"
 		},
 		"./utils/timer.class": {
 			"types": "./dist/utils/timer.class.d.ts",
-			"import": "./dist/utils/timer.class.js"
+			"import": "./dist/utils/timer.class.js",
+			"development": "./src/utils/timer.class.ts"
 		},
 		"./utils/timermanager.class": {
 			"types": "./dist/utils/timermanager.class.d.ts",
-			"import": "./dist/utils/timermanager.class.js"
+			"import": "./dist/utils/timermanager.class.js",
+			"development": "./src/utils/timermanager.class.ts"
 		},
 		"./utils/vars.store": {
 			"types": "./dist/utils/vars.store.d.ts",
-			"import": "./dist/utils/vars.store.js"
+			"import": "./dist/utils/vars.store.js",
+			"development": "./src/utils/vars.store.ts"
 		},
 		"./utils/vars.utils": {
 			"types": "./dist/utils/vars.utils.d.ts",
-			"import": "./dist/utils/vars.utils.js"
+			"import": "./dist/utils/vars.utils.js",
+			"development": "./src/utils/vars.utils.ts"
 		},
 		"./package.json": {
 			"types": "./package.json",

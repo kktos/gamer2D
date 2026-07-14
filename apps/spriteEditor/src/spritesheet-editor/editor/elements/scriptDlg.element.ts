@@ -1,4 +1,4 @@
-import { CompileSyntaxErr, compile } from "gamer2d/script/compiler/compiler";
+import { CompileSyntaxErr, compile } from "gamer2d/script/compiler2/compiler";
 import type { TSpriteSheet } from "gamer2d/script/compiler/ressources/spritesheet.rules";
 import { createSpriteSheet } from "gamer2d/utils/createSpriteSheet.util";
 import { sourceImage, spritesheetSourceText } from "../../shared/main.store.js";

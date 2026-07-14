@@ -1,5 +1,5 @@
 import { Entity } from "gamer2d/entities/Entity";
-import { AnimationTrait, KillableTrait, PhysicsTrait, SolidTrait } from "gamer2d/traits/index";
+import { AnimationTrait, KillableTrait, PhysicsTrait, SolidTrait } from "gamer2d/traits/";
 import { DIRECTIONS } from "gamer2d/types/direction.type";
 import { AI3Trait } from "../traits/ai3.trait.js";
 import { JumpTrait } from "../traits/jump.trait.js";
