@@ -16,5 +16,9 @@ export function parseLayers(parser: NeatParser) {
 		result.push(parseLayer(parser));
 	}
 
+	if (result.length === 0) {
+		throw new Error("A scene must define at least one layer.");
+	}
+
 	return result;
 }

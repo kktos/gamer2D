@@ -21,10 +21,6 @@ export function parseSceneGame(parser: NeatParser) {
 
 	result.layers = parseLayers(parser);
 
-	if (result.layers.length === 0) {
-		throw new Error("A scene must define at least one layer.");
-	}
-
 	parser.consume("PUNCT", "}");
 	return result;
 }
