@@ -8,7 +8,7 @@ const PATTERNS = [
 	// { type: "FUNCALL", regex: String.raw`[a-zA-Z_][a-zA-Z0-9_]*\((?:[^)"']|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')*\)` },
 
 	// Units and numbers
-	// { type: "DIMENSION", regex: String.raw`\d+x\d+` },
+	{ type: "DIMENSION", regex: String.raw`\d+x\d+` },
 	// { type: "PIXEL", regex: String.raw`\d+px` },
 	// { type: "SECONDS", regex: String.raw`\d+s` },
 	{ type: "NUMBER", regex: String.raw`\d+\.\d+|\d+` },
@@ -48,12 +48,14 @@ export type TNeatToken<T extends TTokenType = TTokenType> = {
 };
 
 export class NeatLexer {
-	tokens: TNeatToken[];
-	current: number;
-	positions: Map<string, unknown>;
-	lines: string[];
+	tokens: TNeatToken[] = [];
+	current: number = 0;
+	positions: Map<string, unknown> = new Map();
+	lines: string[] = [];
 
-	constructor() {
+	// constructor() {this.reset();}
+
+	public reset() {
 		this.tokens = [];
 		this.lines = [];
 		this.current = 0;
@@ -110,6 +112,26 @@ export class NeatLexer {
 					case "VARIABLE":
 						token.value = value.slice(1);
 						break;
+					case "DIMENSION": {
+						const parts = value.split("x");
+						this.tokens.push({
+							type: "NUMBER",
+							value: Number.parseFloat(parts[0]),
+							pos: [lineNum + 1, column + 1],
+							rawValue: parts[0],
+						});
+						this.tokens.push({
+							type: "PUNCT",
+							value: ",",
+							pos: [lineNum + 1, column + 1 + parts[0].length],
+							rawValue: "x",
+						});
+						token.type = "NUMBER";
+						token.value = Number.parseFloat(parts[1]);
+						token.pos = [lineNum + 1, column + 1 + parts[0].length + 1];
+						token.rawValue = parts[1];
+						break;
+					}
 				}
 
 				this.tokens.push(token);

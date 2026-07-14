@@ -17,31 +17,32 @@ import { parseSettings } from "./rules/shared/settings.rule";
 import { parseStatementsBlock } from "./rules/shared/statements.rule";
 import { parseValueExpression } from "./rules/shared/value-expr.rule";
 
+const parser = new NeatParser();
+
+parser.addRule("expression", parseValueExpression);
+parser.addRule("assign", parseVariableAssignment);
+parser.addRule("statements", parseStatementsBlock);
+
+parser.addRule("settings", parseSettings);
+parser.addRule("spritesheet", parseSpritesheet);
+parser.addRule("fontsheet", parseFontsheet);
+
+parser.addRule("scene", parseScene);
+parser.addRule("layer", parseLayer);
+
+parser.addRule("scene_display", parseSceneDisplay);
+parser.addRule("scene_level", parseSceneLevel);
+parser.addRule("scene_game", parseSceneGame);
+
+parser.addRule("layer_background", parseLayerBackground);
+parser.addRule("layer_globals", parseLayerGlobals);
+parser.addRule("layer_ui", parseLayerUi);
+parser.addRule("layer_entities", parseLayerEntites);
+parser.addRule("layer_level", parseLayerLevel);
+parser.addRule("layer_worldcollision", parseLayerWorldCollision);
+
 export function compile<T>(text: string, startRule: string, _globals?: Map<string, unknown>, _options?: unknown) {
-	const parser = new NeatParser();
-
-	parser.addRule("expression", parseValueExpression);
-	parser.addRule("assign", parseVariableAssignment);
-	parser.addRule("statements", parseStatementsBlock);
-
-	parser.addRule("settings", parseSettings);
-	parser.addRule("spritesheet", parseSpritesheet);
-	parser.addRule("fontsheet", parseFontsheet);
-
-	parser.addRule("scene", parseScene);
-	parser.addRule("layer", parseLayer);
-
-	parser.addRule("scene_display", parseSceneDisplay);
-	parser.addRule("scene_level", parseSceneLevel);
-	parser.addRule("scene_game", parseSceneGame);
-
-	parser.addRule("layer_background", parseLayerBackground);
-	parser.addRule("layer_globals", parseLayerGlobals);
-	parser.addRule("layer_ui", parseLayerUi);
-	parser.addRule("layer_entities", parseLayerEntites);
-	parser.addRule("layer_level", parseLayerLevel);
-	parser.addRule("layer_worldcollision", parseLayerWorldCollision);
-
+	parser.reset();
 	const result = parser.parse(text, startRule);
 	return result as T;
 }

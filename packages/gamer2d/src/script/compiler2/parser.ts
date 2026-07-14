@@ -12,6 +12,10 @@ export class NeatParser {
 		this.rules = new Map();
 	}
 
+	public reset() {
+		this.lexer.reset();
+	}
+
 	public addRule(name: string, handler: NeatParserRuleHandler) {
 		if (this.rules.has(name)) console.warn(`Parser rule "${name}" is being redefined.`);
 		this.rules.set(name, handler);

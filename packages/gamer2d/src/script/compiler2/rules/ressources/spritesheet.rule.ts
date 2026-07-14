@@ -52,6 +52,7 @@ export function parseSpritesheet(parser: NeatParser) {
 	}
 
 	if (!result.image) throw new SyntaxError(`Missing image property for spritesheet ${result.name}`);
+	if (!result.sprites || result.sprites.length === 0) throw new SyntaxError(`Missing sprites for spritesheet ${result.name}`);
 
 	parser.punct("}");
 
@@ -137,7 +138,9 @@ function parseGrid(parser: NeatParser) {
 	parser.identifier("grid");
 
 	result.size[0] = parser.number();
-	parser.consume(["PUNCT", "IDENTIFIER"], [",", "x"]);
+	// this is now change by the lexex 32x32 -> 32 , 32
+	// parser.consume(["PUNCT", "IDENTIFIER"], [",", "x"]);
+	parser.punct(",");
 	result.size[1] = parser.number();
 
 	if (parser.isIdentifier(["increment", "inc"])) {
@@ -205,7 +208,10 @@ function parseAnimationFrames(parser: NeatParser) {
 	if (parser.is("PUNCT", "[")) {
 		result = [];
 		parser.punct("[");
-		while (!parser.is("PUNCT", ",")) result.push(parser.name());
+		while (!parser.is("PUNCT", "]")) {
+			result.push(parser.name());
+			if (parser.is("PUNCT", ",")) parser.advance();
+		}
 		parser.punct("]");
 	} else {
 		const sprite = parser.name();
