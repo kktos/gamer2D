@@ -28,11 +28,12 @@ parser.addRule("spritesheet", parseSpritesheet);
 parser.addRule("fontsheet", parseFontsheet);
 
 parser.addRule("scene", parseScene);
-parser.addRule("layer", parseLayer);
 
 parser.addRule("scene_display", parseSceneDisplay);
 parser.addRule("scene_level", parseSceneLevel);
 parser.addRule("scene_game", parseSceneGame);
+
+parser.addRule("layer", parseLayer);
 
 parser.addRule("layer_background", parseLayerBackground);
 parser.addRule("layer_globals", parseLayerGlobals);
