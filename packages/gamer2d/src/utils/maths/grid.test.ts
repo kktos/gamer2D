@@ -22,7 +22,15 @@ describe("Grid", () => {
 
 	describe("set and get", () => {
 		it("should set and get a value at a specific grid coordinate", () => {
-			const cellValue: GridCell = new GridCell({ kind: "wall", left: 0, top: 0, right: 16, bottom: 8, indexX: 0, indexY: 0 });
+			const cellValue: GridCell = new GridCell({
+				kind: "wall",
+				left: 0,
+				top: 0,
+				right: 16,
+				bottom: 8,
+				indexX: 0,
+				indexY: 0,
+			});
 			grid.set(2, 3, cellValue);
 			expect(grid.get(2, 3)).toBe(cellValue);
 		});
@@ -36,8 +44,24 @@ describe("Grid", () => {
 		});
 
 		it("should overwrite existing values", () => {
-			const cellValue1: GridCell = new GridCell({ kind: "floor", left: 0, top: 0, right: 16, bottom: 8, indexX: 0, indexY: 0 });
-			const cellValue2: GridCell = new GridCell({ kind: "door", left: 0, top: 0, right: 16, bottom: 8, indexX: 0, indexY: 0 });
+			const cellValue1: GridCell = new GridCell({
+				kind: "floor",
+				left: 0,
+				top: 0,
+				right: 16,
+				bottom: 8,
+				indexX: 0,
+				indexY: 0,
+			});
+			const cellValue2: GridCell = new GridCell({
+				kind: "door",
+				left: 0,
+				top: 0,
+				right: 16,
+				bottom: 8,
+				indexX: 0,
+				indexY: 0,
+			});
 			grid.set(1, 1, cellValue1);
 			expect(grid.get(1, 1)).toBe(cellValue1);
 			grid.set(1, 1, cellValue2);
@@ -47,7 +71,15 @@ describe("Grid", () => {
 
 	describe("delete", () => {
 		it("should delete a value at a specific grid coordinate", () => {
-			const cellValue: GridCell = new GridCell({ kind: "wall", left: 0, top: 0, right: 16, bottom: 8, indexX: 0, indexY: 0 });
+			const cellValue: GridCell = new GridCell({
+				kind: "wall",
+				left: 0,
+				top: 0,
+				right: 16,
+				bottom: 8,
+				indexX: 0,
+				indexY: 0,
+			});
 			grid.set(4, 5, cellValue);
 			expect(grid.get(4, 5)).toBe(cellValue);
 			grid.delete(4, 5);

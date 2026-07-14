@@ -2,9 +2,17 @@ import type { PropertiesInspector } from "../properties.inspector";
 import type { PropertyConfig, PropertyEditor } from "./editors.intf";
 
 export const PointEditor: PropertyEditor = {
-	supports: (config: PropertyConfig, value: unknown) => config.editor === "point" && Array.isArray(value) && value.length === 2,
-	render: (cell: HTMLTableCellElement, key: string, value: [number, number], config: PropertyConfig, inspector: PropertiesInspector) => {
-		let inputs: HTMLInputElement[] | NodeListOf<HTMLInputElement> = cell.querySelectorAll<HTMLInputElement>('input[type="number"]');
+	supports: (config: PropertyConfig, value: unknown) =>
+		config.editor === "point" && Array.isArray(value) && value.length === 2,
+	render: (
+		cell: HTMLTableCellElement,
+		key: string,
+		value: [number, number],
+		config: PropertyConfig,
+		inspector: PropertiesInspector,
+	) => {
+		let inputs: HTMLInputElement[] | NodeListOf<HTMLInputElement> =
+			cell.querySelectorAll<HTMLInputElement>('input[type="number"]');
 		if (!inputs.length) {
 			cell.innerHTML = "";
 			const inputX = document.createElement("input") as HTMLInputElement;

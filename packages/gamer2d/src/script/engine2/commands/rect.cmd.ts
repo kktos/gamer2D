@@ -15,7 +15,11 @@ export function executeRectCommand(command: TNeatRectCommand, context: Execution
 
 	// Handle padding if present
 	let padding = [0, 0];
-	if (command.pad) padding = [evalExpressionAs(command.pad[0], context, "number"), evalExpressionAs(command.pad[1], context, "number")];
+	if (command.pad)
+		padding = [
+			evalExpressionAs(command.pad[0], context, "number"),
+			evalExpressionAs(command.pad[1], context, "number"),
+		];
 
 	relativeX = relativeX - padding[0];
 	relativeY = relativeY - padding[1];

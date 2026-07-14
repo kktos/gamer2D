@@ -67,7 +67,8 @@ export class EntityPool extends Entity {
 	// public collides(gc: GameContext, target: Entity) {}
 
 	update(gc: GameContext, scene) {
-		for (let index = 0; index < this.usedList.length; index++) if (this.usedList[index]) this.pool[index].update(gc, scene);
+		for (let index = 0; index < this.usedList.length; index++)
+			if (this.usedList[index]) this.pool[index].update(gc, scene);
 		this.events.process("*", (...args: unknown[]) => gc.scene?.emit(args[0] as symbol, ...args.slice(1)));
 		this.events.clear();
 	}

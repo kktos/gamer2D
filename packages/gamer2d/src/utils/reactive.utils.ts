@@ -55,7 +55,11 @@ export class ReactiveInterpolator {
 	/**
 	 * Create a reactive text with performance optimizations
 	 */
-	createReactiveText(template: string, onUpdate: (newText: string) => void, options: PerformanceOptions = {}): () => void {
+	createReactiveText(
+		template: string,
+		onUpdate: (newText: string) => void,
+		options: PerformanceOptions = {},
+	): () => void {
 		const opts = { ...this.defaultOptions, ...options };
 		let currentDependencies: string[] = [];
 		let cleanup: (() => void) | undefined;
@@ -190,6 +194,7 @@ export class ReactiveInterpolator {
 			const signal = this.store.getSignal(varName);
 			if (signal) {
 				effect(() => {
+					// oxlint-disable-next-line no-unused-expressions
 					signal.value; // Access to track dependency
 					callback();
 				});
@@ -206,6 +211,7 @@ export class ReactiveInterpolator {
 				const signal = this.store.getSignal(varName);
 				if (signal) {
 					effect(() => {
+						// oxlint-disable-next-line no-unused-expressions
 						signal.value; // Access to track dependency
 
 						// Apply performance optimization for high-frequency vars
@@ -254,6 +260,7 @@ export class ReactiveInterpolator {
 
 		// Single effect watching the memo
 		effect(() => {
+			// oxlint-disable-next-line no-unused-expressions
 			allVariablesMemo.value; // Create dependency
 			executeCallback();
 		});
@@ -432,7 +439,10 @@ export function reactiveExpression<T>(evalFn: (varsUsed: Set<string>) => T, stor
 	const memoSignal = memo(() => {
 		for (const v of varsUsed) {
 			const s = store.getSignal(v);
-			if (s) s.value;
+			if (s) {
+				// oxlint-disable-next-line no-unused-expressions
+				s.value;
+			}
 		}
 		return evalFn(varsUsed);
 	});

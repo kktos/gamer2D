@@ -1,5 +1,11 @@
 import type { NeatParser } from "../../parser";
-import type { TNeatAlignCommand, TNeatBgColorCommand, TNeatColorCommand, TNeatFontCommand, TNeatZoomCommand } from "../../types/commands.type";
+import type {
+	TNeatAlignCommand,
+	TNeatBgColorCommand,
+	TNeatColorCommand,
+	TNeatFontCommand,
+	TNeatZoomCommand,
+} from "../../types/commands.type";
 import { parseValueExpression } from "./value-expr.rule";
 
 export function parseColor(parser: NeatParser): TNeatColorCommand {

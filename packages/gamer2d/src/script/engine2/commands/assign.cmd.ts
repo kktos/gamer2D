@@ -28,7 +28,8 @@ export function executeAssignmentCommand(command: TNeatAssignCommand, context: E
 		context.variables.set(rootVarName, current);
 	}
 
-	if (typeof current !== "object" || Array.isArray(current)) throw new Error(`Cannot assign property to non-object variable: ${rootVarName}`);
+	if (typeof current !== "object" || Array.isArray(current))
+		throw new Error(`Cannot assign property to non-object variable: ${rootVarName}`);
 
 	// Navigate to the parent of the final property
 	for (let i = 1; i < path.length - 1; i++) {
@@ -36,7 +37,8 @@ export function executeAssignmentCommand(command: TNeatAssignCommand, context: E
 
 		if (current[key] === null || current[key] === undefined) current[key] = {};
 
-		if (typeof current[key] !== "object" || Array.isArray(current[key])) throw new Error(`Cannot access property '${key}' on non-object value`);
+		if (typeof current[key] !== "object" || Array.isArray(current[key]))
+			throw new Error(`Cannot access property '${key}' on non-object value`);
 
 		current = current[key] as Record<string, unknown>;
 	}

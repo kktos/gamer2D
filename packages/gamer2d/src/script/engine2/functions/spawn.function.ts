@@ -17,7 +17,8 @@ export function fnSpawn(context: ExecutionContext, ...args: unknown[]) {
 
 	const params = args[0] as SpawnParams;
 
-	if (typeof params !== "object" || params?.type === undefined) throw new TypeError("Function spawn() expect an object like { type: '', at: { x: 0, y: 0 } }");
+	if (typeof params !== "object" || params?.type === undefined)
+		throw new TypeError("Function spawn() expect an object like { type: '', at: { x: 0, y: 0 } }");
 
 	const entity = createEntityByName(params.type, params);
 

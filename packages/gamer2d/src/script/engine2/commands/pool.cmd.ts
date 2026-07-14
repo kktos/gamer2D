@@ -18,7 +18,9 @@ export function executePoolCommand(command: TNeatPoolCommand, context: Execution
 
 	if (command.traits) addTraits(command.traits, entityPool, context);
 
-	for (let idx = 0; idx < spawnCount; idx++) entityPool; //.use();
+	for (let idx = 0; idx < spawnCount; idx++) {
+		// entityPool.use();
+	}
 
 	gc.scene?.addTask(Events.TASK_ADD_ENTITY, entityPool);
 	return entityPool;

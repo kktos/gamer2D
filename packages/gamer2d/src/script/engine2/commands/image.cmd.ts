@@ -5,8 +5,14 @@ import { evalExpressionAs } from "../expr.eval";
 import { interpolateString } from "../string.eval";
 
 export function executeImageCommand(command: TNeatImageCommand, context: ExecutionContext) {
-	const x = reactiveExpression((varsUsed) => evalExpressionAs(command.at.x, context, "number", varsUsed), context.variables);
-	const y = reactiveExpression((varsUsed) => evalExpressionAs(command.at.y, context, "number", varsUsed), context.variables);
+	const x = reactiveExpression(
+		(varsUsed) => evalExpressionAs(command.at.x, context, "number", varsUsed),
+		context.variables,
+	);
+	const y = reactiveExpression(
+		(varsUsed) => evalExpressionAs(command.at.y, context, "number", varsUsed),
+		context.variables,
+	);
 
 	const srcString = evalExpressionAs(command.source, context, "string");
 	const source = reactiveExpression((varsUsed) => interpolateString(srcString, context, varsUsed), context.variables);

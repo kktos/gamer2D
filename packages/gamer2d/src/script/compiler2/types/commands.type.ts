@@ -272,4 +272,7 @@ export type TNeatButtonInstantiationWithoutBodyCommand = {
 	content?: TNeatExpression;
 };
 
-export type TNeatButtonCommand = TNeatButtonDefineCommand | TNeatButtonInstantiationWithBodyCommand | TNeatButtonInstantiationWithoutBodyCommand;
+export type TNeatButtonCommand =
+	| TNeatButtonDefineCommand
+	| TNeatButtonInstantiationWithBodyCommand
+	| TNeatButtonInstantiationWithoutBodyCommand;

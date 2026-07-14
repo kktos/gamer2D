@@ -43,7 +43,10 @@ export class NeatParser {
 		}
 	}
 
-	public consume<T extends TTokenType>(expectedType: T, expectedValue?: TokenValueMap[T] | TokenValueMap[T][]): TNeatToken<T>;
+	public consume<T extends TTokenType>(
+		expectedType: T,
+		expectedValue?: TokenValueMap[T] | TokenValueMap[T][],
+	): TNeatToken<T>;
 	public consume(expectedType: TTokenType[], expectedValue?: unknown | unknown[]): TNeatToken;
 	public consume(expectedType: TTokenType | TTokenType[], expectedValue?: unknown | unknown[]): TNeatToken {
 		// biome-ignore lint/suspicious/noExplicitAny: wasn't able to avoid it

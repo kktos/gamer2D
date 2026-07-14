@@ -3,7 +3,13 @@ import { ResourceManager } from "../game";
 import type { SpriteSheet } from "../game/Spritesheet";
 import type { GameContext } from "../game/types/GameContext";
 import type { Scene } from "../scenes/Scene";
-import { type ITraitCollides, type ITraitObstructedOn, type ITraitUpdate, type Trait, TraitDict } from "../traits/Trait";
+import {
+	type ITraitCollides,
+	type ITraitObstructedOn,
+	type ITraitUpdate,
+	type Trait,
+	TraitDict,
+} from "../traits/Trait";
 import { getTraitClassname } from "../traits/Trait.factory";
 import { DIRECTIONS } from "../types/direction.type";
 import { generateID } from "../utils/id.util";

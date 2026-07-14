@@ -34,7 +34,11 @@ describe("parseValueExpression with function/method calls", () => {
 
 	it("should parse nested expressions in expressions", () => {
 		const ast = parse("1 + 2 /($x + 3))");
-		expect(ast).toStrictEqual({ op: "/", left: { op: "+", left: 1, right: 2 }, right: { op: "+", left: { variable: "x" }, right: 3 } });
+		expect(ast).toStrictEqual({
+			op: "/",
+			left: { op: "+", left: 1, right: 2 },
+			right: { op: "+", left: { variable: "x" }, right: 3 },
+		});
 	});
 
 	it("should support complex chains with expressions", () => {

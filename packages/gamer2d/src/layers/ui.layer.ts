@@ -38,7 +38,7 @@ export class UiLayer extends HTMLLayer {
 	private views: TViewDef[];
 
 	constructor(gc: GameContext, parent: Scene, sheet) {
-		super(gc, parent, "ui", sheet.ui);
+		super(gc, parent, "ui" /*sheet.ui*/);
 
 		this.font = Font.get(sheet.font);
 

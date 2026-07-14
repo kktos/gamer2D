@@ -3,9 +3,17 @@ import type { PropertyConfig, PropertyEditor } from "./editors.intf";
 
 export const ArrayEditor: PropertyEditor = {
 	supports: (config: PropertyConfig, value: unknown): boolean =>
-		config.editor === "array" && Array.isArray(value) && (value.every((v) => typeof v === "string") || value.every((v) => typeof v === "number")),
+		config.editor === "array" &&
+		Array.isArray(value) &&
+		(value.every((v) => typeof v === "string") || value.every((v) => typeof v === "number")),
 
-	render: (cell: HTMLTableCellElement, key: string, value: string[] | number[], _config: PropertyConfig, inspector: PropertiesInspector): void => {
+	render: (
+		cell: HTMLTableCellElement,
+		key: string,
+		value: string[] | number[],
+		_config: PropertyConfig,
+		inspector: PropertiesInspector,
+	): void => {
 		cell.innerHTML = "";
 		const isNumberArray = value.every((v) => typeof v === "number");
 

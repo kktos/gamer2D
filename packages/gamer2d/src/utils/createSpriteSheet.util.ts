@@ -1,5 +1,10 @@
 import { SpriteSheet } from "../game/Spritesheet";
-import type { TSpriteDef, TSpriteDefTiles, TSpriteSheet, TSpriteSheetGrid } from "../script/compiler2/rules/ressources/spritesheet.rule";
+import type {
+	TSpriteDef,
+	TSpriteDefTiles,
+	TSpriteSheet,
+	TSpriteSheetGrid,
+} from "../script/compiler2/rules/ressources/spritesheet.rule";
 
 export function createSpriteSheet(sheet: TSpriteSheet, img: HTMLImageElement | HTMLCanvasElement) {
 	const s = new SpriteSheet(sheet.name, img);
@@ -36,7 +41,8 @@ export function addDefsToSpriteSheet(sheet: Partial<TSpriteSheet>, s: SpriteShee
 		dx *= width + offsetX;
 		dy *= height + offsetY;
 
-		for (let idx = 0; idx < tiles.count; idx++) s.define(`${baseName}-${nameSuffix + idx}`, { x: x + idx * dx, y: y + idx * dy, width, height }, { scale });
+		for (let idx = 0; idx < tiles.count; idx++)
+			s.define(`${baseName}-${nameSuffix + idx}`, { x: x + idx * dx, y: y + idx * dy, width, height }, { scale });
 		nameSuffix += tiles.count;
 	};
 

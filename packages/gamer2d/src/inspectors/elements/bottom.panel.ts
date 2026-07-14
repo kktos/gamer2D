@@ -154,7 +154,15 @@ DIV.btn.icn {
     <div class="panel-content" part="content"></div>
 `;
 
-type TProps = "panelTitle" | "initialHeight" | "minHeight" | "maxHeight" | "closable" | "resizable" | "opened" | "panelZIndex";
+type TProps =
+	| "panelTitle"
+	| "initialHeight"
+	| "minHeight"
+	| "maxHeight"
+	| "closable"
+	| "resizable"
+	| "opened"
+	| "panelZIndex";
 
 export class ResizablePanel extends HTMLElement {
 	private _shadowRoot: ShadowRoot;
@@ -172,7 +180,16 @@ export class ResizablePanel extends HTMLElement {
 	}
 
 	static get observedAttributes() {
-		return ["panel-title", "initial-height", "min-height", "max-height", "closable", "resizable", "opened", "panel-z-index"];
+		return [
+			"panel-title",
+			"initial-height",
+			"min-height",
+			"max-height",
+			"closable",
+			"resizable",
+			"opened",
+			"panel-z-index",
+		];
 	}
 
 	constructor() {
@@ -280,21 +297,24 @@ export class ResizablePanel extends HTMLElement {
 		return this.hasAttribute("closable") && this.getAttribute("closable") !== "false";
 	}
 	set closable(value: boolean) {
-		value ? this.setAttribute("closable", "") : this.removeAttribute("closable");
+		if (value) this.setAttribute("closable", "");
+		else this.removeAttribute("closable");
 	}
 
 	get resizable(): boolean {
 		return this.hasAttribute("resizable") && this.getAttribute("resizable") !== "false";
 	}
 	set resizable(value: boolean) {
-		value ? this.setAttribute("resizable", "") : this.removeAttribute("resizable");
+		if (value) this.setAttribute("resizable", "");
+		else this.removeAttribute("resizable");
 	}
 
 	get opened(): boolean {
 		return this.hasAttribute("opened") && this.getAttribute("opened") !== "false";
 	}
 	set opened(value: boolean) {
-		value ? this.setAttribute("opened", "") : this.removeAttribute("opened");
+		if (value) this.setAttribute("opened", "");
+		else this.removeAttribute("opened");
 	}
 
 	get panelZIndex(): number {

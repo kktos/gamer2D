@@ -2,8 +2,15 @@ import type { PropertiesInspector } from "../properties.inspector";
 import type { PropertyConfig, PropertyEditor } from "./editors.intf";
 
 export const BooleanEditor: PropertyEditor = {
-	supports: (config: PropertyConfig, value: unknown): boolean => config.editor === "boolean" && (typeof value === "boolean" || typeof value === "number"),
-	render: (cell: HTMLTableCellElement, key: string, value: boolean | number, _config: PropertyConfig, inspector: PropertiesInspector): void => {
+	supports: (config: PropertyConfig, value: unknown): boolean =>
+		config.editor === "boolean" && (typeof value === "boolean" || typeof value === "number"),
+	render: (
+		cell: HTMLTableCellElement,
+		key: string,
+		value: boolean | number,
+		_config: PropertyConfig,
+		inspector: PropertiesInspector,
+	): void => {
 		let input = cell.querySelector('input[type="checkbox"]') as HTMLInputElement | null;
 		if (!input) {
 			cell.innerHTML = "";

@@ -7,7 +7,10 @@ export type TupleToUnion<T extends unknown[]> = T[number];
 
 export type RequireNone<KeysType extends PropertyKey> = Partial<Record<KeysType, never>>;
 export type RequireAll<ObjectType, KeysType extends keyof ObjectType> = Required<Pick<ObjectType, KeysType>>;
-export type RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> = (RequireAll<ObjectType, KeysType> | RequireNone<KeysType>) &
+export type RequireAllOrNone<ObjectType, KeysType extends keyof ObjectType = keyof ObjectType> = (
+	| RequireAll<ObjectType, KeysType>
+	| RequireNone<KeysType>
+) &
 	Omit<ObjectType, KeysType>;
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>

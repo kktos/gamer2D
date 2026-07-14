@@ -197,15 +197,46 @@ export class SpriteSheet {
 
 			if (countY > 1) {
 				for (let idx = 0; idx < countY; idx++) {
-					ctx.drawImage(sprites[0], 0, 0, spriteSize.width, spriteSize.height, dx, dy, spriteSize.width, spriteSize.height);
+					ctx.drawImage(
+						sprites[0],
+						0,
+						0,
+						spriteSize.width,
+						spriteSize.height,
+						dx,
+						dy,
+						spriteSize.width,
+						spriteSize.height,
+					);
 					dy += spriteSize.height;
 				}
 			} else if (countX > 1) {
 				for (let idx = 0; idx < countX; idx++) {
-					ctx.drawImage(sprites[0], 0, 0, spriteSize.width, spriteSize.height, dx, dy, spriteSize.width, spriteSize.height);
+					ctx.drawImage(
+						sprites[0],
+						0,
+						0,
+						spriteSize.width,
+						spriteSize.height,
+						dx,
+						dy,
+						spriteSize.width,
+						spriteSize.height,
+					);
 					dx += spriteSize.width;
 				}
-			} else ctx.drawImage(sprites[0], 0, 0, spriteSize.width, spriteSize.height, dx, dy, spriteSize.width, spriteSize.height);
+			} else
+				ctx.drawImage(
+					sprites[0],
+					0,
+					0,
+					spriteSize.width,
+					spriteSize.height,
+					dx,
+					dy,
+					spriteSize.width,
+					spriteSize.height,
+				);
 		}
 
 		// this.sprites.set(name, [canvas]);
@@ -236,7 +267,14 @@ export class SpriteSheet {
 		ctx.drawImage(img, x, y, zoom * img.width, zoom * img.height);
 	}
 
-	drawAnim(name: string, ctx: CanvasRenderingContext2D, x: number, y: number, distance: number, { zoom } = { zoom: 1 }) {
+	drawAnim(
+		name: string,
+		ctx: CanvasRenderingContext2D,
+		x: number,
+		y: number,
+		distance: number,
+		{ zoom } = { zoom: 1 },
+	) {
 		const animation = this.animations.get(name);
 		if (animation) this.draw(animation.frame(distance), ctx, x, y, { flip: 0, zoom });
 	}

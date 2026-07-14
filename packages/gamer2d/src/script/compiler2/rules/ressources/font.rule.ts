@@ -16,7 +16,14 @@ export type TFontSheet = {
 export function parseFontsheet(parser: NeatParser) {
 	parser.identifier("font");
 
-	const result: Partial<TFontSheet> = { name: parser.name(), offsetX: 0, offsetY: 0, gapX: 0, gapY: 0, isMulticolor: false };
+	const result: Partial<TFontSheet> = {
+		name: parser.name(),
+		offsetX: 0,
+		offsetY: 0,
+		gapX: 0,
+		gapY: 0,
+		isMulticolor: false,
+	};
 
 	parser.punct("{");
 
@@ -74,7 +81,7 @@ function parseCharset(parser: NeatParser) {
 		result += parser.string();
 		if (parser.is("PUNCT", ",")) parser.advance();
 	}
-	
+
 	parser.punct("]");
 
 	return result;

@@ -2,22 +2,22 @@ import type { GameContext } from "../game/types/GameContext";
 import type { ResizablePanel } from "../inspectors/elements/bottom.panel";
 import { FloatingWindowElement } from "../inspectors/elements/floating-window.element";
 import type { Scene } from "../scenes/Scene";
-import type { SceneSheetUI } from "../script/compiler/layers/display/display.rules";
+// import type { SceneSheetUI } from "../script/compiler/layers/display/display.rules";
 import { Layer } from "./Layer.class";
 
 let uiElement: ResizablePanel | FloatingWindowElement | undefined;
 
 export class HTMLLayer extends Layer {
-	constructor(gc: GameContext, parent: Scene, name: string, layout?: SceneSheetUI) {
+	constructor(gc: GameContext, parent: Scene, name: string /* ,layout?: SceneSheetUI */) {
 		super(gc, parent, name);
 
-		if (!layout) return;
+		// if (!layout) return;
 
 		if (!uiElement) uiElement = createUI();
 
 		// uiElement.className = layout.pos === "top" ? "top" : "bottom";
 
-		if (layout.background) uiElement.style.backgroundColor = layout.background.value;
+		// if (layout.background) uiElement.style.backgroundColor = layout.background.value;
 
 		// uiElement.innerHTML = `
 		// 		<div class="grid-column header">
@@ -42,7 +42,10 @@ export class HTMLLayer extends Layer {
 	bindEvents(elm: Element, handler) {
 		const btnList = elm.querySelectorAll(".btn,BUTTON");
 		for (let idx = 0; idx < btnList.length; idx++) {
-			btnList[idx].addEventListener("click", (evt) => evt.target instanceof Element && evt.isTrusted && handler.onClickUIBtn(btnList[idx].id));
+			btnList[idx].addEventListener(
+				"click",
+				(evt) => evt.target instanceof Element && evt.isTrusted && handler.onClickUIBtn(btnList[idx].id),
+			);
 		}
 
 		const inputList = elm.querySelectorAll("INPUT,SELECT,TEXTAREA");

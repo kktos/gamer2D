@@ -1,5 +1,9 @@
 import type { NeatParser } from "../../../parser";
-import type { TNeatButtonCommand, TNeatButtonInstantiationWithBodyCommand, TNeatButtonInstantiationWithoutBodyCommand } from "../../../types/commands.type";
+import type {
+	TNeatButtonCommand,
+	TNeatButtonInstantiationWithBodyCommand,
+	TNeatButtonInstantiationWithoutBodyCommand,
+} from "../../../types/commands.type";
 import { parseAt, parseValueTuple } from "../../shared/common.rule";
 import { parseSprite } from "../../shared/sprite.rule";
 import { parseValueExpression } from "../../shared/value-expr.rule";
@@ -11,7 +15,10 @@ export function parseButton(parser: NeatParser) {
 
 	const result: Partial<TNeatButtonCommand> = { cmd: "BUTTON" };
 
-	if (parser.isString() || (parser.isIdentifier() && !parser.isIdentifier(["size", "at", "pad", "trigger", "content"]))) {
+	if (
+		parser.isString() ||
+		(parser.isIdentifier() && !parser.isIdentifier(["size", "at", "pad", "trigger", "content"]))
+	) {
 		result.id = parser.name();
 	}
 
@@ -71,7 +78,8 @@ export function parseButton(parser: NeatParser) {
 	}
 
 	if (!(result as TNeatButtonInstantiationWithBodyCommand).at) {
-		if (!(result.body && result.id)) throw new Error("Missing required 'id' or block {} argument in button declaration.");
+		if (!(result.body && result.id))
+			throw new Error("Missing required 'id' or block {} argument in button declaration.");
 	} else {
 		if (!result.body && !result.id) throw new Error("Missing required 'id' argument in button command.");
 	}

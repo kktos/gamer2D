@@ -3,7 +3,13 @@ import type { PropertyConfig, PropertyEditor } from "./editors.intf";
 
 export const TextEditor: PropertyEditor = {
 	supports: (config: PropertyConfig, value: unknown): boolean => config.editor === "text" && typeof value === "string",
-	render: (cell: HTMLTableCellElement, key: string, value: string, _config: PropertyConfig, inspector: PropertiesInspector): void => {
+	render: (
+		cell: HTMLTableCellElement,
+		key: string,
+		value: string,
+		_config: PropertyConfig,
+		inspector: PropertiesInspector,
+	): void => {
 		let input = cell.querySelector('input[type="text"]') as HTMLInputElement | null;
 		if (!input) {
 			cell.innerHTML = "";

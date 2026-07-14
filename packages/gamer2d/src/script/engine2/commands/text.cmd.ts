@@ -16,8 +16,14 @@ export function executeTextCommand(command: TNeatTextCommand, context: Execution
 	const text = reactiveExpression((varsUsed) => interpolateString(srcString, context, varsUsed), context.variables);
 
 	const origin = getOrigin(context);
-	const x = reactiveExpression((varsUsed) => origin.x + evalExpressionAs(command.at.x, context, "number", varsUsed), context.variables);
-	const y = reactiveExpression((varsUsed) => origin.y + evalExpressionAs(command.at.y, context, "number", varsUsed), context.variables);
+	const x = reactiveExpression(
+		(varsUsed) => origin.x + evalExpressionAs(command.at.x, context, "number", varsUsed),
+		context.variables,
+	);
+	const y = reactiveExpression(
+		(varsUsed) => origin.y + evalExpressionAs(command.at.y, context, "number", varsUsed),
+		context.variables,
+	);
 
 	let align: ReturnType<typeof evalAlign> | undefined;
 
@@ -37,7 +43,10 @@ export function executeTextCommand(command: TNeatTextCommand, context: Execution
 	if (command.color) {
 		// because TS can't see it's defined
 		const cmdColor = command.color;
-		const color = reactiveExpression((varsUsed) => evalExpressionAs(cmdColor, context, "string", varsUsed), context.variables);
+		const color = reactiveExpression(
+			(varsUsed) => evalExpressionAs(cmdColor, context, "string", varsUsed),
+			context.variables,
+		);
 		textObj.color = color;
 	}
 	if (command.font) {

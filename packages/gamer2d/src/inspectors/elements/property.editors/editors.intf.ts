@@ -9,7 +9,13 @@ export interface PropertyEditor {
 	/**
 	 * Render the editor into the given cell.
 	 */
-	render(cell: HTMLTableCellElement, key: string, value: unknown, config: PropertyConfig, inspector: PropertiesInspector): void;
+	render(
+		cell: HTMLTableCellElement,
+		key: string,
+		value: unknown,
+		config: PropertyConfig,
+		inspector: PropertiesInspector,
+	): void;
 }
 
 // Define these interfaces within the file or import from a shared types file

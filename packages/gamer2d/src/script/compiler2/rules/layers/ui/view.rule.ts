@@ -5,7 +5,10 @@ import { parseAt, parseValueTuple } from "../../shared/common.rule";
 export function parseView(parser: NeatParser) {
 	parser.consume("IDENTIFIER", "view");
 
-	const result: Partial<TNeatViewCommand> = { cmd: "VIEW", id: parser.consume(["STRING", "IDENTIFIER"]).value as string };
+	const result: Partial<TNeatViewCommand> = {
+		cmd: "VIEW",
+		id: parser.consume(["STRING", "IDENTIFIER"]).value as string,
+	};
 
 	loop: while (parser.is("IDENTIFIER")) {
 		switch (parser.peekValue()) {
@@ -29,7 +32,8 @@ export function parseView(parser: NeatParser) {
 		}
 	}
 
-	if (!result.at || !result.size || !result.type) throw new Error("Missing required 'at' or 'size' or 'type' argument in view command.");
+	if (!result.at || !result.size || !result.type)
+		throw new Error("Missing required 'at' or 'size' or 'type' argument in view command.");
 
 	return result as TNeatViewCommand;
 }

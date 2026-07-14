@@ -13,7 +13,11 @@ export function isConstExpression(instructions: TNeatExpression) {
 	return !hasVarOrFn;
 }
 
-export function evalExpression(instructions: TNeatExpression, context: ExecutionContext, varsUsed?: Set<string>): EvalValue {
+export function evalExpression(
+	instructions: TNeatExpression,
+	context: ExecutionContext,
+	varsUsed?: Set<string>,
+): EvalValue {
 	const stack: EvalValue[] = [];
 
 	for (const instr of instructions) {
@@ -41,22 +45,26 @@ export function evalExpression(instructions: TNeatExpression, context: Execution
 						break;
 					}
 					case "-": {
-						if (typeof a !== "number" || typeof b !== "number") throw new Error(`Operands must be numbers for ${instr.op}`);
+						if (typeof a !== "number" || typeof b !== "number")
+							throw new Error(`Operands must be numbers for ${instr.op}`);
 						stack.push(a - b);
 						break;
 					}
 					case "/": {
-						if (typeof a !== "number" || typeof b !== "number") throw new Error(`Operands must be numbers for ${instr.op}`);
+						if (typeof a !== "number" || typeof b !== "number")
+							throw new Error(`Operands must be numbers for ${instr.op}`);
 						stack.push(a / b);
 						break;
 					}
 					case "*": {
-						if (typeof a !== "number" || typeof b !== "number") throw new Error(`Operands must be numbers for ${instr.op}`);
+						if (typeof a !== "number" || typeof b !== "number")
+							throw new Error(`Operands must be numbers for ${instr.op}`);
 						stack.push(a * b);
 						break;
 					}
 					case "%": {
-						if (typeof a !== "number" || typeof b !== "number") throw new Error(`Operands must be numbers for ${instr.op}`);
+						if (typeof a !== "number" || typeof b !== "number")
+							throw new Error(`Operands must be numbers for ${instr.op}`);
 						stack.push(a % b);
 						break;
 					}
@@ -89,7 +97,8 @@ export function evalExpression(instructions: TNeatExpression, context: Execution
 			case "method": {
 				const obj = stack.pop();
 				if (obj === null || obj === undefined) throw new Error("Cannot access property of null or undefined");
-				if (typeof obj !== "object" && !Array.isArray(obj)) throw new Error("Cannot access property of non-object value");
+				if (typeof obj !== "object" && !Array.isArray(obj))
+					throw new Error("Cannot access property of non-object value");
 
 				const args = instr.args.map((arg) => {
 					let result = evalExpression(arg, context, varsUsed);
@@ -122,11 +131,13 @@ export function evalExpression(instructions: TNeatExpression, context: Execution
 				const property = stack.pop();
 				const obj = stack.pop();
 
-				if (typeof property !== "string" && typeof property !== "number") throw new Error("Property name must be a string or a number");
+				if (typeof property !== "string" && typeof property !== "number")
+					throw new Error("Property name must be a string or a number");
 
 				if (obj === null || obj === undefined) throw new Error("Cannot access property of null or undefined");
 
-				if (typeof obj !== "object" && !Array.isArray(obj)) throw new Error("Cannot access property of non-object value");
+				if (typeof obj !== "object" && !Array.isArray(obj))
+					throw new Error("Cannot access property of non-object value");
 
 				const result = Array.isArray(obj) ? (obj as EvalArray)[property] : (obj as EvalObject)[property];
 				if (result === undefined) throw new Error(`Property '${property}' does not exist on object`);
@@ -143,18 +154,45 @@ export function evalExpression(instructions: TNeatExpression, context: Execution
 	return stack[0];
 }
 
-export function evalExpressionAs(instructions: TNeatExpression, context: ExecutionContext, type: "string", varsUsed?: Set<string>): string;
-export function evalExpressionAs(instructions: TNeatExpression, context: ExecutionContext, type: "number", varsUsed?: Set<string>): number;
-export function evalExpressionAs(instructions: TNeatExpression, context: ExecutionContext, type: "boolean", varsUsed?: Set<string>): boolean;
-export function evalExpressionAs(instructions: TNeatExpression, context: ExecutionContext, type: "array", varsUsed?: Set<string>): EvalArray;
-export function evalExpressionAs(instructions: TNeatExpression, context: ExecutionContext, type: string, varsUsed?: Set<string>): unknown {
+export function evalExpressionAs(
+	instructions: TNeatExpression,
+	context: ExecutionContext,
+	type: "string",
+	varsUsed?: Set<string>,
+): string;
+export function evalExpressionAs(
+	instructions: TNeatExpression,
+	context: ExecutionContext,
+	type: "number",
+	varsUsed?: Set<string>,
+): number;
+export function evalExpressionAs(
+	instructions: TNeatExpression,
+	context: ExecutionContext,
+	type: "boolean",
+	varsUsed?: Set<string>,
+): boolean;
+export function evalExpressionAs(
+	instructions: TNeatExpression,
+	context: ExecutionContext,
+	type: "array",
+	varsUsed?: Set<string>,
+): EvalArray;
+export function evalExpressionAs(
+	instructions: TNeatExpression,
+	context: ExecutionContext,
+	type: string,
+	varsUsed?: Set<string>,
+): unknown {
 	const result = evalExpression(instructions, context, varsUsed);
 
 	if (type === "array") {
-		if (!Array.isArray(result)) throw new Error(`Expression did not evaluate to an array. Got type: ${typeof result}, value: ${result}`);
+		if (!Array.isArray(result))
+			throw new Error(`Expression did not evaluate to an array. Got type: ${typeof result}, value: ${result}`);
 	}
 	// biome-ignore lint/suspicious/useValidTypeof: this is valid, biome is lost here :)
-	else if (typeof result !== type) throw new Error(`Expression did not evaluate to a ${type}. Got type: ${typeof result}, value: ${result}`);
+	else if (typeof result !== type)
+		throw new Error(`Expression did not evaluate to a ${type}. Got type: ${typeof result}, value: ${result}`);
 
 	return result;
 }

@@ -1,25 +1,25 @@
 {
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"],
-  "compilerOptions": {
-    "rootDir": "./src",
-    "outDir": "./dist",
-    "target": "ES2022",
-    "module":"esnext",
-    "moduleResolution":  "bundler",
-    "lib": ["ES2022", "DOM"],
-    "skipLibCheck": true,
-    "strict": true,
-    "noImplicitAny": false,
-    "isolatedDeclarations": false,
-    "removeComments": true,
-    
-    "composite": false,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "inlineSources": false,
-  }
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist"],
+	"compilerOptions": {
+		"rootDir": "./src",
+		"outDir": "./dist",
+		"target": "ES2022",
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"lib": ["ES2022", "DOM"],
+		"skipLibCheck": true,
+		"strict": true,
+		"noImplicitAny": false,
+		"isolatedDeclarations": false,
+		"removeComments": true,
+
+		"composite": false,
+		"declaration": true,
+		"declarationMap": true,
+		"sourceMap": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"inlineSources": false
+	}
 }

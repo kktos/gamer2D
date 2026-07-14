@@ -33,7 +33,7 @@ export class ItemList<T = unknown> extends HTMLElement {
 		this._table.addEventListener("click", (event) => {
 			const row = (event.target as HTMLElement).closest("tr[data-row-id]") as HTMLTableRowElement;
 			if (row) {
-				row.dataset.rowId && this.selectRow(row.dataset.rowId);
+				if (row.dataset.rowId) this.selectRow(row.dataset.rowId);
 				this.dispatchEvent(
 					new CustomEvent("item-selected", {
 						detail: { id: row.dataset.rowId },

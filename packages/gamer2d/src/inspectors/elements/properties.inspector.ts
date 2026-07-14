@@ -417,4 +417,13 @@ function createTemplate() {
 	return template.content.cloneNode(true);
 }
 
-PropertiesInspector.registerEditors([NumberEditor, TextEditor, BooleanEditor, SelectEditor, RgbaEditor, VariableEditor, PointEditor, ArrayEditor]);
+PropertiesInspector.registerEditors([
+	NumberEditor,
+	TextEditor,
+	BooleanEditor,
+	SelectEditor,
+	RgbaEditor,
+	VariableEditor,
+	PointEditor,
+	ArrayEditor,
+]);

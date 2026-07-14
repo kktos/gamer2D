@@ -3,7 +3,13 @@ import type { PropertyConfig, PropertyEditor } from "./editors.intf";
 
 export const NumberEditor: PropertyEditor = {
 	supports: (config: PropertyConfig, value: unknown) => config.editor === "number" && typeof value === "number",
-	render: (cell: HTMLTableCellElement, key: string, value: number, config: PropertyConfig, inspector: PropertiesInspector) => {
+	render: (
+		cell: HTMLTableCellElement,
+		key: string,
+		value: number,
+		config: PropertyConfig,
+		inspector: PropertiesInspector,
+	) => {
 		let input = cell.querySelector('input[type="number"]') as HTMLInputElement | null;
 		if (!input) {
 			cell.innerHTML = "";

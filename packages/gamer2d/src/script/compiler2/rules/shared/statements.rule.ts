@@ -59,7 +59,9 @@ export function parseMethodCall(parser: NeatParser, startExpr: TNeatExpression):
 				break;
 			}
 			default:
-				throw new Error(`Expected identifier or variable for property access after '.', got ${nextToken.type} ${nextToken.value}`);
+				throw new Error(
+					`Expected identifier or variable for property access after '.', got ${nextToken.type} ${nextToken.value}`,
+				);
 		}
 	}
 	return object;

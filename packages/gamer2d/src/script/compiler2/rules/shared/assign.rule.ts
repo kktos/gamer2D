@@ -20,7 +20,9 @@ export function parseVariableAssignment(parser: NeatParser, options?: { isConst?
 				memberName = { type: "var", name: parser.variable() };
 				break;
 			default:
-				throw new Error(`Expected identifier or variable for property access in assignment after '.', got ${memberToken.type} ${memberToken.value}`);
+				throw new Error(
+					`Expected identifier or variable for property access in assignment after '.', got ${memberToken.type} ${memberToken.value}`,
+				);
 		}
 
 		path.push(memberName);

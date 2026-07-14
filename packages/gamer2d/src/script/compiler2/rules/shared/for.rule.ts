@@ -1,6 +1,11 @@
 import type { PartialExcept } from "../../../../types";
 import type { NeatParser } from "../../parser";
-import type { TNeatCommand, TNeatForCommand, TNeatRangeForCommand, TNeatVariableForCommand } from "../../types/commands.type";
+import type {
+	TNeatCommand,
+	TNeatForCommand,
+	TNeatRangeForCommand,
+	TNeatVariableForCommand,
+} from "../../types/commands.type";
 import { parseText } from "../layers/ui/text.rule";
 import { parseVariableAssignment } from "./assign.rule";
 import { parseValueTuple } from "./common.rule";

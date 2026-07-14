@@ -9,7 +9,10 @@
 		"clean": "turbo run clean && rm -rf node_modules"
 	},
 	"devDependencies": {
-		"turbo": "^2.10.4"
+		"oxfmt": "^0.59.0",
+		"oxlint": "^1.74.0",
+		"oxlint-tsgolint": "^0.24.0",
+		"turbo": "^2.10.5"
 	},
-	"packageManager": "pnpm@11.10.0"
+	"packageManager": "pnpm@11.11.0"
 }

@@ -20,7 +20,10 @@ export function executeMenuCommand(command: TNeatMenuCommand, context: Execution
 
 	let padding = [0, 0];
 	if (command.selection?.pad)
-		padding = [evalExpressionAs(command.selection.pad[0], context, "number"), evalExpressionAs(command.selection.pad[1], context, "number")];
+		padding = [
+			evalExpressionAs(command.selection.pad[0], context, "number"),
+			evalExpressionAs(command.selection.pad[1], context, "number"),
+		];
 
 	const rectObj: RectDTO = {
 		x: 0,

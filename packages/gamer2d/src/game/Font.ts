@@ -38,7 +38,14 @@ export function loadFontData(sheetDef: TFontSheet) {
 				const y = offsetY + Math.floor(index / charsPerLine) * charHeight;
 				spritesheet.define(char, { x, y, width: sheetDef.width, height: sheetDef.height });
 			}
-			return new Font(sheetDef.name, spritesheet, sheetDef.height, sheetDef.width, hasLowercase(sheetDef.charset), sheetDef.isMulticolor);
+			return new Font(
+				sheetDef.name,
+				spritesheet,
+				sheetDef.height,
+				sheetDef.width,
+				hasLowercase(sheetDef.charset),
+				sheetDef.isMulticolor,
+			);
 		})
 		.catch((err) => console.error("loadImage", sheetDef.image, err));
 }
@@ -76,7 +83,14 @@ export class Font {
 		return fonts.get(name ?? mainFont) as Font;
 	}
 
-	constructor(name: string, spritesheet: SpriteSheet, height: number, width: number, hasLowercase: boolean, isMulticolor: boolean) {
+	constructor(
+		name: string,
+		spritesheet: SpriteSheet,
+		height: number,
+		width: number,
+		hasLowercase: boolean,
+		isMulticolor: boolean,
+	) {
 		this.name = name;
 		this.spritesheet = spritesheet;
 		this.spriteHeight = height;
@@ -298,7 +312,11 @@ export class Font {
 		ctx.putImageData(imageData, 0, 0);
 	}
 
-	private calculateAlignmentOffset(canvas: HTMLCanvasElement, boxWidth?: number, boxHeight?: number): { x: number; y: number } {
+	private calculateAlignmentOffset(
+		canvas: HTMLCanvasElement,
+		boxWidth?: number,
+		boxHeight?: number,
+	): { x: number; y: number } {
 		let offsetX = 0;
 		// to compensate real font height... TODO: in font definition ?
 		let offsetY = 2;

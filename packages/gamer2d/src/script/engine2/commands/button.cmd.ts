@@ -12,7 +12,13 @@ import type {
 	TNeatCommand,
 } from "../../compiler2/types/commands.type";
 import { runCommands } from "../exec";
-import { addButtonDefinition, type ExecutionContext, getButtonDefinition, popOrigin, pushOrigin } from "../exec.context";
+import {
+	addButtonDefinition,
+	type ExecutionContext,
+	getButtonDefinition,
+	popOrigin,
+	pushOrigin,
+} from "../exec.context";
 import { evalExpression, evalExpressionAs } from "../expr.eval";
 
 export function executeButtonCommand(command: TNeatButtonCommand, context: ExecutionContext) {
@@ -20,7 +26,10 @@ export function executeButtonCommand(command: TNeatButtonCommand, context: Execu
 	return inlineButton(command, context);
 }
 
-function inlineButton(command: TNeatButtonInstantiationWithBodyCommand | TNeatButtonInstantiationWithoutBodyCommand, context: ExecutionContext) {
+function inlineButton(
+	command: TNeatButtonInstantiationWithBodyCommand | TNeatButtonInstantiationWithoutBodyCommand,
+	context: ExecutionContext,
+) {
 	const gc = context.gc as GameContext;
 	const buttonObj: ButtonDTO = {
 		x: evalExpressionAs(command.at.x, context, "number"),
@@ -57,7 +66,10 @@ function inlineButton(command: TNeatButtonInstantiationWithBodyCommand | TNeatBu
 
 	entity.selectionRect = getBoundingBox(gc, buttonItems);
 	if (command.pad) {
-		const padding = [evalExpressionAs(command.pad[0], context, "number"), evalExpressionAs(command.pad[1], context, "number")];
+		const padding = [
+			evalExpressionAs(command.pad[0], context, "number"),
+			evalExpressionAs(command.pad[1], context, "number"),
+		];
 		entity.selectionRect.inflate(padding[0], padding[1]);
 	}
 

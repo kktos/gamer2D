@@ -171,17 +171,33 @@ export class NeatLexer {
 	public is(expectedType: TTokenType | TTokenType[], expectedValue?: unknown | unknown[], offset = 0) {
 		const token = this.peek(offset);
 		const typeMatch = Array.isArray(expectedType) ? expectedType.includes(token.type) : token.type === expectedType;
-		const valueMatch = expectedValue === undefined ? true : Array.isArray(expectedValue) ? expectedValue.includes(token.value) : token.value === expectedValue;
+		const valueMatch =
+			expectedValue === undefined
+				? true
+				: Array.isArray(expectedValue)
+					? expectedValue.includes(token.value)
+					: token.value === expectedValue;
 
 		return typeMatch && valueMatch;
 	}
 
-	public consume<T extends TTokenType>(expectedType: T, expectedValue?: TokenValueMap[T] | TokenValueMap[T][]): TNeatToken<T>;
+	public consume<T extends TTokenType>(
+		expectedType: T,
+		expectedValue?: TokenValueMap[T] | TokenValueMap[T][],
+	): TNeatToken<T>;
 	public consume(expectedType: TTokenType[], expectedValue?: unknown | unknown[]): TNeatToken;
-	public consume<T extends TTokenType>(expectedType: T | TTokenType[], expectedValue?: unknown | unknown[]): TNeatToken<T> | TNeatToken {
+	public consume<T extends TTokenType>(
+		expectedType: T | TTokenType[],
+		expectedValue?: unknown | unknown[],
+	): TNeatToken<T> | TNeatToken {
 		const token = this.peek();
 		const typeMatch = Array.isArray(expectedType) ? expectedType.includes(token.type) : token.type === expectedType;
-		const valueMatch = expectedValue === undefined ? true : Array.isArray(expectedValue) ? expectedValue.includes(token.value) : token.value === expectedValue;
+		const valueMatch =
+			expectedValue === undefined
+				? true
+				: Array.isArray(expectedValue)
+					? expectedValue.includes(token.value)
+					: token.value === expectedValue;
 
 		if (typeMatch && valueMatch) return this.advance();
 
@@ -189,17 +205,32 @@ export class NeatLexer {
 		// this.lexer.constructor["throwInvalidToken"]?.(this.lexer.lines, token, expectedType, expectedValue);
 		// return { type: "EOF", value: null } as TNeatToken;
 
-		NeatLexerError.throwInvalidToken(this.lines, token, Array.isArray(expectedType) ? expectedType.join(" or ") : expectedType, expectedValue);
+		NeatLexerError.throwInvalidToken(
+			this.lines,
+			token,
+			Array.isArray(expectedType) ? expectedType.join(" or ") : expectedType,
+			expectedValue,
+		);
 		return { type: "EOF", value: null } as TNeatToken;
 	}
 
 	public expect(expectedType: TTokenType | TTokenType[], expectedValue?: unknown | unknown[]) {
 		const token = this.peek();
 		const typeMatch = Array.isArray(expectedType) ? expectedType.includes(token.type) : token.type === expectedType;
-		const valueMatch = expectedValue === undefined ? true : Array.isArray(expectedValue) ? expectedValue.includes(token.value) : token.value === expectedValue;
+		const valueMatch =
+			expectedValue === undefined
+				? true
+				: Array.isArray(expectedValue)
+					? expectedValue.includes(token.value)
+					: token.value === expectedValue;
 
 		if (typeMatch && valueMatch) return true;
 		// this.lexer.constructor["throwInvalidToken"]?.(this.lexer.lines, token, expectedType, expectedValue);
-		NeatLexerError.throwInvalidToken(this.lines, token, Array.isArray(expectedType) ? expectedType.join(" or ") : expectedType, expectedValue);
+		NeatLexerError.throwInvalidToken(
+			this.lines,
+			token,
+			Array.isArray(expectedType) ? expectedType.join(" or ") : expectedType,
+			expectedValue,
+		);
 	}
 }

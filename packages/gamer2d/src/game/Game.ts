@@ -260,14 +260,15 @@ export class Game {
 			this.gc.tick++;
 			this.gc.deltaTime = deltaTime;
 			this.gc.totalTime += deltaTime;
-			this.gc.gamepad && readGamepad(this.gc, coppola);
+			if (this.gc.gamepad) readGamepad(this.gc, coppola);
 			coppola.update(this.gc);
 		};
 		this.fpsManager.on(onTimerUpdate);
 
 		await coppola.run(startScene);
 
-		for (let idx = 0; idx < GAME_EVENTS.length; idx++) window.addEventListener(GAME_EVENTS[idx], this, { passive: false });
+		for (let idx = 0; idx < GAME_EVENTS.length; idx++)
+			window.addEventListener(GAME_EVENTS[idx], this, { passive: false });
 
 		// console.log("play()");
 		this.play();
@@ -283,9 +284,9 @@ export class Game {
 	// }
 
 	uselessMethodToIncludeHelpers() {
-		addEntity;
-		addLayer;
-		addScene;
-		addTrait;
+		const _a = addEntity;
+		const _b = addLayer;
+		const _c = addScene;
+		const _d = addTrait;
 	}
 }

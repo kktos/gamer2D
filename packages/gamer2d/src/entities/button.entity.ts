@@ -67,7 +67,12 @@ export class ButtonEntity extends Entity {
 
 		if (this.fillcolor) {
 			ctx.fillStyle = this.fillcolor;
-			ctx.fillRect(this.selectionRect.left, this.selectionRect.top, this.selectionRect.width, this.selectionRect.height);
+			ctx.fillRect(
+				this.selectionRect.left,
+				this.selectionRect.top,
+				this.selectionRect.width,
+				this.selectionRect.height,
+			);
 			// ctx.strokeStyle = this.fillcolor;
 			// ctx.strokeRect(this.selectionRect.left, this.selectionRect.top, this.selectionRect.width, this.selectionRect.height);
 		}

@@ -55,7 +55,13 @@ export function drawPixelated(img: HTMLCanvasElement, context: CanvasRenderingCo
 	}
 }
 
-export function drawCropPixelated(img: HTMLImageElement, context: CanvasRenderingContext2D, zoom: number, srcRect, dstRect) {
+export function drawCropPixelated(
+	img: HTMLImageElement,
+	context: CanvasRenderingContext2D,
+	zoom: number,
+	srcRect,
+	dstRect,
+) {
 	if (!img.id) img.id = `__img${lastImageId++}`;
 
 	let idata = idataById[img.id];
@@ -81,7 +87,14 @@ export function drawCropPixelated(img: HTMLImageElement, context: CanvasRenderin
 }
 export type TImageData = { imgData: Uint8ClampedArray<ArrayBufferLike>; width: number };
 
-export function drawZoomedImage({ imgData, width }: TImageData, ctx: CanvasRenderingContext2D, zoom: number, srcRect, x = 0, y = 0) {
+export function drawZoomedImage(
+	{ imgData, width }: TImageData,
+	ctx: CanvasRenderingContext2D,
+	zoom: number,
+	srcRect,
+	x = 0,
+	y = 0,
+) {
 	for (let x2 = 0; x2 < srcRect.w; ++x2) {
 		for (let y2 = 0; y2 < srcRect.h; ++y2) {
 			const i = ((y2 + srcRect.y) * width + (x2 + srcRect.x)) * 4;

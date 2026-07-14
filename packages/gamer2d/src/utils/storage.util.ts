@@ -13,7 +13,7 @@ export class LocalDB {
 
 	static levels(theme: string) {
 		let keys = LocalDB.keys();
-		const re = new RegExp(`^\./levels/${theme}/`);
+		const re = new RegExp(`^./levels/${theme}/`);
 		keys = keys.filter((key) => key.match(re)).sort();
 		return keys.map((key) => ({ key, name: key.replace(/^\.\/levels\//, "") }));
 	}
@@ -71,7 +71,9 @@ export class LocalDB {
 	static isPlayerScoreGoodEnough() {
 		const lastGame = LocalDB.currentPlayer();
 		const highscores = LocalDB.highscores();
-		return !highscores.length || highscores.length < HIGHSCORES_COUNT || highscores.some((i) => i.score < lastGame.score);
+		return (
+			!highscores.length || highscores.length < HIGHSCORES_COUNT || highscores.some((i) => i.score < lastGame.score)
+		);
 	}
 
 	static updateHighscores() {

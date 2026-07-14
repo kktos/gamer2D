@@ -2,8 +2,15 @@ import type { PropertiesInspector } from "../properties.inspector";
 import type { PropertyConfig, PropertyEditor, PropertyEditorOption } from "./editors.intf";
 
 export const SelectEditor: PropertyEditor = {
-	supports: (config: PropertyConfig, _value: unknown): boolean => config.editor === "select" && Array.isArray(config.options),
-	render: (cell: HTMLTableCellElement, key: string, value: unknown, config: PropertyConfig, inspector: PropertiesInspector): void => {
+	supports: (config: PropertyConfig, _value: unknown): boolean =>
+		config.editor === "select" && Array.isArray(config.options),
+	render: (
+		cell: HTMLTableCellElement,
+		key: string,
+		value: unknown,
+		config: PropertyConfig,
+		inspector: PropertiesInspector,
+	): void => {
 		let select = cell.querySelector("select") as HTMLSelectElement | null;
 		const options = config.options as (string | PropertyEditorOption[]) | undefined;
 		if (!select && Array.isArray(options)) {
@@ -23,7 +30,9 @@ export const SelectEditor: PropertyEditor = {
 			}
 			select.addEventListener("change", () => {
 				let selectedValue = select?.value;
-				const originalOption = Array.isArray(options) ? options.find((o) => typeof o !== "string" && String(o.value) === select?.value) : undefined;
+				const originalOption = Array.isArray(options)
+					? options.find((o) => typeof o !== "string" && String(o.value) === select?.value)
+					: undefined;
 				if (originalOption && typeof originalOption !== "string") {
 					selectedValue = String(originalOption.value);
 				} else {

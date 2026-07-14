@@ -5,7 +5,12 @@ import { parseStatementsBlock } from "./statements.rule";
 export function parseOn(parser: NeatParser) {
 	parser.advance(); // consume "on"
 
-	const result: TNeatOnCommand = { cmd: "ON", event: parser.consume(["STRING", "IDENTIFIER"]).rawValue, params: [], statements: [] };
+	const result: TNeatOnCommand = {
+		cmd: "ON",
+		event: parser.consume(["STRING", "IDENTIFIER"]).rawValue,
+		params: [],
+		statements: [],
+	};
 
 	if (parser.isIdentifier("from")) {
 		parser.advance();

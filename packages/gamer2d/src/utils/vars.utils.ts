@@ -2,12 +2,21 @@ import type { Entity } from "../entities/Entity";
 import type { Anim } from "../game/Anim";
 import type { System } from "../layers/display/views/System.view";
 import type { View } from "../layers/display/views/View";
-import type { TText } from "../script/compiler/layers/display/layout/text.rules";
+// import type { TText } from "../script/compiler/layers/display/layout/text.rules";
 import type { Trait } from "../traits/Trait";
 import type { TResultValue, TVarSounds } from "../types/engine.types";
 import type { ArgVariable } from "../types/value.types";
 
-export type TVarTypes = TResultValue | TVarSounds | Map<string, Entity> | Record<string, unknown> | TText | View | System | Trait | Anim | ArgVariable[];
+export type TVarTypes =
+	| TResultValue
+	| TVarSounds
+	| Map<string, Entity>
+	| Record<string, unknown>
+	| /*TText |*/ View
+	| System
+	| Trait
+	| Anim
+	| ArgVariable[];
 // export type TVarDict = Map<string, unknown>;
 
 export class TVars {

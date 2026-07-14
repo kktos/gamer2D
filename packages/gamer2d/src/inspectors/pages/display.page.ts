@@ -26,7 +26,7 @@ export class DisplayPage extends DebugPage {
 		const menu = this.element.querySelector("debug-menu") as DebugMenu;
 
 		this.coppola.currentScene.useLayer("display", (layer) => {
-			const { gc, scene, layout, vars, ...props } = { ...(layer as unknown as Record<string, unknown>) };
+			const { _gc, _scene, layout, vars, ...props } = { ...(layer as unknown as Record<string, unknown>) };
 
 			propsInspector.update(props);
 

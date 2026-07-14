@@ -184,6 +184,7 @@ describe("Signals System", () => {
 			let cleanupCount = 0;
 
 			const tracker = createEffectTracker(() => {
+				// oxlint-disable-next-line no-unused-expressions
 				sig.value; // Depend on signal
 				onCleanup(() => {
 					cleanupCount++;

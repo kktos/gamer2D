@@ -38,7 +38,10 @@ export class SpriteEntity extends Entity {
 	render(gc) {
 		const ctx = gc.viewport.ctx;
 		if (this.currSprite)
-			this.spritesheet?.draw(this.currSprite, ctx, this.bbox.left, this.bbox.top, { flip: this.dir === DIRECTIONS.RIGHT ? 1 : 0, zoom: this.zoom });
+			this.spritesheet?.draw(this.currSprite, ctx, this.bbox.left, this.bbox.top, {
+				flip: this.dir === DIRECTIONS.RIGHT ? 1 : 0,
+				zoom: this.zoom,
+			});
 	}
 }
 

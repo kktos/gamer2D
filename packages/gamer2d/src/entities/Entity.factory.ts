@@ -39,8 +39,17 @@ export type TBaseEntityDTO = {
 export function createEntityByName(nameOrAlias: string, dto: TBaseEntityDTO) {
 	let className: string | undefined;
 
-	if (typeof dto !== "object" || !dto || typeof dto.at !== "object" || !dto.at || typeof dto.at.x !== "number" || typeof dto.at.y !== "number")
-		throw new Error(`Invalid Entity descriptor: it needs at least a position { at : { x: 0, y: 0 } }. Received:"${JSON.stringify(dto)}"`);
+	if (
+		typeof dto !== "object" ||
+		!dto ||
+		typeof dto.at !== "object" ||
+		!dto.at ||
+		typeof dto.at.x !== "number" ||
+		typeof dto.at.y !== "number"
+	)
+		throw new Error(
+			`Invalid Entity descriptor: it needs at least a position { at : { x: 0, y: 0 } }. Received:"${JSON.stringify(dto)}"`,
+		);
 
 	// 1. Check if nameOrAlias is a registered friendly name (alias)
 	className = friendlyNamesToClassNameRegistry[nameOrAlias.toLowerCase()];
@@ -66,5 +75,7 @@ export function createEntityByName(nameOrAlias: string, dto: TBaseEntityDTO) {
 		return new FallbackSpriteEntityClass(nameOrAlias, dto);
 	}
 
-	throw new Error(`Entity class not found for identifier: "${nameOrAlias}". No fallback available or SpriteEntity not registered.`);
+	throw new Error(
+		`Entity class not found for identifier: "${nameOrAlias}". No fallback available or SpriteEntity not registered.`,
+	);
 }

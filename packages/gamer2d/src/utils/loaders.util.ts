@@ -14,7 +14,8 @@ export async function loadImage(name: string): Promise<HTMLImageElement> {
 	const imgBlob = await query.blob();
 
 	// if (!allowedFileTypes.includes(imgBlob.type)) throw new TypeError(`Unknown image type ${imgBlob.type}`);
-	if (!allowedFileTypes.includes(imgBlob.type)) return Promise.reject(`ERROR on ${name}: Unknown image type ${imgBlob.type}`);
+	if (!allowedFileTypes.includes(imgBlob.type))
+		return Promise.reject(`ERROR on ${name}: Unknown image type ${imgBlob.type}`);
 
 	return await new Promise((resolve) => {
 		const image = new Image();

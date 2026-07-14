@@ -33,7 +33,10 @@ interface CommandExecutor {
 const COMMAND_REGISTRY = new Map<string, CommandExecutor>();
 
 // Function to register a command
-export function addCommand<T extends TNeatCommand>(commandName: string, executor: (command: T, context: ExecutionContext) => void) {
+export function addCommand<T extends TNeatCommand>(
+	commandName: string,
+	executor: (command: T, context: ExecutionContext) => void,
+) {
 	COMMAND_REGISTRY.set(commandName, {
 		execute: executor as (command: unknown, context: ExecutionContext) => unknown,
 	});

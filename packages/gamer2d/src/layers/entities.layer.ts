@@ -150,7 +150,12 @@ export class EntitiesLayer extends Layer {
 		if (this.selectedEntity) {
 			const ctx = gc.viewport.ctx;
 			ctx.strokeStyle = "red";
-			ctx.strokeRect(this.selectedEntity.bbox.left, this.selectedEntity.bbox.top, this.selectedEntity.bbox.width, this.selectedEntity.bbox.height);
+			ctx.strokeRect(
+				this.selectedEntity.bbox.left,
+				this.selectedEntity.bbox.top,
+				this.selectedEntity.bbox.width,
+				this.selectedEntity.bbox.height,
+			);
 		}
 	}
 }

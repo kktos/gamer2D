@@ -53,7 +53,8 @@ function renderImage(ctx, resourceManager, image) {
 	const imgCtx = imgCanvas.getContext("2d") as CanvasRenderingContext2D;
 
 	for (let row = 0; row < image.repeat[1]; row++)
-		for (let col = 0; col < image.repeat[0]; col++) ss.draw(sprite, imgCtx, col * size.width * zoom, row * size.height * zoom, { flip: 0, zoom });
+		for (let col = 0; col < image.repeat[0]; col++)
+			ss.draw(sprite, imgCtx, col * size.width * zoom, row * size.height * zoom, { flip: 0, zoom });
 
 	ctx.drawImage(imgCanvas, image.x.value, image.y.value);
 }

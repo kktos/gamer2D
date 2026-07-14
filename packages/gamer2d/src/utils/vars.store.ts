@@ -246,8 +246,14 @@ export class NeatVariableStore<T = unknown> {
 
 	debug(): void {
 		console.log("=== Signal Store Debug ===");
-		console.log("Local variables:", Object.fromEntries(Array.from(this.localStore.entries()).map(([k, v]) => [k, v.value])));
-		console.log("Global variables:", Object.fromEntries(Array.from(this.globalStore.entries()).map(([k, v]) => [k, v.value])));
+		console.log(
+			"Local variables:",
+			Object.fromEntries(Array.from(this.localStore.entries()).map(([k, v]) => [k, v.value])),
+		);
+		console.log(
+			"Global variables:",
+			Object.fromEntries(Array.from(this.globalStore.entries()).map(([k, v]) => [k, v.value])),
+		);
 		console.log("Resolved scope:", Object.fromEntries(this.entriesWithScope()));
 	}
 }

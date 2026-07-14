@@ -4,7 +4,13 @@ import type { PropertyConfig, PropertyEditor } from "./editors.intf";
 
 export const VariableEditor: PropertyEditor = {
 	supports: (_config: PropertyConfig, value: unknown): boolean => value instanceof ArgVariable,
-	render: (cell: HTMLTableCellElement, key: string, value: ArgVariable, _config: PropertyConfig, inspector: PropertiesInspector): void => {
+	render: (
+		cell: HTMLTableCellElement,
+		key: string,
+		value: ArgVariable,
+		_config: PropertyConfig,
+		inspector: PropertiesInspector,
+	): void => {
 		let variableDiv = cell.querySelector("div") as HTMLDivElement | null;
 		if (!variableDiv) {
 			variableDiv = document.createElement("div");

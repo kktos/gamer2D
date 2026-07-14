@@ -104,7 +104,8 @@ export class AnimationPathTrait extends Trait {
 		switch (fn.name) {
 			case "moveTo": {
 				if (args.length !== 2) throw new TypeError("moveTo needs 2 arguments moveTo(x,y)");
-				if (typeof args[0] !== "number" || typeof args[1] !== "number") throw new TypeError("moveTo arguments must be numbers");
+				if (typeof args[0] !== "number" || typeof args[1] !== "number")
+					throw new TypeError("moveTo arguments must be numbers");
 				yield { x: args[0], y: args[1] };
 				break;
 			}
@@ -135,7 +136,8 @@ export class AnimationPathTrait extends Trait {
 
 			case "walkTo": {
 				if (args.length !== 2) throw new TypeError("walkTo needs 2 arguments walkTo(x,y)");
-				if (typeof args[0] !== "number" || typeof args[1] !== "number") throw new TypeError("walkTo arguments must be numbers");
+				if (typeof args[0] !== "number" || typeof args[1] !== "number")
+					throw new TypeError("walkTo arguments must be numbers");
 				const pointGenerator = this.walkAlongLine(entity.bbox.left, entity.bbox.top, args[0], args[1]);
 				yield* withEasing(pointGenerator, this.easingFn, this.duration);
 				break;
@@ -164,7 +166,12 @@ export class AnimationPathTrait extends Trait {
 
 			case "circle": {
 				if (args.length !== 4) throw new TypeError("circle needs 4 arguments circle(duration)");
-				if (typeof args[0] !== "number" || typeof args[1] !== "number" || typeof args[2] !== "number" || typeof args[3] !== "number")
+				if (
+					typeof args[0] !== "number" ||
+					typeof args[1] !== "number" ||
+					typeof args[2] !== "number" ||
+					typeof args[3] !== "number"
+				)
 					throw new TypeError("circle arguments must be numbers");
 				const pointGenerator = this.moveInCircle(args[0], args[1], args[2], args[3]);
 				yield* withEasing(pointGenerator, this.easingFn, this.duration);
@@ -172,7 +179,12 @@ export class AnimationPathTrait extends Trait {
 			}
 		}
 	}
-	private *walkAlongLine(fromX: number, fromY: number, toX: number, toY: number): Generator<Point | null, void, number> {
+	private *walkAlongLine(
+		fromX: number,
+		fromY: number,
+		toX: number,
+		toY: number,
+	): Generator<Point | null, void, number> {
 		const dx = toX - fromX;
 		const dy = toY - fromY;
 
@@ -201,7 +213,12 @@ export class AnimationPathTrait extends Trait {
 		}
 	}
 
-	private *cycleProp(propName: string, valueOrValues: unknown, entity: Entity, mode: "step" | "interpolate" = "step"): Generator<Point | null, void, number> {
+	private *cycleProp(
+		propName: string,
+		valueOrValues: unknown,
+		entity: Entity,
+		mode: "step" | "interpolate" = "step",
+	): Generator<Point | null, void, number> {
 		const currentPos = { x: entity.bbox.left, y: entity.bbox.top };
 
 		const setValue = (value) => {
@@ -259,7 +276,12 @@ export class AnimationPathTrait extends Trait {
 		}
 	}
 
-	private *moveInCircle(centerX: number, centerY: number, radius: number, startAngleDegrees: number): Generator<Point | null, void, number> {
+	private *moveInCircle(
+		centerX: number,
+		centerY: number,
+		radius: number,
+		startAngleDegrees: number,
+	): Generator<Point | null, void, number> {
 		const startAngle = Math.abs(startAngleDegrees) * toRad;
 		const totalAngleChange = Math.sign(startAngleDegrees) >= 0 ? TAU : -TAU; // Full circle
 
@@ -315,7 +337,11 @@ export class AnimationPathTrait extends Trait {
 	}
 }
 
-function* withEasing<T>(generator: Generator<T, void, number>, easingFn: TEasingFunction, duration: number): Generator<T, void, number> {
+function* withEasing<T>(
+	generator: Generator<T, void, number>,
+	easingFn: TEasingFunction,
+	duration: number,
+): Generator<T, void, number> {
 	let elapsedTime = 0;
 	let result = generator.next(0);
 

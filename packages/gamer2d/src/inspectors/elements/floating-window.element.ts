@@ -17,7 +17,17 @@ export class FloatingWindowElement extends HTMLElement {
 	private initialMousePos: { x: number; y: number } | null = null;
 
 	static get observedAttributes() {
-		return ["title", "closeable", "resizable", "minimizable", "minimized", "initial-width", "initial-height", "initial-top", "initial-left"];
+		return [
+			"title",
+			"closeable",
+			"resizable",
+			"minimizable",
+			"minimized",
+			"initial-width",
+			"initial-height",
+			"initial-top",
+			"initial-left",
+		];
 	}
 
 	static bootstrap() {
