@@ -3,7 +3,6 @@ import { compile } from "./compiler";
 import type { TNeatLayer } from "./types/layers.type";
 
 describe("compiler - layer background", () => {
-	
 	it("should compile a background layer with its options", () => {
 		const scriptText = `
 			layer background "bg"

@@ -38,5 +38,4 @@ describe("compiler - scene", () => {
 
 		expect(() => compile<TNeatScene>(scriptText, "scene")).toThrow(/at least one layer/i);
 	});
-
 });

@@ -222,10 +222,8 @@ export type TNeatAnimationCommand = {
 export type TNeatPoolCommand = {
 	cmd: "POOL";
 	spriteName: string;
-	at?: { x: TNeatExpression; y: TNeatExpression };
-	count: TNeatExpression;
+	capacity: TNeatExpression;
 	id: string;
-	spawn?: TNeatExpression;
 	traits?: TNeatExpression;
 };
 
