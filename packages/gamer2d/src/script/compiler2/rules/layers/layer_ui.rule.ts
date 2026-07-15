@@ -16,7 +16,9 @@ import { parseText } from "./ui/text.rule";
 import { parseTimer } from "./ui/timer.rule";
 import { parseView } from "./ui/view.rule";
 
-const COMMAND_HANDLERS = {
+type LayerUiCommandHandler = (parser: NeatParser) => TNeatCommand;
+
+const COMMAND_HANDLERS: Record<string, LayerUiCommandHandler> = {
 	font: parseFont,
 	align: parseAlign,
 	color: parseColor,
@@ -37,24 +39,23 @@ const COMMAND_HANDLERS = {
 	button: parseButton,
 } as const;
 
+function parseLayerUiCommand(parser: NeatParser): TNeatCommand {
+	if (parser.is("VARIABLE")) return parseVariableAssignment(parser);
+
+	const commandName = parser.peekValue();
+	const handler = COMMAND_HANDLERS[ commandName as keyof typeof COMMAND_HANDLERS];
+	if (!handler) throw new Error(`Unexpected UI command: ${commandName}`);
+
+	return handler(parser);
+}
+
 export function parseLayerUi(parser: NeatParser) {
 	parser.consume("PUNCT", "{");
 
 	const result: TNeatCommand[] = [{ cmd: "CLEARCONTEXT" }];
 
 	while (parser.is(["IDENTIFIER", "VARIABLE"])) {
-		if (parser.is("IDENTIFIER")) {
-			const commandName = parser.peekValue();
-			const handler = COMMAND_HANDLERS[commandName as keyof typeof COMMAND_HANDLERS];
-			if (!handler) break;
-			result.push(handler(parser));
-			continue;
-		}
-		if (parser.is("VARIABLE")) {
-			result.push(parseVariableAssignment(parser));
-			continue;
-		}
-		throw new Error("Invalid token");
+		result.push(parseLayerUiCommand(parser));
 	}
 
 	parser.consume("PUNCT", "}");
