@@ -351,6 +351,30 @@
 			"types": "./dist/script/compiler2/compiler.d.ts",
 			"import": "./dist/script/compiler2/compiler.js"
 		},
+		"./script/compiler2/compiler.expression.test": {
+			"types": "./dist/script/compiler2/compiler.expression.test.d.ts",
+			"import": "./dist/script/compiler2/compiler.expression.test.js"
+		},
+		"./script/compiler2/compiler.fontsheet.test": {
+			"types": "./dist/script/compiler2/compiler.fontsheet.test.d.ts",
+			"import": "./dist/script/compiler2/compiler.fontsheet.test.js"
+		},
+		"./script/compiler2/compiler.layer.background.test": {
+			"types": "./dist/script/compiler2/compiler.layer.background.test.d.ts",
+			"import": "./dist/script/compiler2/compiler.layer.background.test.js"
+		},
+		"./script/compiler2/compiler.layer.entities.test": {
+			"types": "./dist/script/compiler2/compiler.layer.entities.test.d.ts",
+			"import": "./dist/script/compiler2/compiler.layer.entities.test.js"
+		},
+		"./script/compiler2/compiler.scene.test": {
+			"types": "./dist/script/compiler2/compiler.scene.test.d.ts",
+			"import": "./dist/script/compiler2/compiler.scene.test.js"
+		},
+		"./script/compiler2/compiler.spritesheet.test": {
+			"types": "./dist/script/compiler2/compiler.spritesheet.test.d.ts",
+			"import": "./dist/script/compiler2/compiler.spritesheet.test.js"
+		},
 		"./script/compiler2/lexer": {
 			"types": "./dist/script/compiler2/lexer.d.ts",
 			"import": "./dist/script/compiler2/lexer.js"
