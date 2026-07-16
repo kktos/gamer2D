@@ -29,7 +29,9 @@ describe("compiler - layer ui", () => {
 				zoom 1.5
 				on click from ui $x $y { $pressed = true }
 				animation bounce paused repeat 3 { $frame = $frame + 1 }
+
 				text "Hello" at 10,20 font "PressStart2P", 16 size 50,10 color blue align center,bottom id title nocache anim $anim traits $traits
+				
 				menu main {
 					selection { background darkblue pad 2,3 }
 					keys { previous "up" next "down" select "enter" }
@@ -37,7 +39,9 @@ describe("compiler - layer ui", () => {
 				}
 				image "sprites/sky.png" at 10,20 repeat 3,4
 				sprite "hero" at 1,2 size 16x16 id avatar dir left anim $run traits $move
-				rect at 0,0 size 100x30 fill black color white anim $pulse traits $panel
+
+				rect 0,0,100,30 paint white,black pad 1,1 anim $pulse traits $panel
+
 				pool enemies {
 					sprite "ghost"
 					capacity 10
@@ -52,7 +56,7 @@ describe("compiler - layer ui", () => {
 				timer tick every 16 ms
 				sound music play
 				button play at 5,5 size 20,8 pad 1,2 trigger go {
-					rect at 0,0 size 20,8 fill black
+					rect 0,0,20,8 fill black
 					text "Play" at 2,2 font "PressStart2P", 12 
 				}
 			}
