@@ -58,7 +58,7 @@ export async function loadLayer(gc: GameContext, name: string) {
 			const scriptText = await gc.resourceManager.loadScene(name);
 			sheet = compile<TNeatLayer>(scriptText, "layer");
 		} catch (e) {
-			console.error((e as Error).message);
+			console.error(`Layer ${name}\n${(e as Error).message}`);
 		}
 	}
 	if (!sheet) throw new Error(`Unknown Layer: "${name}"`);
