@@ -14,7 +14,7 @@ export function parseRect(parser: NeatParser) {
 	parser.consume("PUNCT", ",");
 	const [width, height] = parseValueTuple(parser);
 
-	const result: Partial<TNeatRectCommand> = { cmd: "RECT",at:{x,y},size:{width,height} };
+	const result: Partial<TNeatRectCommand> = { cmd: "RECT", at: { x, y }, size: { width, height } };
 
 	loop: while (parser.is("IDENTIFIER")) {
 		switch (parser.peekValue()) {
