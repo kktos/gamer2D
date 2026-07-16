@@ -52,7 +52,7 @@ export function parseFont(parser: NeatParser) {
 	return fontSpec;
 }
 
-function parseColorValue(parser: NeatParser) {
+export function parseColorValue(parser: NeatParser) {
 	if (parser.is("COLOR")) return parser.color();
 
 	const identifier = parser.identifier();

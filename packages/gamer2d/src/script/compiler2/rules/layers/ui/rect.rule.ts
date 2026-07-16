@@ -1,29 +1,33 @@
 import type { NeatParser } from "../../../parser";
 import type { TNeatRectCommand } from "../../../types/commands.type";
-import { parseAt, parseValueTuple } from "../../shared/common.rule";
-import { parseColor } from "../../shared/style.rule";
+import { parseValueTuple } from "../../shared/common.rule";
+import { parseColor, parseColorValue } from "../../shared/style.rule";
 import { parseValueExpression } from "../../shared/value-expr.rule";
 
+/*
+	rect x,y,w,h [pad h,v] [fill color] [color color] [paint stroke,fill] [anim expr] [traits expr]
+*/
 export function parseRect(parser: NeatParser) {
 	parser.consume("IDENTIFIER", "rect");
 
-	const result: Partial<TNeatRectCommand> = { cmd: "RECT" };
+	const [x, y] = parseValueTuple(parser);
+	parser.consume("PUNCT", ",");
+	const [width, height] = parseValueTuple(parser);
+
+	const result: Partial<TNeatRectCommand> = { cmd: "RECT",at:{x,y},size:{width,height} };
 
 	loop: while (parser.is("IDENTIFIER")) {
 		switch (parser.peekValue()) {
-			case "at": {
-				result.at = parseAt(parser);
-				break;
-			}
-			case "size": {
-				parser.advance();
-				const [width, height] = parseValueTuple(parser);
-				result.size = { width, height };
-				break;
-			}
 			case "pad": {
 				parser.advance();
 				result.pad = parseValueTuple(parser);
+				break;
+			}
+			case "paint": {
+				parser.advance();
+				result.color = parseColorValue(parser);
+				parser.consume("PUNCT", ",");
+				result.fill = parseColorValue(parser);
 				break;
 			}
 			case "fill": {
@@ -47,10 +51,6 @@ export function parseRect(parser: NeatParser) {
 			default:
 				break loop;
 		}
-	}
-
-	if (!result.at || !result.size) {
-		throw new Error("Missing required 'at' or 'size' argument in rect command.");
 	}
 
 	return result as TNeatRectCommand;
