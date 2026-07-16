@@ -58,8 +58,10 @@ export class Font {
 	public size: number;
 	public align: TAlignType;
 	public valign: TAlignType;
+
 	public spritesheet: SpriteSheet;
 	public hasLowercase: boolean;
+
 	public color!: string;
 	public bgcolor!: string;
 

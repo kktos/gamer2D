@@ -2,12 +2,11 @@ import { type TextDTO, TextEntity } from "../../../entities";
 import { Events } from "../../../events";
 import type { GameContext } from "../../../game";
 import { reactiveExpression } from "../../../utils/reactive.utils";
-import { Signal, signal } from "../../../utils/signals.util";
 import type { TNeatTextCommand } from "../../compiler2/types/commands.type";
 import { type ExecutionContext, getOrigin } from "../exec.context";
 import { evalExpression, evalExpressionAs } from "../expr.eval";
 import { interpolateString } from "../string.eval";
-import { alignToNumber } from "./align.cmd";
+import { evalAlign } from "./align.cmd";
 import { evalFont } from "./font.cmd";
 import { addAnims } from "./shared/add.anims";
 import { addTraits } from "./shared/add.traits";
@@ -17,21 +16,24 @@ export function executeTextCommand(command: TNeatTextCommand, context: Execution
 	const text = reactiveExpression((varsUsed) => interpolateString(srcString, context, varsUsed), context.variables);
 
 	const origin = getOrigin(context);
-	const xProp = reactiveExpression((varsUsed) => {
-		let value = evalExpression(command.at.x, context, varsUsed);
-		if (typeof value === "number") value += origin.x;
-		return value;
-	}, context.variables);
-	const yProp = reactiveExpression((varsUsed) => {
-		let value = evalExpression(command.at.y, context, varsUsed);
-		if (typeof value === "number") value += origin.y;
-		return value;
-	}, context.variables);
+	const x = reactiveExpression(
+		(varsUsed) => origin.x + evalExpressionAs(command.at.x, context, "number", varsUsed),
+		context.variables,
+	);
+	const y = reactiveExpression(
+		(varsUsed) => origin.y + evalExpressionAs(command.at.y, context, "number", varsUsed),
+		context.variables,
+	);
+
+	let align: ReturnType<typeof evalAlign> | undefined;
+
+	if (command.align) align = evalAlign(command.align);
+	else if (context.currentAlign) align = { h: context.currentAlign, v: context.currentVAlign };
 
 	const gc = context.gc as GameContext;
 	const textObj: TextDTO = {
-		x: typeof xProp.value === "number" ? (xProp as Signal<number>) : signal(0),
-		y: typeof yProp.value === "number" ? (yProp as Signal<number>) : signal(0),
+		x,
+		y,
 		size: context.currentFontSize ?? 1,
 		bgcolor: context.currentBgColor,
 		text,
@@ -58,18 +60,16 @@ export function executeTextCommand(command: TNeatTextCommand, context: Execution
 		textObj.height = evalExpressionAs(command.size.height, context, "number");
 	}
 
+	if (align) {
+		textObj.align = align.h;
+		if (align.v) textObj.valign = align.v;
+	}
+
 	// let align: ReturnType<typeof evalAlign> | undefined;
 	if (context.currentAlign) {
 		// align = { h: context.currentAlign, v: context.currentVAlign };
 		textObj.align = context.currentAlign;
 		if (context.currentVAlign) textObj.valign = context.currentVAlign;
-	}
-
-	if (typeof xProp.value === "string") {
-		textObj.align = alignToNumber(xProp.value);
-	}
-	if (typeof yProp.value === "string") {
-		textObj.valign = alignToNumber(yProp.value);
 	}
 
 	// if (command.boxAlign) align = evalAlign(command.boxAlign);

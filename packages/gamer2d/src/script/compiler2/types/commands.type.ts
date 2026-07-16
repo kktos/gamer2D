@@ -103,7 +103,7 @@ export type TNeatTextCommand = {
 	color?: TNeatExpression;
 	id?: string;
 	size?: TNeatPropertySize;
-	boxAlign?: TNeatAlignCommand;
+	align?: TNeatAlignCommand;
 	anims?: TNeatExpression;
 	traits?: TNeatExpression;
 	nocache?: boolean;
