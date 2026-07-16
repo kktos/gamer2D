@@ -43,7 +43,7 @@ function parseLayerUiCommand(parser: NeatParser): TNeatCommand {
 	if (parser.is("VARIABLE")) return parseVariableAssignment(parser);
 
 	const commandName = parser.peekValue();
-	const handler = COMMAND_HANDLERS[ commandName as keyof typeof COMMAND_HANDLERS];
+	const handler = COMMAND_HANDLERS[commandName as keyof typeof COMMAND_HANDLERS];
 	if (!handler) throw new Error(`Unexpected UI command: ${commandName}`);
 
 	return handler(parser);

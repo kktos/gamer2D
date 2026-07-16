@@ -10,8 +10,10 @@ const ALIGN_NAMES = {
 	center: 5,
 };
 
-function alignToNumber(alignName: string) {
-	return ALIGN_NAMES[alignName];
+export function alignToNumber(alignName: string) {
+	const alignNumber = ALIGN_NAMES[alignName.toLowerCase()];
+	if (alignNumber === undefined) throw new Error(`Align ${alignName} unknown`);
+	return alignNumber;
 }
 
 export function executeAlignCommand(command: TNeatAlignCommand, context: ExecutionContext) {

@@ -36,7 +36,7 @@ export function parseText(parser: NeatParser) {
 				result.id = parser.consume(["STRING", "IDENTIFIER"]).value as string;
 				break;
 			case "align":
-				result.align = parseAlign(parser);
+				result.boxAlign = parseAlign(parser);
 				break;
 			case "nocache":
 				parser.advance();
@@ -61,6 +61,9 @@ export function parseText(parser: NeatParser) {
 
 	if (!result.at) {
 		throw new Error("Missing required 'at' argument in text command.");
+	}
+	if (result.boxAlign && !result.size) {
+		throw new Error("Missing required 'size' argument for align in a box to work.");
 	}
 
 	return result as TNeatTextCommand;

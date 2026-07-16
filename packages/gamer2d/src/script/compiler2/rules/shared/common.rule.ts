@@ -1,6 +1,6 @@
 import type { NeatParser } from "../../parser";
 import type { TNeatTerm } from "../../types/expression.type";
-import { parseValueExpression } from "./value-expr.rule";
+import { parseAdditiveExpression, parseValueExpression } from "./value-expr.rule";
 
 export function parseValueTuple(parser: NeatParser): [TNeatTerm[], TNeatTerm[]] {
 	const x = parseValueExpression(parser);
@@ -11,6 +11,8 @@ export function parseValueTuple(parser: NeatParser): [TNeatTerm[], TNeatTerm[]] 
 
 export function parseAt(parser: NeatParser) {
 	parser.identifier("at");
-	const tuple = parseValueTuple(parser);
-	return { x: tuple[0], y: tuple[1] };
+	const x = parseAdditiveExpression(parser);
+	parser.consume("PUNCT", ",");
+	const y = parseValueExpression(parser);
+	return { x, y };
 }

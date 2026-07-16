@@ -32,7 +32,7 @@ function parseObjectLiteral(parser: NeatParser): TNeatExpression {
 	return [{ type: "object", value: obj }];
 }
 
-function parseAdditiveExpression(parser: NeatParser): TNeatExpression {
+export function parseAdditiveExpression(parser: NeatParser): TNeatExpression {
 	let result = parseMultiplicativeExpression(parser);
 	while (parser.is("PUNCT", ["+", "-"])) {
 		const op = parser.advance().value as TNeatOperator;

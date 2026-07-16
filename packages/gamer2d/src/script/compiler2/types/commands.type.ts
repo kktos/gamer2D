@@ -100,10 +100,10 @@ export type TNeatTextCommand = {
 	value: TNeatExpression;
 	at: TNeatPropertyAt;
 	font?: { name?: string; size?: number };
-	size?: TNeatPropertySize;
 	color?: TNeatExpression;
 	id?: string;
-	align?: TNeatAlignCommand;
+	size?: TNeatPropertySize;
+	boxAlign?: TNeatAlignCommand;
 	anims?: TNeatExpression;
 	traits?: TNeatExpression;
 	nocache?: boolean;
