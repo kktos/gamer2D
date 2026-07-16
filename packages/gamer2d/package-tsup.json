@@ -6,7 +6,10 @@
 	"license": "ISC",
 	"type": "module",
 	"exports": {
-		".": "./game/index.js",
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
 		"./traits": "./traits/index.js",
 		"./types": "./types/index.js",
 		"./scene": "./scene/index.js",
@@ -41,6 +44,7 @@
 	},
 	"tsup": {
 		"entry": [
+			"./src/index.ts",
 			"./src/game/index.ts",
 			"./src/traits/index.ts",
 			"./src/types/index.ts",

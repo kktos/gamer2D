@@ -6,7 +6,7 @@ export class BackgroundEntity extends Entity {
 	private type: string;
 
 	constructor(resourceMgr: ResourceManager, type: string) {
-		super(resourceMgr, 0, 0, "backgrounds");
+		super(0, 0, "backgrounds");
 
 		this.type = type;
 		this.setSprite(this.type);

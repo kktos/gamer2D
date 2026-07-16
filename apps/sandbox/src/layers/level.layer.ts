@@ -23,6 +23,12 @@ export class LevelLayer extends Layer {
 			functions: functions,
 			gc,
 			currentScene: parent,
+			currentOrigin: [
+				{
+					x: 0,
+					y: 0,
+				},
+			],
 		};
 
 		const results = runCommands(sheet.data, context) as { type: string; [key: string]: unknown }[];

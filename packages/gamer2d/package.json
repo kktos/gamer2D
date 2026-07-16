@@ -7,6 +7,10 @@
 	"type": "module",
 	"types": "./dist/index.d.ts",
 	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
 		"./constants": {
 			"types": "./dist/constants/index.d.ts",
 			"import": "./dist/constants/index.js"
@@ -347,6 +351,14 @@
 			"types": "./dist/scenes/Scene.factory.d.ts",
 			"import": "./dist/scenes/Scene.factory.js"
 		},
+		"./script": {
+			"types": "./dist/script/index.d.ts",
+			"import": "./dist/script/index.js"
+		},
+		"./script/compiler2": {
+			"types": "./dist/script/compiler2/index.d.ts",
+			"import": "./dist/script/compiler2/index.js"
+		},
 		"./script/compiler2/compiler": {
 			"types": "./dist/script/compiler2/compiler.d.ts",
 			"import": "./dist/script/compiler2/compiler.js"
@@ -366,6 +378,14 @@
 		"./script/compiler2/compiler.layer.entities.test": {
 			"types": "./dist/script/compiler2/compiler.layer.entities.test.d.ts",
 			"import": "./dist/script/compiler2/compiler.layer.entities.test.js"
+		},
+		"./script/compiler2/compiler.layer.globals.test": {
+			"types": "./dist/script/compiler2/compiler.layer.globals.test.d.ts",
+			"import": "./dist/script/compiler2/compiler.layer.globals.test.js"
+		},
+		"./script/compiler2/compiler.layer.ui.test": {
+			"types": "./dist/script/compiler2/compiler.layer.ui.test.d.ts",
+			"import": "./dist/script/compiler2/compiler.layer.ui.test.js"
 		},
 		"./script/compiler2/compiler.scene.test": {
 			"types": "./dist/script/compiler2/compiler.scene.test.d.ts",
@@ -546,6 +566,10 @@
 		"./script/compiler2/types/scenes.type": {
 			"types": "./dist/script/compiler2/types/scenes.type.d.ts",
 			"import": "./dist/script/compiler2/types/scenes.type.js"
+		},
+		"./script/engine2": {
+			"types": "./dist/script/engine2/index.d.ts",
+			"import": "./dist/script/engine2/index.js"
 		},
 		"./script/engine2/commands/align.cmd": {
 			"types": "./dist/script/engine2/commands/align.cmd.d.ts",
@@ -917,7 +941,7 @@
 		}
 	},
 	"scripts": {
-		"build": "tsdown",
+		"build": "tsc --noEmit && tsdown",
 		"postbuild": "node build/cleanup-exports.js",
 		"build:old": "pnpm build:tsup",
 		"not:postbuild": "node build/postbuild.mjs",

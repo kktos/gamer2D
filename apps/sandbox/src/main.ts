@@ -13,6 +13,11 @@ import { BBGameScene } from "./scenes/game.scene.js";
 import BBLevelScene from "./scenes/level.scene.js";
 import { KeyboardPlayerTrait } from "./traits/keyboard_player.trait.js";
 import { ZenChanNormalBehaviourTrait } from "./traits/ZenChanNormalBehaviour.trait.js";
+import { TNeatAssignCommand, TNeatCallCommand } from "gamer2d/script/compiler2/types/commands.type";
+import { ExecutionContext } from "gamer2d/script/engine2/exec.context";
+import { createVariableStore } from "gamer2d/utils/vars.store";
+import { NeatFunctions } from "gamer2d/script/engine2/functions/functions.store";
+import { TNeatExpression } from "gamer2d/script/compiler2/types/expression.type";
 
 const SCRIPT = "game";
 
@@ -150,7 +155,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	const startGameButton = document.getElementById("startGameButton") as HTMLButtonElement;
 	// Check if all required elements exist
-	if (!startGameButton || !scriptInput || !parseSceneButton || !parseLayerButton || !loadButton || !outputTokens || !jsonInput || !evalButton || !evalOutput) {
+	if (
+		!startGameButton ||
+		!scriptInput ||
+		!parseSceneButton ||
+		!parseLayerButton ||
+		!loadButton ||
+		!outputTokens ||
+		!jsonInput ||
+		!evalButton ||
+		!evalOutput
+	) {
 		console.error("One or more required HTML elements are missing.");
 		return;
 	}
@@ -201,8 +216,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 	// Expression Evaluator Event Listeners
 	evalButton.addEventListener("click", () => {
 		const jsonString = `{${jsonInput.value}}`;
-		let astVars: { [key: string]: unknown } = {};
-		let astExpr: { [key: string]: unknown } = {};
+		let astVars: (TNeatAssignCommand | TNeatCallCommand)[] = [];
+		let astExpr: TNeatExpression = [];
 		try {
 			astVars = compile(jsonString, "statements");
 			evalOutput.textContent = `Variables: ${JSON.stringify(astVars, null, 2)}\n`;
@@ -215,9 +230,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 			return;
 		}
 		try {
-			const context = {
-				variables: new Map(),
-				//functions:
+			const context: ExecutionContext = {
+				variables: createVariableStore(),
+				functions: null as unknown as NeatFunctions,
+				currentOrigin: [
+					{
+						x: 0,
+						y: 0,
+					},
+				],
+				gc: game!.gc,
 			};
 			runCommands(astVars, context);
 			resultOutput.textContent = `Result: ${evalExpression(astExpr, context)}`;

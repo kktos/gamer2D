@@ -20,7 +20,7 @@ import type { GameOptions } from "./types/GameOptions";
 
 export class Game {
 	private fpsManager: FPSManager;
-	private gc: GameContext;
+	public readonly gc: GameContext;
 	public coppola: Director | null;
 	public isDebugEnabled = false;
 
