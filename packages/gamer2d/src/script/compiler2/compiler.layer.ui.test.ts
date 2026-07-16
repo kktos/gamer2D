@@ -30,7 +30,7 @@ describe("compiler - layer ui", () => {
 				on click from ui $x $y { $pressed = true }
 				animation bounce paused repeat 3 { $frame = $frame + 1 }
 
-				text "Hello" at 10,20 font "PressStart2P", 16 size 50,10 color blue align center,bottom id title nocache anim $anim traits $traits
+				text "Hello" at center,20 font "PressStart2P", 16 size 50,10 color blue align center,bottom id title nocache anim $anim traits $traits
 				
 				menu main {
 					selection { background darkblue pad 2,3 }
@@ -113,11 +113,11 @@ describe("compiler - layer ui", () => {
 				{
 					cmd: "TEXT",
 					value: [{ type: "const", value: "Hello" }],
-					at: { x: [{ type: "const", value: 10 }], y: [{ type: "const", value: 20 }] },
+					at: { x: [{ type: "const", value: "center" }], y: [{ type: "const", value: 20 }] },
 					font: { name: "PressStart2P", size: 16 },
 					size: { width: [{ type: "const", value: 50 }], height: [{ type: "const", value: 10 }] },
 					color: [{ type: "const", value: "blue" }],
-					align: { cmd: "ALIGN", align: "center", valign: "bottom" },
+					boxAlign: { cmd: "ALIGN", align: "center", valign: "bottom" },
 					id: "title",
 					nocache: true,
 					anims: [{ type: "var", name: "anim" }],
