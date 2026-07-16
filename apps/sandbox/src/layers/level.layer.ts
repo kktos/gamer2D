@@ -6,8 +6,9 @@ import type { ExecutionContext } from "gamer2d/script/engine2/exec.context";
 import { functions } from "gamer2d/script/engine2/functions/functions.store";
 import type { Grid } from "gamer2d/utils/maths/grid.math";
 import { createVariableStore } from "gamer2d/utils/vars.store";
-import { createLevelGrid } from "../utils/createLevelGrid.utils.js";
-import { createLevelImage } from "../utils/createLevelImage.utils.js";
+import { createLevelGrid } from "../utils/createLevelGrid.utils";
+import { createLevelImage } from "../utils/createLevelImage.utils";
+import { TNeatCommand } from "gamer2d/script/compiler2/types/commands.type";
 
 export class LevelLayer extends Layer {
 	private levelImage: HTMLCanvasElement | undefined;
@@ -15,7 +16,7 @@ export class LevelLayer extends Layer {
 	private gridY: number;
 	readonly grid: Grid;
 
-	constructor(gc: GameContext, parent: Scene, sheet: TLayerLevelSheet) {
+	constructor(gc: GameContext, parent: Scene, sheet: { data: TNeatCommand[] }) {
 		super(gc, parent, "LevelLayer");
 
 		const context: ExecutionContext = {
@@ -39,6 +40,8 @@ export class LevelLayer extends Layer {
 		// if (!settings) throw new SyntaxError("Missing mandatory settings for the level !?!");
 
 		const LEVEL_GRID = gc.resourceManager.settings.get<Record<string, number>>("LEVEL_GRID");
+		if (!LEVEL_GRID) throw new SyntaxError("Missing mandatory LEVEL_GRID for the level !?!");
+
 		this.gridX = LEVEL_GRID.X;
 		this.gridY = LEVEL_GRID.Y;
 		this.grid = createLevelGrid(LEVEL_GRID, settings.map);
