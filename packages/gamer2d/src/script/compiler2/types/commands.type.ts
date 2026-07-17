@@ -24,6 +24,7 @@ export type TNeatCommand =
 	| TNeatMenuCommand
 	| TNeatPoolCommand
 	| TNeatOnCommand
+	| TNeatEmitCommand
 	| TNeatAnimationCommand
 	| TNeatTimerCommand
 	| TNeatSoundCommand
@@ -156,7 +157,6 @@ export type TNeatItemCommand = {
 };
 
 // FOR
-
 export type TNeatVariableForCommand = {
 	cmd: "FOR";
 	var: string;
@@ -173,7 +173,6 @@ export type TNeatRangeForCommand = {
 export type TNeatForCommand = TNeatVariableForCommand | TNeatRangeForCommand;
 
 // MENU
-
 export type TNeatMenuSelection = {
 	// color
 	color?: string;
@@ -198,7 +197,6 @@ export type TNeatMenuCommand = {
 };
 
 // ON
-
 export type TNeatOnCommand = {
 	cmd: "ON";
 	event: string;
@@ -207,8 +205,14 @@ export type TNeatOnCommand = {
 	statements: TNeatCommand[];
 };
 
-// ANIMATION
+// EMIT
+export type TNeatEmitCommand = {
+	cmd: "EMIT";
+	event: string;
+	params: TNeatExpression[];
+};
 
+// ANIMATION
 export type TNeatAnimationCommand = {
 	cmd: "ANIMATION";
 	name: string;
@@ -218,7 +222,6 @@ export type TNeatAnimationCommand = {
 };
 
 // POOL
-
 export type TNeatPoolCommand = {
 	cmd: "POOL";
 	spriteName: string;

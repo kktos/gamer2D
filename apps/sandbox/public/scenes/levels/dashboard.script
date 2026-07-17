@@ -17,6 +17,11 @@ layer ui {
 		// timer("death").start()
 	}
 
+	on "spawn_life" $count {
+		log("spawn_life", $count)
+		entity("lifePool").use($count)
+	}
+
 	on POOL_SPAWNED from lifePool $id $count $entity {
 		$pos= 40 + ($count-1)*16
 		// log("POOL_SPAWNED", $id, $count, $pos)
@@ -46,12 +51,12 @@ layer ui {
 	text "ROUND  1" at 230,265 id "round1" align left traits [Killable()]
 	text "READY !" at 230,285 id "round2" align left traits [KillableTrait()]
 
-	// pool "bubblun:life" id "lifePool" at 0,460 count 10 spawn $bubblun.lives
 	pool "lifePool" {
 		sprite "bubblun:life"
 		capacity 10
 		//spawn $bubblun.lives
 	}
 	// text "${bubblun.lives}" at 80, 463 color black size:1
+	emit "spawn_life"($bubblun.lives)
 
 }

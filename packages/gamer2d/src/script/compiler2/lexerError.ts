@@ -33,7 +33,7 @@ export class NeatLexerError extends Error {
 	static throwInvalidToken(lines: string[], token: TNeatToken, type: string, value: unknown) {
 		const lineContent = lines[token.pos[0] - 1];
 		throw new NeatLexerError(
-			`Invalid token at line ${token.pos[0]}, column ${token.pos[1]}\nExpecting ${type} ${value}\n${NeatLexerError.generateErrorPointer(lineContent, token.pos[1])}`,
+			`Invalid token at line ${token.pos[0]}, column ${token.pos[1]}\nExpecting "${type}" "${value}"\n${NeatLexerError.generateErrorPointer(lineContent, token.pos[1])}`,
 			token.pos[0],
 			token.pos[1],
 			lineContent,

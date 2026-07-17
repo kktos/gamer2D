@@ -7,6 +7,7 @@ import { executeButtonCommand } from "./commands/button.cmd";
 import { executeCallCommand } from "./commands/call.cmd";
 import { executeClearContextCommand } from "./commands/clearcontext.cmd";
 import { executeColorCommand } from "./commands/color.cmd";
+import { executeEmitCommand } from "./commands/emit.cmd";
 import { executeFontCommand } from "./commands/font.cmd";
 import { executeForCommand } from "./commands/for.cmd";
 import { executeImageCommand } from "./commands/image.cmd";
@@ -46,7 +47,11 @@ function runCommand<T extends TNeatCommand>(command: T, context: ExecutionContex
 	const commandExecutor = COMMAND_REGISTRY.get(command.cmd);
 	if (!commandExecutor) throw new Error(`Unknown command: ${command.cmd}`);
 
-	return commandExecutor.execute(command, context);
+	try {
+		return commandExecutor.execute(command, context);
+	} catch (e) {
+		throw new Error(`${command.cmd} - ${(e as Error).message}`);
+	}
 }
 
 export function runCommands(commands: TNeatCommand[], ctx: ExecutionContext) {
@@ -80,6 +85,7 @@ addCommand("MENU", executeMenuCommand);
 addCommand("POOL", executePoolCommand);
 addCommand("SOUND", executeSoundCommand);
 addCommand("ON", executeOnCommand);
+addCommand("EMIT", executeEmitCommand);
 addCommand("TIMER", executeTimerCommand);
 addCommand("ITEM", executeItemCommand);
 addCommand("CALL", executeCallCommand);

@@ -14,4 +14,6 @@ export const Events = {
 	TASK_ADD_ENTITY: Symbol.for("addEntity"),
 	TASK_ADD_ENTITY_AT: Symbol.for("addEntityAt"),
 	TASK_ADD_BEFORE_ENTITY: Symbol.for("addBeforeEntity"),
+
+	TASK_EMIT_EVENT: Symbol.for("emitEvent"),
 } as const;

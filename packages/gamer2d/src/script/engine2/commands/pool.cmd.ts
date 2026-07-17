@@ -9,18 +9,10 @@ import { addTraits } from "./shared/add.traits";
 export function executePoolCommand(command: TNeatPoolCommand, context: ExecutionContext) {
 	const gc = context.gc as GameContext;
 
-	// const x = command.at ? evalExpressionAs(command.at.x, context, "number") : 0;
-	// const y = command.at ? evalExpressionAs(command.at.y, context, "number") : 0;
 	const capacity = evalExpressionAs(command.capacity, context, "number");
-	// const spawnCount = command.spawn ? evalExpressionAs(command.spawn, context, "number") : 0;
-
 	const entityPool = EntityPool.create(command.id, command.spriteName, capacity /*, { at: { x, y } }*/);
 
 	if (command.traits) addTraits(command.traits, entityPool, context);
-
-	// for (let idx = 0; idx < spawnCount; idx++) {
-	// entityPool.use();
-	// }
 
 	gc.scene?.addTask(Events.TASK_ADD_ENTITY, entityPool);
 	return entityPool;

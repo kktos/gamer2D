@@ -1,3 +1,4 @@
+import { Events } from "../events";
 import type { EventCallback } from "../events/EventBuffer";
 import { EventEmitter } from "../events/EventEmitter";
 import { TaskList } from "../game/TaskList";
@@ -137,6 +138,10 @@ export class Scene {
 	}
 
 	setTaskHandlers(_gc: GameContext) {
+		this.tasks.onTask(Events.TASK_EMIT_EVENT, (event: string, ...args: unknown[]) => {
+			this.emit(Symbol.for(event), ...args);
+		});
+
 		// this.tasks.onTask(Scene.TASK_RESET, () => {
 		// 	this.reset(gc);
 		// });

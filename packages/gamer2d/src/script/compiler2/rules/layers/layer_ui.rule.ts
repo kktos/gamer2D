@@ -1,6 +1,7 @@
 import type { NeatParser } from "../../parser";
 import type { TNeatCommand } from "../../types/commands.type";
 import { parseVariableAssignment } from "../shared/assign.rule";
+import { parseEmit } from "../shared/emit.rule";
 import { parseFor } from "../shared/for.rule";
 import { parseOn } from "../shared/on.rule";
 import { parseSprite } from "../shared/sprite.rule";
@@ -25,6 +26,7 @@ const COMMAND_HANDLERS: Record<string, LayerUiCommandHandler> = {
 	bgcolor: parseBgColor,
 	zoom: parseZoom,
 	on: parseOn,
+	emit: parseEmit,
 	animation: parseAnimation,
 	text: parseText,
 	menu: parseMenu,
