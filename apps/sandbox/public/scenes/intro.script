@@ -7,7 +7,7 @@ display "intro" {
 
 	layer ui {
 		font "bubble-bobble"
-		sound "music:intro" play
+		sound "music:intro" autoplay
 
 		timer "spawner" every 30ms
 		on TIMER from spawner {
