@@ -8,7 +8,7 @@ export function parseSound(parser: NeatParser) {
 
 	if (parser.isIdentifier("paused")) {
 		parser.advance();
-	} else if (parser.isIdentifier("play")) {
+	} else if (parser.isIdentifier("autoplay")) {
 		parser.advance();
 		result.isPaused = false;
 	}
