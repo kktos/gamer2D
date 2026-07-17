@@ -19,7 +19,7 @@ layer ui {
 
 	on "spawn_life" $count {
 		log("spawn_life", $count)
-		entity("lifePool").use($count)
+		entity("lifePool").spawn($count)
 	}
 
 	on POOL_SPAWNED from lifePool $id $count $entity {

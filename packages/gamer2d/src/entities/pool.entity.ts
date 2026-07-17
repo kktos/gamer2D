@@ -38,7 +38,7 @@ export class EntityPool extends Entity {
 		return this.pool.find((entity) => entity.id === idxOrId);
 	}
 
-	use(howMany = 1) {
+	spawn(howMany = 1) {
 		const batch: Entity[] = [];
 		for (let idx = 0; idx < howMany; idx++) {
 			const index = this.usedList.indexOf(false);
