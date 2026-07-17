@@ -23,6 +23,11 @@ export function parsePool(parser: NeatParser) {
 				result.capacity = parseValueExpression(parser);
 				break;
 			}
+			case "spawn": {
+				parser.advance();
+				result.spawn = parseValueExpression(parser);
+				break;
+			}
 			case "traits": {
 				parser.advance();
 				result.traits = parseValueExpression(parser);

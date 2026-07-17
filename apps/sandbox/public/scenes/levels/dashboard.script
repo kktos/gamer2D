@@ -17,10 +17,10 @@ layer ui {
 		// timer("death").start()
 	}
 
-	on "spawn_life" $count {
-		log("spawn_life", $count)
-		entity("lifePool").spawn($count)
-	}
+	// on "spawn_life" $count {
+	// 	log("spawn_life", $count)
+	// 	entity("lifePool").spawn($count)
+	// }
 
 	on POOL_SPAWNED from lifePool $id $count $entity {
 		$pos= 40 + ($count-1)*16
@@ -54,9 +54,9 @@ layer ui {
 	pool "lifePool" {
 		sprite "bubblun:life"
 		capacity 10
-		//spawn $bubblun.lives
+		spawn $bubblun.lives
 	}
 	// text "${bubblun.lives}" at 80, 463 color black size:1
-	emit "spawn_life"($bubblun.lives)
+	// emit "spawn_life"($bubblun.lives)
 
 }

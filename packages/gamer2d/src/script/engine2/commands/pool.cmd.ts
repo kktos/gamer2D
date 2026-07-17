@@ -15,5 +15,15 @@ export function executePoolCommand(command: TNeatPoolCommand, context: Execution
 	if (command.traits) addTraits(command.traits, entityPool, context);
 
 	gc.scene?.addTask(Events.TASK_ADD_ENTITY, entityPool);
+
+	if (command.spawn) {
+		const spawnCount = evalExpressionAs(command.spawn, context, "number");
+		const SpawnEventName = Symbol.for(`POOL_${command.id}_SPAWN`);
+		gc.scene?.tasks.onTask(SpawnEventName, (count: number) => {
+			entityPool.spawn(count);
+		});
+		gc.scene?.addTask(SpawnEventName, spawnCount);
+	}
+
 	return entityPool;
 }

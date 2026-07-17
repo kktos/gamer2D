@@ -226,6 +226,7 @@ export type TNeatPoolCommand = {
 	cmd: "POOL";
 	spriteName: string;
 	capacity: TNeatExpression;
+	spawn?: TNeatExpression;
 	id: string;
 	traits?: TNeatExpression;
 };
